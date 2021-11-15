@@ -1,0 +1,104 @@
+{extend name="common/base"/}
+<!-- 样式 -->
+{block name="style"}
+  <style>
+    html,body{
+        height: calc(100% - 20px);
+    }
+  </style>
+<!-- /样式 -->
+<!-- 主体 -->
+{block name="body"}
+<div class="body-content" style="height: 100%">
+    <div style="height:39px;">
+        <a class="layui-btn layui-btn-normal layui-btn-sm" href="{:url('home/article/cate_add')}">+ 添加分类</a><span style="color:#999;margin-left:20px">点击表格内容可编辑</span>
+    </div>
+    <div style="height: calc(100% - 30px)">
+      <table class="layui-hide" id="treeTable" lay-filter="treeTable"></table>
+    </div> 
+</div>
+<script type="text/html" id="switchStatus">
+	<input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="status" {{ d.status == 1 ? 'checked' : '' }}>
+</script>
+{/block}
+<!-- /主体 -->
+
+<!-- 脚本 -->
+{block name="script"}
+	<script>
+		var editObj=null,ptable=null,treeGrid=null,tableId='treeTable',layer=null;
+		function init(layui){
+			var table=layui.table,form = layui.form;
+			treeGrid = layui.treeGrid;//很重要
+			layer=layui.layer;
+			ptable=treeGrid.render({
+				id:tableId
+				,elem: '#'+tableId
+				,idField:'id'
+				,url:"{:url('home/article/cate')}"
+				,cellMinWidth: 100
+				,treeId:'id'//树形id字段名称
+				,treeUpId:'pid'//树形父id字段名称
+				,treeShowName:'title'//以树形式显示的字段
+				,cols: [[
+					{field:'id',width:80, title: 'ID号', align:'center'}
+					,{field: 'sort', title: '排序', edit: "text", align:'center', style:'cursor: pointer;', width:80}
+					,{field:'title', edit:'text',width:240, title: '分类名称'}
+					,{field:'pid', title: '父级ID', edit:"text",width:80, align:'center'}
+					,{field:'keywords', title: '关键词', edit:"text",width:200,}
+					,{field:'desc', title: '描述', edit:"text"}
+					,{width:100,title: '操作', align:'center'
+						,templet: function(d){
+						var html='';
+						var addBtn='<a class="layui-btn layui-btn-normal layui-btn-xs" title="添加分类" href="/home/article/cate_add?pid='+d.id+'">添加</a>';
+						var delBtn='<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>';
+						return addBtn+delBtn;
+					  }
+					}
+				]]
+				,page:false
+				//,skin:'line'
+			});
+			//单元格编辑
+			treeGrid.on('edit('+tableId+')', function(obj){
+				layer.confirm('确定要提交修改吗?', {icon: 3, title:'提示'}, function(index){
+					$.ajax({
+					  url:"{:url('home/article/cate_post_submit')}",
+					  type:'post',
+					  data:{id:obj.data.id,field:obj.field,value:obj.value},
+					  success:function(res){
+						layer.msg(res.msg);
+						if(res.code == 1){
+							setTimeout(function(){
+								location.reload()
+							},2000)						  
+						}
+					  }
+					}) 
+					layer.close(index);
+				});
+			});
+			//删除
+			treeGrid.on('tool('+tableId+')',function (obj) {
+				if(obj.event === 'del'){
+					layer.confirm('确定要删除吗?', {icon: 3, title:'提示'}, function(index){
+						$.ajax({
+						  url:"{:url('home/article/cate_delete')}",
+						  type:'post',
+						  data:{id:obj.data.id},
+						  success:function(res){
+							layer.msg(res.msg);
+							if(res.code == 0){
+								obj.del();
+							}
+						  }
+						}) 
+						layer.close(index);
+					});
+				}
+			});
+		}
+	</script>
+	{include file="common/layui" base='base' extend="['treeGrid']" callback="init" /}
+{/block}
+<!-- /脚本 -->

@@ -1,0 +1,53 @@
+{extend name="common/base"/}
+{block name="style"}
+<style>
+.content-info{background-color: #fff; border-bottom: 1px solid #eee; padding: 15px 20px;}
+.layui-upload-list div{padding: 3px 0; font-size: 12px;}
+.layui-upload-list div a{margin-left: 10px;}
+</style>
+{/block}
+<!-- 主体 -->
+{block name="body"}
+<form class="layui-form body-content">
+	<h3>工作记录详情</h3>
+	<table class="layui-table">
+		<tr>
+			<td class="layui-td-gray2">工作内容</td>
+			<td>
+				{$schedule.name}
+			</td>
+			<td class="layui-td-gray2">创建时间</td>
+			<td>{$schedule.create_time}</td>
+		</tr>
+		<tr>
+			<td class="layui-td-gray2">工作时间范围</td>
+			<td>
+				{$schedule.start_time} {$schedule.start_time_1} 至 {$schedule.end_time_1}，共{$schedule.labor_time}工时
+			</td>
+			<td class="layui-td-gray">工作类型</td>
+			<td>
+			{eq name="$schedule.labor_type" value="1"}外勤工作{/eq}
+			{eq name="$schedule.labor_type" value="2"}案头工作{/eq}
+			</td>
+		</tr>
+		<tr>
+			<td class="layui-td-gray2">描述</td>
+			<td colspan="3">{$schedule.remark}</td>
+		</tr>
+	</table>
+	<div class="layui-form-item" style="padding-top:10px;">
+		<a class="layui-btn layui-btn-primary" href="{:url('home/schedule/list')}">返回</a>
+	</div>
+</form>
+<!-- /主体 -->
+{/block}
+<!-- 脚本 -->
+{block name="script"}
+	<script>
+	function init(layui){
+
+	}	
+	</script>
+	{include file="common/layui" base='base' extend="[]" callback="init" /}
+{/block}
+<!-- /脚本 -->

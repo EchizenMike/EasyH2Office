@@ -1,0 +1,80 @@
+{extend name="common/base"/}
+
+{block name="style"}
+<style>
+	html,
+	body {
+		height: calc(100% - 20px);
+	}
+</style>
+{/block}
+
+<!-- 主体 -->
+{block name="body"}
+<div class="body-content" style="height: 100%">
+	<div style="height:39px;">
+		<a class="layui-btn layui-btn-normal layui-btn-sm" href="{:url('home/department/add')}">+ 添加部门</a>
+	</div>
+	<div style="height: calc(100% - 30px)">
+		<table class="layui-hide" id="treeTable" lay-filter="treeTable"></table>
+	</div>
+</div>
+{/block}
+<!-- /主体 -->
+
+<!-- 脚本 -->
+{block name="script"}
+<script>
+	function init(layui) {
+		var treeGrid = layui.treeGrid,
+			layer = layui.layer,
+			ptable = treeGrid.render({
+			id: 'treeTable'
+			, elem: '#treeTable'
+			, idField: 'id'
+			, url: "{:url('home/department/index')}"
+			, cellMinWidth: 100
+			, treeId: 'id'//树形id字段名称
+			, treeUpId: 'pid'//树形父id字段名称
+			, treeShowName: 'title'//以树形式显示的字段
+			, height: 'full-0'
+			,isOpenDefault:true
+			, cols: [[
+				 { field: 'id', width: 100, title: 'ID号', align: 'center' }
+				, { field: 'pid', title: '上级部门ID',width: 120, align: 'center'}
+				, { field: 'title', title: '部门名称'}
+				, { field: 'uername', title: '部门负责人',width: 120, align: 'center'}
+				, { field: 'phone', title: '部门电话',width: 180, align: 'center'}
+				, { width: 200, title: '操作', align: 'center', templet: function (d) {
+						var html = '<a class="layui-btn layui-btn-normal layui-btn-xs" href="/home/department/add?pid=' + d.id + '">添加下级部门</a><a class="layui-btn layui-btn-xs" href="/home/department/add?id=' + d.id + '">编辑</a><a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>';
+						return html;
+					}
+				}
+			]]
+			, page: false
+		});
+		//删除
+		treeGrid.on('tool(treeTable)', function (obj) {
+			if (obj.event === 'del') {
+				layer.confirm('确定要删除吗?', { icon: 3, title: '提示' }, function (index) {
+					$.ajax({
+						url: "{:url('home/department/delete')}",
+						type: 'post',
+						data: { id: obj.data.id },
+						success: function (e) {
+							layer.msg(e.msg);
+							if (e.code == 0) {
+								obj.del();
+							}
+						}
+					})
+					layer.close(index);
+				});
+			}
+		});
+
+	}
+</script>
+{include file="common/layui" base="base" extend="['treeGrid']" callback="init" /}
+{/block}
+<!-- /脚本 -->

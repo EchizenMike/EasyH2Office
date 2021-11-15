@@ -1,0 +1,81 @@
+{extend name="common/base"/}
+<!-- 主体 -->
+{block name="body"}
+<form class="layui-form body-content">
+	<table class="layui-table layui-table-form">
+		<tr>
+			<td class="layui-td-gray2">父级分类<font>*</font></td>
+			<td>
+				<select name="pid" lay-verify="required" lay-reqText="请选择父级分类">
+				  <option value="0">作为顶级分类</option>
+				  {volist name=":set_recursion(get_article_cate())" id="v"}
+				  <option value="{$v.id}" {eq name="pid" value="$v.id"}selected=""{/eq}>{$v.title}</option>
+				  {/volist}
+				</select>
+			</td>
+			<td class="layui-td-gray2">分类名称<font>*</font></td>
+			<td>
+				<input type="text" name="title" lay-verify="required" autocomplete="off" placeholder="请输入分类名称" lay-reqText="请输入分类名称" class="layui-input">
+			</td>
+		</tr>
+		<tr>
+			<td class="layui-td-gray2">排序</td>
+			<td>
+				<input type="text" name="sort" placeholder="请输入排序，数字" value="0" autocomplete="off" class="layui-input">
+			</td>
+			<td class="layui-td-gray2">关键词</td>
+			<td>
+				<input type="text" name="keywords" placeholder="请输入关键词，用“,”隔开，可空" autocomplete="off" class="layui-input">
+			</td>
+		</tr>
+		<tr>
+			<td class="layui-td-gray2">描述</td>
+			<td colspan="3"><textarea name="desc" placeholder="请输入描述，可空" class="layui-textarea"></textarea></td>
+		</tr>
+	</table>
+	<div style="padding: 10px 0">
+		<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform">立即提交</button>
+		<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+		<button lay-event="back" class="layui-btn layui-btn-primary">返回</button>
+    </div>
+</form>
+{/block}
+<!-- /主体 -->
+
+<!-- 脚本 -->
+{block name="script"}
+	<script>
+		function init(layui){
+		  var form = layui.form
+		  ,layer = layui.layer;
+		  
+		  //监听提交
+		  form.on('submit(webform)', function(data){
+			$.ajax({
+			  url:"{:url('home/article/cate_post_submit')}",
+			  type:'post',
+			  data:data.field,
+			  success:function(e){
+				if(e.code==0){
+				  layer.confirm('保存成功,返回列表页吗?', {icon: 3, title:'提示'}, function(index){
+					history.back(-1);
+					layer.close(index);
+				  });
+				}else{
+				  layer.msg(e.msg);
+				}
+			  }
+			})
+			return false;
+		  });
+		  //监听返回
+		  $('.body-content').on('click','[lay-event="back"]',function () {
+			history.back(-1);
+			return false;
+		  });
+
+		}
+	</script>
+	{include file="common/layui" base='base' extend="[]" callback="init" /}
+{/block}
+<!-- /脚本 -->

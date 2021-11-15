@@ -1,0 +1,81 @@
+{extend name="common/base"/}
+<!-- 主体 -->
+{block name="body"}
+<form class="layui-form body-content">
+	<table class="layui-table layui-table-form">
+		<tr>
+			<td class="layui-td-gray2">关键字名称<font>*</font>
+			</td>
+			<td>
+				<input type="hidden" name="id" value="{$id}" />
+				<input type="text" name="title" lay-verify="required" lay-reqText="请输入关键字名称" autocomplete="off" placeholder="请输入关键字名称"
+					class="layui-input" style="max-width: 360px;" {notempty name="$keywords.title"}
+					value="{$keywords.title}" {/notempty}>
+			</td>
+			<td class="layui-td-gray2">排序</td>
+			<td><input type="text" name="sort" placeholder="请输入排序，数字" autocomplete="off" class="layui-input"
+					style="max-width: 360px;" {notempty name="$keywords.sort" }value="{$keywords.sort}" {/notempty}>
+			</td>
+		</tr>
+		<tr>
+			<td class="layui-td-gray2">状态<font>*</font>
+			</td>
+			<td colspan="3">
+				{if condition="$id eq 0"}
+				<input type="radio" name="status" value="1" title="正常" checked>
+				<input type="radio" name="status" value="0" title="禁用">
+				{else/}
+				<input type="radio" name="status" value="1" title="正常" {eq name="$keywords.status" value="1"
+					}checked{/eq}>
+				<input type="radio" name="status" value="0" title="禁用" {eq name="$keywords.status" value="0"
+					}checked{/eq}>
+				{/if}
+			</td>
+		</tr>
+	</table>
+	<div style="padding: 10px 0">
+		<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform">立即提交</button>
+		<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+		<button lay-event="back" class="layui-btn layui-btn-primary">返回</button>
+	</div>
+</form>
+{/block}
+<!-- /主体 -->
+
+<!-- 脚本 -->
+{block name="script"}
+<script>
+	function init(layui) {
+		var form = layui.form
+			, layer = layui.layer;
+
+		//监听提交
+		form.on('submit(webform)', function (data) {
+			$.ajax({
+				url: "{:url('home/keywords/post_submit')}",
+				type: 'post',
+				data: data.field,
+				success: function (e) {
+					if (e.code == 0) {
+						layer.confirm('保存成功,返回列表页吗?', { icon: 3, title: '提示' }, function (index) {
+							history.back(-1);
+							layer.close(index);
+						});
+					} else {
+						layer.msg(e.msg);
+					}
+				}
+			})
+			return false;
+		});
+		//监听返回
+		$('.body-content').on('click', '[lay-event="back"]', function () {
+			history.back(-1);
+			return false;
+		});
+	}
+
+</script>
+{include file="common/layui" base="base" extend="[]" callback="init" /}
+{/block}
+<!-- /脚本 -->

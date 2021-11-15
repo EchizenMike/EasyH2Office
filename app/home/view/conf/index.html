@@ -1,0 +1,108 @@
+{extend name="common/base"/}
+<!-- 主体 -->
+{block name="body"}
+<div class="body-content">
+	<table class="layui-hide" id="test" lay-filter="test"></table>
+</div>
+
+<script type="text/html" id="status">
+	<i class="layui-icon {{#  if(d.status == 1){ }}layui-icon-ok{{#  } else { }}layui-icon-close{{#  } }}"></i>
+</script>
+<script type="text/html" id="toolbarDemo">
+	<div class="layui-btn-container">
+	<a class="layui-btn layui-btn-normal layui-btn-sm" href="/conf/add">+ 添加配置项</a>
+  </div>
+</script>
+{/block}
+<!-- /主体 -->
+
+<!-- 脚本 -->
+{block name="script"}
+<script>
+	function init(layui) {
+		var table = layui.table,
+			form = layui.form;
+
+		var tableIns = table.render({
+			elem: '#test',
+			title: '配置列表',
+			toolbar: '#toolbarDemo',
+			url: "{:url('home/conf/index')}",
+			page: true, //开启分页				
+			limit: 20,
+			cols: [
+				[{
+					field: 'id',
+					width: 80,
+					title: 'ID编号',
+					align: 'center'
+				},{
+					field: 'title',
+					title: '配置名称'
+				}, {
+					field: 'name',
+					title: '配置标识（新增的模板文件名称需与标识名称一致）'
+				},{
+					field: 'status',
+					width: 80,
+					title: '状态',
+					templet: '#status',
+					align: 'center'
+				}, {
+					width: 160,
+					title: '操作',
+					align: 'center',
+					templet: function (d) {
+						var html = '<div class="layui-btn-group"><a class="layui-btn layui-btn-xs" href="/home/conf/add?id=' + d.id + '">修改</a><a class="layui-btn  layui-btn-normal layui-btn-xs" href="/home/conf/edit?id=' + d.id + '">编辑配置</a><a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a></div>';
+						return html;
+					}
+				}]
+			]
+		});
+
+		//监听搜索提交
+		form.on('submit(webform)', function (data) {
+			if (data.field.keywords) {
+				tableIns.reload({
+					where: {
+						keywords: data.field.keywords
+					},
+					page: {
+						curr: 1
+					}
+				});
+			} else {
+				location.reload();
+			}
+			return false;
+		});
+
+		//删除
+		table.on('tool(test)', function (obj) {
+			if (obj.event === 'del') {
+				layer.confirm('确定要删除吗?', {
+					icon: 3,
+					title: '提示'
+				}, function (index) {
+					$.ajax({
+						url: "{:url('home/conf/delete')}",
+						type: 'post',
+						data: {
+							id: obj.data.id
+						},
+						success: function (res) {
+							layer.msg(res.msg);
+							if (res.code == 0) {
+								obj.del();
+							}
+						}
+					})
+					layer.close(index);
+				});
+			}
+		});
+	}
+</script>
+{include file="common/layui" base="base" extend="[]" callback="init" /}
+{/block}
+<!-- /脚本 -->

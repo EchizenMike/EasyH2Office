@@ -1,0 +1,105 @@
+ /* 滚动条样式 */
+ ::-webkit-scrollbar {
+   width: 8px;
+ }
+ ::-webkit-scrollbar-thumb {
+   background-color:rgba(0,0,0,.15);background-clip:content-box;border:1px solid transparent;border-radius:8px
+ }
+ 
+::-webkit-scrollbar-track{background-color:transparent}
+::-webkit-scrollbar-track:hover{background-color:rgba(0,0,0,.04)}
+::-webkit-scrollbar-thumb:hover{background-color:rgba(0,0,0,.4);border:1px solid transparent}
+::-webkit-scrollbar-thumb:active{background-color:rgba(0,0,0,.65)}
+  
+ ::-moz-scrollbar {
+   width: 8px;
+   background-color: transparent;
+ }
+ ::-moz-scrollbar-thumb {
+   background-color: #c1c1c1;
+   border-radius: 8px;
+ }
+ 
+ div.layui-table-main::-webkit-scrollbar{width:15px;height:15px}
+ div.layui-table-main::-webkit-scrollbar-thumb{min-width:15px;min-height:15px;background-color:rgba(0,0,0,.15);background-clip:content-box;border:2px solid transparent;border-radius:15px}
+ div.layui-table-main::-webkit-scrollbar-track{background-color:transparent}
+ div.layui-table-main::-webkit-scrollbar-track:hover{background-color:rgba(0,0,0,.04)}
+ div.layui-table-main::-webkit-scrollbar-thumb:hover{background-color:rgba(0,0,0,.4);border:2px solid transparent}
+ div.layui-table-main::-webkit-scrollbar-thumb:active{background-color:rgba(0,0,0,.65)}
+ /*placeholder*/
+ ::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+     color:    #aaa;
+ }
+ :-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+    color:    #aaa;
+ }
+ ::-moz-placeholder { /* Mozilla Firefox 19+ */
+    color:    #aaa;
+ }
+ :-ms-input-placeholder { /* Internet Explorer 10-11 */
+    color:    #aaa;
+ }
+ 
+ .layui-table td,.layui-table th{padding:9px 10px;}
+ .layui-table-cell{padding:0 10px;}
+ .layui-table[lay-size=sm] td, .layui-table[lay-size=sm] th {padding: 5px;}
+ .auth-single .auth-icon{font-size:24px; float:left;}
+ .auth-single .layui-form-radio,.auth-single .layui-form-checkbox{margin-left:0;}
+ .auth-single .layui-form-radio{margin-top:0;}
+ .auth-single .layui-form-radio>i,.auth-single .layui-form-checkbox>i{font-size:20px;}
+ .layui-select-tags{padding:10px 0;}
+ .layui-tags-span{padding:5px 8px; font-size:14px; border-radius:3px; margin-bottom:6px; margin-right:6px; border:1px solid #e6e6e6; display:inline-block;cursor:pointer;}
+ .layui-readonly{background-color: #f5f5f5; color:#999;}
+ .layui-tags-span:hover{border:1px solid #ddd; background-color:#f2f2f2;}
+ .layui-tags-span i{margin-left:5px; font-size:14px;}
+ .layui-tags-span i:hover{border-radius:2px;background-color:#FF6347;color:#fff}
+ .layui-letter-span{padding:10px 5px; font-size:15px; display:inline-block; cursor:pointer;}
+ .layui-letter-span.on{color:#FF6347; font-weight:800;}
+ .layui-letter-span:hover{color:#4285f4;}
+ .layui-tags-all{float: right; font-weight: 200px; background-color:#4285f4; color:#fff; border-radius: 3px; padding: 2px 6px; cursor: pointer; display: none;}
+ .layui-table-form{margin-top: 0;}
+ .layui-table-form tbody tr:hover{background-color: #fff;}
+ .layui-td-gray{color:#999; width:80px; text-align:right; background-color:#f8f8f8;}
+ .layui-td-gray2{color:#999; width:100px; text-align:right; background-color:#f8f8f8;}
+ .layui-td-gray3{color:#999; width:120px; text-align:right; background-color:#f8f8f8;}
+ .layui-td-gray4{color:#999; width:150px; text-align:right; background-color:#f8f8f8;}
+ .layui-td-gray font,.layui-td-gray2 font,.layui-td-gray3 font{color:#FF6347; margin-left: 3px;}
+ .main-body{padding:10px;padding-bottom: 0;min-width: 880px;}
+ .body-content{padding:10px;background-color:#fff;}
+ .body-form-btn{padding:10px 0;}
+ .span-color--1{color:#999999;}
+ .span-color-0{color:#5FB878;}
+ .span-color-1{color:#FF6347;}
+ .span-color-2{color:#01AAED;}
+ .span-color-3{color:#d89d00;}
+ .span-color-4{color:#CC0033;}
+ .span-color-5{color:#CCCC00;}
+ .span-color-6{color:#FF33CC;}
+ .span-color-7{color:#6699FF;}
+ .span-color-8{color:#CC9933;}
+ 
+@keyframes layui-rl{
+    from{transform:translateX(0px);}to{transform:translateX(-100%);}
+}
+@-webkit-keyframes layui-rl{
+    from{transform:translateX(0px);}to{transform:translateX(-100%);}
+}
+.layui-anim {
+    -webkit-animation-duration: .3s;
+    animation-duration: .3s;
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both;
+}
+.layui-anim-rl {
+    -webkit-animation-name: layui-rl;
+    animation-name: layui-rl;
+}
+.layui-layer-admin-right {
+    box-shadow: 1px 1px 10px rgba(0,0,0,.1);
+    border-radius: 0;
+    overflow: auto;
+}
+.layui-anim-rl.layui-layer-iframe{
+	overflow:inherit!important;
+}
+.right-popup-close{position: absolute;width:50px;height:44px;line-height:44px;text-align:center; left: -50px;right:0; top: 50px;background-color:#FF5722;color:#fff;border-radius:4px 0 0 4px; cursor:pointer}

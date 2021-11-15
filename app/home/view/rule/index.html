@@ -1,0 +1,101 @@
+{extend name="common/base"/}
+
+{block name="style"}
+<style>
+	html,
+	body {
+		height: calc(100% - 20px);
+	}
+</style>
+{/block}
+
+<!-- 主体 -->
+{block name="body"}
+<div class="body-content" style="height: 100%">
+	<div style="height:39px;">
+		<a class="layui-btn layui-btn-normal layui-btn-sm" href="/home/rule/add">+ 添加节点</a><span style="color:#999;margin-left:20px">点击表格内容可编辑</span>
+	</div>
+	<div style="height: calc(100% - 30px)">
+		<table class="layui-hide" id="treeTable" lay-filter="treeTable"></table>
+	</div>
+</div>
+{/block}
+<!-- /主体 -->
+
+<!-- 脚本 -->
+{block name="script"}
+<script>
+	var editObj = null, ptable = null, treeGrid = null, tableId = 'treeTable', layer = null;
+	function init(layui) {
+		var table = layui.table;
+		treeGrid = layui.treeGrid;//很重要
+		layer = layui.layer;
+		ptable = treeGrid.render({
+			id: tableId
+			, elem: '#' + tableId
+			, idField: 'id'
+			, url: "{:url('home/rule/index')}"
+			, cellMinWidth: 100
+			, treeId: 'id'//树形id字段名称
+			, treeUpId: 'pid'//树形父id字段名称
+			, treeShowName: 'title'//以树形式显示的字段
+			, cols: [[
+				{ field: 'id', width: 80, title: 'ID号', align: 'center' }
+				, { field: 'title', edit: 'text', width: 300, title: '名称', edit: "text" }
+				, { field: 'pid', title: '父级ID', edit: "text", width: 80, align: 'center' }
+				, { field: 'src', title: '规则', edit: "text" }
+				, {
+					width: 100, title: '操作', align: 'center'
+					, templet: function (d) {
+						var html = '<a class="layui-btn layui-btn-normal layui-btn-xs" href="/home/rule/add?pid=' + d.id + '">添加</a><a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>';
+						return html;
+					}
+				}
+			]]
+			, page: false
+			//,skin:'line'
+		});
+		//单元格编辑
+		treeGrid.on('edit(' + tableId + ')', function (obj) {
+			layer.confirm('确定要提交修改吗?', { icon: 3, title: '提示' }, function (index) {
+				$.ajax({
+					url: "{:url('home/rule/post_submit')}",
+					type: 'post',
+					data: { id: obj.data.id, field: obj.field, value: obj.value },
+					success: function (e) {
+						layer.msg(e.msg);
+						if(e.code == 0){
+							setTimeout(function(){
+								location.reload()
+							},2000)						  
+						}
+					}
+				})
+				layer.close(index);
+			});
+		});
+		//删除
+		treeGrid.on('tool(' + tableId + ')', function (obj) {
+			if (obj.event === 'del') {
+				layer.confirm('确定要删除吗?', { icon: 3, title: '提示' }, function (index) {
+					$.ajax({
+						url: "{:url('home/rule/delete')}",
+						type: 'post',
+						data: { id: obj.data.id },
+						success: function (e) {
+							layer.msg(e.msg);
+							if (e.code == 0) {
+								obj.del();
+							}
+						}
+					})
+					layer.close(index);
+				});
+			}
+		});
+
+	}
+</script>
+{include file="common/layui" base="base" extend="['treeGrid']" callback="init" /}
+{/block}
+<!-- /脚本 -->

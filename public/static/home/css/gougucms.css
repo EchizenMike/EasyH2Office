@@ -1,0 +1,77 @@
+.main-body{padding:0;min-width: 1220px;}
+.ittab-bg-gray {background-color:#001529;}
+.layui-layout-admin .layui-header {height:50px;background-color:#fff;}
+.layui-layout-admin .layui-logo {line-height:50px;cursor:pointer;font-size:16px;color:#fff;background:#001529;width:180px;}
+.layui-layout-admin .layui-side {top:50px;width:180px;border-right:1px solid #ddd;}
+.layui-nav .layui-nav-item {line-height:45px;}
+.layui-nav.layui-layout-left {color:#333;margin-left:10px;}
+.layui-nav.layui-layout-left input {border:0;}
+.layui-layout-admin .layui-body {top:50px;padding:0px;padding-right:0px;padding-bottom:0px;bottom:0px;left:180px;z-index:1018;overflow:visible;right:0;background-color:#eff0f4;}
+
+.ittab-menulist {width:100%;height:100%; border-right:1px solid #ccc; font-size:14px; color:#aaaaaa;}
+
+.ittab-menulist-top {padding: 10px 12px; font-size:0; border-bottom: 1px solid #17232c; text-align:center;}
+.ittab-menulist-top a {background-color:#34a853; opacity:1; width: 33.3%; margin:0; padding: 5px 0; display:inline-block;}
+.ittab-menulist-top .layui-icon {color:#fff;font-size:16px;}
+.ittab-menulist-top a:first-child {border-radius: 3px 0 0 3px;}
+.ittab-menulist-top a:last-child {border-radius: 0 3px 3px 0;}
+.ittab-menulist-top a:hover{opacity: .9;}
+
+.ittab-menulist-1 li{height:44px; line-height:44px; cursor:pointer; list-style:none;}
+.ittab-menulist-2 {height:48px;line-height:48px;position:relative;padding-left:12px; cursor: pointer;}
+.ittab-menulist-3 .ittab-menulist-2 {padding-left:38px;}
+.ittab-menulist-1 li:hover,.ittab-menulist-2:hover {background-color: rgba(255,255,255,.1)}
+.ittab-menulist-1 .iconfont{font-size: 18px; font-weight:800; padding-right:5px;}
+.ittab-menulist-1 .site-menu-active span{padding-left:35px; border-left: 3px solid#131E25; width: 168px; display: inline-block;}
+.ittab-menulist-4 .site-menu-active span{padding-left:52px;}
+.ittab-menulist-5 .site-menu-active span{padding-left:75px;}
+.ittab-menulist-1 li:hover span{border-color: rgba(255,255,255,.1)}
+.ittab-menulist-1 li.layui-this span{border-color:#E94335 !important; color:#fff !important; background-color: rgba(255,255,255,.1);}
+.ittab-menulist-1 li .layui-icon-triangle-r{float:right; margin-right:16px;}
+.ittab-menulist-1 li .layui-icon-triangle-d{float:right; margin-right:16px;}
+
+.ittab-menulist-3 {display:none;cursor:pointer;font-size:13px;}
+.ittab-menulist-3 li {background-color: #131E25;}
+.ittab-menulist-4 li {background-color: #131E25;}
+.ittab-menulist-5 li {background-color: #131E25;}
+
+.gougu-admin-tab {margin:0;}
+.gougu-admin-tab .layui-icon-prev {position:absolute;top:-50px; left:0; width:39px; height:50px; line-height:50px; color: #999; text-align:center; cursor:pointer; background-color:#fff;border-right: 1px solid #f1f2f7;}
+.gougu-admin-tab .layui-icon-prev:hover{color: #333;}
+.gougu-admin-tab .layui-icon-next {position:absolute;top:-50px; right:152px; width:39px; height:50px; line-height:50px; color: #999; text-align:center; cursor:pointer; background-color:#fff;border-left: 1px solid #f1f2f7;}
+.gougu-admin-tab .layui-icon-next:hover{color: #333;}
+.gougu-admin-tab .layui-tab-title {position:absolute;top:-50px;height:50px;left:36px; border:0;max-width:calc(100% - 226px); overflow:hidden;}
+
+.gougu-admin-tab .layui-tab-title li {min-width:36px; padding:0 24px 0 12px; color:#666;font-size:12px;line-height:48px;border-top:3px solid #fff; border-right: 1px solid #f1f2f7; background-color:#fff;}
+.gougu-admin-tab .layui-tab-title li .gougu-tab-active {display: inline-block; background-color: #999; width: 8px; height: 8px; border-radius: 20px; margin-right: 6px;}
+.gougu-admin-tab .layui-tab-title li .layui-tab-close {position:absolute;width:15px;height:15px;line-height:16px;top:16px;right:5px;font-size:10px;display:none;border-radius:50%;}
+
+.gougu-admin-tab .layui-tab-title li:hover {color:#333;background-color:#f1f2f7;border-top:3px solid #333;}
+.gougu-admin-tab .layui-tab-title li:hover .gougu-tab-active {background-color:#333}
+.gougu-admin-tab .layui-tab-title li:hover .layui-tab-close {display:inline-block;}
+
+.gougu-admin-tab .layui-tab-title li .layui-tab-close:hover {background-color:#E94335;color:#fff;}
+
+.gougu-admin-tab .layui-tab-title li.layui-this {color:#333;background-color:#f1f2f7;border-top:3px solid #E94335;}
+.gougu-admin-tab .layui-tab-title li.layui-this .gougu-tab-active{background-color:#E94335;}
+.gougu-admin-tab .layui-tab-title li.layui-this .layui-tab-close{display:inline-block;}
+
+.gougu-admin-tab .layui-tab-title li.ittab-tab-home{padding:0 16px;}
+.gougu-admin-tab .layui-tab-title li.ittab-tab-home .layui-tab-close {display:none;}
+.gougu-admin-tab .layui-tab-title li.ittab-tab-home:hover .layui-tab-close {display:none;}
+
+.gougu-admin-tab .layui-tab-brief>.layui-tab-more li.layui-this:after,.layui-tab-brief>.layui-tab-title .layui-this:after {border:0;}
+.gougu-admin-tab .layui-tab-item {height:100%;}
+.gougu-admin-tab .layui-tab-bar { height: 50px;border-width: 0;line-height: 50px;}
+
+.layui-layout-right{padding: 0 3px; background-color:#fff;}
+.layui-nav .layui-nav-item a{padding: 0 12px; text-align: center; min-width: 24px; border-left: 1px solid #eee;}
+.layui-nav .layui-nav-item #ittab-refresh {color:#000;}
+.layui-nav .layui-nav-item #ittab-refresh i {font-size:16px;}
+.layui-nav .layui-nav-item #ittab-del-cache{color:#000}
+.layui-nav .layui-nav-item #ittab-del-cache i{font-size:16px}
+.layui-nav.layui-layout-right .layui-nav-bar {background-color: #fff;}
+.layui-tab-brief>.layui-tab-more li.layui-this:after {border-bottom: 0;}
+.layui-nav-img {width:25px;height:25px;margin-right:0;}
+.layui-layout-admin .layui-footer {left:200px;height:30px;line-height:30px;background-color:#f0f0f0;font-size:12px;}
+.layui-tab-content {padding:0px;}

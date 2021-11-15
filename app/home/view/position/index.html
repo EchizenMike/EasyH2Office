@@ -1,0 +1,108 @@
+{extend name="common/base"/}
+<!-- 主体 -->
+{block name="body"}
+<div class="body-content">
+	<table class="layui-hide" id="test" lay-filter="test"></table>
+</div>
+
+<script type="text/html" id="status">
+	<i class="layui-icon {{#  if(d.status == 1){ }}layui-icon-ok{{#  } else { }}layui-icon-close{{#  } }}"></i>
+</script>
+<script type="text/html" id="toolbarDemo">
+	<div class="layui-btn-container">
+		<a class="layui-btn layui-btn-normal layui-btn-sm" href="{:url('home/position/add')}">+ 添加岗位</a>
+	</div>
+</script>
+<script type="text/html" id="barDemo">
+<div class="layui-btn-group"><span class="layui-btn layui-btn-xs layui-btn-normal" lay-event="view">详情</span><a class="layui-btn layui-btn-xs" href="/home/position/add?id={{d.id}}">编辑</a><span class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</span></div>
+</script>
+
+{/block}
+<!-- /主体 -->
+
+<!-- 脚本 -->
+{block name="script"}
+<script>
+	function init(layui) {
+		var TAB = parent.layui.tab,
+			table = layui.table;
+		var tableIns = table.render({
+			elem: '#test',
+			title: '岗位列表',
+			toolbar: '#toolbarDemo',
+			url: "{:url('home/position/index')}", //数据接口				
+			page: false, //开启分页
+			cols: [
+				[
+					{
+						field: 'id',
+						title: 'ID号',
+						align: 'center',
+						width: 80
+					}, {
+						field: 'title',
+						title: '岗位名称',
+						align: 'center',
+						width: 150
+					},{
+						field: 'groupName',
+						title: '权限角色'
+					},{
+						field: 'work_price',
+						title: '岗位工时单价',
+						align: 'center',
+						width: 160
+					}, {
+						field: 'status',
+						title: '状态',
+						toolbar: '#status',
+						align: 'center',
+						width: 60
+					}, {
+						field: 'right',
+						title: '操作',
+						toolbar: '#barDemo',
+						width: 150,
+						align: 'center'
+					}
+				]
+			]
+		});
+
+		//监听行工具事件
+		table.on('tool(test)', function (obj) {
+			var data = obj.data;			
+			if (obj.event === 'view') {
+				TAB.sonAdd('/home/position/view?id='+data.id,'岗位详情');
+				return;
+			}
+			else if (obj.event === 'del') {
+				if (data.id == 1) {
+					layer.msg('超级岗位不能删除');
+					return;
+				}
+				layer.confirm('您确定要删除该岗位', {
+					icon: 3,
+					title: '提示'
+				}, function (index) {
+					$.ajax({
+						url: "{:url('home/position/delete')}",
+						data: {
+							id: data.id
+						},
+						success: function (e) {
+							layer.msg(e.msg);
+							if (e.code == 0) {
+								obj.del();
+							}
+						}
+					})
+					layer.close(index);
+				});
+			}
+		});
+	}
+</script>
+{include file="common/layui" base='base' extend="[]" callback="init" /}
+{/block}
+<!-- /脚本 -->
