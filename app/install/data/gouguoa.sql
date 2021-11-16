@@ -67,7 +67,7 @@ CREATE TABLE `oa_admin_group`  (
 -- ----------------------------
 -- Records of cms_admin_group
 -- ----------------------------
-INSERT INTO `cms_admin_group` VALUES ('1', '超级员工', '1', '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81', '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22', '超级管理员，系统自动分配所有可操作权限及菜单。', '0', '0');
+INSERT INTO `oa_admin_group` VALUES ('1', '超级员工', '1', '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,112,113', '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43', '超级员工，系统自动分配所有可操作权限及菜单。', '0', '0');
 
 -- ----------------------------
 -- Table structure for oa_admin_log
@@ -113,14 +113,14 @@ CREATE TABLE `oa_admin_menu`  (
 -- Records of oa_admin_menu
 -- ----------------------------
 INSERT INTO `oa_admin_menu` VALUES (1, 0, '系统管理', '', 'icon-jichupeizhi', 1, 0, 0);
-INSERT INTO `oa_admin_menu` VALUES (2, 0, '基础数据', '', 'icon-jichupeizhi', 1, 0, 0);
+INSERT INTO `oa_admin_menu` VALUES (2, 0, '基础数据', '', 'icon-hetongshezhi', 1, 0, 0);
 INSERT INTO `oa_admin_menu` VALUES (3, 0, '人力资源', '', 'icon-renshishezhi', 1, 0, 0);
 INSERT INTO `oa_admin_menu` VALUES (4, 0, '消息通知', '', 'icon-xiaoxishezhi', 1, 0, 0);
 INSERT INTO `oa_admin_menu` VALUES (5, 0, '企业公告', '', 'icon-zhaoshengbaobiao', 1, 0, 0);
 INSERT INTO `oa_admin_menu` VALUES (6, 0, '知识文章', '', 'icon-kecheng', 1, 0, 0);
 INSERT INTO `oa_admin_menu` VALUES (7, 0, '日常办公', '', 'icon-kaoshijihua', 1, 0, 0);
 INSERT INTO `oa_admin_menu` VALUES (8, 0, '财务管理', '', 'icon-yuangongtidian', 1, 0, 0);
-INSERT INTO `oa_admin_menu` VALUES (9, 0, '商业智能', '', 'icon-yuangongtidian', 1, 0, 0);
+INSERT INTO `oa_admin_menu` VALUES (9, 0, '商业智能', '', 'icon-jiaoxuetongji', 1, 0, 0);
 
 INSERT INTO `oa_admin_menu` VALUES (10, 1, '系统配置', 'home/conf/index', '', 1, 0, 0);
 INSERT INTO `oa_admin_menu` VALUES (11, 1, '功能菜单', 'home/menu/index', '', 1, 0, 0);
@@ -397,6 +397,15 @@ CREATE TABLE `oa_config`  (
   `update_time` int(11) NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COMMENT = '系统配置表';
+
+-- ----------------------------
+-- Records of oa_config
+-- ----------------------------
+INSERT INTO `oa_config`(`id`, `title`, `name`, `content`, `status`, `create_time`, `update_time`) VALUES (1, '网站配置', 'web', 'a:13:{s:2:\"id\";s:1:\"1\";s:11:\"admin_title\";s:18:\"勾股办公系统\";s:5:\"title\";s:18:\"勾股办公系统\";s:4:\"logo\";s:52:\"/storage/202111/fc507cc8332d5ef49d9425185e4a9697.jpg\";s:4:\"file\";s:0:\"\";s:6:\"domain\";s:24:\"https://www.gougucms.com\";s:3:\"icp\";s:23:\"粤ICP备1xxxxxx11号-1\";s:8:\"keywords\";s:9:\"勾股cms\";s:5:\"beian\";s:29:\"粤公网安备1xxxxxx11号-1\";s:4:\"desc\";s:478:\"勾股办公是一款基于ThinkPHP6 + Layui + MySql打造的，简单实用的开源免费的企业办公系统框架。系统集成了系统设置、人事管理模块、消息管理模块、日常办公、财务管理等基础模块。系统简约，易于功能扩展，方便二次开发，让开发者更专注于业务深度需求的开发，帮助开发者简单高效降低二次开发成本，通过二次开发之后可以用来做CRM，ERP，业务管理等系统。\";s:4:\"code\";s:0:\"\";s:9:\"copyright\";s:32:\"© 2021 gougucms.com MIT license\";s:7:\"version\";s:5:\"1.0.2\";}', 1, 1612514630, 1637075196);
+INSERT INTO `oa_config`(`id`, `title`, `name`, `content`, `status`, `create_time`, `update_time`) VALUES (2, '邮箱配置', 'email', 'a:8:{s:2:\"id\";s:1:\"2\";s:4:\"smtp\";s:11:\"smtp.qq.com\";s:9:\"smtp_port\";s:3:\"465\";s:9:\"smtp_user\";s:15:\"gougucms@qq.com\";s:8:\"smtp_pwd\";s:6:\"123456\";s:4:\"from\";s:24:\"勾股CMS系统管理员\";s:5:\"email\";s:18:\"admin@gougucms.com\";s:8:\"template\";s:485:\"<p>勾股办公是一款基于ThinkPHP6 + Layui + MySql打造的，简单实用的开源免费的企业办公系统框架。系统集成了系统设置、人事管理模块、消息管理模块、日常办公、财务管理等基础模块。系统简约，易于功能扩展，方便二次开发，让开发者更专注于业务深度需求的开发，帮助开发者简单高效降低二次开发成本，通过二次开发之后可以用来做CRM，ERP，业务管理等系统。</p>\";}', 1, 1612521657, 1637075205);
+INSERT INTO `oa_config`(`id`, `title`, `name`, `content`, `status`, `create_time`, `update_time`) VALUES (3, 'Api Token配置', 'token', 'a:5:{s:2:\"id\";s:1:\"4\";s:3:\"iss\";s:16:\"www.gougucms.com\";s:3:\"aud\";s:8:\"gougucms\";s:7:\"secrect\";s:8:\"GOUGUCMS\";s:7:\"exptime\";s:4:\"3600\";}', 1, 1627313142, 1635953635);
+INSERT INTO `oa_config`(`id`, `title`, `name`, `content`, `status`, `create_time`, `update_time`) VALUES (4, '其他配置', 'other', 'a:3:{s:2:\"id\";s:1:\"5\";s:6:\"author\";s:15:\"勾股工作室\";s:7:\"version\";s:13:\"v1.2021.07.28\";}', 1, 1613725791, 1635953640);
+
 
 -- ----------------------------
 -- Table structure for oa_department
@@ -686,6 +695,11 @@ CREATE TABLE `oa_position`  (
   `update_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COMMENT = '岗位职称';
+
+-- ----------------------------
+-- Records of oa_position
+-- ----------------------------
+INSERT INTO `oa_position`(`id`, `title`, `work_price`, `remark`, `status`, `create_time`, `update_time`) VALUES (1, '超级岗位', 200, '超级岗位，不能轻易修改权限', 1, 0, 0);
 
 -- ----------------------------
 -- Table structure for oa_position_group

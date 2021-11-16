@@ -12,19 +12,19 @@
 		body {
 			width: 100%;
 			height: 100%;
-			background: url("/themes/admin_themes/lib/cms/images/bg.jpg");
+			background: url("{__IMG__}/bg.jpg");
 			background-size: cover;
-			background: url("/static/admin/images/bg_pattern.png"), #7b4397;
-			background: url("/static/admin/images/bg_pattern.png"), -webkit-linear-gradient(to left, #34a853, #4285f4);
+			background: url("{__IMG__}/bg_pattern.png"), #7b4397;
+			background: url("{__IMG__}/bg_pattern.png"), -webkit-linear-gradient(to left, #34a853, #4285f4);
 			/* Chrome 10-25, Safari 5.1-6 */
-			background: url("/static/admin/images/bg_pattern.png"), linear-gradient(to left, #34a853, #4285f4);
+			background: url("{__IMG__}/bg_pattern.png"), linear-gradient(to left, #34a853, #4285f4);
 			/* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 		}
 	</style>
 </head>
 
 <body>
-	<div style="width:200px;margin: 20px auto;"><img src="/static/admin/images/login_logo.png" alt="勾股CMS安装"
+	<div style="width:200px;margin: 20px auto;"><img src="{__IMG__}/login_logo.png" alt="勾股OA安装"
 			width="200"></div>
 	<div style="width:888px;margin:0 auto 30px;">
 		<div class="layui-layout layui-layout-admin">
@@ -202,7 +202,7 @@
 				if ($('.yes').length != 8) {
 					layer.tips('您的配置或权限不符合要求', this);
 				} else {
-					location.href = "/index.php?s=install/index/step3";
+					location.href = "/install/index/step3";
 				}
 			})
 

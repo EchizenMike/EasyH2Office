@@ -26,7 +26,7 @@ class Admin extends BaseController
             $param = get_params();
             $where = array();
             if (!empty($param['keywords'])) {
-                $where[] = ['id|username|nickname|desc|mobile', 'like', '%' . $param['keywords'] . '%'];
+                $where[] = ['id|username|name|nickname|mobile|desc', 'like', '%' . $param['keywords'] . '%'];
             }
             $where[] = ['status', '>=', 0];
             if (isset($param['status'])) {
@@ -268,7 +268,7 @@ class Admin extends BaseController
             $param = get_params();
             $where = array();
             if (!empty($param['keywords'])) {
-                $where[] = ['nickname|rule_menu|param_id', 'like', '%' . $param['keywords'] . '%'];
+                $where[] = ['name|rule_menu|param_id', 'like', '%' . $param['keywords'] . '%'];
             }
             if (!empty($param['title_cate'])) {
                 $where['title'] = $param['title_cate'];
@@ -278,7 +278,7 @@ class Admin extends BaseController
             }
             $rows = empty($param['limit']) ? get_config(app . page_size) : $param['limit'];
             $content = DB::name('AdminLog')
-                ->field("id,uid,nickname,title,content,rule_menu,ip,param_id,param,FROM_UNIXTIME(create_time,'%Y-%m-%d %H:%i:%s') create_time")
+                ->field("id,uid,name,title,content,rule_menu,ip,param_id,param,FROM_UNIXTIME(create_time,'%Y-%m-%d %H:%i:%s') create_time")
                 ->order('create_time desc')
                 ->where($where)
                 ->paginate($rows, false, ['query' => $param]);

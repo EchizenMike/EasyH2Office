@@ -27,7 +27,7 @@ class AdminLog extends Model
         $where['status'] = 1;
         $rows = empty($param['limit']) ? get_config('app.pages') : $param['limit'];
         $content = \think\facade\Db::name('AdminLog')
-            ->field("id,uid,nickname,type,title,module,controller,function,param,content,create_time")
+            ->field("id,uid,name,type,title,module,controller,function,param,content,create_time")
             ->order('create_time desc')
             ->where($where)
             ->paginate($rows, false, ['query' => $param]);
