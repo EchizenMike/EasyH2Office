@@ -19,7 +19,7 @@
 </script>
 <script type="text/html" id="toolbarDemo">
   <div class="layui-btn-container">
-    <a class="layui-btn layui-btn-normal layui-btn-sm" href="/home/role/add">+ 添加管理组</a>
+    <a class="layui-btn layui-btn-normal layui-btn-sm" href="{:url('home/role/add')}">+ 添加权限组</a>
   </div>
 </script>
 {/block}
@@ -59,7 +59,7 @@
 			var data = obj.data;
 			//console.log(obj)
 			if (obj.event === 'del') {
-				layer.confirm('确定要删除该角色吗？', { icon: 3, title: '提示' }, function (index) {
+				layer.confirm('确定要删除该权限角色吗？', { icon: 3, title: '提示' }, function (index) {
 					$.ajax({
 						url: "{:url('home/role/delete')}",
 						data: { id: data.id },

@@ -74,7 +74,7 @@ class Rule extends BaseController
             clear_cache('adminRules');
             return to_assign();
         } else {
-            $pid = empty($param['pid']) ? 0 : $param['pid'];
+            $pid = isset($param['pid']) ? $param['pid'] : 0;
             View::assign('pid', $pid);
             return view();
         }

@@ -66,7 +66,7 @@ class Menu extends BaseController
             clear_cache('adminMenu');
             return to_assign();
         } else {
-            $pid = empty($param['pid']) ? 0 : $param['pid'];
+            $id = isset($param['id']) ? $param['id'] : 0;
             View::assign('pid', $pid);
             return view();
         }

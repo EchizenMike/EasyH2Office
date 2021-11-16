@@ -62,7 +62,7 @@ class Database extends BaseController
             add_log('add');
             return to_assign(0, '备份成功！');
         } else {
-            return to_assign(1, '请选择要备份的表！');
+            return to_assign(1, '请选择要备份的表');
         }
     }
 
@@ -71,14 +71,14 @@ class Database extends BaseController
     {
         $tables = get_params('id');
         if (empty($tables)) {
-            return to_assign(0, '请选择要优化的表！');
+            return to_assign(0, '请选择要优化的表');
         }
         $tables = explode(',', $tables);
         if ($this->db->optimize($tables)) {
             add_log('edit');
             return to_assign(0, '数据表优化成功！');
         } else {
-            return to_assign(1, '数据表优化出错请重试！');
+            return to_assign(1, '数据表优化出错请重试');
         }
     }
 
@@ -87,14 +87,14 @@ class Database extends BaseController
     {
         $tables = get_params('id');
         if (empty($tables)) {
-            return to_assign(1, '请选择要修复的表！');
+            return to_assign(1, '请选择要修复的表');
         }
         $tables = explode(',', $tables);
         if ($this->db->repair($tables)) {
             add_log('edit');
-            return to_assign(0, '数据表修复成功！');
+            return to_assign(0, '数据表修复成功');
         } else {
-            return to_assign(1, '数据表修复出错请重试！');
+            return to_assign(1, '数据表修复出错请重试');
         }
     }
 
@@ -167,13 +167,13 @@ class Database extends BaseController
                     $this->db->delFile($v);
                 }
                 add_log('delete');
-                return to_assign(0, "删除成功！");
+                return to_assign(0, "删除成功");
             }
             if ($this->db->delFile($id)) {
                 add_log('delete');
-                return to_assign(0, "删除成功！");
+                return to_assign(0, "删除成功");
             } else {
-                return to_assign(1, "备份文件删除失败，请检查文件权限！");
+                return to_assign(1, "备份文件删除失败，请检查文件权限");
             }
         }
     }

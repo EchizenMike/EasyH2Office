@@ -60,7 +60,7 @@ class Conf extends BaseController
                 return to_assign();
             }
         } else {
-            $id = empty($param['id']) ? 0 : $param['id'];
+            $id = isset($param['id']) ? $param['id'] : 0;
             if ($id > 0) {
                 $config = Db::name('Config')->where(['id' => $id])->find();
                 View::assign('config', $config);
@@ -101,7 +101,7 @@ class Conf extends BaseController
             }
             return to_assign();
         } else {
-            $id = empty($param['id']) ? 0 : $param['id'];
+            $id = isset($param['id']) ? $param['id'] : 0;
             $conf = Db::name('Config')->where('id', $id)->find();
             $config = [];
             if ($conf['content']) {

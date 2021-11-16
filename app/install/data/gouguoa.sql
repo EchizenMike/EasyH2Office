@@ -67,7 +67,7 @@ CREATE TABLE `oa_admin_group`  (
 -- ----------------------------
 -- Records of cms_admin_group
 -- ----------------------------
-INSERT INTO `oa_admin_group` VALUES ('1', '超级员工', '1', '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,112,113', '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43', '超级员工，系统自动分配所有可操作权限及菜单。', '0', '0');
+INSERT INTO `oa_admin_group` VALUES ('1', '超级员工', '1', '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113', '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43', '超级员工，系统自动分配所有可操作权限及菜单。', '0', '0');
 
 -- ----------------------------
 -- Table structure for oa_admin_log
@@ -296,35 +296,36 @@ INSERT INTO `oa_admin_rule` VALUES (86, 84, 'home/article/cate_delete', '删除�
 INSERT INTO `oa_admin_rule` VALUES (87, 6, 'home/article/index', '知识列表','知识文章', 0, 0);
 INSERT INTO `oa_admin_rule` VALUES (88, 87, 'home/article/add', '添加/修改知识文章','知识文章', 0, 0);
 INSERT INTO `oa_admin_rule` VALUES (89, 87, 'home/article/delete', '删除知识文章','知识文章', 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (90, 87, 'home/article/view', '查看知识文章','知识文章', 0, 0);
 
-INSERT INTO `oa_admin_rule` VALUES (90, 7, 'home/plan/index', '工作计划','工作计划', 0, 0);
-INSERT INTO `oa_admin_rule` VALUES (91, 90, 'home/plan/calendar', '工作计划日历','工作计划', 0, 0);
-INSERT INTO `oa_admin_rule` VALUES (92, 90, 'home/plan/add', '添加/编辑工作计划','工作计划', 0, 0);
-INSERT INTO `oa_admin_rule` VALUES (93, 90, 'home/plan/delete', '删除工作计划','工作计划', 0, 0);
-INSERT INTO `oa_admin_rule` VALUES (94, 90, 'home/plan/detail', '查看工作计划','工作计划', 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (91, 7, 'home/plan/index', '工作计划','工作计划', 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (92, 91, 'home/plan/calendar', '工作计划日历','工作计划', 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (93, 91, 'home/plan/add', '添加/编辑工作计划','工作计划', 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (94, 91, 'home/plan/delete', '删除工作计划','工作计划', 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (95, 91, 'home/plan/detail', '查看工作计划','工作计划', 0, 0);
 
-INSERT INTO `oa_admin_rule` VALUES (95, 7, 'home/schedule/index', '工作记录','工作记录', 0, 0);
-INSERT INTO `oa_admin_rule` VALUES (96, 95, 'home/schedule/calendar', '工作记录日历','工作日历', 0, 0);
-INSERT INTO `oa_admin_rule` VALUES (97, 95, 'home/schedule/add', '添加/编辑工作记录','工作记录', 0, 0);
-INSERT INTO `oa_admin_rule` VALUES (98, 95, 'home/schedule/delete', '删除工作记录','工作记录', 0, 0);
-INSERT INTO `oa_admin_rule` VALUES (99, 95, 'home/schedule/detail', '查看工作记录','工作记录', 0, 0);
-INSERT INTO `oa_admin_rule` VALUES (100, 95, 'home/schedule/update_labor_time', '更改工时','工时', 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (96, 7, 'home/schedule/index', '工作记录','工作记录', 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (97, 96, 'home/schedule/calendar', '工作记录日历','工作日历', 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (98, 96, 'home/schedule/add', '添加/编辑工作记录','工作记录', 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (99, 96, 'home/schedule/delete', '删除工作记录','工作记录', 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (100, 96, 'home/schedule/detail', '查看工作记录','工作记录', 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (101, 96, 'home/schedule/update_labor_time', '更改工时','工时', 0, 0);
 
-INSERT INTO `oa_admin_rule` VALUES (101, 8, 'home/expense/index', '报销管理','报销', 0, 0);
-INSERT INTO `oa_admin_rule` VALUES (102, 100, 'home/expense/add', '新增/编辑报销','报销', 0, 0);
-INSERT INTO `oa_admin_rule` VALUES (103, 100, 'home/expense/delete', '删除报销','报销', 0, 0);
-INSERT INTO `oa_admin_rule` VALUES (104, 100, 'home/expense/view', '查看报销信息','报销', 0, 0);
-INSERT INTO `oa_admin_rule` VALUES (105, 100, 'home/expense/check', '设置报销状态','报销状态', 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (102, 8, 'home/expense/index', '报销管理','报销', 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (103, 102, 'home/expense/add', '新增/编辑报销','报销', 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (104, 102, 'home/expense/delete', '删除报销','报销', 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (105, 102, 'home/expense/view', '查看报销信息','报销', 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (106, 102, 'home/expense/check', '设置报销状态','报销状态', 0, 0);
 
-INSERT INTO `oa_admin_rule` VALUES (106, 8, 'home/invoice/index', '发票管理','发票', 0, 0);
-INSERT INTO `oa_admin_rule` VALUES (107, 106, 'home/invoice/add', '新增/编辑发票','发票', 0, 0);
-INSERT INTO `oa_admin_rule` VALUES (108, 106, 'home/invoice/delete', '删除发票','发票', 0, 0);
-INSERT INTO `oa_admin_rule` VALUES (109, 106, 'home/invoice/view', '查看发票信息','发票', 0, 0);
-INSERT INTO `oa_admin_rule` VALUES (110, 106, 'home/invoice/check', '设置发票状态','发票状态', 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (107, 8, 'home/invoice/index', '发票管理','发票', 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (108, 107, 'home/invoice/add', '新增/编辑发票','发票', 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (109, 107, 'home/invoice/delete', '删除发票','发票', 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (110, 107, 'home/invoice/view', '查看发票信息','发票', 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (111, 107, 'home/invoice/check', '设置发票状态','发票状态', 0, 0);
 
-INSERT INTO `oa_admin_rule` VALUES (111, 8, 'home/income/index', '到账管理','到账', 0, 0);
-INSERT INTO `oa_admin_rule` VALUES (112, 111, 'home/income/add', '新增到账','到账', 0, 0);
-INSERT INTO `oa_admin_rule` VALUES (113, 111, 'home/income/check', '设置到账状态','到账状态', 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (112, 8, 'home/income/index', '到账管理','到账', 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (113, 112, 'home/income/add', '新增到账','到账', 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (114, 112, 'home/income/check', '设置到账状态','到账状态', 0, 0);
 
 -- ----------------------------
 -- Table structure for oa_article
