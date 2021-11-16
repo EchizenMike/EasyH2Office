@@ -2,8 +2,7 @@
 
 {block name="style"}
 <style>
-	html,
-	body {
+	html,body {
 		height: calc(100% - 20px);
 	}
 </style>
@@ -13,7 +12,7 @@
 {block name="body"}
 <div class="body-content" style="height: 100%">
 	<div style="height:39px;">
-		<a class="layui-btn layui-btn-normal layui-btn-sm" href="/home/menu/add">+ 添加菜单</a><span style="color:#999;margin-left:20px">点击表格内容可编辑</span>
+		<a class="layui-btn layui-btn-normal layui-btn-sm" href="{:url('home/menu/add')}">+ 添加菜单</a><span style="color:#999;margin-left:20px">点击表格内容可编辑</span>
 	</div>
 	<div style="height: calc(100% - 30px)">
 		<table class="layui-hide" id="treeTable" lay-filter="treeTable"></table>
@@ -42,10 +41,10 @@
 			, cols: [[
 				{ field: 'sort', width: 80, title: '排序', edit: "text", align: 'center' }
 				, { field: 'id', width: 80, title: 'ID号', align: 'center' }
-				, { field: 'title', edit: 'text', width: 240, title: '名称', edit: "text" }
-				, { field: 'icon', edit: 'text', width: 180, title: '图标<a href="{__LAYUI__}/font/extend/demo_index.html" target="_blank" style="color:#007AFF">[图标选择]</a>', edit: "text" }
-				, { field: 'pid', title: '父级ID', edit: "text", width: 80, align: 'center' }
-				, { field: 'src', title: '路径', edit: "text" }
+				, { field: 'title', edit: 'text', width: 240, title: '菜单名称', edit: 'text'}
+				, { field: 'icon', edit: 'text', width: 180, title: '图标<a href="{__LAYUI__}/font/extend/demo_index.html" target="_blank" style="color:#007AFF">[图标选择]</a>', edit: 'text'}
+				, { field: 'pid', title: '父级ID', edit: 'text', width: 80, align: 'center' }
+				, { field: 'src', title: '路径', edit: 'text'}
 				, { width: 100, title: '操作', align: 'center', templet: function (d) {
 						var html = '<a class="layui-btn layui-btn-normal layui-btn-xs" href="/home/menu/add?pid=' + d.id + '">添加</a><a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>';
 						return html;
@@ -59,7 +58,7 @@
 		treeGrid.on('edit(' + tableId + ')', function (obj) {
 			layer.confirm('确定要提交修改吗?', { icon: 3, title: '提示' }, function (index) {
 				$.ajax({
-					url: "{:url('home/menu/post_submit')}",
+					url: "{:url('home/menu/add')}",
 					type: 'post',
 					data: { id: obj.data.id, field: obj.field, value: obj.value },
 					success: function (e) {

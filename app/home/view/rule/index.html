@@ -2,8 +2,7 @@
 
 {block name="style"}
 <style>
-	html,
-	body {
+	html,body {
 		height: calc(100% - 20px);
 	}
 </style>
@@ -13,7 +12,7 @@
 {block name="body"}
 <div class="body-content" style="height: 100%">
 	<div style="height:39px;">
-		<a class="layui-btn layui-btn-normal layui-btn-sm" href="/home/rule/add">+ 添加节点</a><span style="color:#999;margin-left:20px">点击表格内容可编辑</span>
+		<a class="layui-btn layui-btn-normal layui-btn-sm" href="{:url('home/rule/add')}">+ 添加节点</a><span style="color:#999;margin-left:20px">点击表格内容可编辑</span>
 	</div>
 	<div style="height: calc(100% - 30px)">
 		<table class="layui-hide" id="treeTable" lay-filter="treeTable"></table>
@@ -41,11 +40,11 @@
 			, treeShowName: 'title'//以树形式显示的字段
 			, cols: [[
 				{ field: 'id', width: 80, title: 'ID号', align: 'center' }
-				, { field: 'title', edit: 'text', width: 300, title: '名称', edit: "text" }
+				, { field: 'title', edit: 'text', width: 300, title: '节点名称'}
 				, { field: 'pid', title: '父级ID', edit: "text", width: 80, align: 'center' }
-				, { field: 'src', title: '规则', edit: "text" }
-				, {
-					width: 100, title: '操作', align: 'center'
+				, { field: 'src', title: '节点规则', edit: "text" }
+				, { field: 'name', edit: 'text', width: 300, title: '日志操作名称'}
+				, {width: 100, title: '操作', align: 'center'
 					, templet: function (d) {
 						var html = '<a class="layui-btn layui-btn-normal layui-btn-xs" href="/home/rule/add?pid=' + d.id + '">添加</a><a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>';
 						return html;
@@ -59,7 +58,7 @@
 		treeGrid.on('edit(' + tableId + ')', function (obj) {
 			layer.confirm('确定要提交修改吗?', { icon: 3, title: '提示' }, function (index) {
 				$.ajax({
-					url: "{:url('home/rule/post_submit')}",
+					url: "{:url('home/rule/add')}",
 					type: 'post',
 					data: { id: obj.data.id, field: obj.field, value: obj.value },
 					success: function (e) {

@@ -58,7 +58,7 @@
 		//监听提交
 		form.on('submit(webform)', function(data) {
 			$.ajax({
-				url: "{:url('home/menu/post_submit')}",
+				url: "{:url('home/menu/add')}",
 				type: 'post',
 				data: data.field,
 				success: function(e) {

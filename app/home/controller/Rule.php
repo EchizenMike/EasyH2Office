@@ -30,33 +30,27 @@ class Rule extends BaseController
     //添加
     public function add()
     {
-        return view('', ['pid' => get_params('pid')]);
-    }
-
-    //提交添加
-    public function post_submit()
-    {
+        $param = get_params();
         if (request()->isAjax()) {
-            $param = get_params();
             if ($param['id'] > 0) {
                 $data[$param['field']] = $param['value'];
                 $data['id'] = $param['id'];
-				if(!empty($data['title'])){
-					try {
-						validate(RuleCheck::class)->scene('edit_title')->check($data);
-					} catch (ValidateException $e) {
-						// 验证失败 输出错误信息
-						return to_assign(1, $e->getError());
-					}
-				}
-				if(!empty($data['src'])){
-					try {
-						validate(RuleCheck::class)->scene('edit_src')->check($data);
-					} catch (ValidateException $e) {
-						// 验证失败 输出错误信息
-						return to_assign(1, $e->getError());
-					}
-				}
+                if (!empty($data['title'])) {
+                    try {
+                        validate(RuleCheck::class)->scene('edit_title')->check($data);
+                    } catch (ValidateException $e) {
+                        // 验证失败 输出错误信息
+                        return to_assign(1, $e->getError());
+                    }
+                }
+                if (!empty($data['src'])) {
+                    try {
+                        validate(RuleCheck::class)->scene('edit_src')->check($data);
+                    } catch (ValidateException $e) {
+                        // 验证失败 输出错误信息
+                        return to_assign(1, $e->getError());
+                    }
+                }
                 Db::name('AdminRule')->strict(false)->field(true)->update($data);
                 add_log('edit', $param['id'], $data);
             } else {
@@ -79,9 +73,12 @@ class Rule extends BaseController
             // 删除后台节点缓存
             clear_cache('adminRules');
             return to_assign();
+        } else {
+            $pid = empty($param['pid']) ? 0 : $param['pid'];
+            View::assign('pid', $pid);
+            return view();
         }
     }
-
     //删除
     public function delete()
     {

@@ -28,29 +28,21 @@ class Menu extends BaseController
     }
 
     //添加菜单页面
-
     public function add()
     {
-        return view('', ['pid' => get_params('pid')]);
-    }
-
-    //提交添加
-
-    public function post_submit()
-    {
+        $param = get_params();
         if (request()->isAjax()) {
-            $param = get_params();
             if ($param['id'] > 0) {
                 $data[$param['field']] = $param['value'];
                 $data['id'] = $param['id'];
-				if(!empty($data['title'])){
-					try {
-						validate(MenuCheck::class)->scene('edit')->check($data);
-					} catch (ValidateException $e) {
-						// 验证失败 输出错误信息
-						return to_assign(1, $e->getError());
-					}
-				}
+                if (!empty($data['title'])) {
+                    try {
+                        validate(MenuCheck::class)->scene('edit')->check($data);
+                    } catch (ValidateException $e) {
+                        // 验证失败 输出错误信息
+                        return to_assign(1, $e->getError());
+                    }
+                }
                 Db::name('AdminMenu')->strict(false)->field(true)->update($data);
                 add_log('edit', $param['id'], $data);
             } else {
@@ -73,11 +65,14 @@ class Menu extends BaseController
             // 删除后台菜单缓存
             clear_cache('adminMenu');
             return to_assign();
+        } else {
+            $pid = empty($param['pid']) ? 0 : $param['pid'];
+            View::assign('pid', $pid);
+            return view();
         }
     }
 
     //删除
-
     public function delete()
     {
         $id = get_params('id');
