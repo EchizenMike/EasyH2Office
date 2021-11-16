@@ -8,14 +8,12 @@
 			<td class="layui-td-gray2">开发者</td>
 			<td>
 				<input type="hidden" value="{$id}" name="id">
-				<input type="text" name="author" autocomplete="off" placeholder="请输入开发者"
-					lay-reqText="请输入开发者" class="layui-input"{notempty name="$config.author"} value="{$config.author}" {/notempty}>
+				<input type="text" name="author" autocomplete="off" placeholder="请输入开发者" lay-reqText="请输入开发者" class="layui-input"{notempty name="$config.author"} value="{$config.author}" {/notempty}>
 			</td>
 			<td class="layui-td-gray2">开发版本号
 			</td>
 			<td>
-				<input type="text" name="version" autocomplete="off" placeholder="请输入版本号"
-					lay-reqText="请输入版本号" class="layui-input" {notempty name="$config.version"} value="{$config.version}" {/notempty}>
+				<input type="text" name="version" autocomplete="off" placeholder="请输入版本号" lay-reqText="请输入版本号" class="layui-input" {notempty name="$config.version"} value="{$config.version}" {/notempty}>
 			</td>
 		</tr>
 	</table>
@@ -39,7 +37,7 @@
 		//监听提交
 		form.on('submit(webform)', function (data) {
 			$.ajax({
-				url: "{:url('home/conf/conf_submit')}",
+				url: "{:url('home/conf/edit')}",
 				type: 'post',
 				data: data.field,
 				success: function (e) {

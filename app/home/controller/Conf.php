@@ -33,23 +33,11 @@ class Conf extends BaseController
         }
     }
 
-    //添加
+    //添加/编辑配置项
     public function add()
     {
-        $id = empty(get_params('id')) ? 0 : get_params('id');
-        if ($id > 0) {
-            $config = Db::name('Config')->where(['id' => $id])->find();
-            View::assign('config', $config);
-        }
-        View::assign('id', $id);
-        return view();
-    }
-
-    //提交添加
-    public function post_submit()
-    {
+        $param = get_params();
         if (request()->isAjax()) {
-            $param = get_params();
             try {
                 validate(ConfCheck::class)->check($param);
             } catch (ValidateException $e) {
@@ -62,7 +50,6 @@ class Conf extends BaseController
                 if ($res) {
                     add_log('edit', $param['id'], $param);
                 }
-
                 return to_assign();
             } else {
                 $param['create_time'] = time();
@@ -70,12 +57,20 @@ class Conf extends BaseController
                 if ($insertId) {
                     add_log('add', $insertId, $param);
                 }
-
                 return to_assign();
             }
+        } else {
+            $id = empty($param['id']) ? 0 : $param['id'];
+            if ($id > 0) {
+                $config = Db::name('Config')->where(['id' => $id])->find();
+                View::assign('config', $config);
+            }
+            View::assign('id', $id);
+            return view();
         }
     }
-    //删除
+
+    //删除配置项
     public function delete()
     {
         $id = get_params("id");
@@ -90,22 +85,11 @@ class Conf extends BaseController
         }
     }
 
-    //编辑配置
+    //编辑配置信息
     public function edit()
     {
-        $id = empty(get_params('id')) ? 0 : get_params('id');
-        $conf = Db::name('Config')->where('id', $id)->find();
-        $config = [];
-        if ($conf['content']) {
-            $config = unserialize($conf['content']);
-        }
-        return view($conf['name'], ['id' => $id, 'config' => $config]);
-    }
-    //提交添加
-    public function conf_submit()
-    {
+        $param = get_params();
         if (request()->isAjax()) {
-            $param = get_params();
             $data['content'] = serialize($param);
             $data['update_time'] = time();
             $data['id'] = $param['id'];
@@ -116,6 +100,16 @@ class Conf extends BaseController
                 add_log('edit', $param['id'], $param);
             }
             return to_assign();
+        } else {
+            $id = empty($param['id']) ? 0 : $param['id'];
+            $conf = Db::name('Config')->where('id', $id)->find();
+            $config = [];
+            if ($conf['content']) {
+                $config = unserialize($conf['content']);
+            }
+            View::assign('id', $id);
+            View::assign('config', $config);
+            return view($conf['name']);
         }
     }
 }

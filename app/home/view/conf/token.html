@@ -8,27 +8,23 @@
 			<td class="layui-td-gray2">Token签发组织</td>
 			<td>
 				<input type="hidden" value="{$id}" name="id">
-				<input type="text" name="iss" autocomplete="off" placeholder="请输入签发组织"
-					lay-reqText="请输入签发组织" class="layui-input"{notempty name="$config.iss"} value="{$config.iss}" {/notempty}>
+				<input type="text" name="iss" autocomplete="off" placeholder="请输入签发组织" lay-reqText="请输入签发组织" class="layui-input"{notempty name="$config.iss"} value="{$config.iss}" {/notempty}>
 			</td>
 			<td class="layui-td-gray2">Token签发作者
 			</td>
 			<td>
-				<input type="text" name="aud" autocomplete="off" placeholder="请输入签发作者"
-					lay-reqText="请输入签发作者" class="layui-input" {notempty name="$config.aud"} value="{$config.aud}" {/notempty}>
+				<input type="text" name="aud" autocomplete="off" placeholder="请输入签发作者" lay-reqText="请输入签发作者" class="layui-input" {notempty name="$config.aud"} value="{$config.aud}" {/notempty}>
 			</td>
 		</tr>
 		<tr>
 			<td class="layui-td-gray2">Token Secrect</td>
 			<td>
-				<input type="text" name="secrect" autocomplete="off" placeholder="请输入secrect"
-					lay-reqText="请输入secrect" class="layui-input"{notempty name="$config.secrect"} value="{$config.secrect}" {/notempty}>
+				<input type="text" name="secrect" autocomplete="off" placeholder="请输入secrect" lay-reqText="请输入secrect" class="layui-input"{notempty name="$config.secrect"} value="{$config.secrect}" {/notempty}>
 			</td>
 			<td class="layui-td-gray2">Token过期时间
 			</td>
 			<td>
-				<input type="text" name="exptime" autocomplete="off" placeholder="请输入过期时间"
-					lay-reqText="请输入过期时间" class="layui-input" {notempty name="$config.exptime"} value="{$config.exptime}" {/notempty}>
+				<input type="text" name="exptime" autocomplete="off" placeholder="请输入过期时间" lay-reqText="请输入过期时间" class="layui-input" {notempty name="$config.exptime"} value="{$config.exptime}" {/notempty}>
 			</td>
 		</tr>
 	</table>
@@ -60,7 +56,7 @@
 		//监听提交
 		form.on('submit(webform)', function (data) {
 			$.ajax({
-				url: "{:url('home/conf/conf_submit')}",
+				url: "{:url('home/conf/edit')}",
 				type: 'post',
 				data: data.field,
 				success: function (e) {

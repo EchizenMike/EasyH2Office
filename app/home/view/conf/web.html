@@ -9,14 +9,12 @@
 			</td>
 			<td>
 				<input type="hidden" name="id" value="{$id}">
-				<input type="text" name="admin_title" lay-verify="required" autocomplete="off" placeholder="请输入系统名称"
-					lay-reqText="请输入系统名称" class="layui-input" {notempty name="$config.admin_title"} value="{$config.admin_title}" {/notempty}>
+				<input type="text" name="admin_title" lay-verify="required" autocomplete="off" placeholder="请输入系统名称" lay-reqText="请输入系统名称" class="layui-input" {notempty name="$config.admin_title"} value="{$config.admin_title}" {/notempty}>
 			</td>
 			<td class="layui-td-gray2">网站名称<font>*</font>
 			</td>
 			<td>
-				<input type="text" name="title" lay-verify="required" autocomplete="off" placeholder="请输入网站平台名称"
-					lay-reqText="请输入网站名称" class="layui-input" {notempty name="$config.title"} value="{$config.title}" {/notempty}>
+				<input type="text" name="title" lay-verify="required" autocomplete="off" placeholder="请输入网站平台名称" lay-reqText="请输入网站名称" class="layui-input" {notempty name="$config.title"} value="{$config.title}" {/notempty}>
 			</td>
 			<td rowspan="3" class="layui-td-gray2">系统LOGO</td>
 			<td rowspan="3" style="width: 240px;">
@@ -34,34 +32,29 @@
 			<td class="layui-td-gray2">网站域名<font>*</font>
 			</td>
 			<td>
-				<input type="text" name="domain" lay-verify="required" autocomplete="off" placeholder="请输入网站域名"
-					lay-reqText="请输入网站域名" class="layui-input" {notempty name="$config.domain"} value="{$config.domain}" {/notempty}>
+				<input type="text" name="domain" lay-verify="required" autocomplete="off" placeholder="请输入网站域名" lay-reqText="请输入网站域名" class="layui-input" {notempty name="$config.domain"} value="{$config.domain}" {/notempty}>
 			</td>
 			<td class="layui-td-gray2">ICP备案号</td>
 			<td>
-				<input type="text" name="icp" autocomplete="off" placeholder="请输入ICP备案号" class="layui-input"
-				{notempty name="$config.icp"} value="{$config.icp}" {/notempty}>
+				<input type="text" name="icp" autocomplete="off" placeholder="请输入ICP备案号" class="layui-input" {notempty name="$config.icp"} value="{$config.icp}" {/notempty}>
 			</td>
 		</tr>
 		<tr>
 			<td class="layui-td-gray2">SEO关键词<font>*</font>
 			</td>
 			<td>
-				<input type="text" name="keywords" lay-verify="required" autocomplete="off" placeholder="多个关键词用“,”隔开"
-					lay-reqText="请输入SEO关键字" class="layui-input" {notempty name="$config.keywords"} value="{$config.keywords}" {/notempty}>
+				<input type="text" name="keywords" lay-verify="required" autocomplete="off" placeholder="多个关键词用“,”隔开" lay-reqText="请输入SEO关键字" class="layui-input" {notempty name="$config.keywords"} value="{$config.keywords}" {/notempty}>
 			</td>
 			<td class="layui-td-gray2">公安备案号</td>
 			<td>
-				<input type="text" name="beian" autocomplete="off" placeholder="请输入公安备案号" class="layui-input"
-				{notempty name="$config.beian"} value="{$config.beian}" {/notempty}>
+				<input type="text" name="beian" autocomplete="off" placeholder="请输入公安备案号" class="layui-input" {notempty name="$config.beian"} value="{$config.beian}" {/notempty}>
 			</td>
 		</tr>
 		<tr>
 			<td class="layui-td-gray2">SEO描述<font>*</font>
 			</td>
 			<td colspan="5">
-				<textarea name="desc" lay-verify="required" placeholder="请输入网站描述" lay-reqText="请输入网站描述"
-					class="layui-textarea">{notempty name="$config.desc"}{$config.desc} {/notempty}</textarea>
+				<textarea name="desc" lay-verify="required" placeholder="请输入网站描述" lay-reqText="请输入网站描述" class="layui-textarea">{notempty name="$config.desc"}{$config.desc} {/notempty}</textarea>
 			</td>
 		</tr>
 		<tr>
@@ -73,14 +66,12 @@
 		<tr>
 			<td class="layui-td-gray2">版权信息</td>
 			<td colspan="3">
-				<input type="text" name="copyright" autocomplete="off" placeholder="请输入版权信息"
-					lay-reqText="请输入版权信息" class="layui-input"{notempty name="$config.copyright"} value="{$config.copyright}" {/notempty}>
+				<input type="text" name="copyright" autocomplete="off" placeholder="请输入版权信息" lay-reqText="请输入版权信息" class="layui-input"{notempty name="$config.copyright"} value="{$config.copyright}" {/notempty}>
 			</td>
 			<td class="layui-td-gray2">代码版本号<font>*</font>
 			</td>
 			<td>
-				<input type="text" lay-verify="required" name="version" autocomplete="off" placeholder="请输入版本号"
-					lay-reqText="请输入版本号" class="layui-input" {notempty name="$config.version"} value="{$config.version}" {/notempty}>
+				<input type="text" lay-verify="required" name="version" autocomplete="off" placeholder="请输入版本号" lay-reqText="请输入版本号" class="layui-input" {notempty name="$config.version"} value="{$config.version}" {/notempty}>
 			</td>
 		</tr>
 	</table>
@@ -122,7 +113,7 @@
 		//监听提交
 		form.on('submit(webform)', function (data) {
 			$.ajax({
-				url: "{:url('home/conf/conf_submit')}",
+				url: "{:url('home/conf/edit')}",
 				type: 'post',
 				data: data.field,
 				success: function (e) {

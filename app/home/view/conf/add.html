@@ -8,9 +8,7 @@
 			</td>
 			<td>
 				<input type="hidden" name="id" value="{$id}" />
-				<input type="text" name="title" lay-verify="required" autocomplete="off" placeholder="请输入配置名称"
-					class="layui-input"  {notempty name="$config.title"}
-					value="{$config.title}" {/notempty}>
+				<input type="text" name="title" lay-verify="required" autocomplete="off" placeholder="请输入配置名称" lay-reqText="请输入配置名称" class="layui-input"  {notempty name="$config.title"} value="{$config.title}" {/notempty}>
 			</td>
 			<td class="layui-td-gray2">状态<font>*</font></td>
 			<td>{if condition="$id eq 0"}
@@ -29,7 +27,7 @@
 				配置标识<font>*</font>
 			</td>
 			<td colspan="3">
-				<input style="width: 300px;" type="text" name="name" placeholder="请输入配置标识" lay-verify="required" autocomplete="off" class="layui-input" {notempty name="$config.name"} value="{$config.name}" {/notempty}>
+				<input style="width: 300px;" type="text" name="name" lay-verify="required" placeholder="请输入配置标识" lay-reqText="请输入配置标识" autocomplete="off" class="layui-input" {notempty name="$config.name"} value="{$config.name}" {/notempty}>
 				<span style ="color: red; font-size: 12px; margin-top: 5px;">（注意：新增配置项以后，需要对应新增模板文件，模板文件名称需与标识名称一致，建议复制现有的配置模板文件，然后根据需求修改对应的表单即可）</span>
 			</td>
 		</tr>
@@ -52,14 +50,13 @@
 		//监听提交
 		form.on('submit(webform)', function (data) {
 			$.ajax({
-				url: "{:url('home/conf/conf_submit')}",
+				url: "{:url('home/conf/add')}",
 				type: 'post',
 				data: data.field,
 				success: function (e) {
 					if (e.code == 0) {
 						layer.confirm('保存成功,返回列表页吗?', { icon: 3, title: '提示' }, function (index) {
-							history.back(-1);
-							layer.close(index);
+							window.location.href="{:url('home/conf/index')}";
 						});
 					} else {
 						layer.msg(e.msg);
