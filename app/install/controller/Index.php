@@ -19,7 +19,7 @@ class Index
     {
         // 检测是否安装过
         if (is_installed()) {
-            echo '你已经安装过勾股cms系统！如需重新安装，请删除“config/install.lock”文件';
+            echo '你已经安装过勾股OA系统！如需重新安装，请删除“config/install.lock”文件';
             die();
         }
     }
@@ -98,7 +98,7 @@ class Index
         $link->select_db($data['DB_NAME']);
         // 导入sql数据并创建表
         $fqcms_sql = file_get_contents(CMS_ROOT . '/app/install/data/gougucms.sql');
-        $sql_array = preg_split("/;[\r\n]+/", str_replace("cms_", $data['DB_PREFIX'], $fqcms_sql));
+        $sql_array = preg_split("/;[\r\n]+/", str_replace("oa_", $data['DB_PREFIX'], $fqcms_sql));
         foreach ($sql_array as $k => $v) {
             if (!empty($v)) {
                 $link->query($v);
@@ -183,7 +183,7 @@ return [
         if (false == file_put_contents(CMS_ROOT . "config/database.php", $db_str)) {
             return to_assign(1, '创建数据库配置文件失败，请检查目录权限');
         }
-        if (false == file_put_contents(CMS_ROOT . "config/install.lock", '勾股CMS安装鉴定文件，请勿删除！！！！！此次安装时间为：' . date('Y-m-d H:i:s', time()))) {
+        if (false == file_put_contents(CMS_ROOT . "config/install.lock", '勾股OA安装鉴定文件，请勿删除！！！！！此次安装时间为：' . date('Y-m-d H:i:s', time()))) {
             return to_assign(1, '创建安装鉴定文件失败，请检查目录权限');
         }
         return to_assign();
