@@ -36,7 +36,7 @@ class Admin extends BaseController
                 $where[] = ['type', '=', $param['type']];
             }
             if (!empty($param['did'])) {
-                $department_array = d_department_son($param['did']);
+                $department_array = get_department_son($param['did']);
                 $where[] = ['did', 'in', $department_array];
             }
             $rows = empty($param['limit']) ? get_config(app . page_size) : $param['limit'];
@@ -60,7 +60,7 @@ class Admin extends BaseController
     public function add()
     {
         $id = empty(get_params('id')) ? 0 : get_params('id');
-        $department = set_recursion(d_department());
+        $department = set_recursion(get_department());
         $position = Db::name('Position')->where('status', '>=', 0)->order('create_time asc')->select();
         if ($id > 0) {
             $detail = get_admin($id);

@@ -20,7 +20,12 @@ class Department extends BaseController
     public function index()
     { 
         if (request()->isAjax()) {
-            $list = Db::name('Department')->order('create_time asc')->select();
+            $list = Db::name('Department')
+					->field('d.*,a.name as leader')
+					->alias('d')
+					->join('Admin a', 'a.id = d.uid','LEFT')
+					->order('create_time asc')
+					->select();
             return to_assign(0, '', $list);
         } else {
             return view();
@@ -32,9 +37,11 @@ class Department extends BaseController
     {
         $id = empty(get_params('id')) ? 0 : get_params('id');
         $pid = empty(get_params('pid')) ? 0 : get_params('pid');
-		$department = set_recursion(d_department());
+		$department = set_recursion(get_department());
         if($id > 0) {
             $detail = Db::name('Department')->where(['id' => $id])->find();
+			$users=Db::name('Admin')->where(['did'=>$id,'status'=>1])->select();
+            View::assign('users', $users);
             View::assign('detail', $detail);
         }
         View::assign('department', $department);
@@ -55,8 +62,14 @@ class Department extends BaseController
 					return to_assign(1, $e->getError());
 				}
 				$param['update_time'] = time();
-                Db::name('Department')->strict(false)->field(true)->update($param);
-                add_log('edit', $param['id'], $param);
+				$department_array=get_department_son($param['id']);
+				if (in_array($param['pid'], $department_array)){
+					return to_assign(1,'上级部门不能是该部门本身或其下属部门');
+				}
+				else{
+					Db::name('Department')->strict(false)->field(true)->update($param);
+					add_log('edit', $param['id'], $param);
+				}  
             } else {
                 try {
                     validate(DepartmentCheck::class)->scene('add')->check($param);
@@ -71,52 +84,15 @@ class Department extends BaseController
         }
     }
 
-    //提交添加
-    public function save()
-    {
-    	if($this->request->isPost()){
-            $param = vae_get_param();
-			if($param['id']>0){
-				$result = $this->validate($param, 'app\home\validate\Department.edit');
-				if ($result !== true) {
-					return vae_assign(0,$result);
-				} else {
-					$param['update_time'] = time();
-					$department_array=[];
-					$department_cate = vae_get_department();
-					$department_ids=get_data_node($department_cate,$param['id']);
-					$department_array = array_column($department_ids, 'id');
-					$department_array[]=$param['id'];
-					if (in_array($param['pid'], $department_array)){
-						return vae_assign(0,'上级部门不能是该部门本身或其下属部门');
-					}
-					else{
-						$res = \think\loader::model('Department')->strict(false)->field(true)->update($param);
-                        if($res) add_log('edit',$param['id'],$param);
-					}					
-				}
-			}else{
-				$result = $this->validate($param, 'app\home\validate\Department.add');
-				if ($result !== true) {
-					return vae_assign(0,$result);
-				} else {
-					$param['create_time'] = time();
-					$mid = \think\loader::model('Department')->strict(false)->field(true)->insertGetId($param);					
-				}
-			}
-			return vae_assign();
-    	}
-    }
-
     //删除
     public function delete()
     {
         $id = get_params("id");
-        $count = Db::name('Department')->where(["pid" => $id,'status'=>['egt',0]])->count();
-		$users = Db::name('Admin')->where(["did" => $id,'status'=>['egt',0]])->count();
+        $count = Db::name('Department')->where([['pid','=',$id],['status','>=',0]])->count();
         if ($count > 0) {
             return to_assign(1,"该部门下还有子部门，无法删除");
         }
+		$users = Db::name('Admin')->where([['did','=',$id],['status','>=',0]])->count();
         if ($users > 0) {
             return to_assign(1,"该部门下还有员工，无法删除");
         }

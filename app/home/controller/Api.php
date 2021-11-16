@@ -158,7 +158,7 @@ class Api extends BaseController
     //获取部门节点列表
     public function get_department_tree()
     {
-        $department = d_department();
+        $department = get_department();
 		$list = get_tree($department, 0,2);
         $data['trees'] = $list;
         return json($data);
@@ -168,7 +168,7 @@ class Api extends BaseController
     public function get_employee($did=0)
     {
 		$did=get_params('did');
-		$department=d_department_son($did);
+		$department=get_department_son($did);
 		$employee = Db::name('admin')
 			->field('a.id,a.did,a.position_id,a.mobile,a.name,a.nickname,a.sex,a.status,a.thumb,a.username,d.title as department')
 			->alias('a')

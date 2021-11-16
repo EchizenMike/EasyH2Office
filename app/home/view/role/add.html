@@ -173,7 +173,7 @@
 		
 		//监听返回
 		$('.body-content').on('click', '[lay-event="back"]', function () {
-			history.back(-1);
+			window.location.href="{:url('home/role/index')}";
 			return false;
 		});
 

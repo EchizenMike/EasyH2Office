@@ -137,16 +137,16 @@ function get_admin_menus()
 
 
 //读取部门列表
-function d_department()
+function get_department()
 {
     $department = Db::name('Department')->select()->toArray();
     return $department;
 }
 
 //获取某部门的子部门id
-function d_department_son($did = 0,$is_self=1)
+function get_department_son($did = 0,$is_self=1)
 {
-	$department=d_department();
+	$department=get_department();
 	$department_list = get_data_node($department,$did);
 	$department_array = array_column($department_list,'id');
 	if($is_self == 1){
