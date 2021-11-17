@@ -7,17 +7,16 @@
 
 declare (strict_types = 1);
 
-namespace app\middleware;
+namespace app\home\middleware;
 
 class Install
 {
     public function handle($request, \Closure $next)
     {
         if (!is_installed()) {
-			if(strpos($request['s'],'install/') == false){
-				return $request->isAjax() ? to_assign(1, '请先完成系统安装引导') : redirect((string) url('/install/index'));
-			}            
+            return $request->isAjax() ? to_assign(1, '请先完成系统安装引导') : redirect((string) url('/install/index'));
         }
+
         return $next($request);
     }
 }

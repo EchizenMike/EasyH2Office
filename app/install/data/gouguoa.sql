@@ -409,6 +409,29 @@ INSERT INTO `oa_config`(`id`, `title`, `name`, `content`, `status`, `create_time
 
 
 -- ----------------------------
+-- Table structure for oa_check
+-- ----------------------------
+DROP TABLE IF EXISTS `oa_check`;
+CREATE TABLE `oa_check`  (
+  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `uid` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '审核人ID',
+  `type` tinyint(1) UNSIGNED NULL DEFAULT 0 COMMENT '审核类型 1报销审核人 2报销打款确认人 3发票审核人 4发票开票人',
+  `remark` varchar(1000) NULL DEFAULT '' COMMENT '备注',
+  `status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '状态：-1删除 0禁用 1启用',
+  `create_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
+  `update_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COMMENT = '审核人配置';
+
+-- ----------------------------
+-- Records of oa_check
+-- ----------------------------
+INSERT INTO `oa_check`(`id`, `uid`, `type`, `remark`, `status`, `create_time`, `update_time`) VALUES (1, 1, 1, '初始化设置', 1, 1558681814, 0);
+INSERT INTO `oa_check`(`id`, `uid`, `type`, `remark`, `status`, `create_time`, `update_time`) VALUES (2, 1, 2, '初始化设置', 1, 1558681814, 0);
+INSERT INTO `oa_check`(`id`, `uid`, `type`, `remark`, `status`, `create_time`, `update_time`) VALUES (3, 1, 3, '初始化设置', 1, 1558681814, 0);
+INSERT INTO `oa_check`(`id`, `uid`, `type`, `remark`, `status`, `create_time`, `update_time`) VALUES (4, 1, 4, '初始化设置', 1, 1558681814, 0);
+
+-- ----------------------------
 -- Table structure for oa_department
 -- ----------------------------
 DROP TABLE IF EXISTS `oa_department`;

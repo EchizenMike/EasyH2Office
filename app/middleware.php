@@ -10,8 +10,6 @@ return [
     // \think\middleware\CheckRequestCache::class,
     // 多语言加载
     // \think\middleware\LoadLangPack::class,
-	//验证勾股cms是否完成安装
-	\app\middleware\Install::class,
     // Session初始化
     'think\middleware\SessionInit',
 ];
