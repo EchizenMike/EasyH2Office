@@ -1,0 +1,107 @@
+{extend name="common/base"/}
+<!-- 主体 -->
+{block name="body"}
+<form class="layui-form body-content">
+	{if condition="$id eq 0"}
+	<table class="layui-table layui-table-form">
+		<tr>
+			<td class="layui-td-gray2">工作类型名称<font>*</font></td>
+			<td>
+				<input type="text" name="title" autocomplete="off" placeholder="请输入工作类型名称" lay-verify="required" lay-reqText="请输入工作类型名称" class="layui-input" value="">			
+			</td>
+			<td class="layui-td-gray2">关联部门<font>*</font></td>
+			<td>
+				<select name="pid" lay-verify="required" lay-reqText="请选择部门">
+					<option value="">请选择</option>
+					{volist name="department" id="v"}
+					<option value="{$v.id}" {eq name="pid" value="$v.id" }selected {/eq}>{$v.title}</option>
+					{/volist}
+				</select>
+			</td>
+			<td class="layui-td-gray2">状态<font>*</font></td>
+			<td>
+				<input type="radio" name="status" value="1" title="正常" checked>
+				<input type="radio" name="status" value="0" title="禁用">
+			</td>
+		</tr>
+		<tr>
+			<td class="layui-td-gray2" style="vertical-align: top;">备注信息</td>
+			<td colspan="5">
+				<textarea name="remark" placeholder="请输入备注" class="layui-textarea"></textarea>
+			</td>
+		</tr>
+	</table>
+	{else/}
+	<table class="layui-table layui-table-form">
+		<tr>
+			<td class="layui-td-gray2">工作类型名称<font>*</font></td>
+			<td>
+				<input type="text" name="title" autocomplete="off" placeholder="请输入工作类型名称" lay-verify="required" lay-reqText="请输入工作类型名称" class="layui-input" value="{$detail.title}">			
+			</td>
+			<td class="layui-td-gray2">关联部门<font>*</font></td>
+			<td>
+				<select name="type" lay-verify="required"  lay-reqText="请选择部门">
+					<option value="">请选择</option>
+					<option value="{$v.id}" {eq name="detail.did" value="$v.id"} selected{/eq}>{$v.title}</option>
+				  </select>
+			</td>
+			<td class="layui-td-gray2">状态<font>*</font></td>
+			<td>
+				<input type="radio" name="status" value="1" title="正常" {eq name="$detail.status" value="1"}checked{/eq}>
+				<input type="radio" name="status" value="0" title="禁用" {eq name="$detail.status" value="0"}checked{/eq}>
+			</td>
+		</tr>
+		<tr>
+			<td class="layui-td-gray2" style="vertical-align: top;">备注信息</td>
+			<td colspan="5">
+				<textarea name="remark" placeholder="请输入备注" class="layui-textarea">{$detail.remark}</textarea>
+			</td>
+		</tr>
+	</table>
+	{/if}
+	<div style="padding: 10px 0">
+		<input type="hidden" name="id" value="{$id}" />
+		<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform">立即提交</button>
+		<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+		<button lay-event="back" class="layui-btn layui-btn-primary">返回</button>
+	</div>
+</form>
+{/block}
+<!-- /主体 -->
+
+<!-- 脚本 -->
+{block name="script"}
+<script>
+	function init(layui) {
+		var form = layui.form
+			, layer = layui.layer;
+
+		//监听提交
+		form.on('submit(webform)', function (data) {
+			$.ajax({
+				url: "{:url('home/schedule/cate_add')}",
+				type: 'post',
+				data: data.field,
+				success: function (e) {
+					if (e.code == 0) {
+						layer.confirm('保存成功,返回列表页吗?', { icon: 3, title: '提示' }, function (index) {
+							window.location.href="{:url('home/conf/index')}";
+						});
+					} else {
+						layer.msg(e.msg);
+					}
+				}
+			})
+			return false;
+		});
+		//监听返回
+		$('.body-content').on('click', '[lay-event="back"]', function () {
+			history.back(-1);
+			return false;
+		});
+	}
+
+</script>
+{include file="common/layui" base="base" extend="[]" callback="init" /}
+{/block}
+<!-- /脚本 -->

@@ -134,7 +134,7 @@ INSERT INTO `oa_admin_menu` VALUES (17, 2, '审核人相关配置', 'home/check/
 INSERT INTO `oa_admin_menu` VALUES (18, 2, '工作类型设置', 'home/schedule/cate', '', 1, 0, 0);
 INSERT INTO `oa_admin_menu` VALUES (19, 2, '知识关键字设置', 'home/keywords/index', '', 1, 0, 0);
 INSERT INTO `oa_admin_menu` VALUES (20, 2, '报销类型设置', 'home/expense/cate', '', 1, 0, 0);
-INSERT INTO `oa_admin_menu` VALUES (21, 2, '发票主体设置', 'home/invoice/server', '', 1, 0, 0);
+INSERT INTO `oa_admin_menu` VALUES (21, 2, '发票主体设置', 'home/invoice/subject', '', 1, 0, 0);
 
 INSERT INTO `oa_admin_menu` VALUES (22, 3, '部门架构', 'home/department/index', '', 1, 0, 0);
 INSERT INTO `oa_admin_menu` VALUES (23, 3, '岗位职称', 'home/position/index', '', 1, 0, 0);
@@ -241,10 +241,10 @@ INSERT INTO `oa_admin_rule` VALUES (43, 42, 'home/expense/cate_add', '新增/编
 INSERT INTO `oa_admin_rule` VALUES (44, 42, 'home/expense/cate_disable', '禁用报销类型','报销类型', 0, 0);
 INSERT INTO `oa_admin_rule` VALUES (45, 42, 'home/expense/cate_delete', '删除报销类型','报销类型', 0, 0);
 
-INSERT INTO `oa_admin_rule` VALUES (46, 2, 'home/invoice/server', '发票主体设置','发票主体', 0, 0);
-INSERT INTO `oa_admin_rule` VALUES (47, 46, 'home/invoice/server_add', '新增/编辑发票主体','发票主体', 0, 0);
-INSERT INTO `oa_admin_rule` VALUES (48, 46, 'home/invoice/server_disable', '禁用发票主体','发票主体', 0, 0);
-INSERT INTO `oa_admin_rule` VALUES (49, 46, 'home/invoice/server_delete', '删除发票主体','发票主体', 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (46, 2, 'home/invoice/subject', '发票主体设置','发票主体', 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (47, 46, 'home/invoice/subject_add', '新增/编辑发票主体','发票主体', 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (48, 46, 'home/invoice/subject_disable', '禁用发票主体','发票主体', 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (49, 46, 'home/invoice/subject_delete', '删除发票主体','发票主体', 0, 0);
 
 INSERT INTO `oa_admin_rule` VALUES (50, 3, 'home/department/index', '部门架构','部门', 0, 0);
 INSERT INTO `oa_admin_rule` VALUES (51, 50, 'home/department/add', '添加/编辑部门信息','部门', 0, 0);
@@ -421,7 +421,7 @@ CREATE TABLE `oa_check`  (
   `create_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
   `update_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COMMENT = '审核人配置';
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COMMENT = '审核人配置表';
 
 -- ----------------------------
 -- Records of oa_check
@@ -765,6 +765,22 @@ CREATE TABLE `oa_schedule`  (
   `update_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COMMENT = '工作记录';
+
+-- ----------------------------
+-- Table structure for oa_schedule_cate
+-- ----------------------------
+DROP TABLE IF EXISTS `oa_schedule_cate`;
+CREATE TABLE `oa_schedule_cate`  (
+  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `title` varchar(100) NOT NULL DEFAULT '' COMMENT '工作类型名称',
+  `did` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '关联部门id',
+  `service_cate_id` int(11) NOT NULL DEFAULT 0 COMMENT '预留字段：关联业务类型id',
+  `remark` varchar(1000) NULL DEFAULT '' COMMENT '备注',
+  `status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '状态：-1删除 0禁用 1启用',
+  `create_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
+  `update_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COMMENT = '工作类型表';
 
 -- ----------------------------
 -- Table structure for oa_schedule_interfix

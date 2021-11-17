@@ -6,7 +6,7 @@
 </div>
 <script type="text/html" id="toolbarDemo">
   <div class="layui-btn-container">
-  	<button class="layui-btn layui-btn-normal layui-btn-sm addNew" type="button">+ 添加报销类别</button>
+  	<button class="layui-btn layui-btn-normal layui-btn-sm addNew" type="button">+ 添加发票主体</button>
   </div>
 </script>
 {/block}
@@ -24,13 +24,13 @@
 			elem: '#test'
 			,toolbar: '#toolbarDemo'
 			,title:'报销类别列表'
-			,url:"{:url('home/expense/cate')}"
+			,url:"{:url('home/invoice/subject')}"
 			,page: true //开启分页
 			,limit: 20
 			,cellMinWidth: 80
 			,cols: [[
 					{field:'id',width:80, title: 'ID号', align:'center'}
-					,{field:'title',title: '类别名称'}
+					,{field:'title',title: '发票主体名称'}
 					,{field:'status', title: '状态',width:80,align:'center',templet: function(d){
 						var html1='<span>正常</span>';
 						var html2='<span style="color:#FF5722">禁用</span>';
@@ -62,9 +62,9 @@
 					addExpense(obj.data.id,obj.data.title);
 				}
 				if(obj.event === 'disable'){
-					layer.confirm('确定要禁用该类别吗?', {icon: 3, title:'提示'}, function(index){
+					layer.confirm('确定要禁用该发票主体吗?', {icon: 3, title:'提示'}, function(index){
 						$.ajax({
-							url: "{:url('home/expense/cate_add')}",
+							url: "{:url('home/invoice/subject_add')}",
 							type: 'post',
 							data: {
 								id: obj.data.id,
@@ -82,9 +82,9 @@
 					});
 				}
 				if(obj.event === 'open'){
-					layer.confirm('确定要启用该类别吗?', {icon: 3, title:'提示'}, function(index){
+					layer.confirm('确定要启用该发票主体吗?', {icon: 3, title:'提示'}, function(index){
 						$.ajax({
-							url: "{:url('home/expense/cate_add')}",
+							url: "{:url('home/invoice/subject_add')}",
 							type: 'post',
 							data: {
 								id: obj.data.id,
@@ -108,9 +108,9 @@
 			});
 			
 			function addExpense(id,val){
-				var title = '新增类别';
+				var title = '新增发票主体';
 				if(id>0){
-					title = '编辑类别';
+					title = '编辑发票主体';
 				}
 				layer.prompt({
 					title: title,
@@ -120,7 +120,7 @@
 						var value = layero.find(".layui-layer-input").val();
 						if (value) {
 							$.ajax({
-								url: "{:url('home/expense/cate_add')}",
+								url: "{:url('home/invoice/subject_add')}",
 								type: 'post',
 								data: {
 									id: id,
@@ -134,7 +134,7 @@
 								}
 							})
 						} else {
-							layer.msg('请填写类别标题');
+							layer.msg('请填写发票主体名称');
 						}
 					}
 				})

@@ -1,0 +1,88 @@
+{extend name="common/base"/}
+<!-- 主体 -->
+{block name="body"}
+<div class="body-content">
+	<table class="layui-hide" id="test" lay-filter="test"></table>
+</div>
+<script type="text/html" id="toolbarDemo">
+  <div class="layui-btn-container">
+	<a class="layui-btn layui-btn-normal layui-btn-sm" href="{:url('home/check/add')}">+ 添加审核人配置</a>
+  </div>
+</script>
+{/block}
+<!-- /主体 -->
+
+<!-- 脚本 -->
+{block name="script"}
+<script>
+	function init(layui) {
+		var table = layui.table,
+			form = layui.form;
+
+		var tableIns = table.render({
+			elem: '#test',
+			title: '配置列表',
+			toolbar: '#toolbarDemo',
+			url: "{:url('home/check/index')}",
+			page: true, //开启分页				
+			limit: 20,
+			cols: [
+				[{field: 'id',width: 80,title: 'ID编号',align: 'center'}
+				, { field: 'name', width: 180, title: '审核人姓名'}
+				, { field: 'type',width: 300,title: '审核类型', templet: function (d) {
+						var html = '';
+						if(d.type==1){
+							html='报销审核';
+						}
+						else if(d.type==2){
+							html='报销打款确认';
+						}
+						else if(d.type==3){
+							html='发票审核';
+						}
+						else if(d.type==4){
+							html='发票开票';
+						}
+						return html;
+				}}
+				, { field: 'remark', title: '备注'}
+				, {width: 100, title: '操作', align: 'center'
+					, templet: function (d) {
+						var html = '<div class="layui-btn-group">';
+						html+='<a class="layui-btn layui-btn-xs" href="/home/check/add?id='+d.id+'">编辑</a>';
+						html+= '<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>';
+						html+= '</div>';
+						return html;
+					}
+				}]
+			]
+		});
+		//删除
+		table.on('tool(test)', function (obj) {
+			if (obj.event === 'del') {
+				layer.confirm('确定要删除吗?', {
+					icon: 3,
+					title: '提示'
+				}, function (index) {
+					$.ajax({
+						url: "{:url('home/check/delete')}",
+						type: 'post',
+						data: {
+							id: obj.data.id
+						},
+						success: function (res) {
+							layer.msg(res.msg);
+							if (res.code == 0) {
+								obj.del();
+							}
+						}
+					})
+					layer.close(index);
+				});
+			}
+		});
+	}
+</script>
+{include file="common/layui" base="base" extend="[]" callback="init" /}
+{/block}
+<!-- /脚本 -->

@@ -1,0 +1,156 @@
+{extend name="common/base"/}
+<!-- 主体 -->
+{block name="body"}
+<div class="body-content">
+	<table class="layui-hide" id="test" lay-filter="test"></table>
+</div>
+<script type="text/html" id="barDemo">
+<div class="layui-btn-group"><span class="layui-btn layui-btn-normal layui-btn-xs" lay-event="view">详情</span><span class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</span></div>
+</script>
+{/block}
+<!-- /主体 -->
+
+<!-- 脚本 -->
+{block name="script"}
+<script>
+	function init(layui) {
+		var table = layui.table,
+			rightpage = layui.rightpage,
+			form = layui.form;
+
+		var tableIns = table.render({
+			elem: '#test',
+			title: '报销管理列表',
+			toolbar: '#toolbarDemo',
+			url: "{:url('home/expense/index')}", //数据接口		
+			page: true, //开启分页
+			limit: 20,
+			cols: [
+				[
+					{
+						field: 'id',
+						title: 'ID号',
+						align: 'center',
+						width: 80
+					}, {
+						field: 'amount',
+						title: '报销总金额(元)',
+						align: 'right',
+						width: 120,
+					},{
+						field: 'user_name',
+						title: '报销人',
+						align: 'center',
+						width: 90
+					},{
+						field: 'department',
+						title: '报销部门',
+						align: 'center',
+						width: 120
+					},{
+						field: 'code',
+						title: '报销凭证编号',
+						width: 150,
+					},{
+						field: 'expense_time',
+						title: '原始单据日期',
+						align: 'center',
+						width: 110
+					},{
+						field: 'income_month',
+						title: '入账月份',
+						align: 'center',
+						width: 100
+					},{
+						field: 'admin_name',
+						title: '登记人',
+						align: 'center',
+						width: 100
+					},{
+						field: 'create_time',
+						title: '录入时间',
+						align: 'center',
+						width: 150
+					},{
+						field: 'status',
+						title: '状态',
+						align: 'center',
+						width: 120,
+						templet:function(d){
+							var html='<span style="color:#FF5722">审核不通过</span>';
+							if(d.check_status==1){
+								html='<span style="color:#393D49">报销审核中</span>';
+							}
+							else if(d.check_status==2){
+								html='<span style="color:#5FB878">审核通过</span>';
+							}
+							else if(d.check_status==3){
+								html='<span style="color:#009688">已打款</span>';
+							}
+							return html;
+						}
+					},{
+						field: 'check_name',
+						title: '审核人',
+						align: 'center',
+						width: 90
+					},{
+						field: 'check_time',
+						title: '审核时间',
+						align: 'center',
+						width: 136
+					},{
+						field: 'pay_name',
+						title: '打款确认人',
+						align: 'center',
+						width: 90
+					},{
+						field: 'pay_time',
+						title: '打款确认时间',
+						align: 'center',
+						width: 136
+					}, {
+						field: 'right',
+						fixed: 'right',
+						title: '操作',
+						toolbar: '#barDemo',
+						width: 100,
+						align: 'center'
+					}
+				]
+			]
+		});
+
+		//监听行工具事件
+		table.on('tool(test)', function(obj) {
+			var data = obj.data;
+			if (obj.event === 'view') {
+				rightpage.open("/home/expense/check?id="+data.id);
+				return;
+			}
+			if (obj.event === 'del') {
+				layer.confirm('确定删除该报销记录吗？', {
+					icon: 3,
+					title: '提示'
+				}, function(index) {
+					$.ajax({
+						url: "{:url('home/expense/delete')}",
+						data: {
+							id: data.id
+						},
+						success: function(res) {
+							layer.msg(res.msg);
+							if (res.code == 0) {
+								obj.del();
+							}
+						}
+					})
+					layer.close(index);
+				});
+			}
+		});
+	}
+</script>
+{include file="common/layui" base='base' extend="['rightpage']" use="['table','form']" callback="init" /}
+{/block}
+<!-- /脚本 -->

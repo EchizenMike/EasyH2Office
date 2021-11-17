@@ -4,23 +4,15 @@
 <form class="layui-form body-content">
 	<table class="layui-table layui-table-form">
 		<tr>
-			<td class="layui-td-gray2">关键字名称<font>*</font>
+			<td class="layui-td-gray">关键字名称<font>*</font></td>
+			<td>				
+				<input type="text" name="title" lay-verify="required" lay-reqText="请输入关键字名称" autocomplete="off" placeholder="请输入关键字名称" class="layui-input" {notempty name="$keywords.title"} value="{$keywords.title}" {/notempty}>
 			</td>
+			<td class="layui-td-gray">排序</td>
+			<td><input type="text" name="sort" placeholder="请输入排序，数字" autocomplete="off" class="layui-input" {notempty name="$keywords.sort" }value="{$keywords.sort}" {/notempty}>
+			</td>
+			<td class="layui-td-gray">状态<font>*</font></td>
 			<td>
-				<input type="hidden" name="id" value="{$id}" />
-				<input type="text" name="title" lay-verify="required" lay-reqText="请输入关键字名称" autocomplete="off" placeholder="请输入关键字名称"
-					class="layui-input" style="max-width: 360px;" {notempty name="$keywords.title"}
-					value="{$keywords.title}" {/notempty}>
-			</td>
-			<td class="layui-td-gray2">排序</td>
-			<td><input type="text" name="sort" placeholder="请输入排序，数字" autocomplete="off" class="layui-input"
-					style="max-width: 360px;" {notempty name="$keywords.sort" }value="{$keywords.sort}" {/notempty}>
-			</td>
-		</tr>
-		<tr>
-			<td class="layui-td-gray2">状态<font>*</font>
-			</td>
-			<td colspan="3">
 				{if condition="$id eq 0"}
 				<input type="radio" name="status" value="1" title="正常" checked>
 				<input type="radio" name="status" value="0" title="禁用">
@@ -34,6 +26,7 @@
 		</tr>
 	</table>
 	<div style="padding: 10px 0">
+		<input type="hidden" name="id" value="{$id}" />
 		<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform">立即提交</button>
 		<button type="reset" class="layui-btn layui-btn-primary">重置</button>
 		<button lay-event="back" class="layui-btn layui-btn-primary">返回</button>
@@ -52,7 +45,7 @@
 		//监听提交
 		form.on('submit(webform)', function (data) {
 			$.ajax({
-				url: "{:url('home/keywords/post_submit')}",
+				url: "{:url('home/keywords/add')}",
 				type: 'post',
 				data: data.field,
 				success: function (e) {

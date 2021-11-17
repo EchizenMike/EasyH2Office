@@ -12,9 +12,9 @@
 			<td class="layui-td-gray2">上级部门<font>*</font></td>
 			<td>
 				<select name="pid" lay-verify="required" lay-reqText="请选择上级部门">
-					<option value="0">作为顶级部门</option>
+					<option value="">作为顶级部门</option>
 					{volist name="department" id="v"}
-					<option value="{$v.id}" {eq name="pid" value="$v.id" }selected {/eq}>{$v.title}</option>
+					<option value="{$v.id}">{$v.title}</option>
 					{/volist}
 				</select>
 			</td>
@@ -34,7 +34,7 @@
 			<td class="layui-td-gray2">上级部门<font>*</font></td>
 			<td>
 				<select name="pid" lay-verify="required" lay-reqText="请选择上级部门">
-					<option value="0">作为顶级部门</option>
+					<option value="">作为顶级部门</option>
 					{volist name="department" id="v"}
 					<option value="{$v.id}" {eq name="detail.pid" value="$v.id"} selected{/eq}>{$v.title}</option>
 					{/volist}

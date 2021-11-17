@@ -10,52 +10,52 @@ declare (strict_types = 1);
 namespace app\home\controller;
 
 use app\home\BaseController;
-use app\home\model\Expense as ExpenseList;
-use app\home\model\ExpenseCate;
-use app\home\validate\ExpenseCateCheck;
-use app\home\validate\ExpenseCheck;
+use app\home\model\Invoice as InvoiceList;
+use app\home\model\InvoiceSubject;
+use app\home\validate\InvoiceSubjectCheck;
+use app\home\validate\InvoiceCheck;
 use think\exception\ValidateException;
 use think\facade\Db;
 use think\facade\View;
 
-class Expense extends BaseController
+class Invoice extends BaseController
 {
-    public function cate()
+    public function subject()
     {
         if (request()->isAjax()) {
-            $cate = Db::name('ExpenseCate')->order('create_time asc')->select();
-            return to_assign(0, '', $cate);
+            $subject = Db::name('InvoiceSubject')->order('create_time asc')->select();
+            return to_assign(0, '', $subject);
         } else {
             return view();
         }
     }
     //提交保存分类
-    public function cate_add()
+    public function subject_add()
     {
         if (request()->isAjax()) {
             $param = get_params();
             if (!empty($param['id']) && $param['id'] > 0) {
                 try {
-                    validate(ExpenseCateCheck::class)->scene('edit')->check($param);
+                    validate(InvoiceSubjectCheck::class)->scene('edit')->check($param);
                 } catch (ValidateException $e) {
                     // 验证失败 输出错误信息
                     return to_assign(1, $e->getError());
                 }
                 $data['update_time'] = time();
-                $res = ExpenseCate::strict(false)->field(true)->update($param);
+                $res = InvoiceSubject::strict(false)->field(true)->update($param);
                 if ($res) {
                     add_log('edit', $param['id'], $param);
                 }
                 return to_assign();
             } else {
                 try {
-                    validate(ExpenseCateCheck::class)->scene('add')->check($param);
+                    validate(InvoiceSubjectCheck::class)->scene('add')->check($param);
                 } catch (ValidateException $e) {
                     // 验证失败 输出错误信息
                     return to_assign(1, $e->getError());
                 }
                 $param['create_time'] = time();
-                $insertId = ExpenseCate::strict(false)->field(true)->insertGetId($param);
+                $insertId = InvoiceSubject::strict(false)->field(true)->insertGetId($param);
                 if ($insertId) {
                     add_log('add', $insertId, $param);
                 }
