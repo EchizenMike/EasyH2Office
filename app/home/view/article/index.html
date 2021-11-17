@@ -22,8 +22,8 @@
 <script type="text/html" id="status">
 	<i class="layui-icon {{#  if(d.status == 1){ }}layui-icon-ok{{#  } else { }}layui-icon-close{{#  } }}"></i>
 </script>
-<script type="text/html" id="is_home">
-	<i class="layui-icon {{#  if(d.is_home == 1){ }}layui-icon-ok{{#  } else { }}layui-icon-close{{#  } }}"></i>
+<script type="text/html" id="is_share">
+	<i class="layui-icon {{#  if(d.is_share == 1){ }}layui-icon-ok{{#  } else { }}layui-icon-close{{#  } }}"></i>
 </script>
 <script type="text/html" id="toolbarDemo">
 	<div class="layui-btn-container">
@@ -79,8 +79,8 @@
 						width: 66
 					}, {
 						field: 'is_home',
-						title: '首页显示',
-						toolbar: '#is_home',
+						title: '首页共享',
+						toolbar: '#is_share',
 						align: 'center',
 						width: 90
 					}, {

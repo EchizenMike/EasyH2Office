@@ -33,12 +33,6 @@ class Note extends BaseController
     //分类添加
     public function cate_add()
     {
-        return view('', ['pid' => get_params('pid')]);
-    }
-
-    //提交保存分类
-    public function cate_post_submit()
-    {
         if (request()->isAjax()) {
             $param = get_params();
             if (!empty($param['id']) && $param['id'] > 0) {
@@ -72,6 +66,10 @@ class Note extends BaseController
                 }
                 return to_assign();
             }
+        } else {
+            $pid = isset($param['pid']) ? $param['pid'] : 0;
+            View::assign('pid', $pid);
+            return view();
         }
     }
 
@@ -124,20 +122,8 @@ class Note extends BaseController
     //添加
     public function add()
     {
-        $id = empty(get_params('id')) ? 0 : get_params('id');
-        if ($id > 0) {
-            $note = Db::name('Note')->where(['id' => $id])->find();
-            View::assign('note', $note);
-        }
-        View::assign('id', $id);
-        return view();
-    }
-
-    //提交添加
-    public function post_submit()
-    {
+        $param = get_params();
         if (request()->isAjax()) {
-            $param = get_params();
             $param['start_time'] = isset($param['start_time']) ? strtotime(urldecode($param['start_time'])) : 0;
             $param['end_time'] = isset($param['end_time']) ? strtotime(urldecode($param['end_time'])) : 0;
             if (!empty($param['id']) && $param['id'] > 0) {
@@ -169,6 +155,14 @@ class Note extends BaseController
 
                 return to_assign();
             }
+        } else {
+            $id = isset($param['id']) ? $param['id'] : 0;
+            if ($id > 0) {
+                $note = Db::name('Note')->where(['id' => $id])->find();
+                View::assign('note', $note);
+            }
+            View::assign('id', $id);
+            return view();
         }
     }
 

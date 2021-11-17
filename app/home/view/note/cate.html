@@ -61,7 +61,7 @@
 			treeGrid.on('edit('+tableId+')', function(obj){
 				layer.confirm('确定要提交修改吗?', {icon: 3, title:'提示'}, function(index){
 					$.ajax({
-					  url:"{:url('home/note/cate_post_submit')}",
+					  url:"{:url('home/note/cate_add')}",
 					  type:'post',
 					  data:{id:obj.data.id,field:obj.field,value:obj.value},
 					  success:function(res){

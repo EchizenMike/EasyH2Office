@@ -37,10 +37,10 @@
           <input type="text" name="sort" placeholder="请输入排序，数字" autocomplete="off" class="layui-input"
             value="{$article.sort}">
         </td>
-        <td class="layui-td-gray2">首页显示</td>
+        <td class="layui-td-gray2">是否共享</td>
         <td>
-          <input type="radio" name="is_home" value="1" title="是" {eq name="$article.is_home" value="1" }checked{/eq}>
-          <input type="radio" name="is_home" value="0" title="否" {eq name="$article.is_home" value="0" }checked{/eq}>
+          <input type="radio" name="is_share" value="1" title="是" {eq name="$article.is_share" value="1" }checked{/eq}>
+          <input type="radio" name="is_share" value="0" title="否" {eq name="$article.is_share" value="0" }checked{/eq}>
         </td>
         <td class="layui-td-gray2">属性</td>
         <td>
@@ -107,59 +107,58 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
-  function init(layui) {
-    var form = layui.form
-      , layer = layui.layer
-      , tagspicker = layui.tagpicker
-      , upload = layui.upload;
+	function init(layui) {
+		var form = layui.form
+		  , layer = layui.layer
+		  , tagspicker = layui.tagpicker
+		  , upload = layui.upload;
 
-    var tags = new tagspicker({
-      'url': "{:url('home/api/get_keyword_cate')}",
-      'target': 'keyword_name',
-      'tag_ids': 'keyword_id',
-      'tag_tags': 'keyword_name',
-      'height': 500,
-      'isDiy': 1
-    });
+	var tags = new tagspicker({
+		'url': "{:url('home/api/get_keyword_cate')}",
+		'target': 'keyword_name',
+		'tag_ids': 'keyword_id',
+		'tag_tags': 'keyword_name',
+		'height': 500,
+		'isDiy': 1
+	});
 
     //封面上传
     var uploadInst = upload.render({
-      elem: '#test1'
-      , url: "{:url('home/api/upload')}",
-      , done: function (res) {
-        //如果上传失败
-        if (res.code == 1) {
-          return layer.msg('上传失败');
-        }
-        //上传成功
-        $('#demo1 input').attr('value', res.data.id);
-        $('#demo1 img').attr('src', res.data.filepath);
-      }
+		elem: '#test1'
+		, url: "{:url('home/api/upload')}"
+		, done: function (res) {
+			//如果上传失败
+			if (res.code == 1) {
+				return layer.msg('上传失败');
+			}
+			//上传成功
+			$('#demo1 input').attr('value', res.data.id);
+			$('#demo1 img').attr('src', res.data.filepath);
+		}
     });
 
     //监听提交
     form.on('submit(webform)', function (data) {
-      $.ajax({
-        url: "{:url('home/api/post_submit')}",
-        type: 'post',
-        data: data.field,
-        success: function (e) {
-          if (e.code == 0) {
-            layer.confirm('保存成功,返回列表页吗?', { icon: 3, title: '提示' }, function (index) {
-              history.back(-1);
-              layer.close(index);
-            });
-          } else {
-            layer.msg(e.msg);
-          }
-        }
-      })
-      return false;
+		$.ajax({
+			url: "{:url('home/article/add')}",
+			type: 'post',
+			data: data.field,
+			success: function (e) {
+				if (e.code == 0) {
+					layer.confirm('保存成功,返回列表页吗?', { icon: 3, title: '提示' }, function (index) {
+						window.location.href="{:url('home/article/index')}";
+					});
+				} else {
+					layer.msg(e.msg);
+				}
+			}
+		})
+		return false;
     });
     //监听返回
     $('.body-content').on('click', '[lay-event="back"]', function () {
-      history.back(-1);
-      return false;
+		history.back(-1);
+		return false;
     });
 
   }

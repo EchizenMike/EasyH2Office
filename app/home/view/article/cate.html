@@ -45,7 +45,6 @@
 					,{field: 'sort', title: '排序', edit: "text", align:'center', style:'cursor: pointer;', width:80}
 					,{field:'title', edit:'text',width:240, title: '分类名称'}
 					,{field:'pid', title: '父级ID', edit:"text",width:80, align:'center'}
-					,{field:'keywords', title: '关键词', edit:"text",width:200,}
 					,{field:'desc', title: '描述', edit:"text"}
 					,{width:100,title: '操作', align:'center'
 						,templet: function(d){
@@ -63,15 +62,15 @@
 			treeGrid.on('edit('+tableId+')', function(obj){
 				layer.confirm('确定要提交修改吗?', {icon: 3, title:'提示'}, function(index){
 					$.ajax({
-					  url:"{:url('home/article/cate_post_submit')}",
+					  url:"{:url('home/article/cate_add')}",
 					  type:'post',
 					  data:{id:obj.data.id,field:obj.field,value:obj.value},
 					  success:function(res){
 						layer.msg(res.msg);
-						if(res.code == 1){
+						if(res.code == 0){
 							setTimeout(function(){
 								location.reload()
-							},2000)						  
+							},1200)						  
 						}
 					  }
 					}) 
