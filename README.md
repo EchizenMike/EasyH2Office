@@ -1,4 +1,4 @@
-# 勾股CMS
+# 勾股OA
 
 [![勾股CMS](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://gitee.com/gougucms/gougucms/)
 [![勾股CMS](https://img.shields.io/badge/GouguCMS-1.0.0-brightgreen.svg)](https://gitee.com/gougucms/gougucms/)
@@ -9,7 +9,7 @@
 - 勾股OA：https://oa.gougucms.com
 - gitee：https://gitee.com/gougucms/office.git
 
-### 开源项目
+### 其他开源项目
 - [开源项目系列之勾股CMS](https://www.gougucms.com) 
 - [开源项目系列之勾股博客](https://blog.gougucms.com) 
 
@@ -242,11 +242,6 @@ composer install
 6.  访问 http://www.yoursite.com/install/index ，请注意查看伪静态请配置是否设置了thinkphp规则。
 
 7.  遇到问题请到QQ群：24641076 反馈。
-
-### 截图预览
-![输入图片说明](https://images.gitee.com/uploads/images/2021/0225/002705_51fd21e2_8633021.png "p1.png")
-![输入图片说明](https://images.gitee.com/uploads/images/2021/0225/002716_e8037c3c_8633021.png "p2.png")
-![输入图片说明](https://images.gitee.com/uploads/images/2021/0904/222609_7cb6d1a9_72602.png "p3.png")
 
 
 ### 开源协议  
