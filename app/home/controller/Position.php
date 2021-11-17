@@ -20,47 +20,24 @@ class Position extends BaseController
     public function index()
     {
         if (request()->isAjax()) {
-            $list = Db::name('Position')->where('status','>=',0)->order('create_time asc')->select()->toArray();
-			foreach ($list as &$val) {
-				$groupId = Db::name('PositionGroup')->where(['pid' => $val['id']])->column('group_id');
-				$groupName = Db::name('AdminGroup')->where('id', 'in', $groupId)->column('title');
-				$val['groupName'] = implode(',', $groupName);
-			}
-			$res['data'] = $list;
+            $list = Db::name('Position')->where('status', '>=', 0)->order('create_time asc')->select()->toArray();
+            foreach ($list as &$val) {
+                $groupId = Db::name('PositionGroup')->where(['pid' => $val['id']])->column('group_id');
+                $groupName = Db::name('AdminGroup')->where('id', 'in', $groupId)->column('title');
+                $val['groupName'] = implode(',', $groupName);
+            }
+            $res['data'] = $list;
             return table_assign(0, '', $res);
         } else {
             return view();
         }
     }
 
-    //添加
+    //添加&编辑
     public function add()
     {
-        $id = empty(get_params('id')) ? 0 : get_params('id');
-		$group = Db::name('AdminGroup')->order('create_time asc')->select()->toArray();
-        if($id > 0) {
-            $detail = Db::name('Position')->where(['id' => $id])->find();
-			$detail['group_id'] = Db::name('PositionGroup')->where(['pid' => $id])->column('group_id');
-			foreach ($group as &$val) {
-				if(in_array($val['id'],$detail['group_id'])){
-					$val['checked'] = 1;				
-				}
-				else{
-					$val['checked'] = 0;
-				}
-			}
-            View::assign('detail', $detail);
-        }
-        View::assign('group', $group);
-        View::assign('id', $id);
-        return view();
-    }
-	
-    //提交添加
-    public function post_submit()
-    {
+        $param = get_params();
         if (request()->isAjax()) {
-            $param = get_params();
             if (!empty($param['id']) && $param['id'] > 0) {
                 try {
                     validate(PositionCheck::class)->scene('edit')->check($param);
@@ -77,7 +54,7 @@ class Position extends BaseController
                         $data[$k] = [
                             'pid' => $param['id'],
                             'group_id' => $v,
-                            'create_time' => time()
+                            'create_time' => time(),
                         ];
                     }
                     Db::name('PositionGroup')->strict(false)->field(true)->insertAll($data);
@@ -107,7 +84,7 @@ class Position extends BaseController
                         $data[$k] = [
                             'pid' => $uid,
                             'group_id' => $v,
-							'create_time' => time()
+                            'create_time' => time(),
                         ];
                     }
                     Db::name('PositionGroup')->strict(false)->field(true)->insertAll($data);
@@ -122,57 +99,75 @@ class Position extends BaseController
             }
             return to_assign();
         }
+        else{
+            $id = isset($param['id']) ? $param['id'] : 0;
+            $group = Db::name('AdminGroup')->order('create_time asc')->select()->toArray();
+            if ($id > 0) {
+                $detail = Db::name('Position')->where(['id' => $id])->find();
+                $detail['group_id'] = Db::name('PositionGroup')->where(['pid' => $id])->column('group_id');
+                foreach ($group as &$val) {
+                    if (in_array($val['id'], $detail['group_id'])) {
+                        $val['checked'] = 1;
+                    } else {
+                        $val['checked'] = 0;
+                    }
+                }
+                View::assign('detail', $detail);
+            }
+            View::assign('group', $group);
+            View::assign('id', $id);
+            return view();
+        }
     }
 
     //查看
     public function view()
-    {		
-		$id = get_params('id');
-		$group = Db::name('AdminGroup')->order('create_time asc')->select()->toArray();
+    {
+        $id = get_params('id');
+        $group = Db::name('AdminGroup')->order('create_time asc')->select()->toArray();
         $detail = Db::name('Position')->where(['id' => $id])->find();
-		$detail['group_id'] = Db::name('PositionGroup')->where(['pid' => $id])->column('group_id');
-		foreach ($group as &$val) {
-			if(in_array($val['id'],$detail['group_id'])){
-				$val['checked'] = 1;				
-			}
-			else{
-				$val['checked'] = 0;
-			}
-		}
-		
-		$menu = get_admin_menu();
-		$rule = get_admin_rule();
-		$user_groups = Db::name('PositionGroup')
-                ->alias('a')
-                ->join("AdminGroup g", "a.group_id=g.id", 'LEFT')
-                ->where("a.pid='{$id}' and g.status='1'")
-                ->select()
-                ->toArray();
-		$groups = $user_groups ?: [];
+        $detail['group_id'] = Db::name('PositionGroup')->where(['pid' => $id])->column('group_id');
+        foreach ($group as &$val) {
+            if (in_array($val['id'], $detail['group_id'])) {
+                $val['checked'] = 1;
+            } else {
+                $val['checked'] = 0;
+            }
+        }
 
-		$menus = []; 
-		$rules = []; 
-		foreach ($groups as $g) {
-			$menus = array_merge($menus, explode(',', trim($g['menus'], ',')));
-			$rules = array_merge($rules, explode(',', trim($g['rules'], ',')));
-		}
-		$menus = array_unique($menus);
-		$rules = array_unique($rules);		
-		
-		$role_menu = create_tree_list(0, $menu, $menus);
-		$role_rule = create_tree_list(0, $rule, $rules);
+        $menu = get_admin_menu();
+        $rule = get_admin_rule();
+        $user_groups = Db::name('PositionGroup')
+            ->alias('a')
+            ->join("AdminGroup g", "a.group_id=g.id", 'LEFT')
+            ->where("a.pid='{$id}' and g.status='1'")
+            ->select()
+            ->toArray();
+        $groups = $user_groups ?: [];
+
+        $menus = [];
+        $rules = [];
+        foreach ($groups as $g) {
+            $menus = array_merge($menus, explode(',', trim($g['menus'], ',')));
+            $rules = array_merge($rules, explode(',', trim($g['rules'], ',')));
+        }
+        $menus = array_unique($menus);
+        $rules = array_unique($rules);
+
+        $role_menu = create_tree_list(0, $menu, $menus);
+        $role_rule = create_tree_list(0, $rule, $rules);
         View::assign('role_menu', $role_menu);
         View::assign('role_rule', $role_rule);
         View::assign('detail', $detail);
-        View::assign('group', $group);	
-		add_log('view', $id);
+        View::assign('group', $group);
+        add_log('view', $id);
         return view();
     }
     //删除
     public function delete()
     {
         $id = get_params("id");
-        if($id == 1){
+        if ($id == 1) {
             return to_assign(0, "超级岗位，不能删除");
         }
         $data['status'] = '-1';

@@ -12,9 +12,9 @@
 			<td class="layui-td-gray2">上级部门<font>*</font></td>
 			<td>
 				<select name="pid" lay-verify="required" lay-reqText="请选择上级部门">
-					<option value="">作为顶级部门</option>
+					<option value="0">作为顶级部门</option>
 					{volist name="department" id="v"}
-					<option value="{$v.id}">{$v.title}</option>
+					<option value="{$v.id}" {eq name="$pid" value="$v.id"} selected{/eq}>{$v.title}</option>
 					{/volist}
 				</select>
 			</td>
@@ -34,9 +34,9 @@
 			<td class="layui-td-gray2">上级部门<font>*</font></td>
 			<td>
 				<select name="pid" lay-verify="required" lay-reqText="请选择上级部门">
-					<option value="">作为顶级部门</option>
+					<option value="0">作为顶级部门</option>
 					{volist name="department" id="v"}
-					<option value="{$v.id}" {eq name="detail.pid" value="$v.id"} selected{/eq}>{$v.title}</option>
+					<option value="{$v.id}" {eq name="$detail.pid" value="$v.id"} selected{/eq}>{$v.title}</option>
 					{/volist}
 				</select>
 			</td>
@@ -78,7 +78,7 @@
 		//监听提交
 		form.on('submit(webform)', function(data) {
 			$.ajax({
-				url: "{:url('home/department/post_submit')}",
+				url: "{:url('home/department/add')}",
 				type: 'post',
 				data: data.field,
 				success: function(e) {

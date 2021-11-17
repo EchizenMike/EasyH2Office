@@ -5,22 +5,22 @@
 	{if condition="$id eq 0"}
 	<table class="layui-table layui-table-form">
 		<tr>
-			<td class="layui-td-gray2">岗位名称<font>*</font></td>
+			<td class="layui-td-gray">岗位名称<font>*</font></td>
 			<td>
 				<input type="text" name="title" lay-verify="required" autocomplete="off" placeholder="请输入岗位名称" lay-reqText="请输入岗位名称" class="layui-input">
 			</td>
-			<td class="layui-td-gray2">岗位工时单价<font>*</font></td>
+			<td class="layui-td-gray3">岗位工时单价(元)<font>*</font></td>
 			<td>
 				<input type="text" name="work_price" lay-verify="required|number" placeholder="请输入岗位工时单价" lay-reqText="请输入岗位工时单价" autocomplete="off" class="layui-input">
 			</td>
-			<td class="layui-td-gray2">状态<font>*</font></td>
+			<td class="layui-td-gray">状态<font>*</font></td>
 			<td>
 				<input type="radio" name="status" value="1" title="正常" checked>
 				<input type="radio" name="status" value="0" title="禁用">
 			</td>
 		</tr>
 		<tr>
-			<td class="layui-td-gray2">权限角色<font>*</font></td>
+			<td class="layui-td-gray">权限角色<font>*</font></td>
 			<td colspan="5">
 				{volist name="$group" id="v"}
 				<input type="checkbox" name="group_id[]" title="{$v.title}" value="{$v.id}" lay-skin="primary">
@@ -28,7 +28,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td class="layui-td-gray2">岗位备注</td>
+			<td class="layui-td-gray">岗位备注</td>
 			<td colspan="5">
 				<textarea name="remark" placeholder="请输入岗位备注" class="layui-textarea"></textarea>
 			</td>
@@ -37,22 +37,22 @@
 	{else/}
 	<table class="layui-table layui-table-form">
 		<tr>
-			<td class="layui-td-gray2">岗位名称<font>*</font></td>
+			<td class="layui-td-gray">岗位名称<font>*</font></td>
 			<td>
 				<input type="text" name="title" value="{$detail.title}" lay-verify="required" autocomplete="off" placeholder="请输入岗位名称" lay-reqText="请输入岗位名称" class="layui-input">
 			</td>
-			<td class="layui-td-gray2">岗位工时单价<font>*</font></td>
+			<td class="layui-td-gray3">岗位工时单价(元)<font>*</font></td>
 			<td>
 				<input type="text" name="work_price" value="{$detail.work_price}" lay-verify="required|number" placeholder="请输入岗位工时单价" lay-reqText="请输入岗位工时单价" autocomplete="off" class="layui-input">
 			</td>
-			<td class="layui-td-gray2">状态<font>*</font></td>
+			<td class="layui-td-gray">状态<font>*</font></td>
 			<td>
 				<input type="radio" name="status" value="1" title="正常" {eq name="$detail.status" value="1"}checked{/eq}>
-				<input type="radio" name="status" value="0" title="禁止登录" {eq name="$detail.status" value="0"}checked{/eq}>
+				<input type="radio" name="status" value="0" title="禁止" {eq name="$detail.status" value="0"}checked{/eq}>
 			</td>
 		</tr>
 		<tr>
-			<td class="layui-td-gray2">权限角色<font>*</font></td>
+			<td class="layui-td-gray">权限角色<font>*</font></td>
 			<td colspan="5">
 			{volist name="$group" id="v"}
 				<input type="checkbox" name="group_id[]" title="{$v.title}" value="{$v.id}" {eq name="$v.checked" value="1" }checked{/eq} lay-skin="primary">
@@ -60,7 +60,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td class="layui-td-gray2">岗位备注</td>
+			<td class="layui-td-gray">岗位备注</td>
 			<td colspan="5">
 				<textarea name="remark" placeholder="请输入岗位备注" class="layui-textarea">{$detail.remark}</textarea>
 			</td>
@@ -88,7 +88,7 @@
 		//监听提交
 		form.on('submit(webform)', function (data) {
 			$.ajax({
-				url: "{:url('home/position/post_submit')}",
+				url: "{:url('home/position/add')}",
 				type: 'post',
 				data: data.field,
 				success: function (e) {

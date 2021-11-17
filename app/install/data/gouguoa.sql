@@ -67,7 +67,7 @@ CREATE TABLE `oa_admin_group`  (
 -- ----------------------------
 -- Records of cms_admin_group
 -- ----------------------------
-INSERT INTO `oa_admin_group` VALUES ('1', '超级员工', '1', '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113', '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43', '超级员工，系统自动分配所有可操作权限及菜单。', '0', '0');
+INSERT INTO `oa_admin_group` VALUES ('1', '超级员工权限', '1', '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113', '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43', '超级员工权限，拥有系统的最高权限，不可修改', '0', '0');
 
 -- ----------------------------
 -- Table structure for oa_admin_log
@@ -447,6 +447,25 @@ CREATE TABLE `oa_department`  (
   `update_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COMMENT = '部门组织';
+
+-- ----------------------------
+-- Records of oa_department
+-- ----------------------------
+INSERT INTO `oa_department`(`id`, `title`, `pid`, `leader_id`, `phone`, `remark`, `status`, `create_time`, `update_time`) VALUES (1, '董事会', 0, 0, '13688888888', '', 1, 0, 0);
+INSERT INTO `oa_department`(`id`, `title`, `pid`, `leader_id`, `phone`, `remark`, `status`, `create_time`, `update_time`) VALUES (2, '人事部', 1, 0, '13688888889', '', 1, 0, 0);
+INSERT INTO `oa_department`(`id`, `title`, `pid`, `leader_id`, `phone`, `remark`, `status`, `create_time`, `update_time`) VALUES (3, '财务部', 1, 0, '13688888898', '', 1, 0, 0);
+INSERT INTO `oa_department`(`id`, `title`, `pid`, `leader_id`, `phone`, `remark`, `status`, `create_time`, `update_time`) VALUES (4, '市场部', 1, 0, '13688888988', '', 1, 0, 0);
+INSERT INTO `oa_department`(`id`, `title`, `pid`, `leader_id`, `phone`, `remark`, `status`, `create_time`, `update_time`) VALUES (5, '销售部', 1, 0, '13688889888', '', 1, 0, 0);
+INSERT INTO `oa_department`(`id`, `title`, `pid`, `leader_id`, `phone`, `remark`, `status`, `create_time`, `update_time`) VALUES (6, '技术部', 1, 0, '13688898888', '', 1, 0, 0);
+INSERT INTO `oa_department`(`id`, `title`, `pid`, `leader_id`, `phone`, `remark`, `status`, `create_time`, `update_time`) VALUES (7, '客服部', 1, 0, '13688988888', '', 1, 0, 0);
+INSERT INTO `oa_department`(`id`, `title`, `pid`, `leader_id`, `phone`, `remark`, `status`, `create_time`, `update_time`) VALUES (8, '销售一部', 5, 0, '13688998888', '', 1, 0, 0);
+INSERT INTO `oa_department`(`id`, `title`, `pid`, `leader_id`, `phone`, `remark`, `status`, `create_time`, `update_time`) VALUES (9, '销售二部', 5, 0, '13688999888', '', 1, 0, 0);
+INSERT INTO `oa_department`(`id`, `title`, `pid`, `leader_id`, `phone`, `remark`, `status`, `create_time`, `update_time`) VALUES (10, '销售三部', 5, 0, '13688999988', '', 1, 0, 0);
+INSERT INTO `oa_department`(`id`, `title`, `pid`, `leader_id`, `phone`, `remark`, `status`, `create_time`, `update_time`) VALUES (11, '产品部', 6, 0, '13688888886', '', 1, 0, 0);
+INSERT INTO `oa_department`(`id`, `title`, `pid`, `leader_id`, `phone`, `remark`, `status`, `create_time`, `update_time`) VALUES (12, '设计部', 6, 0, '13688888866', '', 1, 0, 0);
+INSERT INTO `oa_department`(`id`, `title`, `pid`, `leader_id`, `phone`, `remark`, `status`, `create_time`, `update_time`) VALUES (13, '研发部', 6, 0, '13688888666', '', 1, 0, 0);
+INSERT INTO `oa_department`(`id`, `title`, `pid`, `leader_id`, `phone`, `remark`, `status`, `create_time`, `update_time`) VALUES (14, '客服一部', 7, 0, '13688888885', '', 1, 0, 0);
+INSERT INTO `oa_department`(`id`, `title`, `pid`, `leader_id`, `phone`, `remark`, `status`, `create_time`, `update_time`) VALUES (15, '客服二部', 7, 0, '13688888855', '', 1, 0, 0);
 
 -- ----------------------------
 -- Table structure for oa_expense
