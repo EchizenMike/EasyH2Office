@@ -41,7 +41,7 @@ class Admin extends BaseController
             }
             $rows = empty($param['limit']) ? get_config(app . page_size) : $param['limit'];
             $admin = AdminList::where($where)
-                ->order('create_time asc')
+                ->order('id desc')
                 ->paginate($rows, false, ['query' => $param])
                 ->each(function ($item, $key) {
                     $item->department = Db::name('Department')->where(['id' => $item->did])->value('title');
@@ -59,55 +59,13 @@ class Admin extends BaseController
     //添加
     public function add()
     {
-        $id = empty(get_params('id')) ? 0 : get_params('id');
-        $department = set_recursion(get_department());
-        $position = Db::name('Position')->where('status', '>=', 0)->order('create_time asc')->select();
-        if ($id > 0) {
-            $detail = get_admin($id);
-            View::assign('detail', $detail);
-        } else {
-            //初始化密码
-            $reg_pwd = set_salt(6);
-            View::assign('reg_pwd', $reg_pwd);
-        }
-        View::assign('department', $department);
-        View::assign('position', $position);
-        View::assign('id', $id);
-        return view();
-    }
-    //生成头像
-    public function to_avatars($char)
-    {
-        $defaultData = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
-            'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'S', 'Y', 'Z',
-            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-            '零', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖', '拾',
-            '一', '二', '三', '四', '五', '六', '七', '八', '九', '十');
-        if (isset($char)) {
-            $Char = $char;
-        } else {
-            $Char = $defaultData[mt_rand(0, count($defaultData) - 1)];
-        }
-        $OutputSize = min(512, empty($_GET['size']) ? 36 : intval($_GET['size']));
-
-        $Avatar = new MDAvatars($Char, 256, 1);
-        $avatar_name = '/avatars/avatar_256_' . set_salt(10) . time() . '.png';
-        $path = get_config('filesystem.disks.public.url') . $avatar_name;
-        $res = $Avatar->Save('.' . $path, 256);
-        $Avatar->Free();
-        return $path;
-    }
-
-    //提交添加
-    public function post_submit()
-    {
+        $param = get_params();
         if (request()->isAjax()) {
-            $param = get_params();
-			$param['entry_time'] = strtotime($param['entry_time']);
-			$param['nickname'] = $param['name'];
-			$pinyin = new Pinyin();
-			$username = $pinyin->name($param['name'], PINYIN_UMLAUT_V);
-			$param['username'] = implode('', $username);
+            $param['entry_time'] = strtotime($param['entry_time']);
+            $param['nickname'] = $param['name'];
+            $pinyin = new Pinyin();
+            $username = $pinyin->name($param['name'], PINYIN_UMLAUT_V);
+            $param['username'] = implode('', $username);
             if (!empty($param['id']) && $param['id'] > 0) {
                 try {
                     validate(AdminCheck::class)->scene('edit')->check($param);
@@ -118,10 +76,10 @@ class Admin extends BaseController
                 // 启动事务
                 Db::startTrans();
                 try {
-					$count = Db::name('Admin')->where([['username','=',$param['username']],['id','<>',$param['id']]])->count();
-					if ($count > 0) {
-						$param['username'] = implode('', $username) . $count;
-					}
+                    $count = Db::name('Admin')->where([['username', '=', $param['username']], ['id', '<>', $param['id']]])->count();
+                    if ($count > 0) {
+                        $param['username'] = implode('', $username) . $count;
+                    }
                     Db::name('Admin')->where(['id' => $param['id']])->strict(false)->field(true)->update($param);
                     if (!isset($param['thumb']) || $param['thumb'] == '') {
                         $char = mb_substr($param['name'], 0, 1, 'utf-8');
@@ -145,10 +103,10 @@ class Admin extends BaseController
                     // 验证失败 输出错误信息
                     return to_assign(1, $e->getError());
                 }
-				$count = Db::name('Admin')->where('username', $param['username'])->count();
-				if ($count > 0) {
-					$param['username'] = implode('', $username) . $count;
-				}
+                $count = Db::name('Admin')->where('username', $param['username'])->count();
+                if ($count > 0) {
+                    $param['username'] = implode('', $username) . $count;
+                }
                 $param['salt'] = set_salt(20);
                 $param['pwd'] = set_password($param['reg_pwd'], $param['salt']);
                 // 启动事务
@@ -169,7 +127,45 @@ class Admin extends BaseController
                 }
             }
             return to_assign();
+        } else {
+            $id = isset($param['id']) ? $param['id'] : 0;
+            $department = set_recursion(get_department());
+            $position = Db::name('Position')->where('status', '>=', 0)->order('create_time asc')->select();
+            if ($id > 0) {
+                $detail = get_admin($id);
+                View::assign('detail', $detail);
+            } else {
+                //初始化密码
+                $reg_pwd = set_salt(6);
+                View::assign('reg_pwd', $reg_pwd);
+            }
+            View::assign('department', $department);
+            View::assign('position', $position);
+            View::assign('id', $id);
+            return view();
         }
+    }
+    //生成头像
+    public function to_avatars($char)
+    {
+        $defaultData = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
+            'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'S', 'Y', 'Z',
+            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+            '零', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖', '拾',
+            '一', '二', '三', '四', '五', '六', '七', '八', '九', '十');
+        if (isset($char)) {
+            $Char = $char;
+        } else {
+            $Char = $defaultData[mt_rand(0, count($defaultData) - 1)];
+        }
+        $OutputSize = min(512, empty($_GET['size']) ? 36 : intval($_GET['size']));
+
+        $Avatar = new MDAvatars($Char, 256, 1);
+        $avatar_name = '/avatars/avatar_256_' . set_salt(10) . time() . '.png';
+        $path = get_config('filesystem.disks.public.url') . $avatar_name;
+        $res = $Avatar->Save('.' . $path, 256);
+        $Avatar->Free();
+        return $path;
     }
 
     //查看

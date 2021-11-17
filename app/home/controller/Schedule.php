@@ -29,6 +29,7 @@ class Schedule extends BaseController
                 ->alias('s')
                 ->join('Department d', 's.did = d.id', 'LEFT')
                 ->where($where)
+                ->order('id desc')
                 ->paginate($rows, false, ['query' => $param]);
             return table_assign(0, '', $content);
         } else {
@@ -58,6 +59,7 @@ class Schedule extends BaseController
             }
         } else {
             $id = isset($param['id']) ? $param['id'] : 0;
+            $did = isset($param['did']) ? $param['did'] : 0;
             $department = set_recursion(get_department());
             if ($id > 0) {
                 $detail = Db::name('ScheduleCate')->where(['id' => $id])->find();
@@ -65,6 +67,7 @@ class Schedule extends BaseController
             }
             View::assign('department', $department);
             View::assign('id', $id);
+            View::assign('did', $did);
             return view();
         }
     }
