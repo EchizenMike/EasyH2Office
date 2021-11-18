@@ -139,7 +139,7 @@ INSERT INTO `oa_admin_menu` VALUES (21, 2, '发票主体设置', 'home/invoice/s
 INSERT INTO `oa_admin_menu` VALUES (22, 3, '部门架构', 'home/department/index', '', 1, 0, 0);
 INSERT INTO `oa_admin_menu` VALUES (23, 3, '岗位职称', 'home/position/index', '', 1, 0, 0);
 INSERT INTO `oa_admin_menu` VALUES (24, 3, '企业员工', 'home/admin/index', '', 1, 0, 0);
-INSERT INTO `oa_admin_menu` VALUES (25, 3, '人事调动', 'home/personnel/chage', '', 1, 0, 0);
+INSERT INTO `oa_admin_menu` VALUES (25, 3, '人事调动', 'home/personnel/change', '', 1, 0, 0);
 INSERT INTO `oa_admin_menu` VALUES (26, 3, '离职档案', 'home/personnel/leave', '', 1, 0, 0);
 
 INSERT INTO `oa_admin_menu` VALUES (27, 4, '收件箱', 'home/mail/inbox', '', 1, 0, 0);
@@ -154,10 +154,10 @@ INSERT INTO `oa_admin_menu` VALUES (33, 6, '知识类别', 'home/article/cate', 
 INSERT INTO `oa_admin_menu` VALUES (34, 6, '共享知识', 'home/article/index', '', 1, 0, 0);
 INSERT INTO `oa_admin_menu` VALUES (35, 6, '个人知识', 'home/article/list', '', 1, 0, 0);
 
-INSERT INTO `oa_admin_menu` VALUES (36, 7, '工作计划', 'home/plan/list', '', 1, 0, 0);
-INSERT INTO `oa_admin_menu` VALUES (37, 7, '计划日历', 'home/plan/index', '', 1, 0, 0);
-INSERT INTO `oa_admin_menu` VALUES (38, 7, '工作记录', 'home/schedule/list', '', 1, 0, 0);
-INSERT INTO `oa_admin_menu` VALUES (39, 7, '工作日历', 'home/schedule/index', '', 1, 0, 0);
+INSERT INTO `oa_admin_menu` VALUES (36, 7, '工作计划', 'home/plan/index', '', 1, 0, 0);
+INSERT INTO `oa_admin_menu` VALUES (37, 7, '计划日历', 'home/plan/calendar', '', 1, 0, 0);
+INSERT INTO `oa_admin_menu` VALUES (38, 7, '工作记录', 'home/schedule/index', '', 1, 0, 0);
+INSERT INTO `oa_admin_menu` VALUES (39, 7, '工作日历', 'home/schedule/calendar', '', 1, 0, 0);
 
 INSERT INTO `oa_admin_menu` VALUES (40, 8, '报销管理', 'home/expense/index', '', 1, 0, 0);
 INSERT INTO `oa_admin_menu` VALUES (41, 8, '发票管理', 'home/invoice/index', '', 1, 0, 0);

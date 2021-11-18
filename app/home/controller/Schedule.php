@@ -87,8 +87,45 @@ class Schedule extends BaseController
         }
     }
 
+    function index() {
+        if (request()->isAjax()) {
+            $param = get_params();
+            //按时间检索
+            $start_time = isset($param['start_time']) ? strtotime($param['start_time']) : 0;
+            $end_time = isset($param['end_time']) ? strtotime($param['end_time']) : 0;
+            $where = [];
+            if ($start_time > 0 && $end_time > 0) {
+                $where[] = ['a.start_time', 'between', [$start_time, $end_time]];
+            }
+            if (!empty($param['keywords'])) {
+                $where[] = ['a.name', 'like', '%' . trim($param['keywords']) . '%'];
+            }
+            if (!empty($param['uid'])) {
+                $where[] = ['a.admin_id', '=', $param['uid']];
+            } else {
+                $where[] = ['a.admin_id', '=', $this->uid];
+            }
+            $where[] = ['a.status', '=', 1];
+            $rows = empty($param['limit']) ? get_config('app . page_size') : $param['limit'];
+            $schedule = ScheduleList::where($where)
+                ->field('a.*,u.name as create_admin')
+                ->alias('a')
+                ->join('admin u', 'u.id = a.admin_id', 'LEFT')
+                ->order('a.id desc')
+                ->paginate($rows, false)
+                ->each(function ($item, $key) {
+                    $item->start_time = empty($item->start_time) ? '' : date('Y-m-d H:i', $item->start_time);
+                    //$item->end_time = empty($item->end_time) ? '': date('Y-m-d H:i', $item->end_time);
+                    $item->end_time = empty($item->end_time) ? '' : date('H:i', $item->end_time);
+                });
+            return table_assign(0, '', $schedule);
+        } else {
+            return view();
+        }
+    }
+
     //工作记录
-    public function index()
+    public function calendar()
     {
         if (request()->isAjax()) {
             $param = get_params();
@@ -155,45 +192,8 @@ class Schedule extends BaseController
         }
     }
 
-    function list() {
-        if (request()->isAjax()) {
-            $param = get_params();
-            //按时间检索
-            $start_time = isset($param['start_time']) ? strtotime($param['start_time']) : 0;
-            $end_time = isset($param['end_time']) ? strtotime($param['end_time']) : 0;
-            $where = [];
-            if ($start_time > 0 && $end_time > 0) {
-                $where[] = ['a.start_time', 'between', [$start_time, $end_time]];
-            }
-            if (!empty($param['keywords'])) {
-                $where[] = ['a.name', 'like', '%' . trim($param['keywords']) . '%'];
-            }
-            if (!empty($param['uid'])) {
-                $where[] = ['a.admin_id', '=', $param['uid']];
-            } else {
-                $where[] = ['a.admin_id', '=', $this->uid];
-            }
-            $where[] = ['a.status', '=', 1];
-            $rows = empty($param['limit']) ? get_config('app . page_size') : $param['limit'];
-            $schedule = ScheduleList::where($where)
-                ->field('a.*,u.name as create_admin')
-                ->alias('a')
-                ->join('admin u', 'u.id = a.admin_id', 'LEFT')
-                ->order('a.id desc')
-                ->paginate($rows, false)
-                ->each(function ($item, $key) {
-                    $item->start_time = empty($item->start_time) ? '' : date('Y-m-d H:i', $item->start_time);
-                    //$item->end_time = empty($item->end_time) ? '': date('Y-m-d H:i', $item->end_time);
-                    $item->end_time = empty($item->end_time) ? '' : date('H:i', $item->end_time);
-                });
-            return table_assign(0, '', $schedule);
-        } else {
-            return view();
-        }
-    }
-
     //保存日志数据
-    public function save()
+    public function add()
     {
         $param = get_params();
         $admin_id = $this->uid;
