@@ -11,10 +11,10 @@ namespace app\home;
 
 use think\App;
 use think\exception\HttpResponseException;
-use think\facade\Request;
 use think\facade\Cache;
-use think\facade\Session;
 use think\facade\Db;
+use think\facade\Request;
+use think\facade\Session;
 use think\facade\View;
 
 /**
@@ -53,12 +53,12 @@ abstract class BaseController
      */
     public function __construct(App $app)
     {
-		$this->module = strtolower(app('http')->getName());
+        $this->module = strtolower(app('http')->getName());
         $this->app = $app;
         $this->request = $this->app->request;
-		$this->controller = strtolower($this->request->controller());
-		$this->action = strtolower($this->request->action());
-		$this->uid=0;
+        $this->controller = strtolower($this->request->controller());
+        $this->action = strtolower($this->request->action());
+        $this->uid = 0;
         // 控制器初始化
         $this->initialize();
     }
@@ -69,40 +69,38 @@ abstract class BaseController
         $this->checkLogin();
         $this->param = $this->request->param();
     }
-	
-	/**
-	*验证用户登录
-    */
+
+    /**
+     *验证用户登录
+     */
     protected function checkLogin()
     {
-        if ($this->controller !== 'login' && $this->controller !=='captcha' ) {
+        if ($this->controller !== 'login' && $this->controller !== 'captcha') {
             $session_admin = get_config('app.session_admin');
             if (!Session::has($session_admin)) {
                 if ($this->request->isAjax()) {
                     return to_assign(404, '请先登录');
                 } else {
-                   	redirect('/home/login/index.html')->send();
+                    redirect('/home/login/index.html')->send();
                     exit;
                 }
+            } else {
+                $this->uid = Session::get($session_admin)['id'];
+                View::assign('login_user', $this->uid);
+                // 验证用户访问权限
+                if ($this->controller !== 'index' && $this->controller !== 'api') {
+                    if (!$this->checkAuth()) {
+                        if ($this->request->isAjax()) {
+                            return to_assign(202, '你没有权限,请联系管理员或者人事部');
+                        } else {
+                            echo '<div style="text-align:center;color:red;margin-top:20%;">你没有权限,请联系管理员或者人事部</div>';exit;
+                        }
+                    }
+                }
             }
-			else{
-				$this->uid = Session::get($session_admin)['id'];
-				View::assign('login_user',$this->uid);
-				// 验证用户访问权限
-				if ($this->controller !== 'index' && $this->controller !== 'api') {
-					if (!$this->checkAuth()) {
-						if ($this->request->isAjax()) {
-							return to_assign(202, '你没有权限,请联系管理员或者人事部');
-						} else {
-							echo '<div style="text-align:center;color:red;margin-top:20%;">你没有权限,请联系管理员或者人事部</div>';exit;
-						}
-					}
-				}
-			}
         }
-	}
-	
-	
+    }
+
     /**
      * 验证用户访问权限
      * @DateTime 2020-12-21
@@ -113,20 +111,20 @@ abstract class BaseController
     protected function checkAuth()
     {
         //Cache::delete('RulesSrc' . $uid);
-		$uid = $this->uid;
+        $uid = $this->uid;
         if (!Cache::get('RulesSrc' . $uid) || !Cache::get('RulesSrc0')) {
             //用户所在权限组及所拥有的权限
             // 执行查询
-			$groups = [];
-			$position_id=Db::name('Admin')->where('id',$uid)->value('position_id');
-			$groups = Db::name('PositionGroup')
-				->alias('a')
-				->join("AdminGroup g", "a.group_id=g.id", 'LEFT')
-				->where([['a.pid','=',$position_id],['g.status','=',1]])
-				->select()
-				->toArray();
-			//保存用户所属用户组设置的所有权限规则id
-            $ids = []; 
+            $groups = [];
+            $position_id = Db::name('Admin')->where('id', $uid)->value('position_id');
+            $groups = Db::name('PositionGroup')
+                ->alias('a')
+                ->join("AdminGroup g", "a.group_id=g.id", 'LEFT')
+                ->where([['a.pid', '=', $position_id], ['g.status', '=', 1]])
+                ->select()
+                ->toArray();
+            //保存用户所属用户组设置的所有权限规则id
+            $ids = [];
             foreach ($groups as $g) {
                 $ids = array_merge($ids, explode(',', trim($g['rules'], ',')));
             }
@@ -151,14 +149,14 @@ abstract class BaseController
             $auth_list_all = Cache::get('RulesSrc0');
             $auth_list = Cache::get('RulesSrc' . $uid);
         }
-        $pathUrl = $this->module. '/' .$this->controller . '/' . $this->action;
+        $pathUrl = $this->module . '/' . $this->controller . '/' . $this->action;
         if (!in_array($pathUrl, $auth_list)) {
             return false;
         } else {
             return true;
         }
     }
-	
+
     //
     // 以下为新增，为了使用旧版的 success error redirect 跳转  start
     //

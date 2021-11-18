@@ -19,13 +19,19 @@
 	<table class="layui-hide" id="test" lay-filter="test"></table>
 </div>
 
+<script type="text/html" id="status">
+	<i class="layui-icon {{#  if(d.status == 1){ }}layui-icon-ok{{#  } else { }}layui-icon-close{{#  } }}"></i>
+</script>
+<script type="text/html" id="is_share">
+	<i class="layui-icon {{#  if(d.is_share == 1){ }}layui-icon-ok{{#  } else { }}layui-icon-close{{#  } }}"></i>
+</script>
 <script type="text/html" id="toolbarDemo">
 <div class="layui-btn-container">
    <span class="layui-btn layui-btn-normal layui-btn-sm" title="添加文章" lay-event="add">+ 添加文章</span>
 </div>
 </script>
 <script type="text/html" id="barDemo">
-<div class="layui-btn-group"><span class="layui-btn layui-btn-normal layui-btn-xs" lay-event="view">查看</span></div>
+<div class="layui-btn-group"><span class="layui-btn layui-btn-normal layui-btn-xs" lay-event="view">查看</span><span class="layui-btn layui-btn-xs" lay-event="edit">编辑</span><span class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</span></div>
 </script>
 {/block}
 <!-- /主体 -->
@@ -43,7 +49,7 @@
 			elem: '#test',
 			title: '文章列表',
 			toolbar: '#toolbarDemo',
-			url: "{:url('home/article/index')}", //数据接口
+			url: "{:url('home/article/list')}", //数据接口
 			page: true, //开启分页
 			limit: 20,
 			cols: [
@@ -72,20 +78,22 @@
 						align: 'center',
 						width: 80
 					}, {
-						field: 'user',
-						title: '发布人',
+						field: 'status',
+						title: '状态',
+						toolbar: '#status',
+						align: 'center',
+						width: 66
+					}, {
+						field: 'is_home',
+						title: '是否共享',
+						toolbar: '#is_share',
 						align: 'center',
 						width: 80
-					}, {
-						field: 'department',
-						title: '部门',
-						align: 'center',
-						width: 100
 					}, {
 						field: 'right',
 						title: '操作',
 						toolbar: '#barDemo',
-						width: 60,
+						width: 130,
 						align: 'center'
 					}
 				]
@@ -105,6 +113,30 @@
 			if(obj.event === 'view'){
 				rightpage.open('/home/article/view?id='+data.id);
 				return;
+			}
+			if(obj.event === 'edit'){
+				rightpage.open('/home/article/add?id='+data.id);
+				return;
+			}
+			if (obj.event === 'del') {
+				layer.confirm('确定要删除吗?', {
+					icon: 3,
+					title: '提示'
+				}, function(index) {
+					$.ajax({
+						url: "{:url('home/article/delete')}",
+						data: {
+							id: data.id
+						},
+						success: function(e) {
+							layer.msg(e.msg);
+							if (e.code == 0) {
+								obj.del();
+							}
+						}
+					})
+					layer.close(index);
+				});
 			}
 		});
 

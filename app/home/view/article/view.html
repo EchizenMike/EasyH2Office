@@ -1,0 +1,56 @@
+{extend name="common/base"/}
+<!-- 主体 -->
+{block name="body"}
+<div class="body-content">
+	<h3 class="h3-title">文章详情</h3>
+	<table class="layui-table layui-table-form">
+		<tr>
+			<td class="layui-td-gray">文章标题</td>
+			<td colspan="3">{$detail.title}</td>
+			<td class="layui-td-gray">文章分类</td>
+			<td>
+				{volist name=":set_recursion(get_article_cate())" id="v"}
+					{eq name="$detail.article_cate_id" value="$v.id" }{$v.title}{/eq}
+				{/volist}
+			</td>
+		</tr>
+		<tr>
+			<td class="layui-td-gray">关键字</td>
+			<td colspan="3">{$detail.keyword_names}</td>
+			<td class="layui-td-gray">阅读量</td>
+			<td>{$detail.read}</td>
+		</tr>
+		<tr>
+			<td class="layui-td-gray">发布时间</td>
+			<td>{$detail.create_time | date='Y-m-d H:i:s'}</td>
+			<td class="layui-td-gray">发布人</td>
+			<td>{$detail.user}</td>
+			<td class="layui-td-gray">部门</td>
+			<td>{$detail.department}</td>
+		</tr>
+		{notempty name="$detail.origin_url"}
+		<tr>
+			<td class="layui-td-gray">来源链接</td>
+			<td colspan="5">{$detail.origin_url}</td>
+		</tr>
+		{/notempty}
+		<tr>
+			<td class="layui-td-gray" style="vertical-align:top;">文章内容</td>
+			<td colspan="5">{$detail.content|raw}</td>
+		</tr>
+	</table>
+</div>
+{/block}
+<!-- /主体 -->
+
+<!-- 脚本 -->
+{block name="script"}
+<script>
+function init(layui) {
+
+}
+
+</script>
+{include file="common/layui" base='base' extend="[]" callback="init" /}
+{/block}
+<!-- /脚本 -->

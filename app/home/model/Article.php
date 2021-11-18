@@ -22,13 +22,15 @@ class Article extends Model
         $keywrod_array = \think\facade\Db::name('ArticleKeywords')
             ->field('i.aid,i.keywords_id,k.title')
             ->alias('i')
-            ->join('keywords k', 'k.id = i.keywords_id', 'LEFT')
+            ->join('Keywords k', 'k.id = i.keywords_id', 'LEFT')
             ->order('i.create_time asc')
             ->where(array('i.aid' => $id, 'k.status' => 1))
             ->select()->toArray();
 
         $article['keyword_ids'] = implode(",", array_column($keywrod_array, 'keywords_id'));
         $article['keyword_names'] = implode(',', array_column($keywrod_array, 'title'));
+        $article['user'] = \think\facade\Db::name('Admin')->where(['id' => $article['uid']])->value('name');
+        $article['department'] = \think\facade\Db::name('Department')->where(['id' => $article['did']])->value('title');
         return $article;
     }
 
