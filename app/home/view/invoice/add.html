@@ -10,15 +10,15 @@
 <!-- 主体 -->
 {block name="body"}
 <form class="layui-form body-content">
-	<h3 class="h3-title">开票信息</h3>
+	<h3 class="h3-title">申请开票</h3>
 	{if condition="($id == 0)"}
 	<table class="layui-table">
 		<tr>
 			<td class="layui-td-gray">开票金额<span style="color: red">*</span></td>
 			<td>
-				<input type="text" class="layui-input" name="amount" lay-verify="required" placeholder="请输入开票金额" lay-reqText="请输入开票金额" value="">	
+				<input type="text" class="layui-input" name="amount" lay-verify="required|number" placeholder="请输入开票金额" lay-reqText="请输入开票金额" value="">	
 			</td>
-			<td class="layui-td-gray2">开票类型<span style="color: red">*</span></td>
+			<td class="layui-td-gray">开票类型<span style="color: red">*</span></td>
 			<td>
 			<select name="invoice_type" lay-verify="required"  lay-reqText="请选择开票类型">
 				<option value="">请选择开票类型</option>
@@ -26,20 +26,20 @@
 				<option value="2">增值税普通发票</option>
 			  </select>
 			</td>
-			<td class="layui-td-gray2">发票审核人<span style="color: red">*</span></td>
+			<td class="layui-td-gray">开票主体<span style="color: red">*</span></td>
 			<td>
-			<select name="invoice_type" lay-verify="required"  lay-reqText="请选择开票类型">
-				<option value="">请选择开票类型</option>
-				<option value="1">增值税专用发票</option>
-				<option value="2">增值税普通发票</option>
-			  </select>
+				<select name="invoice_type" lay-verify="required"  lay-reqText="请选择开票类型">
+					<option value="">请选择开票主体</option>
+					<option value="1">勾股科技有限公司</option>
+					<option value="2">勾股信息有限公司</option>
+				</select>
 			</td>
 		</tr>
 		<tr>
-			<td class="layui-td-gray2">抬头类型<span style="color: red">*</span></td>
+			<td class="layui-td-gray">抬头类型<span style="color: red">*</span></td>
 			<td>
-				<input type="radio" name="status" value="1" title="企业" checked>
-				<input type="radio" name="status" value="2" title="个人">
+				<input type="radio" name="type" value="1" title="企业" checked>
+				<input type="radio" name="type" value="2" title="个人">
 			</td>
 			<td class="layui-td-gray">开票抬头<span style="color: red">*</span></td>
 			<td><input type="text" name="invoice_title" class="layui-input" value=""></td>
@@ -49,20 +49,32 @@
 		<tr>
 			<td class="layui-td-gray2">纳税人识别号<span style="color: red">*</span></td>
 			<td><input type="text" name="invoice_tax" class="layui-input" value=""></td>
-			<td class="layui-td-gray2">开户行<span style="color: red">*</span></td>
+			<td class="layui-td-gray">开户行<span style="color: red">*</span></td>
 			<td><input type="text" name="invoice_bank" class="layui-input" value=""></td>
-			<td class="layui-td-gray2">银行账号<span style="color: red">*</span></td>
-			<td><input type="text" name="invoice_banking" class="layui-input" value=""></td>
+			<td class="layui-td-gray">银行账号<span style="color: red">*</span></td>
+			<td><input type="text" name="invoice_account" class="layui-input" value=""></td>
 		</tr>
 		<tr>
 			<td class="layui-td-gray2">银行营业网点<span style="color: red">*</span></td>
 			<td><input type="text" name="invoice_banking" class="layui-input" value=""></td>
-			<td class="layui-td-gray2">地址<span style="color: red">*</span></td>
+			<td class="layui-td-gray">地址<span style="color: red">*</span></td>
 			<td colspan="3"><input type="text" name="invoice_address" class="layui-input" value=""></td>
 		</tr>
 		<tr>
-			<td class="layui-td-gray2">备注信息</td>
+			<td class="layui-td-gray">备注信息</td>
 			<td colspan="5"><textarea name="remark" placeholder="请输入备注信息" class="layui-textarea"></textarea></td>
+		</tr>
+		<tr>
+			<td class="layui-td-gray">发票审核人<span style="color: red">*</span></td>
+			<td colspan="5">
+				<div style="width:300px;">
+				    <select name="invoice_type" lay-verify="required"  lay-reqText="请选择开票类型">
+						<option value="">请选择发票审核人</option>
+						<option value="1">张三丰</option>
+						<option value="2">赵武六</option>
+					</select>
+				</div>
+			</td>
 		</tr>
 	</table>
 	{else/}
@@ -70,9 +82,9 @@
 		<tr>
 			<td class="layui-td-gray">开票金额<span style="color: red">*</span></td>
 			<td>
-				<input type="text" class="layui-input" name="amount" lay-verify="required" placeholder="请输入开票金额" lay-reqText="请输入开票金额" value="">	
+				<input type="text" class="layui-input" name="amount" lay-verify="required|number" placeholder="请输入开票金额" lay-reqText="请输入开票金额" value="">	
 			</td>
-			<td class="layui-td-gray2">开票类型<span style="color: red">*</span></td>
+			<td class="layui-td-gray">开票类型<span style="color: red">*</span></td>
 			<td>
 			<select name="invoice_type" lay-verify="required"  lay-reqText="请选择开票类型">
 				<option value="">请选择开票类型</option>
@@ -80,20 +92,20 @@
 				<option value="2">增值税普通发票</option>
 			  </select>
 			</td>
-			<td class="layui-td-gray2">发票审核人<span style="color: red">*</span></td>
+			<td class="layui-td-gray">开票主体<span style="color: red">*</span></td>
 			<td>
-			<select name="invoice_type" lay-verify="required"  lay-reqText="请选择开票类型">
-				<option value="">请选择开票类型</option>
-				<option value="1">增值税专用发票</option>
-				<option value="2">增值税普通发票</option>
-			  </select>
+				<select name="invoice_type" lay-verify="required"  lay-reqText="请选择开票类型">
+					<option value="">请选择开票主体</option>
+					<option value="1">勾股科技有限公司</option>
+					<option value="2">勾股信息有限公司</option>
+				</select>
 			</td>
 		</tr>
 		<tr>
-			<td class="layui-td-gray2">抬头类型<span style="color: red">*</span></td>
+			<td class="layui-td-gray">抬头类型<span style="color: red">*</span></td>
 			<td>
-				<input type="radio" name="status" value="1" title="企业" checked>
-				<input type="radio" name="status" value="2" title="个人">
+				<input type="radio" name="type" value="1" title="企业" checked>
+				<input type="radio" name="type" value="2" title="个人">
 			</td>
 			<td class="layui-td-gray">开票抬头<span style="color: red">*</span></td>
 			<td><input type="text" name="invoice_title" class="layui-input" value=""></td>
@@ -103,21 +115,34 @@
 		<tr>
 			<td class="layui-td-gray2">纳税人识别号<span style="color: red">*</span></td>
 			<td><input type="text" name="invoice_tax" class="layui-input" value=""></td>
-			<td class="layui-td-gray2">开户行<span style="color: red">*</span></td>
+			<td class="layui-td-gray">开户行<span style="color: red">*</span></td>
 			<td><input type="text" name="invoice_bank" class="layui-input" value=""></td>
-			<td class="layui-td-gray2">银行账号<span style="color: red">*</span></td>
-			<td><input type="text" name="invoice_banking" class="layui-input" value=""></td>
+			<td class="layui-td-gray">银行账号<span style="color: red">*</span></td>
+			<td><input type="text" name="invoice_account" class="layui-input" value=""></td>
 		</tr>
 		<tr>
 			<td class="layui-td-gray2">银行营业网点<span style="color: red">*</span></td>
 			<td><input type="text" name="invoice_banking" class="layui-input" value=""></td>
-			<td class="layui-td-gray2">地址<span style="color: red">*</span></td>
+			<td class="layui-td-gray">地址<span style="color: red">*</span></td>
 			<td colspan="3"><input type="text" name="invoice_address" class="layui-input" value=""></td>
 		</tr>
 		<tr>
-			<td class="layui-td-gray2">备注信息</td>
+			<td class="layui-td-gray">备注信息</td>
 			<td colspan="5"><textarea name="remark" placeholder="请输入备注信息" class="layui-textarea"></textarea></td>
 		</tr>
+		<tr>
+			<td class="layui-td-gray">发票审核人<span style="color: red">*</span></td>
+			<td colspan="5">
+				<div style="width:300px;">
+				    <select name="invoice_type" lay-verify="required"  lay-reqText="请选择开票类型">
+						<option value="">请选择发票审核人</option>
+						<option value="1">张三丰</option>
+						<option value="2">赵武六</option>
+					</select>
+				</div>
+			</td>
+		</tr>
+	</table>
 	{/if}
 
 	<div class="layui-form-item" style="padding-top:10px;">
