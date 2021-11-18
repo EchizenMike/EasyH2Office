@@ -132,155 +132,133 @@ class Expense extends BaseController
         }
     }
 
-    function list() {
-        if (request()->isAjax()) {
-            $param = get_params();
-            $where = [];
-            $where[] = ['admin_id', '=', $this->uid];
-            $where[] = ['status', '=', 1];
-            //按时间检索
-            $start_time = isset($param['start_time']) ? strtotime(urldecode($param['start_time'])) : 0;
-            $end_time = isset($param['end_time']) ? strtotime(urldecode($param['end_time'])) : 0;
-            if ($start_time > 0 && $end_time > 0) {
-                $where[] = ['expense_time', 'between', [$start_time, $end_time]];
-            }
-            $expense = $this->get_list($param, $where);
-            return table_assign(0, '', $expense);
-        } else {
-            return view();
-        }
-    }
-
     //添加
     public function add()
     {
-        $id = empty(get_params('id')) ? 0 : get_params('id');
-        if ($id > 0) {
-            $expense = $this->detail($id);
-            View::assign('expense', $expense);
-        }
-        $expense_cate = Db::name('ExpenseCate')->where(['status' => 1])->select()->toArray();
-        View::assign('user', get_admin($this->uid));
-        View::assign('expense_cate', $expense_cate);
-        View::assign('id', $id);
-        return view();
-    }
-
-    //提交添加
-    public function post_submit()
-    {
-        $admin_id = $this->uid;
-        $dbRes = false;
         $param = get_params();
-        $param['admin_id'] = $admin_id;
-        $param['income_month'] = isset($param['income_month']) ? strtotime(urldecode($param['income_month'])) : 0;
-        $param['expense_time'] = isset($param['expense_time']) ? strtotime(urldecode($param['expense_time'])) : 0;
-        $param['check_status'] = 1;
-        if (!empty($param['id']) && $param['id'] > 0) {
-            try {
-                validate(ExpenseCheck::class)->scene('edit')->check($param);
-            } catch (ValidateException $e) {
-                // 验证失败 输出错误信息
-                return to_assign(1, $e->getError());
-            }
-            $param['update_time'] = time();
-            Db::startTrans();
-            try {
-                $res = ExpenseList::where('id', $param['id'])->strict(false)->field(true)->update($param);
-                if ($res !== false) {
-                    $exid = $param['id'];
-                    //相关内容多个数组;
-                    $amountData = isset($param['amount']) ? $param['amount'] : '';
-                    $remarksData = isset($param['remarks']) ? $param['remarks'] : '';
-                    $cateData = isset($param['cate_id']) ? $param['cate_id'] : '';
-                    $idData = isset($param['expense_id']) ? $param['expense_id'] : 0;
-                    if ($amountData) {
-                        foreach ($amountData as $key => $value) {
-                            if (!$value) {
-                                continue;
+        if (request()->isAjax()) {
+            $dbRes = false; 
+            $admin_id = $this->uid;       
+            $param['admin_id'] = $admin_id;
+            $param['income_month'] = isset($param['income_month']) ? strtotime(urldecode($param['income_month'])) : 0;
+            $param['expense_time'] = isset($param['expense_time']) ? strtotime(urldecode($param['expense_time'])) : 0;
+            $param['check_status'] = 1;
+            if (!empty($param['id']) && $param['id'] > 0) {
+                try {
+                    validate(ExpenseCheck::class)->scene('edit')->check($param);
+                } catch (ValidateException $e) {
+                    // 验证失败 输出错误信息
+                    return to_assign(1, $e->getError());
+                }
+                $param['update_time'] = time();
+                Db::startTrans();
+                try {
+                    $res = ExpenseList::where('id', $param['id'])->strict(false)->field(true)->update($param);
+                    if ($res !== false) {
+                        $exid = $param['id'];
+                        //相关内容多个数组;
+                        $amountData = isset($param['amount']) ? $param['amount'] : '';
+                        $remarksData = isset($param['remarks']) ? $param['remarks'] : '';
+                        $cateData = isset($param['cate_id']) ? $param['cate_id'] : '';
+                        $idData = isset($param['expense_id']) ? $param['expense_id'] : 0;
+                        if ($amountData) {
+                            foreach ($amountData as $key => $value) {
+                                if (!$value) {
+                                    continue;
+                                }    
+                                $data = [];
+                                $data['id'] = $idData[$key];
+                                $data['exid'] = $exid;
+                                $data['admin_id'] = $admin_id;
+                                $data['amount'] = $amountData[$key];
+                                $data['cate_id'] = $cateData[$key];
+                                $data['remarks'] = $remarksData[$key];
+                                if ($data['amount'] == 0) {
+                                    Db::rollback();
+                                    return to_assign(1, '第' . ($key + 1) . '条报销金额不能为零');
+                                }
+                                if ($data['id'] > 0) {
+                                    $data['update_time'] = time();
+                                    $resa = Db::name('ExpenseInterfix')->strict(false)->field(true)->update($data);
+                                } else {
+                                    $data['create_time'] = time();
+                                    $eid = Db::name('ExpenseInterfix')->strict(false)->field(true)->insertGetId($data);
+                                }
                             }
-
-                            $data = [];
-                            $data['id'] = $idData[$key];
-                            $data['exid'] = $exid;
-                            $data['admin_id'] = $admin_id;
-                            $data['amount'] = $amountData[$key];
-                            $data['cate_id'] = $cateData[$key];
-                            $data['remarks'] = $remarksData[$key];
-                            if ($data['amount'] == 0) {
-                                Db::rollback();
-                                return to_assign(1, '第' . ($key + 1) . '条报销金额不能为零');
-                            }
-                            if ($data['id'] > 0) {
-                                $data['update_time'] = time();
-                                $resa = Db::name('ExpenseInterfix')->strict(false)->field(true)->update($data);
-                            } else {
+                        }
+                        add_log('edit', $exid, $param);
+                        Db::commit();
+                        $dbRes = true;
+                    } else {
+                        Db::rollback();
+                    }
+                } catch (\Exception $e) { ##这里参数不能删除($e：错误信息)
+                Db::rollback();
+                    return to_assign(1, $e->getMessage());
+                }
+            } else {
+                try {
+                    validate(ExpenseCheck::class)->scene('add')->check($param);
+                } catch (ValidateException $e) {
+                    // 验证失败 输出错误信息
+                    return to_assign(1, $e->getError());
+                }
+                $param['create_time'] = time();
+                Db::startTrans();
+                try {
+                    $exid = ExpenseList::strict(false)->field(true)->insertGetId($param);
+                    if ($exid) {
+                        //相关内容多个数组;
+                        $amountData = isset($param['amount']) ? $param['amount'] : '';
+                        $remarksData = isset($param['remarks']) ? $param['remarks'] : '';
+                        $cateData = isset($param['cate_id']) ? $param['cate_id'] : '';
+                        if ($amountData) {
+                            foreach ($amountData as $key => $value) {
+                                if (!$value) {
+                                    continue;
+                                }
+                                $data = [];
+                                $data['exid'] = $exid;
+                                $data['admin_id'] = $admin_id;
+                                $data['amount'] = $amountData[$key];
+                                $data['cate_id'] = $cateData[$key];
+                                $data['remarks'] = $remarksData[$key];
                                 $data['create_time'] = time();
+                                if ($data['amount'] == 0) {
+                                    Db::rollback();
+                                    return to_assign(1, '第' . ($key + 1) . '条报销金额不能为零');
+                                }
                                 $eid = Db::name('ExpenseInterfix')->strict(false)->field(true)->insertGetId($data);
                             }
                         }
+                        add_log('add', $exid, $param);
+                        Db::commit();
+                        $dbRes = true;
+                    } else {
+                        Db::rollback();
                     }
-                    add_log('edit', $exid, $param);
-                    Db::commit();
-                    $dbRes = true;
-                } else {
-                    Db::rollback();
+                } catch (\Exception $e) { ##这里参数不能删除($e：错误信息)
+                Db::rollback();
+                    return to_assign(1, $e->getMessage());
                 }
-            } catch (\Exception $e) { ##这里参数不能删除($e：错误信息)
-            Db::rollback();
-                return to_assign(1, $e->getMessage());
             }
-        } else {
-            try {
-                validate(ExpenseCheck::class)->scene('add')->check($param);
-            } catch (ValidateException $e) {
-                // 验证失败 输出错误信息
-                return to_assign(1, $e->getError());
-            }
-            $param['create_time'] = time();
-            Db::startTrans();
-            try {
-                $exid = ExpenseList::strict(false)->field(true)->insertGetId($param);
-                if ($exid) {
-                    //相关内容多个数组;
-                    $amountData = isset($param['amount']) ? $param['amount'] : '';
-                    $remarksData = isset($param['remarks']) ? $param['remarks'] : '';
-                    $cateData = isset($param['cate_id']) ? $param['cate_id'] : '';
-                    if ($amountData) {
-                        foreach ($amountData as $key => $value) {
-                            if (!$value) {
-                                continue;
-                            }
-
-                            $data = [];
-                            $data['exid'] = $exid;
-                            $data['admin_id'] = $admin_id;
-                            $data['amount'] = $amountData[$key];
-                            $data['cate_id'] = $cateData[$key];
-                            $data['remarks'] = $remarksData[$key];
-                            $data['create_time'] = time();
-                            if ($data['amount'] == 0) {
-                                Db::rollback();
-                                return to_assign(1, '第' . ($key + 1) . '条报销金额不能为零');
-                            }
-                            $eid = Db::name('ExpenseInterfix')->strict(false)->field(true)->insertGetId($data);
-                        }
-                    }
-                    add_log('add', $exid, $param);
-                    Db::commit();
-                    $dbRes = true;
-                } else {
-                    Db::rollback();
-                }
-            } catch (\Exception $e) { ##这里参数不能删除($e：错误信息)
-            Db::rollback();
-                return to_assign(1, $e->getMessage());
+            if ($dbRes == true) {
+                return to_assign();
+            } else {
+                return to_assign(1, '保存失败');
             }
         }
-        if ($dbRes == true) {
-            return to_assign();
-        } else {
-            return to_assign(1, '保存失败');
+        else{
+            $id = isset($param['id']) ? $param['id'] : 0;
+            if ($id > 0) {
+                $expense = $this->detail($id);
+                View::assign('expense', $expense);
+            }
+            $expense_cate = Db::name('ExpenseCate')->where(['status' => 1])->select()->toArray();
+            View::assign('user', get_admin($this->uid));
+            View::assign('expense_cate', $expense_cate);
+            View::assign('id', $id);
+            return view();
         }
     }
 

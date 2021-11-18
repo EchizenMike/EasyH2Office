@@ -10,10 +10,9 @@ declare (strict_types = 1);
 namespace app\home\controller;
 
 use app\home\BaseController;
-use app\home\model\Invoice as InvoiceList;
 use app\home\model\InvoiceSubject;
+use app\home\model\Invoice as InvoiceList;
 use app\home\validate\InvoiceSubjectCheck;
-use app\home\validate\InvoiceCheck;
 use think\exception\ValidateException;
 use think\facade\Db;
 use think\facade\View;
@@ -67,7 +66,7 @@ class Invoice extends BaseController
     public function get_list($param = [], $where = [])
     {
         $rows = empty($param['limit']) ? get_config('app . page_size') : $param['limit'];
-        $expense = ExpenseList::where($where)
+        $expense = InvoiceList::where($where)
             ->order('create_time asc')
             ->paginate($rows, false, ['query' => $param])
             ->each(function ($item, $key) {
@@ -80,37 +79,28 @@ class Invoice extends BaseController
                 $item->check_time = empty($item->check_time) ? '-' : date('Y-m-d H:i', $item->check_time);
                 $item->pay_name = Db::name('Admin')->where(['id' => $item->pay_admin_id])->value('name');
                 $item->pay_time = empty($item->pay_time) ? '-' : date('Y-m-d H:i', $item->pay_time);
-                $item->amount = Db::name('ExpenseInterfix')->where(['exid' => $item->id])->sum('amount');
             });
         return $expense;
     }
 
     public function detail($id = 0)
     {
-        $expense = Db::name('Expense')->where(['id' => $id])->find();
-        if ($expense) {
-            $expense['income_month'] = empty($expense['income_month']) ? '-' : date('Y-m', $expense['income_month']);
-            $expense['expense_time'] = empty($expense['expense_time']) ? '-' : date('Y-m-d', $expense['expense_time']);
-            $expense['user_name'] = Db::name('Admin')->where(['id' => $expense['uid']])->value('name');
-            $expense['department'] = Db::name('Department')->where(['id' => $expense['did']])->value('title');
-            $expense['amount'] = Db::name('ExpenseInterfix')->where(['exid' => $expense['id']])->sum('amount');
-
-            if ($expense['check_admin_id'] > 0) {
-                $expense['check_admin'] = Db::name('Admin')->where(['id' => $expense['check_admin_id']])->value('name');
-                $expense['check_time'] = date('Y-m-d H:i:s', $expense['check_time']);
+        $invoice = Db::name('Invoice')->where(['id' => $id])->find();
+        if ($invoice) {
+            $invoice['income_month'] = empty($invoice['income_month']) ? '-' : date('Y-m', $invoice['income_month']);
+            $invoice['expense_time'] = empty($invoice['expense_time']) ? '-' : date('Y-m-d', $invoice['expense_time']);
+            $invoice['user_name'] = Db::name('Admin')->where(['id' => $invoice['uid']])->value('name');
+            $invoice['department'] = Db::name('Department')->where(['id' => $invoice['did']])->value('title');
+            if ($invoice['check_admin_id'] > 0) {
+                $invoice['check_admin'] = Db::name('Admin')->where(['id' => $invoice['check_admin_id']])->value('name');
+                $invoice['check_time'] = date('Y-m-d H:i:s', $invoice['check_time']);
             }
-            if ($expense['pay_admin_id'] > 0) {
-                $expense['pay_admin'] = Db::name('Admin')->where(['id' => $expense['pay_admin_id']])->value('name');
-                $expense['pay_time'] = date('Y-m-d H:i:s', $expense['pay_time']);
+            if ($invoice['pay_admin_id'] > 0) {
+                $invoice['pay_admin'] = Db::name('Admin')->where(['id' => $invoice['pay_admin_id']])->value('name');
+                $invoice['pay_time'] = date('Y-m-d H:i:s', $invoice['pay_time']);
             }
-            $expense['list'] = Db::name('ExpenseInterfix')
-                ->field('a.*,c.title as cate_title')
-                ->alias('a')
-                ->join('ExpenseCate c', 'a.cate_id = c.id')
-                ->where(['a.exid' => $expense['id']])
-                ->select();
         }
-        return $expense;
+        return $invoice;
     }
 
     public function index()
@@ -125,27 +115,8 @@ class Invoice extends BaseController
             if ($start_time > 0 && $end_time > 0) {
                 $where[] = ['expense_time', 'between', [$start_time, $end_time]];
             }
-            $expense = $this->get_list($param, $where);
-            return table_assign(0, '', $expense);
-        } else {
-            return view();
-        }
-    }
-
-    function list() {
-        if (request()->isAjax()) {
-            $param = get_params();
-            $where = [];
-            $where[] = ['admin_id', '=', $this->uid];
-            $where[] = ['status', '=', 1];
-            //按时间检索
-            $start_time = isset($param['start_time']) ? strtotime(urldecode($param['start_time'])) : 0;
-            $end_time = isset($param['end_time']) ? strtotime(urldecode($param['end_time'])) : 0;
-            if ($start_time > 0 && $end_time > 0) {
-                $where[] = ['expense_time', 'between', [$start_time, $end_time]];
-            }
-            $expense = $this->get_list($param, $where);
-            return table_assign(0, '', $expense);
+            $invoice = $this->get_list($param, $where);
+            return table_assign(0, '', $invoice);
         } else {
             return view();
         }
@@ -156,12 +127,10 @@ class Invoice extends BaseController
     {
         $id = empty(get_params('id')) ? 0 : get_params('id');
         if ($id > 0) {
-            $expense = $this->detail($id);
-            View::assign('expense', $expense);
+            $detail = $this->detail($id);
+            View::assign('detail', $detail);
         }
-        $expense_cate = Db::name('ExpenseCate')->where(['status' => 1])->select()->toArray();
         View::assign('user', get_admin($this->uid));
-        View::assign('expense_cate', $expense_cate);
         View::assign('id', $id);
         return view();
     }
@@ -288,9 +257,9 @@ class Invoice extends BaseController
     public function view()
     {
         $id = empty(get_params('id')) ? 0 : get_params('id');
-        $expense = $this->detail($id);
+        $detail = $this->detail($id);
         View::assign('uid', $this->uid);
-        View::assign('expense', $expense);
+        View::assign('detail', $detail);
         return view();
     }
 
@@ -308,7 +277,7 @@ class Invoice extends BaseController
         $data['status'] = '-1';
         $data['id'] = $id;
         $data['update_time'] = time();
-        if (Db::name('expense')->update($data) !== false) {
+        if (Db::name('Invoice')->update($data) !== false) {
             add_log('delete', $id);
             return to_assign(0, "删除成功");
         } else {
@@ -328,17 +297,12 @@ class Invoice extends BaseController
                 $param['pay_admin_id'] = $this->uid;
                 $param['pay_time'] = time();
             }
-            $res = ExpenseList::where('id', $param['id'])->strict(false)->field(true)->update($param);
+            $res = InvoiceList::where('id', $param['id'])->strict(false)->field(true)->update($param);
             if ($res !== false) {
                 return to_assign();
             } else {
                 return to_assign(1, "操作失败");
             }
-        } else {
-            $expense = $this->detail($param['id']);
-            View::assign('expense', $expense);
-            View::assign('uid', $this->uid);
-            return view();
         }
     }
 }

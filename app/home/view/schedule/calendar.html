@@ -310,10 +310,10 @@
 			eventLimit: false, // 当事件过多时是否显示更多按钮
 			selectable: true,
 			select: function(arg) {
-				detail=default_detail;
-				
-				var startTime=arg.start.getFullYear()+'-'+toNumer(arg.start.getMonth()+1)+'-'+toNumer(arg.start.getDate())+' '+toNumer(arg.start.getHours())+':'+toNumer(arg.start.getMinutes());
-				var endTime=arg.end.getFullYear()+'-'+toNumer(arg.end.getMonth()+1)+'-'+toNumer(arg.end.getDate())+' '+toNumer(arg.end.getHours())+':'+toNumer(arg.end.getMinutes());
+				console.log(arg);
+				detail={};				
+				var startTime=arg.start.getFullYear()+'-'+(arg.start.getMonth()+1)+'-'+(arg.start.getDate())+' '+(arg.start.getHours())+':'+(arg.start.getMinutes());
+				var endTime=arg.end.getFullYear()+'-'+(arg.end.getMonth()+1)+'-'+(arg.end.getDate())+' '+(arg.end.getHours())+':'+(arg.end.getMinutes());
 			
 				detail['start_time']=startTime;
 				detail['end_time']= endTime;
@@ -328,7 +328,7 @@
 			events: function(fetchInfo, successCallback, failureCallback ){
 				$.ajax({
 					type:"POST",
-					url:"/home/schedule/index",
+					url:"/home/schedule/calendar",
 					dataType:"json",
 					data:{start:fetchInfo.startStr,end:fetchInfo.endStr,uid:uid},
 					success:function(result){

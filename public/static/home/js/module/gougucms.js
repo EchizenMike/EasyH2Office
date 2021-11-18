@@ -172,7 +172,7 @@ layui.define(['element'], function(exports){
 		layer.tips('正在清理系统缓存...',this);
 		that.attr('class','clearThis');
 		$.ajax({
-		  	url:"/admin/api/cache_clear",
+		  	url:"/home/api/cache_clear",
 		  	success:function(res){
 		  		if(res.code == 1){
 		  			setTimeout(function(){

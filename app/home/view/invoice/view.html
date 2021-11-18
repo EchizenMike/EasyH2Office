@@ -8,7 +8,7 @@
 <!-- 主体 -->
 {block name="body"}
 <div class="body-content">
-	<h3>报销详情</h3>
+	<h3 class="h3-title">报销详情</h3>
 	<table class="layui-table">
 		<tr>
 			<td class="layui-td-gray2">报销凭证编号</td>
@@ -78,11 +78,19 @@
 			</td>
 		</tr>
 	</table>
-	{if condition="($expense.check_status == 0) AND ($uid == $expense.admin_id)"}
 	<div class="layui-form-item" style="padding-top:10px;">
+		<input name="id" id="id" type="hidden" value="{$expense.id}">
+		{if condition="($expense.check_status == 0) AND ($uid == $expense.admin_id)"}
 		<a class="layui-btn" href="/home/expense/add?id={$expense.id}">编辑</a>
+		{/if}
+		{if condition="($expense.check_status == 1) AND ($uid == $expense.check_admin_id)"}
+		<button class="layui-btn layui-btn-danger" lay-event="checkno">审核不通过</button>
+		<button class="layui-btn" lay-event="checkok">审核通过</button>
+		{/if}
+		{if condition="($expense.check_status == 2) AND ($uid == $expense.pay_admin_id)"}
+		<button class="layui-btn" lay-event="payed">打款确认</button>
+		{/eq}
 	</div>
-	{/if}
 </div>
 {/block}
 <!-- /主体 -->
@@ -90,10 +98,69 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
-function init(layui) {
+function init(layui) {	
+	$('.body-content').on('click', '[lay-event="checkok"]', function () {
+	    var id=$('#id').val();
+		layer.confirm('确定审核通过该报销申请?', {icon: 3, title:'提示'}, function(index){
+			$.ajax({
+				url:"{:url('home/expense/check')}",
+				data:{id:id,check_status:2},
+				success:function(res){
+					layer.msg(res.msg);
+					if(res.code==0){
+						window.setTimeout(function(){
+							window.location.reload();
+						},1200)	
+					}
+				}
+			})
+		})
+		return false;
+	});
 
+	$('.body-content').on('click', '[lay-event="checkno"]', function () {
+		var id=$('#id').val();
+		layer.confirm('确定拒绝该提现申请?', {icon: 3, title:'提示'}, function(index){
+			layer.prompt({title: '拒绝的理由', formType: 3,value :''}, function(text, index){
+				if(text ==''){
+					layer.msg('请输入拒绝的理由');
+					return false;
+				}
+				$.ajax({
+					url:"{:url('home/expense/check')}",
+					data:{id:id,check_status:0,check_remark:text},
+					success:function(res){
+						layer.msg(res.msg);
+						if(res.code==0){
+							window.setTimeout(function(){
+								parent.location.reload();
+							},1200)							
+						}
+					}
+				})
+				layer.closeAll();
+			})
+		})
+	})
+	
+	$('.body-content').on('click', '[lay-event="payed"]', function () {
+		var id=$('#id').val();
+		layer.confirm('确定已经打款?', {icon: 3, title:'提示'}, function(index){
+			$.ajax({
+				url:"{:url('home/expense/check')}",
+				data:{id:id,check_status:3},
+				success:function(res){
+					layer.msg(res.msg);
+					if(res.code==0){
+						window.setTimeout(function(){
+							parent.location.reload();
+						},1200)	
+					}
+				}
+			})
+		})
+	})
 }
-
 </script>
 {include file="common/layui" base='base' extend="[]" callback="init" /}
 {/block}
