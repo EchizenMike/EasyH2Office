@@ -6,9 +6,9 @@
  */
 /**
 ======================
-*模块数据获取公共文件
+ *模块数据获取公共文件
 ======================
-*/
+ */
 use think\facade\Cache;
 use think\facade\Db;
 
@@ -21,7 +21,7 @@ function set_cache($key, $value, $date = 86400)
 //读取缓存
 function get_cache($key)
 {
-   return Cache::get($key);
+    return Cache::get($key);
 }
 
 //清空缓存
@@ -31,26 +31,25 @@ function clear_cache($key)
 }
 
 //读取系统配置
-function get_system_config($name,$key='')
+function get_system_config($name, $key = '')
 {
-    $config=[];
+    $config = [];
     if (get_cache('system_config' . $name)) {
         $config = get_cache('system_config' . $name);
     } else {
-        $conf = Db::name('config')->where('name',$name)->find();
-        if($conf['content']){
+        $conf = Db::name('config')->where('name', $name)->find();
+        if ($conf['content']) {
             $config = unserialize($conf['content']);
         }
         set_cache('system_config' . $name, $config);
     }
-    if($key==''){
+    if ($key == '') {
         return $config;
+    } else {
+        if ($config[$key]) {
+            return $config[$key];
+        }
     }
-	else{
-		if($config[$key]){
-			return $config[$key];
-		}				
-	}
 }
 
 //获取指定管理员的信息
@@ -64,12 +63,12 @@ function get_admin($id)
 }
 
 //获取当前登录用户的信息
-function get_login_admin($key='')
+function get_login_admin($key = '')
 {
     $session_admin = get_config('app.session_admin');
     if (\think\facade\Session::has($session_admin)) {
         $gougu_admin = \think\facade\Session::get($session_admin);
-		$admin = get_admin($gougu_admin['id']);
+        $admin = get_admin($gougu_admin['id']);
         if (!empty($key)) {
             if (isset($admin[$key])) {
                 return $admin[$key];
@@ -94,14 +93,14 @@ function get_admin_menu()
 //读取权限节点列表
 function get_admin_rule()
 {
-    $rule = Db::name('AdminRule')->order('create_time asc')->select()->toArray();
+    $rule = Db::name('AdminRule')->order('id desc')->select()->toArray();
     return $rule;
 }
 
 //读取权限分组列表
 function get_admin_group()
 {
-    $group = Db::name('AdminGroup')->order('create_time asc')->select()->toArray();
+    $group = Db::name('AdminGroup')->order('id desc')->select()->toArray();
     return $group;
 }
 
@@ -117,7 +116,7 @@ function get_admin_group_info($id)
 //菜单父子关系排序，用于后台菜单
 function get_admin_menus()
 {
-	$admin = get_login_admin();
+    $admin = get_login_admin();
     if (get_cache('menu' . $admin['id'])) {
         $list = get_cache('menu' . $admin['id']);
     } else {
@@ -135,47 +134,65 @@ function get_admin_menus()
     return $list;
 }
 
-
 //读取部门列表
 function get_department()
 {
-    $department = Db::name('Department')->select()->toArray();
+    $department = Db::name('Department')->where(['status' => 1])->select()->toArray();
     return $department;
 }
 
 //获取某部门的子部门id
-function get_department_son($did = 0,$is_self=1)
+function get_department_son($did = 0, $is_self = 1)
 {
-	$department=get_department();
-	$department_list = get_data_node($department,$did);
-	$department_array = array_column($department_list,'id');
-	if($is_self == 1){
-		//包括自己在内
-		$department_array[]=$did;
-	}
-	return $department_array;
+    $department = get_department();
+    $department_list = get_data_node($department, $did);
+    $department_array = array_column($department_list, 'id');
+    if ($is_self == 1) {
+        //包括自己在内
+        $department_array[] = $did;
+    }
+    return $department_array;
 }
-
 
 //读取关键字列表
 function get_keywords()
 {
-    $keywords = Db::name('Keywords')->where(['status' => 1])->order('create_time asc')->select();
-    return $keywords;
+    $keywords = Db::name('Keywords')->where(['status' => 1])->order('id desc')->select()->toArray();
 }
 
 //读取公告分类列表
 function get_note_cate()
 {
-    $cate = Db::name('NoteCate')->order('create_time asc')->select()->toArray();
+    $cate = Db::name('NoteCate')->order('id desc')->select()->toArray();
     return $cate;
 }
 
 //读取知识分类列表
 function get_article_cate()
 {
-    $cate = Db::name('ArticleCate')->order('create_time asc')->select()->toArray();
+    $cate = Db::name('ArticleCate')->order('id desc')->select()->toArray();
     return $cate;
+}
+
+//读取开票主体
+function get_invoice_subject()
+{
+    $subject = Db::name('InvoiceSubject')->where(['status' => 1])->order('id desc')->select()->toArray();
+    return $subject;
+}
+
+//读取审核人
+function get_check_user($type=1)
+{
+    $user = Db::name('Check')
+    ->field('c.*,a.name as user')
+    ->alias('c')
+    ->join('admin a', 'a.id = c.uid', 'LEFT')
+    ->where(['c.type'=>$type,'c.status' => 1])
+    ->order('c.id desc')
+    ->select()
+    ->toArray();
+    return $user;
 }
 
 /**
@@ -206,13 +223,14 @@ function get_file($id)
  * 节点权限判断
  * @return bool
  */
-function check_auth($rule,$uid){
-	$auth_list = Cache::get('RulesSrc' . $uid);
+function check_auth($rule, $uid)
+{
+    $auth_list = Cache::get('RulesSrc' . $uid);
     if (!in_array($rule, $auth_list)) {
         return false;
     } else {
         return true;
-   }
+    }
 }
 /**
  * 员工操作日志
@@ -300,9 +318,9 @@ function send_email($to, $subject = '', $content = '')
     $mail->Host = $config['smtp'];
     //端口 - likely to be 25, 465 or 587
     $mail->Port = $config['smtp_port'];
-    if($mail->Port == '465'){
-        $mail->SMTPSecure = 'ssl';// 使用安全协议
-    }    
+    if ($mail->Port == '465') {
+        $mail->SMTPSecure = 'ssl'; // 使用安全协议
+    }
     //Whether to use SMTP authentication
     $mail->SMTPAuth = true;
     //发送邮箱
@@ -322,7 +340,7 @@ function send_email($to, $subject = '', $content = '')
         $mail->addAddress($to);
     }
 
-    $mail->isHTML(true);// send as HTML
+    $mail->isHTML(true); // send as HTML
     //标题
     $mail->Subject = $subject;
     //HTML内容转换
@@ -331,8 +349,8 @@ function send_email($to, $subject = '', $content = '')
     if ($status) {
         return true;
     } else {
-      //  echo "Mailer Error: ".$mail->ErrorInfo;// 输出错误信息
-      //  die;
+        //  echo "Mailer Error: ".$mail->ErrorInfo;// 输出错误信息
+        //  die;
         return false;
     }
 }

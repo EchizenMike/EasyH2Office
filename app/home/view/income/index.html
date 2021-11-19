@@ -1,0 +1,143 @@
+{extend name="common/base"/}
+<!-- 主体 -->
+{block name="body"}
+<div class="body-content">
+	<table class="layui-hide" id="test" lay-filter="test"></table>
+</div>
+{/block}
+<!-- /主体 -->
+
+<!-- 脚本 -->
+{block name="script"}
+<script>
+	function init(layui) {
+		var table = layui.table,
+			rightpage = layui.rightpage,
+			form = layui.form;
+
+		var tableIns = table.render({
+			elem: '#test',
+			title: '到账列表',
+			toolbar: '#toolbarDemo',
+			url: "{:url('home/income/index')}", //数据接口		
+			page: true, //开启分页
+			limit: 20,
+			cols: [
+				[
+					{
+						field: 'id',
+						title: 'ID号',
+						align: 'center',
+						width: 80
+					},{
+						field: 'status',
+						title: '到账状态',
+						align: 'center',
+						width: 100,
+						templet:function(d){
+							var html='<span style="color:#FF5722">未到账</span>';
+							if(d.invoice_status==4){
+								html='<span style="color:#009688">部分到账</span>';
+							}
+							else if(d.invoice_status==5){
+								html='<span style="color:#009688">全部到账</span>';
+							}
+							return html;
+						}
+					},{
+						field: 'enter_amount',
+						title: '到账金额(元)',
+						align: 'right',
+						width: 120,
+					}, {
+						field: 'invoice_title',
+						title: '发票抬头',
+						width: 240,
+					},{
+						field: 'amount',
+						title: '发票金额(元)',
+						align: 'right',
+						width: 120,
+					},{
+						field: 'invoice_type',
+						title: '开票类型',
+						align: 'center',
+						width: 90,
+						templet:function(d){
+							var html='-';
+							if(d.invoice_type==1){
+								html='<span style="color:#1E9FFF">普票</span>';
+							}
+							else if(d.invoice_type==2){
+								html='<span style="color:#5FB878">专票</span>';
+							}
+							return html;
+						}
+					},{
+						field: 'user',
+						title: '申请开票人',
+						align: 'center',
+						width: 100
+					},{
+						field: 'department',
+						title: '所属部门',
+						align: 'center',
+						width: 120
+					},{
+						field: 'create_time',
+						title: '申请时间',
+						align: 'center',
+						width: 150
+					},{
+						field: 'check_name',
+						title: '审核人',
+						align: 'center',
+						width: 90
+					},{
+						field: 'check_time',
+						title: '审核时间',
+						align: 'center',
+						width: 136
+					},{
+						field: 'pay_name',
+						title: '开票人',
+						align: 'center',
+						width: 90
+					},{
+						field: 'pay_time',
+						title: '开票时间',
+						align: 'center',
+						width: 136
+					},{
+						field: 'pay_time',
+						title: '发票号码',
+						align: 'center',
+						width: 136
+					}, {
+						field: 'right',
+						fixed: 'right',
+						title: '操作',
+						width: 60,
+						align: 'right',
+						templet:function(d){
+							var html='<span class="layui-btn layui-btn-normal layui-btn-xs" lay-event="view">详情</span>';
+							return html;
+						}
+					}
+				]
+			]
+		});
+
+		//监听行工具事件
+		table.on('tool(test)', function(obj) {
+			var data = obj.data;
+			if (obj.event === 'view') {
+				rightpage.open("/home/income/view?id="+data.id);
+				return;
+			}
+		});
+	}
+</script>
+{include file="common/layui" base='base' extend="['rightpage']" use="['table','form']" callback="init" /}
+{/block}
+<!-- /脚本 -->

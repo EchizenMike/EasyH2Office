@@ -5,19 +5,22 @@ use think\Validate;
 class InvoiceCheck extends Validate
 {
     protected $rule = [
-        'code'       => 'require',
-        'id'          => 'require',
-        'status'      => 'require'
+        'amount'           => 'require|float',
+        'invoice_type'     => 'require',
+        'invoice_subject'  => 'require',
+        'id'               => 'require'
     ];
 
     protected $message = [
-        'code.require'           => '报销凭证编号不能为空',
+        'amount.require'          => '开票金额不能为空',
+        'amount.number'           => '开票金额只能为数字',
         'id.require'              => '缺少更新条件',
-        'status.require'          => '状态为必选',
+        'invoice_type.require'    => '请选择开票类型',
+        'invoice_subject.require' => '请选择开票主体',
     ];
 
     protected $scene = [
-        'add'       => ['code'],
-        'edit'      => ['id', 'code']
+        'add'       => ['amount','invoice_type','invoice_subject'],
+        'edit'      => ['id', 'amount','invoice_type','invoice_subject']
     ];
 }

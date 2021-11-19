@@ -35,8 +35,8 @@
 						align: 'center',
 						width: 80
 					}, {
-						field: 'amount',
-						title: '客户名称',
+						field: 'invoice_title',
+						title: '开票抬头',
 						width: 240,
 					},{
 						field: 'amount',
@@ -46,10 +46,20 @@
 					},{
 						field: 'invoice_type',
 						title: '开票类型',
-						align: 'right',
+						align: 'center',
 						width: 90,
+						templet:function(d){
+							var html='-';
+							if(d.invoice_type==1){
+								html='<span style="color:#1E9FFF">普票</span>';
+							}
+							else if(d.invoice_type==2){
+								html='<span style="color:#5FB878">专票</span>';
+							}
+							return html;
+						}
 					},{
-						field: 'user_name',
+						field: 'user',
 						title: '申请人',
 						align: 'center',
 						width: 100
@@ -70,14 +80,23 @@
 						width: 120,
 						templet:function(d){
 							var html='<span style="color:#FF5722">审核不通过</span>';
-							if(d.check_status==1){
-								html='<span style="color:#393D49">报销审核中</span>';
+							if(d.invoice_status==1){
+								html='<span style="color:#393D49">审核中</span>';
 							}
-							else if(d.check_status==2){
-								html='<span style="color:#5FB878">审核通过</span>';
+							else if(d.invoice_status==2){
+								html='<span style="color:#5FB878">待开具</span>';
 							}
-							else if(d.check_status==3){
-								html='<span style="color:#009688">已打款</span>';
+							else if(d.invoice_status==3){
+								html='<span style="color:#009688">已开具</span>';
+							}
+							else if(d.invoice_status==4){
+								html='<span style="color:#009688">部分到账</span>';
+							}
+							else if(d.invoice_status==5){
+								html='<span style="color:#009688">全部到账</span>';
+							}
+							else if(d.invoice_status==10){
+								html='<span style="color:#FF5722">已作废</span>';
 							}
 							return html;
 						}
@@ -142,7 +161,7 @@
 		table.on('tool(test)', function(obj) {
 			var data = obj.data;
 			if (obj.event === 'view') {
-				rightpage.open("/home/invoice/check?id="+data.id);
+				rightpage.open("/home/invoice/view?id="+data.id);
 				return;
 			}
 			if (obj.event === 'edit') {
@@ -150,7 +169,7 @@
 				return;
 			}
 			if (obj.event === 'del') {
-				layer.confirm('确定删除该报销记录吗？', {
+				layer.confirm('确定删除该发票记录吗？', {
 					icon: 3,
 					title: '提示'
 				}, function(index) {

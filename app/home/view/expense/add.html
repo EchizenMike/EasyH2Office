@@ -28,15 +28,22 @@
 			</td>
 		</tr>
 		<tr>
-			<td class="layui-td-gray2">报销人<span style="color: red">*</span></td>
+			<td class="layui-td-gray">报销审核人<span style="color: red">*</span></td>
 			<td>
-				<input type="text" name="name" placeholder="请选择报销人" readonly class="layui-input" lay-verify="required" lay-reqText="请选择报销人" value="{$user.name}" readonly>
-				<input type="hidden" name="uid" autocomplete="off" class="layui-input" value="{$user.id}">
+				<select name="check_admin_id" lay-verify="required"  lay-reqText="请选择报销审核人">
+					<option value="">请选择报销审核人</option>
+					{volist name=":get_check_user(1)" id="vo"}
+						<option value="{$vo.uid}">{$vo.user}</option>
+					{/volist}
+				</select>
+			</td>
+			<td class="layui-td-gray2">报销人</td>
+			<td>
+				{$user.name}
 			</td>
 			<td class="layui-td-gray">报销部门</td>
 			<td>
-				<input type="text" name="department" readonly class="layui-input" value="{$user.department}" readonly>		
-				<input type="hidden" name="did" autocomplete="off" class="layui-input" value="{$user.did}">					
+				{$user.department}			
 			</td>
 		</tr>
 		<tr>
@@ -86,16 +93,19 @@
 			</td>
 		</tr>
 		<tr>
-			<td class="layui-td-gray2">报销人<span style="color: red">*</span></td>
+			<td class="layui-td-gray">报销审核人<span style="color: red">*</span></td>
 			<td>
-				<input type="text" name="name" placeholder="请选择报销人" readonly class="layui-input" lay-verify="required" lay-reqText="请选择报销人" value="{$expense.user_name}" readonly>
-				<input type="hidden" name="uid" autocomplete="off" class="layui-input" value="{$expense.uid}">
+				<select name="check_admin_id" lay-verify="required"  lay-reqText="请选择报销审核人">
+					<option value="">请选择报销审核人</option>
+					{volist name=":get_check_user(1)" id="vo"}
+						<option value="{$vo.uid}" {eq name="$vo.uid" value="$expense.check_admin_id"}selected{/eq}>{$vo.user}</option>
+					{/volist}
+				</select>
 			</td>
+			<td class="layui-td-gray2">报销人</td>
+			<td>{$expense.user_name}</td>
 			<td class="layui-td-gray">报销部门</td>
-			<td>
-				<input type="text" name="department" readonly class="layui-input" value="{$expense.department}" readonly>		
-				<input type="hidden" name="did" autocomplete="off" class="layui-input" value="{$expense.did}">					
-			</td>
+			<td>{$expense.department}</td>
 		</tr>
 		<tr>
 			<td class="layui-td-gray2">报销选项<span style="color: red">*</span></td>
@@ -155,7 +165,6 @@
 		var form = layui.form
 		  ,layer = layui.layer
 		  ,table = layui.table
-		  ,employeepicker = layui.employeepicker//很重要
 		  ,laydate = layui.laydate;
 
 		laydate.render({
@@ -169,26 +178,6 @@
 			max:0,
 			showBottom: false
 		});
-		  
-		// 选择员工
-		$('.body-content').on('click','[name="name"]',function(){
-			var that = $(this);
-			var names = that.val(), ids = $('[name="uid"]').val();
-			employeepicker.init({
-				ids: ids,
-				names: names,
-				type: 0,
-				department_url:"{:url('/home/api/get_department_tree')}",
-				employee_url:"{:url('/home/api/get_employee')}",
-				callback: function (ids, names, dids, departments) {
-					$('[name="uid"]').val(ids);
-					$('[name="did"]').val(dids);
-					$('[name="department"]').val(departments);
-					that.val(names);
-				}
-			})
-		}); 
-
 		//监听提交
 		form.on('submit(webform)', function(data){
 		  	var interfix = $('.more_interfix');
@@ -254,23 +243,6 @@
 			else{
 				that.parents(".more_interfix").remove();
 			}
-		});
-		
-		//报销成员修改
-		$('[name="nickname"]').on('click',function() {
-			var that=$(this);
-			var ids=that.next().val(),names=that.val();
-			employeepicker.init({
-				ids:ids,
-				names:names,
-				type:0,
-				callback:function(ids,names,dids,departments){
-					that.val(names);
-					that.next().val(ids);
-					$('[name="department"]').val(departments);
-					$('[name="did"]').val(dids);
-				}
-			});
 		});
 
 	}

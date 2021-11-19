@@ -73,9 +73,8 @@ class Expense extends BaseController
             ->each(function ($item, $key) {
                 $item->income_month = empty($item->income_month) ? '-' : date('Y-m', $item->income_month);
                 $item->expense_time = empty($item->expense_time) ? '-' : date('Y-m-d', $item->expense_time);
-                $item->user_name = Db::name('Admin')->where(['id' => $item->uid])->value('name');
                 $item->admin_name = Db::name('Admin')->where(['id' => $item->admin_id])->value('name');
-                $item->department = Db::name('Department')->where(['id' => $item->did])->value('title');
+                $item->department = Db::name('Department')->where(['id' => $item->admin_id])->value('title');
                 $item->check_name = Db::name('Admin')->where(['id' => $item->check_admin_id])->value('name');
                 $item->check_time = empty($item->check_time) ? '-' : date('Y-m-d H:i', $item->check_time);
                 $item->pay_name = Db::name('Admin')->where(['id' => $item->pay_admin_id])->value('name');
@@ -91,7 +90,7 @@ class Expense extends BaseController
         if ($expense) {
             $expense['income_month'] = empty($expense['income_month']) ? '-' : date('Y-m', $expense['income_month']);
             $expense['expense_time'] = empty($expense['expense_time']) ? '-' : date('Y-m-d', $expense['expense_time']);
-            $expense['user_name'] = Db::name('Admin')->where(['id' => $expense['uid']])->value('name');
+            $expense['user_name'] = Db::name('Admin')->where(['id' => $expense['admin_id']])->value('name');
             $expense['department'] = Db::name('Department')->where(['id' => $expense['did']])->value('title');
             $expense['amount'] = Db::name('ExpenseInterfix')->where(['exid' => $expense['id']])->sum('amount');
 
@@ -139,7 +138,6 @@ class Expense extends BaseController
         if (request()->isAjax()) {
             $dbRes = false; 
             $admin_id = $this->uid;       
-            $param['admin_id'] = $admin_id;
             $param['income_month'] = isset($param['income_month']) ? strtotime(urldecode($param['income_month'])) : 0;
             $param['expense_time'] = isset($param['expense_time']) ? strtotime(urldecode($param['expense_time'])) : 0;
             $param['check_status'] = 1;
@@ -204,6 +202,8 @@ class Expense extends BaseController
                     return to_assign(1, $e->getError());
                 }
                 $param['create_time'] = time();
+                $param['admin_id'] = $admin_id;
+                $param['did'] = get_login_admin('did');
                 Db::startTrans();
                 try {
                     $exid = ExpenseList::strict(false)->field(true)->insertGetId($param);

@@ -13,6 +13,7 @@ use app\home\BaseController;
 use app\home\model\InvoiceSubject;
 use app\home\model\Invoice as InvoiceList;
 use app\home\validate\InvoiceSubjectCheck;
+use app\home\validate\InvoiceCheck;
 use think\exception\ValidateException;
 use think\facade\Db;
 use think\facade\View;
@@ -70,15 +71,12 @@ class Invoice extends BaseController
             ->order('create_time asc')
             ->paginate($rows, false, ['query' => $param])
             ->each(function ($item, $key) {
-                $item->income_month = empty($item->income_month) ? '-' : date('Y-m', $item->income_month);
-                $item->expense_time = empty($item->expense_time) ? '-' : date('Y-m-d', $item->expense_time);
-                $item->user_name = Db::name('Admin')->where(['id' => $item->uid])->value('name');
-                $item->admin_name = Db::name('Admin')->where(['id' => $item->admin_id])->value('name');
+                $item->user = Db::name('Admin')->where(['id' => $item->admin_id])->value('name');
                 $item->department = Db::name('Department')->where(['id' => $item->did])->value('title');
                 $item->check_name = Db::name('Admin')->where(['id' => $item->check_admin_id])->value('name');
                 $item->check_time = empty($item->check_time) ? '-' : date('Y-m-d H:i', $item->check_time);
-                $item->pay_name = Db::name('Admin')->where(['id' => $item->pay_admin_id])->value('name');
-                $item->pay_time = empty($item->pay_time) ? '-' : date('Y-m-d H:i', $item->pay_time);
+                $item->open_name = Db::name('Admin')->where(['id' => $item->open_admin_id])->value('name');
+                $item->open_time = empty($item->open_time) ? '-' : date('Y-m-d H:i', $item->open_time);
             });
         return $expense;
     }
@@ -87,17 +85,15 @@ class Invoice extends BaseController
     {
         $invoice = Db::name('Invoice')->where(['id' => $id])->find();
         if ($invoice) {
-            $invoice['income_month'] = empty($invoice['income_month']) ? '-' : date('Y-m', $invoice['income_month']);
-            $invoice['expense_time'] = empty($invoice['expense_time']) ? '-' : date('Y-m-d', $invoice['expense_time']);
-            $invoice['user_name'] = Db::name('Admin')->where(['id' => $invoice['uid']])->value('name');
+            $invoice['user'] = Db::name('Admin')->where(['id' => $invoice['admin_id']])->value('name');
             $invoice['department'] = Db::name('Department')->where(['id' => $invoice['did']])->value('title');
             if ($invoice['check_admin_id'] > 0) {
                 $invoice['check_admin'] = Db::name('Admin')->where(['id' => $invoice['check_admin_id']])->value('name');
-                $invoice['check_time'] = date('Y-m-d H:i:s', $invoice['check_time']);
+                $invoice['check_time'] = empty($invoice['check_time']) ? '0' : date('Y-m-d H:i', $invoice['check_time']);
             }
-            if ($invoice['pay_admin_id'] > 0) {
-                $invoice['pay_admin'] = Db::name('Admin')->where(['id' => $invoice['pay_admin_id']])->value('name');
-                $invoice['pay_time'] = date('Y-m-d H:i:s', $invoice['pay_time']);
+            if ($invoice['open_admin_id'] > 0) {
+                $invoice['open_name'] = Db::name('Admin')->where(['id' => $invoice['open_admin_id']])->value('name');
+                $invoice['open_time'] = empty($invoice['open_time']) ? '0' : date('Y-m-d H:i', $invoice['open_time']);
             }
         }
         return $invoice;
@@ -122,134 +118,70 @@ class Invoice extends BaseController
         }
     }
 
-    //添加
+    //添加&编辑
     public function add()
     {
-        $id = empty(get_params('id')) ? 0 : get_params('id');
-        if ($id > 0) {
-            $detail = $this->detail($id);
-            View::assign('detail', $detail);
-        }
-        View::assign('user', get_admin($this->uid));
-        View::assign('id', $id);
-        return view();
-    }
-
-    //提交添加
-    public function post_submit()
-    {
-        $admin_id = $this->uid;
-        $dbRes = false;
         $param = get_params();
-        $param['admin_id'] = $admin_id;
-        $param['income_month'] = isset($param['income_month']) ? strtotime(urldecode($param['income_month'])) : 0;
-        $param['expense_time'] = isset($param['expense_time']) ? strtotime(urldecode($param['expense_time'])) : 0;
-        $param['check_status'] = 1;
-        if (!empty($param['id']) && $param['id'] > 0) {
-            try {
-                validate(ExpenseCheck::class)->scene('edit')->check($param);
-            } catch (ValidateException $e) {
-                // 验证失败 输出错误信息
-                return to_assign(1, $e->getError());
+        if (request()->isAjax()) {
+            //人类型判断
+            if ($param['type'] == 2) {
+                if (!$param['invoice_tax']) {
+                    return to_assign(1, '纳税人识别号不能为空');
+                }
+                if (!$param['invoice_bank']) {
+                    return to_assign(1, '开户银行不能为空');
+                }
+                if (!$param['invoice_account']) {
+                    return to_assign(1, '银行账号不能为空');
+                }
+                if (!$param['invoice_banking']) {
+                    return to_assign(1, '银行营业网点不能为空');
+                }
+                if (!$param['invoice_address']) {
+                    return to_assign(1, '银地址不能为空');
+                }
             }
-            $param['update_time'] = time();
-            Db::startTrans();
-            try {
-                $res = ExpenseList::where('id', $param['id'])->strict(false)->field(true)->update($param);
+            if (!empty($param['id']) && $param['id'] > 0) {
+                try {
+                    validate(InvoiceCheck::class)->scene('edit')->check($param);
+                } catch (ValidateException $e) {
+                    // 验证失败 输出错误信息
+                    return to_assign(1, $e->getError());
+                }
+                $param['update_time'] = time();
+                $res = InvoiceList::where('id', $param['id'])->strict(false)->field(true)->update($param);
                 if ($res !== false) {
-                    $exid = $param['id'];
-                    //相关内容多个数组;
-                    $amountData = isset($param['amount']) ? $param['amount'] : '';
-                    $remarksData = isset($param['remarks']) ? $param['remarks'] : '';
-                    $cateData = isset($param['cate_id']) ? $param['cate_id'] : '';
-                    $idData = isset($param['expense_id']) ? $param['expense_id'] : 0;
-                    if ($amountData) {
-                        foreach ($amountData as $key => $value) {
-                            if (!$value) {
-                                continue;
-                            }
-
-                            $data = [];
-                            $data['id'] = $idData[$key];
-                            $data['exid'] = $exid;
-                            $data['admin_id'] = $admin_id;
-                            $data['amount'] = $amountData[$key];
-                            $data['cate_id'] = $cateData[$key];
-                            $data['remarks'] = $remarksData[$key];
-                            if ($data['amount'] == 0) {
-                                Db::rollback();
-                                return to_assign(1, '第' . ($key + 1) . '条报销金额不能为零');
-                            }
-                            if ($data['id'] > 0) {
-                                $data['update_time'] = time();
-                                $resa = Db::name('ExpenseInterfix')->strict(false)->field(true)->update($data);
-                            } else {
-                                $data['create_time'] = time();
-                                $eid = Db::name('ExpenseInterfix')->strict(false)->field(true)->insertGetId($data);
-                            }
-                        }
-                    }
-                    add_log('edit', $exid, $param);
-                    Db::commit();
-                    $dbRes = true;
+                    return to_assign();   
                 } else {
-                    Db::rollback();
+                    return to_assign(1, '操作失败');
                 }
-            } catch (\Exception $e) { ##这里参数不能删除($e：错误信息)
-            Db::rollback();
-                return to_assign(1, $e->getMessage());
-            }
-        } else {
-            try {
-                validate(ExpenseCheck::class)->scene('add')->check($param);
-            } catch (ValidateException $e) {
-                // 验证失败 输出错误信息
-                return to_assign(1, $e->getError());
-            }
-            $param['create_time'] = time();
-            Db::startTrans();
-            try {
-                $exid = ExpenseList::strict(false)->field(true)->insertGetId($param);
+            } else {
+                try {
+                    validate(InvoiceCheck::class)->scene('add')->check($param);
+                } catch (ValidateException $e) {
+                    // 验证失败 输出错误信息
+                    return to_assign(1, $e->getError());
+                }
+                $admin_id = $this->uid;
+                $param['admin_id'] = $admin_id;
+                $param['did'] = get_login_admin('did');
+                $param['create_time'] = time();
+                $exid = InvoiceList::strict(false)->field(true)->insertGetId($param);
                 if ($exid) {
-                    //相关内容多个数组;
-                    $amountData = isset($param['amount']) ? $param['amount'] : '';
-                    $remarksData = isset($param['remarks']) ? $param['remarks'] : '';
-                    $cateData = isset($param['cate_id']) ? $param['cate_id'] : '';
-                    if ($amountData) {
-                        foreach ($amountData as $key => $value) {
-                            if (!$value) {
-                                continue;
-                            }
-
-                            $data = [];
-                            $data['exid'] = $exid;
-                            $data['admin_id'] = $admin_id;
-                            $data['amount'] = $amountData[$key];
-                            $data['cate_id'] = $cateData[$key];
-                            $data['remarks'] = $remarksData[$key];
-                            $data['create_time'] = time();
-                            if ($data['amount'] == 0) {
-                                Db::rollback();
-                                return to_assign(1, '第' . ($key + 1) . '条报销金额不能为零');
-                            }
-                            $eid = Db::name('ExpenseInterfix')->strict(false)->field(true)->insertGetId($data);
-                        }
-                    }
-                    add_log('add', $exid, $param);
-                    Db::commit();
-                    $dbRes = true;
+                    return to_assign();   
                 } else {
-                    Db::rollback();
+                     return to_assign(1, '操作失败');
                 }
-            } catch (\Exception $e) { ##这里参数不能删除($e：错误信息)
-            Db::rollback();
-                return to_assign(1, $e->getMessage());
             }
-        }
-        if ($dbRes == true) {
-            return to_assign();
         } else {
-            return to_assign(1, '保存失败');
+            $id = isset($param['id']) ? $param['id'] : 0;
+            if ($id > 0) {
+                $detail = $this->detail($id);
+                View::assign('detail', $detail);
+            }
+            View::assign('user', get_admin($this->uid));
+            View::assign('id', $id);
+            return view();
         }
     }
 
@@ -267,12 +199,12 @@ class Invoice extends BaseController
     public function delete()
     {
         $id = get_params("id");
-        $expense = $this->detail($id);
-        if ($expense['check_status'] == 2) {
-            return to_assign(1, "已审核的报销记录不能删除");
+        $detail = $this->detail($id);
+        if ($detail['invoice_status'] == 2) {
+            return to_assign(1, "已审核的发票不能删除");
         }
-        if ($expense['check_status'] == 3) {
-            return to_assign(1, "已打款的报销记录不能删除");
+        if ($detail['invoice_status'] == 3) {
+            return to_assign(1, "已开具的发票不能删除");
         }
         $data['status'] = '-1';
         $data['id'] = $id;
@@ -289,13 +221,14 @@ class Invoice extends BaseController
     {
         $param = get_params();
         if (request()->isAjax()) {
-            if ($param['check_status'] == 2 || $param['check_status'] == 0) {
-                $param['check_admin_id'] = $this->uid;
+            if ($param['invoice_status'] == 2 || $param['invoice_status'] == 0) {
                 $param['check_time'] = time();
             }
             if ($param['check_status'] == 3) {
-                $param['pay_admin_id'] = $this->uid;
-                $param['pay_time'] = time();
+                $param['open_time'] = time();
+            }
+            if ($param['check_status'] == 10) {
+                $param['update_time'] = time();
             }
             $res = InvoiceList::where('id', $param['id'])->strict(false)->field(true)->update($param);
             if ($res !== false) {

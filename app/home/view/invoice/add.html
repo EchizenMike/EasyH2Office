@@ -28,33 +28,34 @@
 			</td>
 			<td class="layui-td-gray">开票主体<span style="color: red">*</span></td>
 			<td>
-				<select name="invoice_type" lay-verify="required"  lay-reqText="请选择开票类型">
+				<select name="invoice_subject" lay-verify="required"  lay-reqText="请选择开票主体">
 					<option value="">请选择开票主体</option>
-					<option value="1">勾股科技有限公司</option>
-					<option value="2">勾股信息有限公司</option>
+					{volist name=":get_invoice_subject()" id="vo"}
+					<option value="{$vo.id}">{$vo.title}</option>
+					{/volist}
 				</select>
 			</td>
 		</tr>
 		<tr>
 			<td class="layui-td-gray">抬头类型<span style="color: red">*</span></td>
 			<td>
-				<input type="radio" name="type" value="1" title="企业" checked>
-				<input type="radio" name="type" value="2" title="个人">
+				<input type="radio" name="type" lay-filter="type" value="1" title="企业" checked>
+				<input type="radio" name="type" lay-filter="type" value="2" title="个人">
 			</td>
 			<td class="layui-td-gray">开票抬头<span style="color: red">*</span></td>
-			<td><input type="text" name="invoice_title" class="layui-input" value=""></td>
+			<td><input type="text" name="invoice_title" class="layui-input" value="" lay-verify="required"  lay-reqText="请输入开票抬头"></td>
 			<td class="layui-td-gray">电话号码<span style="color: red">*</span></td>
-			<td><input type="text" name="invoice_phone" class="layui-input" value=""></td>
+			<td><input type="text" name="invoice_phone" class="layui-input" value="" lay-verify="required"  lay-reqText="请输入电话号码"></td>
 		</tr>
-		<tr>
+		<tr class="invoice-type">
 			<td class="layui-td-gray2">纳税人识别号<span style="color: red">*</span></td>
 			<td><input type="text" name="invoice_tax" class="layui-input" value=""></td>
 			<td class="layui-td-gray">开户行<span style="color: red">*</span></td>
 			<td><input type="text" name="invoice_bank" class="layui-input" value=""></td>
 			<td class="layui-td-gray">银行账号<span style="color: red">*</span></td>
-			<td><input type="text" name="invoice_account" class="layui-input" value=""></td>
+			<td><input type="text" name="invoice_account" class="layui-input" value="" lay-verify="number"></td>
 		</tr>
-		<tr>
+		<tr class="invoice-type">
 			<td class="layui-td-gray2">银行营业网点<span style="color: red">*</span></td>
 			<td><input type="text" name="invoice_banking" class="layui-input" value=""></td>
 			<td class="layui-td-gray">地址<span style="color: red">*</span></td>
@@ -68,10 +69,11 @@
 			<td class="layui-td-gray">发票审核人<span style="color: red">*</span></td>
 			<td colspan="5">
 				<div style="width:300px;">
-				    <select name="invoice_type" lay-verify="required"  lay-reqText="请选择开票类型">
+				    <select name="check_admin_id" lay-verify="required"  lay-reqText="请选择发票审核人">
 						<option value="">请选择发票审核人</option>
-						<option value="1">张三丰</option>
-						<option value="2">赵武六</option>
+						{volist name=":get_check_user(3)" id="vo"}
+							<option value="{$vo.uid}">{$vo.user}</option>
+						{/volist}
 					</select>
 				</div>
 			</td>
@@ -82,62 +84,64 @@
 		<tr>
 			<td class="layui-td-gray">开票金额<span style="color: red">*</span></td>
 			<td>
-				<input type="text" class="layui-input" name="amount" lay-verify="required|number" placeholder="请输入开票金额" lay-reqText="请输入开票金额" value="">	
+				<input type="text" class="layui-input" name="amount" lay-verify="required|number" placeholder="请输入开票金额" lay-reqText="请输入开票金额" value="{$detail.amount}">	
 			</td>
 			<td class="layui-td-gray">开票类型<span style="color: red">*</span></td>
 			<td>
-			<select name="invoice_type" lay-verify="required"  lay-reqText="请选择开票类型">
+			<select name="invoice_type" lay-verify="required" lay-reqText="请选择开票类型">
 				<option value="">请选择开票类型</option>
-				<option value="1">增值税专用发票</option>
-				<option value="2">增值税普通发票</option>
+				<option value="1" {eq name="$detail.invoice_type" value="1"}selected{/eq}>增值税专用发票</option>
+				<option value="2" {eq name="$detail.invoice_type" value="2"}selected{/eq}>增值税普通发票</option>
 			  </select>
 			</td>
 			<td class="layui-td-gray">开票主体<span style="color: red">*</span></td>
 			<td>
-				<select name="invoice_type" lay-verify="required"  lay-reqText="请选择开票类型">
+				<select name="invoice_subject" lay-verify="required"  lay-reqText="请选择开票主体">
 					<option value="">请选择开票主体</option>
-					<option value="1">勾股科技有限公司</option>
-					<option value="2">勾股信息有限公司</option>
+					{volist name=":get_invoice_subject()" id="vo"}
+					<option value="{$vo.id}" {eq name="$vo.id" value="$detail.invoice_subject"}selected{/eq}>{$vo.title}</option>
+					{/volist}
 				</select>
 			</td>
 		</tr>
 		<tr>
 			<td class="layui-td-gray">抬头类型<span style="color: red">*</span></td>
 			<td>
-				<input type="radio" name="type" value="1" title="企业" checked>
-				<input type="radio" name="type" value="2" title="个人">
+				<input type="radio" name="type" lay-filter="type" value="1" title="企业" {eq name="$detail.type" value="1"}checked{/eq}>
+				<input type="radio" name="type" lay-filter="type" value="2" title="个人" {eq name="$detail.type" value="2"}checked{/eq}>
 			</td>
 			<td class="layui-td-gray">开票抬头<span style="color: red">*</span></td>
-			<td><input type="text" name="invoice_title" class="layui-input" value=""></td>
+			<td><input type="text" name="invoice_title" class="layui-input" value="{$detail.invoice_title}"></td>
 			<td class="layui-td-gray">电话号码<span style="color: red">*</span></td>
-			<td><input type="text" name="invoice_phone" class="layui-input" value=""></td>
+			<td><input type="text" name="invoice_phone" class="layui-input" value="{$detail.invoice_phone}"></td>
 		</tr>
-		<tr>
+		<tr class="invoice-type" {eq name="$detail.type" value="2"}style="display:none"{/eq}>
 			<td class="layui-td-gray2">纳税人识别号<span style="color: red">*</span></td>
-			<td><input type="text" name="invoice_tax" class="layui-input" value=""></td>
+			<td><input type="text" name="invoice_tax" class="layui-input" value="{$detail.invoice_tax}"></td>
 			<td class="layui-td-gray">开户行<span style="color: red">*</span></td>
-			<td><input type="text" name="invoice_bank" class="layui-input" value=""></td>
+			<td><input type="text" name="invoice_bank" class="layui-input" value="{$detail.invoice_bank}"></td>
 			<td class="layui-td-gray">银行账号<span style="color: red">*</span></td>
-			<td><input type="text" name="invoice_account" class="layui-input" value=""></td>
+			<td><input type="text" name="invoice_account" class="layui-input" value="{$detail.invoice_account}"></td>
 		</tr>
-		<tr>
+		<tr class="invoice-type" {eq name="$detail.type" value="2"}style="display:none"{/eq}>
 			<td class="layui-td-gray2">银行营业网点<span style="color: red">*</span></td>
-			<td><input type="text" name="invoice_banking" class="layui-input" value=""></td>
+			<td><input type="text" name="invoice_banking" class="layui-input" value="{$detail.invoice_banking}"></td>
 			<td class="layui-td-gray">地址<span style="color: red">*</span></td>
-			<td colspan="3"><input type="text" name="invoice_address" class="layui-input" value=""></td>
+			<td colspan="3"><input type="text" name="invoice_address" class="layui-input" value="{$detail.invoice_address}"></td>
 		</tr>
 		<tr>
 			<td class="layui-td-gray">备注信息</td>
-			<td colspan="5"><textarea name="remark" placeholder="请输入备注信息" class="layui-textarea"></textarea></td>
+			<td colspan="5"><textarea name="remark" placeholder="请输入备注信息" class="layui-textarea">{$detail.remark}</textarea></td>
 		</tr>
 		<tr>
 			<td class="layui-td-gray">发票审核人<span style="color: red">*</span></td>
 			<td colspan="5">
 				<div style="width:300px;">
-				    <select name="invoice_type" lay-verify="required"  lay-reqText="请选择开票类型">
+				    <select name="check_admin_id" lay-verify="required"  lay-reqText="请选择发票审核人">
 						<option value="">请选择发票审核人</option>
-						<option value="1">张三丰</option>
-						<option value="2">赵武六</option>
+						{volist name=":get_check_user(3)" id="vo"}
+							<option value="{$vo.uid}" {eq name="$vo.uid" value="$detail.check_admin_id"}selected{/eq}>{$vo.user}</option>
+						{/volist}
 					</select>
 				</div>
 			</td>
@@ -162,23 +166,28 @@
 		  ,layer = layui.layer
 		  ,laydate = layui.laydate;
 
+		//选择收件人类型
+		form.on('radio(type)', function (data) {
+			if(data.value==2){
+				$('.invoice-type').hide();
+			}
+			else{
+				$('.invoice-type').show();
+			}
+		});	
 		//监听提交
 		form.on('submit(webform)', function(data){
-		  	var interfix = $('.more_interfix');
-			if(interfix.length <1 ){ 
-				layer.msg('至少要保留一个报销选项');
-				return false;
-			}
+		  	
 			$.ajax({
-			  url:"{:url('/home/expense/add')}",
-			  type:'post',
-			  data:data.field,
-			  success:function(e){
-				layer.msg(e.msg);
-				if(e.code==0){
-					parent.location.reload();
+				url:"{:url('/home/invoice/add')}",
+				type:'post',
+				data:data.field,
+				success:function(e){
+					layer.msg(e.msg);
+					if(e.code==0){
+						parent.location.reload();
+					}
 				}
-			  }
 			})
 			return false;
 		});
