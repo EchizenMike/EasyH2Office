@@ -162,7 +162,7 @@ INSERT INTO `oa_admin_menu` VALUES (39, 7, '工作日历', 'home/schedule/calend
 INSERT INTO `oa_admin_menu` VALUES (40, 8, '报销管理', 'home/expense/index', '', 1, 0, 0);
 INSERT INTO `oa_admin_menu` VALUES (41, 8, '发票管理', 'home/invoice/index', '', 1, 0, 0);
 INSERT INTO `oa_admin_menu` VALUES (42, 8, '到账管理', 'home/income/index', '', 1, 0, 0);
-INSERT INTO `oa_admin_menu` VALUES (43, 9, '日志分析', 'home/analysis/list', '', 1, 0, 0);
+INSERT INTO `oa_admin_menu` VALUES (43, 9, '日志分析', 'home/analysis/index', '', 1, 0, 0);
 
 -- ----------------------------
 -- Table structure for oa_admin_rule
@@ -328,6 +328,8 @@ INSERT INTO `oa_admin_rule` VALUES (112, 108, 'home/invoice/check', '设置发�
 INSERT INTO `oa_admin_rule` VALUES (113, 8, 'home/income/index', '到账管理','到账', 0, 0);
 INSERT INTO `oa_admin_rule` VALUES (114, 113, 'home/income/add', '新增到账','到账', 0, 0);
 INSERT INTO `oa_admin_rule` VALUES (115, 113, 'home/income/check', '设置到账状态','到账状态', 0, 0);
+
+INSERT INTO `oa_admin_rule` VALUES (116, 9, 'home/analysis/index', '智能分析','智能分析', 0, 0);
 
 -- ----------------------------
 -- Table structure for oa_article
