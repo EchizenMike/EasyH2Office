@@ -71,7 +71,7 @@
 			uid = 0;
 			$('[data-event="select"]').val('');
 			calendar.refetchEvents({
-				url: '/home/schedule/index?uid='+uid
+				url: '/home/plan/index?uid='+uid
 			});
 		});
 		
@@ -211,7 +211,7 @@
 					}
 					console.log(detail);
 					$.ajax({
-						url:"{:url('home/schedule/save')}",
+						url:"{:url('home/plan/save')}",
 						type:'post',
 						data:detail,
 						success:function(e){
@@ -328,7 +328,7 @@
 			events: function(fetchInfo, successCallback, failureCallback ){
 				$.ajax({
 					type:"POST",
-					url:"/home/schedule/calendar",
+					url:"/home/plan/calendar",
 					dataType:"json",
 					data:{start:fetchInfo.startStr,end:fetchInfo.endStr,uid:uid},
 					success:function(result){

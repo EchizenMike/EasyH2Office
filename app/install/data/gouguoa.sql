@@ -154,8 +154,8 @@ INSERT INTO `oa_admin_menu` VALUES (33, 6, '知识类别', 'home/article/cate', 
 INSERT INTO `oa_admin_menu` VALUES (34, 6, '共享知识', 'home/article/index', '', 1, 0, 0);
 INSERT INTO `oa_admin_menu` VALUES (35, 6, '个人知识', 'home/article/list', '', 1, 0, 0);
 
-INSERT INTO `oa_admin_menu` VALUES (36, 7, '工作计划', 'home/plan/index', '', 1, 0, 0);
-INSERT INTO `oa_admin_menu` VALUES (37, 7, '计划日历', 'home/plan/calendar', '', 1, 0, 0);
+INSERT INTO `oa_admin_menu` VALUES (36, 7, '日程安排', 'home/plan/index', '', 1, 0, 0);
+INSERT INTO `oa_admin_menu` VALUES (37, 7, '日程日历', 'home/plan/calendar', '', 1, 0, 0);
 INSERT INTO `oa_admin_menu` VALUES (38, 7, '工作记录', 'home/schedule/index', '', 1, 0, 0);
 INSERT INTO `oa_admin_menu` VALUES (39, 7, '工作日历', 'home/schedule/calendar', '', 1, 0, 0);
 
@@ -300,11 +300,11 @@ INSERT INTO `oa_admin_rule` VALUES (90, 87, 'home/article/view', '查看知识�
 
 INSERT INTO `oa_admin_rule` VALUES (91, 6, 'home/article/list', '个人知识','知识文章', 0, 0);
 
-INSERT INTO `oa_admin_rule` VALUES (92, 7, 'home/plan/index', '工作计划','工作计划', 0, 0);
-INSERT INTO `oa_admin_rule` VALUES (93, 92, 'home/plan/calendar', '工作计划日历','工作计划', 0, 0);
-INSERT INTO `oa_admin_rule` VALUES (94, 92, 'home/plan/add', '添加/编辑工作计划','工作计划', 0, 0);
-INSERT INTO `oa_admin_rule` VALUES (95, 92, 'home/plan/delete', '删除工作计划','工作计划', 0, 0);
-INSERT INTO `oa_admin_rule` VALUES (96, 92, 'home/plan/detail', '查看工作计划','工作计划', 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (92, 7, 'home/plan/index', '日程安排','日程安排', 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (93, 92, 'home/plan/calendar', '日程日历','日程安排', 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (94, 92, 'home/plan/add', '添加/编辑日程安排','日程安排', 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (95, 92, 'home/plan/delete', '删除日程安排','日程安排', 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (96, 92, 'home/plan/detail', '查看日程安排','日程安排', 0, 0);
 
 INSERT INTO `oa_admin_rule` VALUES (97, 7, 'home/schedule/index', '工作记录','工作记录', 0, 0);
 INSERT INTO `oa_admin_rule` VALUES (98, 97, 'home/schedule/calendar', '工作记录日历','工作日历', 0, 0);
@@ -767,21 +767,44 @@ CREATE TABLE `oa_position_group`  (
 INSERT INTO `oa_position_group`(`pid`, `group_id`, `create_time`, `update_time`) VALUES (1, 1, 1635755739, 0);
 
 -- ----------------------------
+-- Table structure for oa_plan
+-- ----------------------------
+DROP TABLE IF EXISTS `oa_plan`;
+CREATE TABLE `oa_plan`  (
+  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) NOT NULL DEFAULT '' COMMENT '工作安排主题',
+  `color` varchar(100) NOT NULL DEFAULT '' COMMENT '颜色',
+  `cid` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '预设字段:关联工作内容类型ID',
+  `cmid` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '预设字段:关联客户ID',
+  `ptid` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '预设字段:关联项目ID',
+  `admin_id` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '关联创建员工ID',
+  `did` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '所属部门',
+  `start_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '开始时间',
+  `end_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '结束时间',
+  `remind_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '提醒时间',
+  `remark` text NOT NULL COMMENT '描述',
+  `status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '状态：-1删除 0禁用 1启用',
+  `create_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
+  `update_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COMMENT = '日程安排';
+
+-- ----------------------------
 -- Table structure for oa_schedule
 -- ----------------------------
 DROP TABLE IF EXISTS `oa_schedule`;
 CREATE TABLE `oa_schedule`  (
   `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `name` varchar(100) NOT NULL DEFAULT '' COMMENT '工作记录主题',
+  `title` varchar(255) NOT NULL DEFAULT '' COMMENT '工作记录主题',
   `cid` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '预设字段:关联工作内容类型ID',
   `cmid` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '预设字段:关联客户ID',
   `ptid` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '预设字段:关联项目ID',
-  `plid` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '预设字段:关联任务计划ID',
+  `taid` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '预设字段:关联任务ID',
   `admin_id` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '关联创建员工ID',
   `did` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '所属部门',
   `start_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '开始时间',
   `end_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '结束时间',
-  `labor_time` decimal(15, 1) NOT NULL DEFAULT 0.0 COMMENT '工时',
+  `labor_time` decimal(15, 2) NOT NULL DEFAULT 0.00 COMMENT '工时',
   `labor_type` int(1) NOT NULL DEFAULT 0 COMMENT '工作类型:1案头2外勤',
   `remark` text NOT NULL COMMENT '描述',
   `status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '状态：-1删除 0禁用 1启用',

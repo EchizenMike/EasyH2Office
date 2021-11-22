@@ -91,36 +91,26 @@
 		var tableIns = table.render({
 			elem: '#test'
 			,toolbar: '#toolbarDemo'
-			,title:'工作记录列表'
-			,url:"{:url('home/schedule/index')}"
+			,title:'日程安排列表'
+			,url:"{:url('home/plan/index')}"
 			,page: true //开启分页
 			,limit: 20
 			,cellMinWidth: 80
 			,cols: [[ //表头
 				{field: 'id', title: '序号',fixed: 'left', width:80, align:'center'}
-				,{field: 'labor_type', title: '工作类别', align:'center',width:90,templet:function(d){
-					var html='';
-					if(d.labor_type==0){
-						html='<span class="span-color-'+d.labor_type+'">-</span>';
-					}
-					else if(d.labor_type == 1){
-						html='<span class="span-color-'+d.labor_type+'">案头工作</span>';
-					}
-					else if(d.labor_type == 2){
-						html='<span class="span-color-'+d.labor_type+'">外勤工作</span>';
-					}
+				,{field: 'color', title: '优先级', align:'center',width:90,templet:function(d){
+					var html='<span class="span-color-'+d.color+'">-</span>';
 					return html;
 				}}
 				,{field: 'start_time', title: '工作时间范围', align:'center',width:186,templet:function(d){
 					var html=d.start_time+'至'+d.end_time;
 					return html;
 				}}
-				,{field: 'labor_time', title: '工时', align:'center',width:80}
 				,{field: 'title', title: '工作内容'}
-				,{field: 'create_time', title: '记录时间', align:'center',width:150}
-				,{field: 'right', title: '操作',fixed:'right', width:150, align:'center',templet:function(d){
+				,{field: 'create_time', title: '登记时间', align:'center',width:150}
+				,{field: 'right', title: '操作',fixed:'right', width:120, align:'center',templet:function(d){
 					var html='<div class="layui-btn-group">';
-					html+='<button class="layui-btn layui-btn-xs layui-btn-danger" lay-event="time">调整工时</button><button class="layui-btn layui-btn-xs layui-btn-normal"  lay-event="view">查看</button>';
+					html+='<button class="layui-btn layui-btn-xs layui-btn-normal"  lay-event="view">查看</button>';
 					if(d.admin_id==login_user){
 						html+='<button class="layui-btn layui-btn-xs" lay-event="edit">编辑</button>';
 					}
@@ -133,111 +123,9 @@
 		//更改工时
 		table.on('tool(test)', function(obj){
 			var data = obj.data;
-			if(obj.event === 'time'){
-			  var content='<form class="layui-form" style="width:568px">\
-							<table class="layui-table" style="margin:15px 15px 0;">\
-								<tr>\
-									<td class="layui-td-gray2">工作时间范围 <span style="color: red">*</span></td>\
-									<td>\
-										<input id="start_time_a" name="start_time_a" style="width:110px; display:inline-block;" autocomplete="off" class="layui-input" value="" readonly lay-verify="required" lay-reqText="请选择"><div style="display: inline-block; margin-left:5px; width: 80px;"><select lay-filter="start_time_1" id="start_time_1"></select></div> 至 <input id="end_time_a" name="end_time_a" style="width:110px; display:inline-block;" autocomplete="off" class="layui-input" value="" readonly lay-verify="required" lay-reqText="请选择"><div style="display: inline-block; margin-left:5px; width: 80px;"><select lay-filter="end_time_1" id="end_time_1"></select></div>\
-									</td>\
-								</tr>\
-							</table>\
-						</form>';
-				layer.open({
-					type:1,
-					title:'调整工时',
-					area:['600px','388px'],
-					content:content,
-					success:function(){
-						//日期时间范围
-						laydate.render({
-							elem: '#start_time_a',
-							type: 'date',
-							max:0,
-							format: 'yyyy-MM-dd',
-							showBottom: false,
-							done:function(a,b,c){
-								$('#end_time_a').val(a);
-							}
-						});
-
-						//日期时间范围
-						laydate.render({
-							elem: '#end_time_a',
-							type: 'date',
-							max:0,
-							format: 'yyyy-MM-dd',
-							showBottom: false,
-							done:function(a,b,c){
-								$('#start_time_a').val(a);
-							}
-						});
-						$('#start_time_1,#end_time_1').empty();
-						
-						var hourArray=[];
-						for(var h=0;h<24;h++){
-							var t=h<10?'0'+h:h
-							var t_1=t+':00',t_2=t+':15',t_3=t+':30',t_4=t+':45';
-							hourArray.push(t_1,t_2,t_3,t_4);
-						}
-						
-						var html_1='', html_2='',def_h1='08:30',def_h2='09:00';
-						for(var s=0;s<hourArray.length;s++){
-							var check_1='',check_2='';
-							if(hourArray[s]==def_h1){
-								check_1='selected';
-							}
-							if(hourArray[s]==def_h2){
-								check_2='selected';
-							}
-							html_1 += '<option value="'+hourArray[s]+'" '+check_1+'>'+hourArray[s]+'</option>';
-							html_2 += '<option value="'+hourArray[s]+'" '+check_2+'>'+hourArray[s]+'</option>';
-						}
-						
-						$('#start_time_1').append(html_1);
-						$('#end_time_1').append(html_2);
-						form.render();
-					
-					},
-					btn: ['确定提交'],
-					btnAlign: 'c',
-					yes: function(idx){
-						let start_time = $('#start_time_a').val();
-						let end_time = $('#end_time_a').val();
-						let start_time_1 = $('#start_time_1').val();
-						let end_time_1 = $('#end_time_1').val();
-						if(start_time=='' || end_time==''){
-							layer.msg('请选择工作时间范围');
-							return;
-							}
-						$.ajax({
-							url:"{:url('home/schedule/update_labor_time')}",
-							type:'post',
-							data:{
-								id:data.id,
-								admin_id:data.admin_id,
-								start_time:start_time,
-								end_time:end_time,
-								start_time_1:start_time_1,
-								end_time_1:end_time_1
-							},
-							success:function(e){
-								layer.msg(e.msg);
-								if(e.code==0){								
-									layer.close(idx);								
-									setTimeout(function(){
-										window.location.reload();
-									},1000)	
-								}
-							}
-						})			
-					}
-				})
-			}
-			else if(obj.event === 'edit'){
+			if(obj.event === 'edit'){
 				$.ajax({
-					url:"{:url('home/schedule/detail')}",
+					url:"{:url('home/plan/detail')}",
 					data:{
 						id:data.id
 					},
@@ -250,7 +138,7 @@
 			}
 			else if(obj.event === 'view'){
 				$.ajax({
-					url:"{:url('home/schedule/detail')}",
+					url:"{:url('home/plan/detail')}",
 					data:{
 						id:data.id
 					},
@@ -294,7 +182,7 @@
 						</form>';
 			layer.open({
 				type:1,
-				title:'编辑工作记录',
+				title:'编辑日程安排',
 				area:['900px','390px'],
 				content:content,
 				success:function(){
@@ -325,7 +213,7 @@
 					}
 					console.log(detail);
 					$.ajax({
-						url:"{:url('home/schedule/add')}",
+						url:"{:url('home/plan/add')}",
 						type:'post',
 						data:detail,
 						success:function(e){
@@ -373,7 +261,7 @@
 						</form>';
 			layer.open({
 				type:1,
-				title:'工作记录',
+				title:'日程安排',
 				area:['800px','336px'],
 				content:content,
 				success:function(){
@@ -522,7 +410,7 @@
 					}
 					console.log(detail);
 					$.ajax({
-						url:"{:url('home/schedule/add')}",
+						url:"{:url('home/plan/add')}",
 						type:'post',
 						data:detail,
 						success:function(e){
