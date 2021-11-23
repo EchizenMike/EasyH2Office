@@ -86,14 +86,14 @@ function get_login_admin($key = '')
 //读取后台菜单列表
 function get_admin_menu()
 {
-    $menu = Db::name('AdminMenu')->order('sort asc')->select()->toArray();
+    $menu = Db::name('AdminMenu')->order('sort asc,id asc')->select()->toArray();
     return $menu;
 }
 
 //读取权限节点列表
 function get_admin_rule()
 {
-    $rule = Db::name('AdminRule')->order('id desc')->select()->toArray();
+    $rule = Db::name('AdminRule')->order('sort asc,id asc')->select()->toArray();
     return $rule;
 }
 

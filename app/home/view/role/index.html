@@ -4,22 +4,19 @@
 <div class="body-content">
 	<form class="layui-form">
 		<div class="layui-input-inline" style="width:300px;">
-			<input type="text" name="keywords" placeholder="ID/名称/备注" class="layui-input" autocomplete="off" />
+			<input type="text" name="keywords" placeholder="名称/备注" class="layui-input" autocomplete="off" />
 		</div>
 		<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform">提交搜索</button>
 	</form>
 	<table class="layui-hide" id="test" lay-filter="test"></table>
 </div>
 
-<script type="text/html" id="thumb">
-  <img src='{{d.thumb}}' height="25" style="border-radius: 50%;" />
-</script>
 <script type="text/html" id="status">
   <i class="layui-icon {{#  if(d.status == 1){ }}layui-icon-ok{{#  } else { }}layui-icon-close{{#  } }}"></i>
 </script>
 <script type="text/html" id="toolbarDemo">
   <div class="layui-btn-container">
-    <a class="layui-btn layui-btn-normal layui-btn-sm" href="{:url('home/role/add')}">+ 添加权限组</a>
+    <button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="add">+ 添加权限组</button>
   </div>
 </script>
 {/block}
@@ -29,8 +26,9 @@
 {block name="script"}
 <script>
 	function init(layui) {
-		var table = layui.table
-			, form = layui.form;
+		var table = layui.table,
+			rightpage = layui.rightpage,
+			form = layui.form;
 
 		var tableIns = table.render({
 			elem: '#test',
@@ -40,24 +38,34 @@
 			limit: 20,
 			cols: [[ //表头
 				{ field: 'id', title: 'ID号', align: 'center', width: 80 }
-				, { field: 'title', title: '名称', width: 200 }
+				, { field: 'title', title: '权限组名称', width: 200 }
 				, { field: 'desc', title: '备注' }
 				, { field: 'status', title: '状态', toolbar: '#status', align: 'center', width: 80 }
-				, {	width: 120,
+				, {	width: 100,
 					title: '操作',
 					align: 'center',
 					templet: function (d) {
-						var html = '<div class="layui-btn-group"><a class="layui-btn layui-btn-xs" href="/home/role/add?id=' + d.id + '">编辑</a><a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a></div>';
+						var html = '<div class="layui-btn-group"><button class="layui-btn layui-btn-xs" lay-event="edit">编辑</button><button class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</button></div>';
 						return html;
 					}
 				}
 			]]
 		});
-
+		
+		//表头工具栏事件
+		table.on('toolbar(test)', function(obj){
+			if (obj.event === 'add') {
+				rightpage.open("{:url('home/role/add')}");
+				return;
+			}
+		});
 		//监听行工具事件
 		table.on('tool(test)', function (obj) {
 			var data = obj.data;
-			//console.log(obj)
+			if (obj.event === 'edit') {
+				rightpage.open('/home/role/add?id='+obj.data.id);
+				return;
+			}
 			if (obj.event === 'del') {
 				layer.confirm('确定要删除该权限角色吗？', { icon: 3, title: '提示' }, function (index) {
 					$.ajax({
@@ -70,16 +78,6 @@
 							}
 						}
 					})
-					layer.close(index);
-				});
-			} else if (obj.event === 'edit') {
-				layer.prompt({
-					formType: 2
-					, value: data.email
-				}, function (value, index) {
-					obj.update({
-						email: value
-					});
 					layer.close(index);
 				});
 			}
@@ -96,6 +94,6 @@
 	}
 
 </script>
-{include file="common/layui" base="base" extend="[]" callback="init" /}
+{include file="common/layui" base="base" extend="['rightpage']" callback="init" /}
 {/block}
 <!-- /脚本 -->

@@ -2,7 +2,8 @@
 <!-- 主体 -->
 {block name="body"}
 <form class="layui-form body-content">
-	<table class="layui-table layui-table-form">
+	<h3 class="h3-title">配置项</h3>
+	<table class="layui-table">
 		<tr>
 			<td class="layui-td-gray2">配置名称<font>*</font>
 			</td>
@@ -35,7 +36,6 @@
 	<div style="padding: 10px 0">
 		<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform">立即提交</button>
 		<button type="reset" class="layui-btn layui-btn-primary">重置</button>
-		<button lay-event="back" class="layui-btn layui-btn-primary">返回</button>
 	</div>
 </form>
 {/block}
@@ -56,18 +56,13 @@
 				success: function (e) {
 					if (e.code == 0) {
 						layer.confirm('保存成功,返回列表页吗?', { icon: 3, title: '提示' }, function (index) {
-							window.location.href="{:url('home/conf/index')}";
+							parent.location.reload();
 						});
 					} else {
 						layer.msg(e.msg);
 					}
 				}
 			})
-			return false;
-		});
-		//监听返回
-		$('.body-content').on('click', '[lay-event="back"]', function () {
-			history.back(-1);
 			return false;
 		});
 	}

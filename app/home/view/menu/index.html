@@ -11,8 +11,8 @@
 <!-- 主体 -->
 {block name="body"}
 <div class="body-content" style="height: 100%">
-	<div style="height:39px;">
-		<a class="layui-btn layui-btn-normal layui-btn-sm" href="{:url('home/menu/add')}">+ 添加菜单</a><span style="color:#999;margin-left:20px">点击表格内容可编辑</span>
+	<div style="height:42px">
+		<button class="layui-btn layui-btn-normal layui-btn-sm add-menu">+ 添加菜单</button>
 	</div>
 	<div style="height: calc(100% - 30px)">
 		<table class="layui-hide" id="treeTable" lay-filter="treeTable"></table>
@@ -24,9 +24,10 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
-	var editObj = null, ptable = null, treeGrid = null, tableId = 'treeTable', layer = null;
+	var ptable = null, treeGrid = null,rightpage=null, layer = null, tableId = "treeTable";
 	function init(layui) {
-		var treeGrid = layui.treeGrid;//很重要
+		treeGrid = layui.treeGrid;
+		rightpage = layui.rightpage,
 		layer = layui.layer;
 		ptable = treeGrid.render({
 			id: tableId
@@ -39,14 +40,13 @@
 			, treeShowName: 'title'//以树形式显示的字段
 			, height: 'full-0'
 			, cols: [[
-				{ field: 'sort', width: 80, title: '排序', edit: "text", align: 'center' }
+				{ field: 'sort', width: 80, title: '排序', align: 'center' }
 				, { field: 'id', width: 80, title: 'ID号', align: 'center' }
-				, { field: 'title', edit: 'text', width: 240, title: '菜单名称', edit: 'text'}
-				, { field: 'icon', edit: 'text', width: 180, title: '图标<a href="{__LAYUI__}/font/extend/demo_index.html" target="_blank" style="color:#007AFF">[图标选择]</a>', edit: 'text'}
-				, { field: 'pid', title: '父级ID', edit: 'text', width: 80, align: 'center' }
-				, { field: 'src', title: '路径', edit: 'text'}
-				, { width: 100, title: '操作', align: 'center', templet: function (d) {
-						var html = '<a class="layui-btn layui-btn-normal layui-btn-xs" href="/home/menu/add?pid=' + d.id + '">添加</a><a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>';
+				, { field: 'title', width: 240, title: '菜单名称'}
+				, { field: 'icon', width: 180, title: '图标class'}
+				, { field: 'src', title: '菜单路径'}
+				, { width: 160, title: '操作', align: 'center', templet: function (d) {
+						var html = '<span class="layui-btn-group"><button class="layui-btn layui-btn-normal layui-btn-xs" lay-event="add">添加子菜单</button><button class="layui-btn layui-btn-xs" lay-event="edit">编辑</button><button class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</button></span>';
 						return html;
 					}
 				}
@@ -54,27 +54,23 @@
 			, page: false
 			//,skin:'line'
 		});
-		//单元格编辑
-		treeGrid.on('edit(' + tableId + ')', function (obj) {
-			layer.confirm('确定要提交修改吗?', { icon: 3, title: '提示' }, function (index) {
-				$.ajax({
-					url: "{:url('home/menu/add')}",
-					type: 'post',
-					data: { id: obj.data.id, field: obj.field, value: obj.value },
-					success: function (e) {
-						layer.msg(e.msg);
-						if(e.code == 0){
-							setTimeout(function(){
-								location.reload()
-							},2000)						  
-						}
-					}
-				})
-				layer.close(index);
-			});
+		
+		//表头工具栏事件
+		$('.body-content').on('click','.add-menu', function(){
+			rightpage.open("{:url('home/menu/add')}");
+			return;
 		});
-		//删除
+
+		//操作按钮
 		treeGrid.on('tool(' + tableId + ')', function (obj) {
+			if (obj.event === 'add') {
+				rightpage.open('/home/menu/add?pid='+obj.data.id);
+				return;
+			}
+			if (obj.event === 'edit') {
+				rightpage.open('/home/menu/add?id='+obj.data.id);
+				return;
+			}
 			if (obj.event === 'del') {
 				layer.confirm('确定要删除吗?', { icon: 3, title: '提示' }, function (index) {
 					$.ajax({
@@ -95,6 +91,6 @@
 
 	}
 </script>
-{include file="common/layui" base="base" extend="['treeGrid']" callback="init" /}
+{include file="common/layui" base="base" extend="['treeGrid','rightpage']" callback="init" /}
 {/block}
 <!-- /脚本 -->

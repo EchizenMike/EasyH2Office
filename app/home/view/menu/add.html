@@ -2,11 +2,12 @@
 <!-- 主体 -->
 {block name="body"}
 <form class="layui-form body-content">
-	<table class="layui-table layui-table-form">
+	<h3 class="h3-title">系统菜单</h3>
+	{if condition="$id eq 0"}
+	<table class="layui-table">
 		<tr>
 			<td class="layui-td-gray2">父级菜单<font>*</font></td>
 			<td>
-				<input type="hidden" name="id" value="0">
 				<select name="pid" lay-verify="required" lay-reqText="请选择父级菜单">
 					<option value="0">作为顶级菜单</option>
 					{volist name=":set_recursion(get_admin_menu())" id="v"}
@@ -18,15 +19,9 @@
 			<td>
 				<input type="text" name="title" lay-verify="required" autocomplete="off" placeholder="请输入菜单名称" lay-reqText="请输入菜单名称" class="layui-input">
 			</td>
-		</tr>
-		<tr>
 			<td class="layui-td-gray2">菜单路径</td>
 			<td>
 				<input type="text" name="src" placeholder="请输入菜单路径，可空" autocomplete="off" class="layui-input">
-			</td>
-			<td class="layui-td-gray2">菜单参数</td>
-			<td>
-				<input type="text" name="param" placeholder="请输入菜单参数，可空" autocomplete="off" class="layui-input">
 			</td>
 		</tr>
 		<tr>
@@ -34,15 +29,48 @@
 			<td>
 				<input type="text" name="icon" placeholder="请输入图标样式，可空" autocomplete="off" class="layui-input">
 			</td>
-			<td colspan="2">				
-				如：icon-jichuguanli<a href="{__LAYUI__}/font/extend/demo_index.html" target="_blank" style="margin-left:10px; color:#007AFF">[点击查看图标]</a>
+			<td colspan="4">				
+				如：icon-jichuguanli<a href="{__LAYUI__}/font/extend/demo_index.html" target="_blank" style="margin-left:10px; color:#007AFF">[点击查看可选图标]</a>
 			</td>
 		</tr>
 	</table>
+	{else/}
+	<table class="layui-table">
+		<tr>
+			<td class="layui-td-gray2">父级菜单<font>*</font></td>
+			<td>
+				<input type="hidden" name="id" value="0">
+				<select name="pid" lay-verify="required" lay-reqText="请选择父级菜单">
+					<option value="0">作为顶级菜单</option>
+					{volist name=":set_recursion(get_admin_menu())" id="v"}
+					<option value="{$v.id}" {eq name="$detail.pid" value="$v.id" }selected="" {/eq}>{$v.title} </option>
+					{/volist}
+				</select>
+			</td>
+			<td class="layui-td-gray2">菜单名称<font>*</font></td>
+			<td>
+				<input type="text" name="title" lay-verify="required" autocomplete="off" placeholder="请输入菜单名称" lay-reqText="请输入菜单名称" class="layui-input" value="{$detail.title}">
+			</td>
+			<td class="layui-td-gray2">菜单路径</td>
+			<td>
+				<input type="text" name="src" placeholder="请输入菜单路径，可空" autocomplete="off" class="layui-input" value="{$detail.src}">
+			</td>
+		</tr>
+		<tr>
+			<td class="layui-td-gray2">菜单图标</td>
+			<td>
+				<input type="text" name="icon" placeholder="请输入图标样式，可空" autocomplete="off" class="layui-input" value="{$detail.icon}">
+			</td>
+			<td colspan="4">				
+				如：icon-jichuguanli<a href="{__LAYUI__}/font/extend/demo_index.html" target="_blank" style="margin-left:10px; color:#007AFF">[点击查看可选图标]</a>
+			</td>
+		</tr>
+	</table>
+	{/if}
 	<div style="padding: 10px 0">
+		<input type="hidden" name="id" value="{$id}">
 		<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform">立即提交</button>
 		<button type="reset" class="layui-btn layui-btn-primary">重置</button>
-		<button lay-event="back" class="layui-btn layui-btn-primary">返回</button>
 	</div>
 </form>
 {/block}
@@ -63,23 +91,14 @@
 				data: data.field,
 				success: function(e) {
 					if (e.code == 0) {
-						layer.confirm('保存成功,返回列表页吗?', {
-							icon: 3,
-							title: '提示'
-						}, function(index) {
-							history.back(-1);
-							layer.close(index);
+						layer.confirm('保存成功,返回列表页吗?', { icon: 3, title: '提示' }, function (index) {
+							parent.location.reload();
 						});
 					} else {
 						layer.msg(e.msg);
 					}
 				}
 			})
-			return false;
-		});
-		//监听返回
-		$('.body-content').on('click', '[lay-event="back"]', function() {
-			history.back(-1);
 			return false;
 		});
 	}

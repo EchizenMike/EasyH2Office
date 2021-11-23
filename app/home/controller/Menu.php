@@ -33,18 +33,15 @@ class Menu extends BaseController
         $param = get_params();
         if (request()->isAjax()) {
             if ($param['id'] > 0) {
-                $data[$param['field']] = $param['value'];
-                $data['id'] = $param['id'];
-                if (!empty($data['title'])) {
-                    try {
-                        validate(MenuCheck::class)->scene('edit')->check($data);
-                    } catch (ValidateException $e) {
-                        // 验证失败 输出错误信息
-                        return to_assign(1, $e->getError());
-                    }
+                try {
+                    validate(MenuCheck::class)->scene('edit')->check($param);
+                } catch (ValidateException $e) {
+                    // 验证失败 输出错误信息
+                    return to_assign(1, $e->getError());
                 }
-                Db::name('AdminMenu')->strict(false)->field(true)->update($data);
-                add_log('edit', $param['id'], $data);
+                $param['update_time'] = time();
+                Db::name('AdminMenu')->strict(false)->field(true)->update($param);
+                add_log('edit', $param['id'], $param);
             } else {
                 try {
                     validate(MenuCheck::class)->scene('add')->check($param);
@@ -52,6 +49,7 @@ class Menu extends BaseController
                     // 验证失败 输出错误信息
                     return to_assign(1, $e->getError());
                 }
+                $param['create_time'] = time();
                 $mid = Db::name('AdminMenu')->strict(false)->field(true)->insertGetId($param);
                 //自动为系统所有者管理组分配新增的菜单
                 $group = Db::name('AdminGroup')->find(1);
@@ -67,6 +65,12 @@ class Menu extends BaseController
             return to_assign();
         } else {
             $id = isset($param['id']) ? $param['id'] : 0;
+            $pid = isset($param['pid']) ? $param['pid'] : 0;
+            if($id>0){
+                $detail = Db::name('AdminMenu')->where('id',$id)->find();
+                View::assign('detail', $detail);
+            }
+            View::assign('id', $id);
             View::assign('pid', $pid);
             return view();
         }

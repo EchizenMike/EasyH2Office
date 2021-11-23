@@ -13,6 +13,7 @@ class RuleCheck extends Validate
 {
     protected $rule = [
         'title' => 'require|unique:admin_rule',
+        'name' => 'require',
         'src' => 'unique:admin_rule',
         'id' => 'require',
     ];
@@ -21,13 +22,13 @@ class RuleCheck extends Validate
         'title.require' => '节点名称不能为空',
         'title.unique' => '同样的节点名称已经存在',
         'src.unique' => '同样的节点规则已经存在',
+        'name.require' => '节点日志操作名称不能为空',
         'id.require' => '缺少更新条件',
         'filed.require' => '缺少要更新的字段名',
     ];
 
     protected $scene = [
-        'add' => ['title','src'],
-        'edit_title' => ['id', 'title'],
-        'edit_src' => ['id', 'src'],
+        'add' => ['title','src','name'],
+        'edit' => ['id', 'title','src','name']
     ];
 }

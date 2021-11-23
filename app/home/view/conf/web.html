@@ -2,8 +2,8 @@
 <!-- 主体 -->
 {block name="body"}
 <form class="layui-form body-content">
-	<h3 style="height:36px">系统配置</h3>
-	<table class="layui-table layui-table-form">
+	<h3 class="h3-title">系统配置</h3>
+	<table class="layui-table">
 		<tr>
 			<td class="layui-td-gray2">系统名称<font>*</font>
 			</td>
@@ -79,7 +79,6 @@
 	<div style="padding: 10px 0">
 		<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform">立即提交</button>
 		<button type="reset" class="layui-btn layui-btn-primary">重置</button>
-		<button lay-event="back" class="layui-btn layui-btn-primary">返回</button>
 	</div>
 </form>
 {/block}
@@ -118,12 +117,8 @@
 				data: data.field,
 				success: function (e) {
 					if (e.code == 0) {
-						layer.confirm('保存成功,关闭本页面吗?', {
-							icon: 3,
-							title: '提示'
-						}, function (index) {
-							history.back(-1);
-							layer.close(index);
+						layer.confirm('保存成功,返回列表页吗?', { icon: 3, title: '提示' }, function (index) {
+							parent.location.reload();
 						});
 					} else {
 						layer.msg(e.msg);
@@ -132,11 +127,6 @@
 			})
 			return false;
 		});
-		//监听返回
-		$('.body-content').on('click', '[lay-event="back"]', function () {
-			history.back(-1);
-			return false;
-		});	
 	}
 </script>
 {include file="common/layui" base="base" extend="[]" callback="init" /}
