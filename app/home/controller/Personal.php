@@ -136,22 +136,22 @@ class Personal extends BaseController
         } else {
             $id = isset($param['id']) ? $param['id'] : 0;
             $where = array();
-            if (!empty($id)) {
+            if ($id>0) {
                 $where['p.id'] = array('eq', $id);
+                $detail = Db::name('PersonalQuit')
+                    ->field('p.*,u.name as name,l.name as lead_admin_name,d.title as department')
+                    ->alias('p')
+                    ->join('admin u', 'p.uid = u.id', 'LEFT')
+                    ->join('admin l', 'p.lead_admin_id = l.id', 'LEFT')
+                    ->join('department d', 'u.did = d.id', 'LEFT')
+                    ->where($where)
+                    ->find();
+                $this_uids_name = Db::name('Admin')->where([['id','in', $detail['connect_uids']]])->column('name');
+                $detail['connect_names'] = implode(',', $this_uids_name);
+                $detail['quit_time'] = date('Y-m-d', $detail['quit_time']);
+                View::assign('detail', $detail);
             }
-            $detail = Db::name('PersonalQuit')
-                ->field('p.*,u.name as name,l.name as lead_admin_name,d.title as department')
-                ->alias('p')
-                ->join('admin u', 'p.uid = u.id', 'LEFT')
-                ->join('admin l', 'p.lead_admin_id = l.id', 'LEFT')
-                ->join('department d', 'u.did = d.id', 'LEFT')
-                ->where($where)
-                ->find();
-            $this_uids_name = Db::name('Admin')->where([['id','in', $detail['connect_uids']]])->column('name');
-            $detail['connect_names'] = implode(',', $this_uids_name);
-            $detail['quit_time'] = date('Y-m-d', $detail['quit_time']);
             View::assign('id', $id);
-            View::assign('detail', $detail);
             return view();
         }
     }

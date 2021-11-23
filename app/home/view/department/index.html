@@ -2,8 +2,7 @@
 
 {block name="style"}
 <style>
-	html,
-	body {
+	html,body {
 		height: calc(100% - 20px);
 	}
 </style>
@@ -12,8 +11,8 @@
 <!-- 主体 -->
 {block name="body"}
 <div class="body-content" style="height: 100%">
-	<div style="height:39px;">
-		<a class="layui-btn layui-btn-normal layui-btn-sm" href="{:url('home/department/add')}">+ 添加部门</a>
+	<div style="height:42px;">
+		<button class="layui-btn layui-btn-normal layui-btn-sm add-menu">+ 添加部门</button>
 	</div>
 	<div style="height: calc(100% - 30px)">
 		<table class="layui-hide" id="treeTable" lay-filter="treeTable"></table>
@@ -28,6 +27,7 @@
 	function init(layui) {
 		var treeGrid = layui.treeGrid,
 			layer = layui.layer,
+			rightpage = layui.rightpage,
 			ptable = treeGrid.render({
 			id: 'treeTable'
 			, elem: '#treeTable'
@@ -45,16 +45,31 @@
 				, { field: 'title', title: '部门名称'}
 				, { field: 'leader', title: '部门负责人',width: 120, align: 'center'}
 				, { field: 'phone', title: '部门电话',width: 160,}
-				, { width: 200, title: '操作', align: 'center', templet: function (d) {
-						var html = '<a class="layui-btn layui-btn-normal layui-btn-xs" href="/home/department/add?pid=' + d.id + '">添加下级部门</a><a class="layui-btn layui-btn-xs" href="/home/department/add?id=' + d.id + '">编辑</a><a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>';
+				, { width:160, title: '操作', align: 'center', templet: function (d) {
+						var html = '<span class="layui-btn-group"><button class="layui-btn layui-btn-normal layui-btn-xs" lay-event="add">添加下级部门</button><button class="layui-btn layui-btn-xs" lay-event="edit">编辑</button><button class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</button></span>';
 						return html;
 					}
 				}
 			]]
 			, page: false
 		});
-		//删除
+		
+		//表头工具栏事件
+		$('.body-content').on('click','.add-menu', function(){
+			rightpage.open("{:url('home/department/add')}");
+			return;
+		});
+
+		//操作按钮
 		treeGrid.on('tool(treeTable)', function (obj) {
+			if (obj.event === 'add') {
+				rightpage.open('/home/department/add?pid='+obj.data.id);
+				return;
+			}
+			if (obj.event === 'edit') {
+				rightpage.open('/home/department/add?id='+obj.data.id);
+				return;
+			}
 			if (obj.event === 'del') {
 				layer.confirm('确定要删除吗?', { icon: 3, title: '提示' }, function (index) {
 					$.ajax({
@@ -72,9 +87,8 @@
 				});
 			}
 		});
-
 	}
 </script>
-{include file="common/layui" base="base" extend="['treeGrid']" callback="init" /}
+{include file="common/layui" base="base" extend="['treeGrid','rightpage']" callback="init" /}
 {/block}
 <!-- /脚本 -->

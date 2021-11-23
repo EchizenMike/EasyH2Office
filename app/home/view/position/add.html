@@ -2,8 +2,9 @@
 <!-- 主体 -->
 {block name="body"}
 <form class="layui-form body-content">
+	<h3 class="h3-title">岗位职称</h3>
 	{if condition="$id eq 0"}
-	<table class="layui-table layui-table-form">
+	<table class="layui-table">
 		<tr>
 			<td class="layui-td-gray">岗位名称<font>*</font></td>
 			<td>
@@ -71,7 +72,6 @@
 		<input type="hidden" name="id" value="{$id}">
 		<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform">立即提交</button>
 		<button type="reset" class="layui-btn layui-btn-primary">重置</button>
-		<button lay-event="back" class="layui-btn layui-btn-primary">返回</button>
 	</div>
 </form>
 {/block}
@@ -81,8 +81,7 @@
 {block name="script"}
 <script>
 	function init(layui) {
-		var TAB = parent.layui.tab,
-			form = layui.form,
+		var form = layui.form,
 			layer = layui.layer;
 
 		//监听提交
@@ -94,19 +93,13 @@
 				success: function (e) {
 					if (e.code == 0) {
 						layer.confirm('保存成功,返回列表页吗?', { icon: 3, title: '提示' }, function (index) {
-							history.back(-1);
-							layer.close(index);
+							parent.location.reload();
 						});
 					} else {
 						layer.msg(e.msg);
 					}
 				}
 			})
-			return false;
-		});
-		//监听返回
-		$('.body-content').on('click', '[lay-event="back"]', function () {
-			history.back(-1);
 			return false;
 		});
 	}
