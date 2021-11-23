@@ -33,25 +33,26 @@ class Note extends BaseController
     //分类添加
     public function cate_add()
     {
+        $param = get_params();
         if (request()->isAjax()) {
-            $param = get_params();
             if (!empty($param['id']) && $param['id'] > 0) {
-                $data[$param['field']] = $param['value'];
-                $data['id'] = $param['id'];
-                $data['update_time'] = time();
-                if (!empty($data['title'])) {
-                    try {
-                        validate(NoteCateCheck::class)->scene('edit')->check($data);
-                    } catch (ValidateException $e) {
-                        // 验证失败 输出错误信息
-                        return to_assign(1, $e->getError());
+                try {
+                    validate(NoteCateCheck::class)->scene('edit')->check($param);
+                } catch (ValidateException $e) {
+                    // 验证失败 输出错误信息
+                    return to_assign(1, $e->getError());
+                }
+                $note_array = get_note_son($param['id']);
+                if (in_array($param['pid'], $note_array)) {
+                    return to_assign(1, '父级分类不能是该分类本身或其子分类');
+                } else {
+                    $param['update_time'] = time();
+                    $res = NoteCate::strict(false)->field(true)->update($param);
+                    if ($res) {
+                        add_log('edit', $param['id'], $param);
                     }
+                    return to_assign();
                 }
-                $res = NoteCate::strict(false)->field(true)->update($data);
-                if ($res) {
-                    add_log('edit', $data['id'], $data);
-                }
-                return to_assign();
             } else {
                 try {
                     validate(NoteCateCheck::class)->scene('add')->check($param);
@@ -67,7 +68,13 @@ class Note extends BaseController
                 return to_assign();
             }
         } else {
+            $id = isset($param['id']) ? $param['id'] : 0;
             $pid = isset($param['pid']) ? $param['pid'] : 0;
+            if ($id > 0) {
+                $detail = Db::name('NoteCate')->where(['id' => $id])->find();
+                View::assign('detail', $detail);
+            }
+            View::assign('id', $id);
             View::assign('pid', $pid);
             return view();
         }

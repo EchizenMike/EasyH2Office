@@ -158,6 +158,7 @@ function get_department_son($did = 0, $is_self = 1)
 function get_keywords()
 {
     $keywords = Db::name('Keywords')->where(['status' => 1])->order('id desc')->select()->toArray();
+	return $keywords;
 }
 
 //读取公告分类列表
@@ -167,11 +168,37 @@ function get_note_cate()
     return $cate;
 }
 
+//读取公告分类子分类ids
+function get_note_son($id = 0, $is_self = 1)
+{
+    $note = get_note_cate();
+    $note_list = get_data_node($note, $id);
+    $note_array = array_column($note_list, 'id');
+    if ($is_self == 1) {
+        //包括自己在内
+        $note_array[] = $id;
+    }
+    return $note_array;
+}
+
 //读取知识分类列表
 function get_article_cate()
 {
     $cate = Db::name('ArticleCate')->order('id desc')->select()->toArray();
     return $cate;
+}
+
+//读取知识分类子分类ids
+function get_article_son($id = 0, $is_self = 1)
+{
+    $article = get_article_cate();
+    $article_list = get_data_node($article, $id);
+    $article_array = array_column($article_list, 'id');
+    if ($is_self == 1) {
+        //包括自己在内
+        $article_array[] = $id;
+    }
+    return $article_array;
 }
 
 //读取开票主体

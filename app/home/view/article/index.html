@@ -5,7 +5,7 @@
 	<form class="layui-form">
 		<div class="layui-input-inline">
 			<select name="article_cate_id">
-				<option value="">请选择文章分类</option>
+				<option value="">请选择知识文章分类</option>
 				{volist name=":set_recursion(get_article_cate())" id="v"}
 				<option value="{$v.id}">{$v.title}</option>
 				{/volist}
@@ -21,7 +21,7 @@
 
 <script type="text/html" id="toolbarDemo">
 <div class="layui-btn-container">
-   <span class="layui-btn layui-btn-normal layui-btn-sm" title="添加文章" lay-event="add">+ 添加文章</span>
+   <span class="layui-btn layui-btn-normal layui-btn-sm" title="添加文章" lay-event="add">+ 添加知识文章</span>
 </div>
 </script>
 <script type="text/html" id="barDemo">

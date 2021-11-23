@@ -51,6 +51,7 @@ class Department extends BaseController
                 } else {
                     Db::name('Department')->strict(false)->field(true)->update($param);
                     add_log('edit', $param['id'], $param);
+                    return to_assign();
                 }
             } else {
                 try {
@@ -61,8 +62,8 @@ class Department extends BaseController
                 }
                 $did = Db::name('Department')->strict(false)->field(true)->insertGetId($param);
                 add_log('add', $did, $param);
+                return to_assign();
             }
-            return to_assign();
         } else {
             $id = isset($param['id']) ? $param['id'] : 0;
             $pid = isset($param['pid']) ? $param['pid'] : 0;

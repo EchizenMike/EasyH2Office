@@ -154,36 +154,36 @@ class Api extends BaseController
             return to_assign(1, '邮件发送失败！');
         }
     }
-	
+
     //获取部门节点列表
     public function get_department_tree()
     {
         $department = get_department();
-		$list = get_tree($department, 0,2);
+        $list = get_tree($department, 0, 2);
         $data['trees'] = $list;
         return json($data);
     }
-	
-	//获取子部门所有员工
-    public function get_employee($did=0)
+
+    //获取子部门所有员工
+    public function get_employee($did = 0)
     {
-		$did=get_params('did');
-		$department=get_department_son($did);
-		$employee = Db::name('admin')
-			->field('a.id,a.did,a.position_id,a.mobile,a.name,a.nickname,a.sex,a.status,a.thumb,a.username,d.title as department')
-			->alias('a')
+        $did = get_params('did');
+        $department = get_department_son($did);
+        $employee = Db::name('admin')
+            ->field('a.id,a.did,a.position_id,a.mobile,a.name,a.nickname,a.sex,a.status,a.thumb,a.username,d.title as department')
+            ->alias('a')
             ->join('Department d', 'a.did = d.id')
-			->where(['a.status'=>1])
-			->where('a.did',"in",$department)
-			->select();
-        return to_assign(0,'',$employee);
+            ->where(['a.status' => 1])
+            ->where('a.did', "in", $department)
+            ->select();
+        return to_assign(0, '', $employee);
     }
-	
+
     //获取角色列表
     public function get_position()
-    {   
-        $position = Db::name('Position')->field('id,title as name')->where([['status','=',1],['id','>',1]])->select();    
-        return to_assign(0,'',$position);
+    {
+        $position = Db::name('Position')->field('id,title as name')->where([['status', '=', 1], ['id', '>', 1]])->select();
+        return to_assign(0, '', $position);
     }
 
     //首页公告
@@ -221,7 +221,6 @@ class Api extends BaseController
         $res['data'] = $list;
         return table_assign(0, '', $res);
     }
-
 
     //修改个人信息
     public function edit_personal()
@@ -289,19 +288,18 @@ class Api extends BaseController
     public function del_expense_interfix()
     {
         $id = get_params("id");
-        $admin_id = Db::name('ExpenseInterfix')->where('id',$id)->value('admin_id');
-		if($admin_id == $this->uid){
-			if (Db::name('ExpenseInterfix')->where('id',$id)->delete() !== false) {
-				return to_assign(0, "删除成功");
-			} else {
-				return to_assign(1, "删除失败");
-			}
-		}else{
-			return to_assign(1, "您没权限删除该报销数据");
-		}
+        $admin_id = Db::name('ExpenseInterfix')->where('id', $id)->value('admin_id');
+        if ($admin_id == $this->uid) {
+            if (Db::name('ExpenseInterfix')->where('id', $id)->delete() !== false) {
+                return to_assign(0, "删除成功");
+            } else {
+                return to_assign(1, "删除失败");
+            }
+        } else {
+            return to_assign(1, "您没权限删除该报销数据");
+        }
 
     }
-
 
     //系统操作日志
     public function log_list()
@@ -317,23 +315,23 @@ class Api extends BaseController
         $content = $log->get_log_list($param);
         return table_assign(0, '', $content);
     }
-	
+
     //获取访问记录
     public function get_view_data()
     {
         $param = get_params();
         $first_time = time();
         $second_time = $first_time - 86400;
-        $three_time = $first_time - 86400*365;
+        $three_time = $first_time - 86400 * 365;
         $begin_first = strtotime(date('Y-m-d', $first_time) . " 00:00:00");
         $end_first = strtotime(date('Y-m-d', $first_time) . " 23:59:59");
         $begin_second = strtotime(date('Y-m-d', $second_time) . " 00:00:00");
         $end_second = strtotime(date('Y-m-d', $second_time) . " 23:59:59");
-		$begin_three = strtotime(date('Y-m-d', $three_time) . " 00:00:00");
+        $begin_three = strtotime(date('Y-m-d', $three_time) . " 00:00:00");
         $data_first = Db::name('AdminLog')->field('create_time')->whereBetween('create_time', "$begin_first,$end_first")->select();
         $data_second = Db::name('AdminLog')->field('create_time')->whereBetween('create_time', "$begin_second,$end_second")->select();
-		$data_three = Db::name('AdminLog')->field('create_time')->whereBetween('create_time', "$begin_three,$end_first")->select();		
-        return to_assign(0, '', ['data_first' => hour_document($data_first), 'data_second' => hour_document($data_second), 'data_three'=>date_document($data_three)]);
+        $data_three = Db::name('AdminLog')->field('create_time')->whereBetween('create_time', "$begin_three,$end_first")->select();
+        return to_assign(0, '', ['data_first' => hour_document($data_first), 'data_second' => hour_document($data_second), 'data_three' => date_document($data_three)]);
     }
 
 }
