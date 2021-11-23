@@ -2,7 +2,8 @@
 <!-- 主体 -->
 {block name="body"}
 <form class="layui-form body-content">
-	<table class="layui-table layui-table-form">
+	<h3 class="h3-title">知识关键字</h3>
+	<table class="layui-table">
 		<tr>
 			<td class="layui-td-gray">关键字名称<font>*</font></td>
 			<td>				
@@ -29,7 +30,6 @@
 		<input type="hidden" name="id" value="{$id}" />
 		<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform">立即提交</button>
 		<button type="reset" class="layui-btn layui-btn-primary">重置</button>
-		<button lay-event="back" class="layui-btn layui-btn-primary">返回</button>
 	</div>
 </form>
 {/block}
@@ -51,19 +51,13 @@
 				success: function (e) {
 					if (e.code == 0) {
 						layer.confirm('保存成功,返回列表页吗?', { icon: 3, title: '提示' }, function (index) {
-							history.back(-1);
-							layer.close(index);
+							parent.location.reload();
 						});
 					} else {
 						layer.msg(e.msg);
 					}
 				}
 			})
-			return false;
-		});
-		//监听返回
-		$('.body-content').on('click', '[lay-event="back"]', function () {
-			history.back(-1);
 			return false;
 		});
 	}

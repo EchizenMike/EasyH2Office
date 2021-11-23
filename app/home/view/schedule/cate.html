@@ -10,7 +10,7 @@
 </script>
 <script type="text/html" id="toolbarDemo">
   <div class="layui-btn-container">
-	<a class="layui-btn layui-btn-normal layui-btn-sm" href="{:url('home/schedule/cate_add')}">+ 添加工作类型</a>
+	<button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="add">+ 添加工作类型</button>
   </div>
 </script>
 {/block}
@@ -21,6 +21,7 @@
 <script>
 	function init(layui) {
 		var table = layui.table,
+			rightpage = layui.rightpage,
 			form = layui.form;
 
 		var tableIns = table.render({
@@ -32,44 +33,43 @@
 			limit: 20,
 			cols: [
 				[{field: 'id',width: 80,title: 'ID编号',align: 'center'}
-				, { field: 'title', width: 180, title: '工作类型名称'}
-				, { field: 'department',width: 300,title: '关联部门'}
+				, { field: 'title', width: 200, title: '工作类型名称'}
+				, { field: 'department',width: 200,title: '关联部门'}
 				, { field: 'remark', title: '备注'}
-				, {
-					field: 'status',
-					width: 80,
-					title: '状态',
-					templet: '#status',
-					align: 'center'
-				},
-				, {width: 100, title: '操作', align: 'center'
-					, templet: function (d) {
+				, {field: 'status', width: 80,title: '状态',templet: '#status',align: 'center'}
+				, {width: 100, title: '操作', align: 'center', templet: function (d) {
 						var html = '<div class="layui-btn-group">';
-						html+='<a class="layui-btn layui-btn-xs" href="/home/schedule/cate_add?id='+d.id+'">编辑</a>';
-						html+= '<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>';
-						html+= '</div>';
+						html+='<button class="layui-btn layui-btn-xs" lay-event="edit">编辑</button>';
+						html+='<button class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</button>';
+						html+='</div>';
 						return html;
 					}
 				}]
 			]
 		});
 
-		//删除
+		//表头工具栏事件
+		table.on('toolbar(test)', function(obj){
+			if (obj.event === 'add') {
+				rightpage.open("{:url('home/schedule/cate_add')}");
+				return;
+			}
+		});
+		//监听行工具事件
 		table.on('tool(test)', function (obj) {
+			var data = obj.data;
+			if (obj.event === 'edit') {
+				rightpage.open('/home/schedule/cate_add?id='+obj.data.id);
+				return;
+			}
 			if (obj.event === 'del') {
-				layer.confirm('确定要删除吗?', {
-					icon: 3,
-					title: '提示'
-				}, function (index) {
+				layer.confirm('确定要删除吗？', { icon: 3, title: '提示' }, function (index) {
 					$.ajax({
-						url: "{:url('home/schedule/cate_delete')}",
-						type: 'post',
-						data: {
-							id: obj.data.id
-						},
-						success: function (res) {
-							layer.msg(res.msg);
-							if (res.code == 0) {
+						url: "{:url('home/schedule/delete')}",
+						data: { id: data.id },
+						success: function (e) {
+							layer.msg(e.msg);
+							if (e.code == 0) {
 								obj.del();
 							}
 						}
@@ -80,6 +80,6 @@
 		});
 	}
 </script>
-{include file="common/layui" base="base" extend="[]" callback="init" /}
+{include file="common/layui" base="base" extend="['rightpage']" callback="init" /}
 {/block}
 <!-- /脚本 -->

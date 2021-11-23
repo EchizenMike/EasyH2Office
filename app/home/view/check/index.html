@@ -6,7 +6,7 @@
 </div>
 <script type="text/html" id="toolbarDemo">
   <div class="layui-btn-container">
-	<a class="layui-btn layui-btn-normal layui-btn-sm" href="{:url('home/check/add')}">+ 添加审核人配置</a>
+	<button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="add">+ 添加审核人配置</button>
   </div>
 </script>
 {/block}
@@ -17,6 +17,7 @@
 <script>
 	function init(layui) {
 		var table = layui.table,
+			rightpage = layui.rightpage,
 			form = layui.form;
 
 		var tableIns = table.render({
@@ -49,30 +50,37 @@
 				, {width: 100, title: '操作', align: 'center'
 					, templet: function (d) {
 						var html = '<div class="layui-btn-group">';
-						html+='<a class="layui-btn layui-btn-xs" href="/home/check/add?id='+d.id+'">编辑</a>';
-						html+= '<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>';
+						html+='<button class="layui-btn layui-btn-xs" lay-event="edit">编辑</button>';
+						html+= '<button class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</button>';
 						html+= '</div>';
 						return html;
 					}
 				}]
 			]
 		});
-		//删除
+		
+		//表头工具栏事件
+		table.on('toolbar(test)', function(obj){
+			if (obj.event === 'add') {
+				rightpage.open("{:url('home/check/add')}");
+				return;
+			}
+		});
+		//监听行工具事件
 		table.on('tool(test)', function (obj) {
+			var data = obj.data;
+			if (obj.event === 'edit') {
+				rightpage.open('/home/check/add?id='+obj.data.id);
+				return;
+			}
 			if (obj.event === 'del') {
-				layer.confirm('确定要删除吗?', {
-					icon: 3,
-					title: '提示'
-				}, function (index) {
+				layer.confirm('确定要删除吗？', { icon: 3, title: '提示' }, function (index) {
 					$.ajax({
 						url: "{:url('home/check/delete')}",
-						type: 'post',
-						data: {
-							id: obj.data.id
-						},
-						success: function (res) {
-							layer.msg(res.msg);
-							if (res.code == 0) {
+						data: { id: data.id },
+						success: function (e) {
+							layer.msg(e.msg);
+							if (e.code == 0) {
 								obj.del();
 							}
 						}
@@ -83,6 +91,6 @@
 		});
 	}
 </script>
-{include file="common/layui" base="base" extend="[]" callback="init" /}
+{include file="common/layui" base="base" extend="['rightpage']" callback="init" /}
 {/block}
 <!-- /脚本 -->
