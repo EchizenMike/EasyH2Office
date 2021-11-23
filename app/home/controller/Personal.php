@@ -52,6 +52,10 @@ class Personal extends BaseController
         $param = get_params();
         if (request()->isAjax()) {
             $param['move_time'] = isset($param['move_time']) ? strtotime($param['move_time']) : 0;
+            $count = Db::name('Department')->where(['leader_id' => $param['uid']])->count();
+            if($count>0){
+                return to_assign(1,'请先撤销该员工的部门负责人头衔再调部门');
+            }
             if ($param['id'] > 0) {
                 $param['update_time'] = time();
                 $res = Db::name('DepartmentChange')->strict(false)->field(true)->update($param);
@@ -94,19 +98,19 @@ class Personal extends BaseController
             $where['p.status'] = array('eq', 1);
             $rows = empty($param['limit']) ? get_config('app . page_size') : $param['limit'];
             $list = PersonalQuit::where($where)
-            ->field('p.*,u.name as name,d.title as department,ps.title as position')
-            ->alias('p')
-            ->join('admin u', 'p.uid = u.id', 'LEFT')
-            ->join('department d', 'u.did = d.id', 'LEFT')
-            ->join('position ps', 'u.position_id = ps.id', 'LEFT')
-            ->order('p.id desc')
-            ->paginate($rows, false, ['query' => $param])
-            ->each(function ($item, $key) {
-                $item->quit_time = date('Y-m-d', $item->quit_time);
-                $item->lead_admin = Db::name('admin')->where(['id' => $item->lead_admin_id])->value('name');
-                $this_uids_name = Db::name('admin')->where([['id','in', $item->connect_uids]])->column('name');
-                $item->connect_names = implode(',', $this_uids_name);
-            });
+                ->field('p.*,u.name as name,d.title as department,ps.title as position')
+                ->alias('p')
+                ->join('admin u', 'p.uid = u.id', 'LEFT')
+                ->join('department d', 'u.did = d.id', 'LEFT')
+                ->join('position ps', 'u.position_id = ps.id', 'LEFT')
+                ->order('p.id desc')
+                ->paginate($rows, false, ['query' => $param])
+                ->each(function ($item, $key) {
+                    $item->quit_time = date('Y-m-d', $item->quit_time);
+                    $item->lead_admin = Db::name('admin')->where(['id' => $item->lead_admin_id])->value('name');
+                    $this_uids_name = Db::name('admin')->where([['id','in', $item->connect_uids]])->column('name');
+                    $item->connect_names = implode(',', $this_uids_name);
+                });
             return table_assign(0, '', $list);
         } else {
             return view();
@@ -118,6 +122,10 @@ class Personal extends BaseController
     {
         $param = get_params();
         if (request()->isAjax()) {
+            $count = Db::name('Department')->where(['leader_id' => $param['uid']])->count();
+            if($count>0){
+                return to_assign(1,'请先撤销该员工的部门负责人头衔再添加离职档案');
+            }
             $param['quit_time'] = isset($param['quit_time']) ? strtotime($param['quit_time']) : 0;
             if ($param['id'] > 0) {
                 $param['update_time'] = time();
@@ -130,7 +138,7 @@ class Personal extends BaseController
                 add_log('add', $res, $param);
             }
             if ($res!==false) {
-                Db::name('Admin')->where('id', $param['uid'])->update(['status' => 0]);
+                Db::name('Admin')->where('id', $param['uid'])->update(['status' => 2]);
             }
             return to_assign();
         } else {

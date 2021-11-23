@@ -13,7 +13,7 @@
 
 <script type="text/html" id="toolbarDemo">
   <div class="layui-btn-container">
-	<button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="add">+ 添加离职档案记录</button>
+	<button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="add">+ 添加离职档案记录</button> <span style="font-size:12px; margin-left:20px; color:#FF5722">删除离职档案即可恢复在职状态</span>
   </div>
 </script>
 {/block}
@@ -35,7 +35,7 @@
 			, limit: 20
 			, cols: [[
 				{ field: 'id', width: 80, title: '序号', align: 'center' }
-				, { field: 'name', width: 90, title: '员工姓名', align: 'center'}
+				, { field: 'name', width: 110, title: '离职员工姓名', align: 'center','style':'color:#FF5722'}
 				, { field: 'department', width: 120, title: '所在部门', align: 'center'}
 				, { field: 'position', width: 100, title: '职位', align: 'center'}
 				, { field: 'lead_admin', width: 90, title: '部门负责人', align: 'center'}

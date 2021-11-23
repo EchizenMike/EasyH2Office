@@ -25,7 +25,6 @@
 				<select name="status">
 					<option value="">选择员工状态</option>
 					<option value="1">正常状态</option>
-					<option value="2">离职状态</option>
 					<option value="0">禁止登录</option>
 				</select>
 			</div>
@@ -52,7 +51,6 @@
 <script type="text/html" id="toolbarDemo">
 	<div class="layui-btn-container">
 		<button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="add"><i class="layui-icon">&#xe61f;</i>添加员工</button>
-		<button class="layui-btn layui-btn-warm layui-btn-sm" lay-event="leave"><i class="layui-icon">&#xe616;</i>设为离职</button>
 		<button class="layui-btn layui-btn-danger layui-btn-sm" lay-event="disable"><i class="layui-icon">&#x1006;</i>禁止登录</button>
 		<button class="layui-btn layui-btn-sm" lay-event="recovery"><i class="layui-icon">&#xe605;</i>恢复正常</button>
 	</div>
@@ -251,10 +249,6 @@
 				case 'recovery':
 					msg = '您确定要把选中的员工恢复正常？';
 					type = 1;
-				break;
-				case 'leave':
-					msg = '您确定要把选中的员工设为离职？';
-					type = 2;
 				break;
 			};
 			

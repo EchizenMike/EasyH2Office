@@ -28,7 +28,7 @@ class Admin extends BaseController
             if (!empty($param['keywords'])) {
                 $where[] = ['id|username|name|nickname|mobile|desc', 'like', '%' . $param['keywords'] . '%'];
             }
-            $where[] = ['status', '>=', 0];
+            $where[] = ['status', '<', 2];
             if (isset($param['status'])) {
                 $where[] = ['status', '=', $param['status']];
             }
