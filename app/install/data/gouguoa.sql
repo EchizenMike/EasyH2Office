@@ -139,8 +139,8 @@ INSERT INTO `oa_admin_menu` VALUES (21, 2, '发票主体设置', 'home/invoice/s
 INSERT INTO `oa_admin_menu` VALUES (22, 3, '部门架构', 'home/department/index', '', 1, 0, 0);
 INSERT INTO `oa_admin_menu` VALUES (23, 3, '岗位职称', 'home/position/index', '', 1, 0, 0);
 INSERT INTO `oa_admin_menu` VALUES (24, 3, '企业员工', 'home/admin/index', '', 1, 0, 0);
-INSERT INTO `oa_admin_menu` VALUES (25, 3, '人事调动', 'home/personnel/change', '', 1, 0, 0);
-INSERT INTO `oa_admin_menu` VALUES (26, 3, '离职档案', 'home/personnel/leave', '', 1, 0, 0);
+INSERT INTO `oa_admin_menu` VALUES (25, 3, '人事调动', 'home/personal/change', '', 1, 0, 0);
+INSERT INTO `oa_admin_menu` VALUES (26, 3, '离职档案', 'home/personal/leave', '', 1, 0, 0);
 
 INSERT INTO `oa_admin_menu` VALUES (27, 4, '收件箱', 'home/mail/inbox', '', 1, 0, 0);
 INSERT INTO `oa_admin_menu` VALUES (28, 4, '已发送', 'home/mail/sendbox', '', 1, 0, 0);
@@ -261,12 +261,12 @@ INSERT INTO `oa_admin_rule` VALUES (59, 57, 'home/admin/view', '查看员工信�
 INSERT INTO `oa_admin_rule` VALUES (60, 57, 'home/admin/set', '设置员工状态','员工状态', 0, 0);
 INSERT INTO `oa_admin_rule` VALUES (61, 57, 'home/admin/reset_psw', '重设员工密码','员工密码', 0, 0);
 
-INSERT INTO `oa_admin_rule` VALUES (62, 3, 'home/personnel/index', '人事调动','人事调动', 0, 0);
-INSERT INTO `oa_admin_rule` VALUES (63, 62, 'home/personnel/add', '新增/编辑人事调动','人事调动', 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (62, 3, 'home/personal/change', '人事调动','人事调动', 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (63, 62, 'home/personal/change_add', '新增/编辑人事调动','人事调动', 0, 0);
 
-INSERT INTO `oa_admin_rule` VALUES (64, 3, 'home/personnel/index', '离职档案','离职档案', 0, 0);
-INSERT INTO `oa_admin_rule` VALUES (65, 64, 'home/personnel/add', '新增/编辑离职档案','离职档案', 0, 0);
-INSERT INTO `oa_admin_rule` VALUES (66, 64, 'home/personnel/delete', '删除离职档案','离职档案', 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (64, 3, 'home/personal/leave', '离职档案','离职档案', 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (65, 64, 'home/personal/leave_add', '新增/编辑离职档案','离职档案', 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (66, 64, 'home/personal/leave_delete', '删除离职档案','离职档案', 0, 0);
 
 INSERT INTO `oa_admin_rule` VALUES (67, 4, 'home/mail/inbox', '收件箱','收件箱', 0, 0);
 INSERT INTO `oa_admin_rule` VALUES (68, 67, 'home/mail/add', '添加/修改消息','消息', 0, 0);
@@ -469,6 +469,42 @@ INSERT INTO `oa_department`(`id`, `title`, `pid`, `leader_id`, `phone`, `remark`
 INSERT INTO `oa_department`(`id`, `title`, `pid`, `leader_id`, `phone`, `remark`, `status`, `create_time`, `update_time`) VALUES (13, '研发部', 6, 0, '13688888666', '', 1, 0, 0);
 INSERT INTO `oa_department`(`id`, `title`, `pid`, `leader_id`, `phone`, `remark`, `status`, `create_time`, `update_time`) VALUES (14, '客服一部', 7, 0, '13688888885', '', 1, 0, 0);
 INSERT INTO `oa_department`(`id`, `title`, `pid`, `leader_id`, `phone`, `remark`, `status`, `create_time`, `update_time`) VALUES (15, '客服二部', 7, 0, '13688888855', '', 1, 0, 0);
+
+-- ----------------------------
+-- Table structure for oa_department_change
+-- ----------------------------
+DROP TABLE IF EXISTS `oa_department_change`;
+CREATE TABLE `oa_department_change`  (
+  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `uid` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '用户ID',
+  `from_did` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '原部门id',
+  `to_did` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '调到部门id',
+  `remark` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '备注',
+  `admin_id` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建人',
+  `status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '状态：-1删除 0禁用 1启用',
+  `move_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '调到时间',
+  `create_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
+  `update_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COMMENT = '人事调动部门记录表';
+
+-- ----------------------------
+-- Table structure for oa_personal_quit
+-- ----------------------------
+DROP TABLE IF EXISTS `oa_personal_quit`;
+CREATE TABLE `oa_personal_quit`  (
+  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `uid` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '用户ID',
+  `remark` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '备注',
+  `admin_id` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建人',
+  `lead_admin_id` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '部门负责人',
+  `connect_uids` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '交接人',
+  `status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '状态：-1删除 0禁用 1启用',
+  `quit_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '离职时间',
+  `create_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
+  `update_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COMMENT = '人事离职记录表';
 
 -- ----------------------------
 -- Table structure for oa_expense
