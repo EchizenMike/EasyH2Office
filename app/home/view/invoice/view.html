@@ -18,7 +18,7 @@
 			<td class="layui-td-gray">开票类型</td>
 			<td>
 			{eq name="$detail.invoice_type" value="1"}增值税专用发票{/eq}
-			{eq name="$detail.invoice_type" value="2"}增值税普通发票{/eq}>
+			{eq name="$detail.invoice_type" value="2"}增值税普通发票{/eq}
 			</td>
 			<td class="layui-td-gray">开票主体</td>
 			<td>
@@ -62,44 +62,65 @@
 			<td class="layui-td-gray">发票状态</td>
 			<td colspan="5">
 				{if condition="($detail.invoice_status == 0)"}
-					<span style="color:#FF5722">审核不通过</span>
+					<span style="color:#FF5722">审核不通过  【原因：{$detail.check_remark}】</span>
 				{elseif condition="($detail.invoice_status == 1)"}
 					<span style="color:#009688">审核中</span>
 				{elseif condition="($detail.invoice_status == 2)"}
-					<span style="color:#1E9FFF">审核通过</span>
+					<span style="color:#1E9FFF">审核通过,待开具</span>
 				{elseif condition="($detail.invoice_status == 3)"}
-					<span style="color:#009688">待开具</span>
-				{elseif condition="($detail.invoice_status == 4)"}
 					<span style="color:#1E9FFF">已开具</span>
-				{elseif condition="($detail.invoice_status == 5)"}
-					<span style="color:#009688">部分到账</span>
-				{elseif condition="($detail.invoice_status == 5)"}
-					<span style="color:#1E9FFF">全部到账</span>
 				{elseif condition="($detail.invoice_status == 10)"}
 					<span style="color:#FF5722">已作废</span>
 				{/if}
 			</td>
 		</tr>
+		{if condition="$detail.check_time > 0"}
 		<tr>
-			{if condition="($detail.check_time == 0)"}
-			<td class="layui-td-gray">当前审核人</td>
-			<td colspan="5">{$detail.check_admin}</td>
-			{else/}
-			<td class="layui-td-gray">发票审核人</td>
+			<td class="layui-td-gray2">审核人</td>
 			<td>{$detail.check_admin}</td>
-			<td class="layui-td-gray">审核时间</td>
-			<td colspan="3">{$detail.check_admin}</td>
-			{/if}
+			<td class="layui-td-gray2">审核时间</td>
+			<td colspan="3">{$detail.check_time}</td>
 		</tr>
+		{else/}
+		<tr>
+			<td class="layui-td-gray2">审核人</td>
+			<td colspan="5">{$detail.check_admin}</td>
+		</tr>
+		{/if}
+		{if condition="$detail.open_admin_id > 0"}
+		<tr>
+			<td class="layui-td-gray2">开票人</td>
+			<td>{$detail.open_admin}</td>
+			<td class="layui-td-gray2">开票时间</td>
+			<td>{$detail.open_time}</td>
+			<td class="layui-td-gray2">发票号码</td>
+			<td>{$detail.code}</td>
+		</tr>
+		{/if}
+		{if condition="($detail.invoice_status == 1) AND ($uid == $detail.check_admin_id)"}
+		<tr>
+			<td class="layui-td-gray">选择开票人<span style="color: red">*</span></td>
+			<td>
+				<form class="layui-form">
+				<select name="open_admin_id">
+					<option value="">请选择发票开具人</option>
+					{volist name=":get_check_user(4)" id="vo"}
+						<option value="{$vo.uid}">{$vo.user}</option>
+					{/volist}
+				</select>
+				</form>
+			</td>
+			<td colspan="4">	
+				<button class="layui-btn layui-btn-danger" lay-event="checkno">审核不通过</button>
+				<button class="layui-btn" lay-event="checkok">审核通过</button>
+			</td>
+		</tr>
+		{/if}
 	</table>
 	<div class="layui-form-item" style="padding-top:10px;">
 		<input name="id" id="id" type="hidden" value="{$detail.id}">
 		{if condition="($detail.invoice_status == 0) AND ($uid == $detail.admin_id)"}
-		<a class="layui-btn" href="/home/invoice_status/add?id={$detail.id}">编辑</a>
-		{/if}
-		{if condition="($detail.invoice_status == 1) AND ($uid == $detail.check_admin_id)"}
-		<button class="layui-btn layui-btn-danger" lay-event="checkno">审核不通过</button>
-		<button class="layui-btn" lay-event="checkok">审核通过</button>
+		<a class="layui-btn" href="/home/invoice/add?id={$detail.id}">编辑</a>
 		{/if}
 		{if condition="($detail.invoice_status == 2) AND ($uid == $detail.open_admin_id)"}
 		<button class="layui-btn" lay-event="payed">开票确认</button>
@@ -115,10 +136,15 @@
 function init(layui) {	
 	$('.body-content').on('click', '[lay-event="checkok"]', function () {
 	    var id=$('#id').val();
+		var open_admin=$('[name="open_admin_id"]').val();
+		if(open_admin == ''){
+			layer.msg('请选择发票开具人');
+			return false;
+		}
 		layer.confirm('确定审核通过该发票申请?', {icon: 3, title:'提示'}, function(index){
 			$.ajax({
 				url:"{:url('home/invoice/check')}",
-				data:{id:id,invoice_status:2},
+				data:{id:id,invoice_status:2,open_admin_id:open_admin},
 				success:function(res){
 					layer.msg(res.msg);
 					if(res.code==0){
@@ -160,17 +186,23 @@ function init(layui) {
 	$('.body-content').on('click', '[lay-event="payed"]', function () {
 		var id=$('#id').val();
 		layer.confirm('确定已经开具发票?', {icon: 3, title:'提示'}, function(index){
-			$.ajax({
-				url:"{:url('home/invoice/check')}",
-				data:{id:id,invoice_status:3},
-				success:function(res){
-					layer.msg(res.msg);
-					if(res.code==0){
-						window.setTimeout(function(){
-							parent.location.reload();
-						},1200)	
-					}
+			layer.prompt({title: '输入发票号码', formType: 3,value :''}, function(text, index){
+				if(text ==''){
+					layer.msg('请输入发票号码');
+					return false;
 				}
+				$.ajax({
+					url:"{:url('home/invoice/check')}",
+					data:{id:id,invoice_status:3,code:text},
+					success:function(res){
+						layer.msg(res.msg);
+						if(res.code==0){
+							window.setTimeout(function(){
+								parent.location.reload();
+							},1200)	
+						}
+					}
+				})
 			})
 		})
 	})

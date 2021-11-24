@@ -20,7 +20,7 @@
 			</td>
 			<td class="layui-td-gray">开票类型<span style="color: red">*</span></td>
 			<td>
-			<select name="invoice_type" lay-verify="required"  lay-reqText="请选择开票类型">
+			<select name="invoice_type" lay-verify="required" lay-reqText="请选择开票类型">
 				<option value="">请选择开票类型</option>
 				<option value="1">增值税专用发票</option>
 				<option value="2">增值税普通发票</option>
@@ -28,7 +28,7 @@
 			</td>
 			<td class="layui-td-gray">开票主体<span style="color: red">*</span></td>
 			<td>
-				<select name="invoice_subject" lay-verify="required"  lay-reqText="请选择开票主体">
+				<select name="invoice_subject" lay-verify="required" lay-reqText="请选择开票主体">
 					<option value="">请选择开票主体</option>
 					{volist name=":get_invoice_subject()" id="vo"}
 					<option value="{$vo.id}">{$vo.title}</option>
@@ -53,7 +53,7 @@
 			<td class="layui-td-gray">开户行<span style="color: red">*</span></td>
 			<td><input type="text" name="invoice_bank" class="layui-input" value=""></td>
 			<td class="layui-td-gray">银行账号<span style="color: red">*</span></td>
-			<td><input type="text" name="invoice_account" class="layui-input" value="" lay-verify="number"></td>
+			<td><input type="text" name="invoice_account" class="layui-input" value=""></td>
 		</tr>
 		<tr class="invoice-type">
 			<td class="layui-td-gray2">银行营业网点<span style="color: red">*</span></td>
@@ -69,7 +69,7 @@
 			<td class="layui-td-gray">发票审核人<span style="color: red">*</span></td>
 			<td colspan="5">
 				<div style="width:300px;">
-				    <select name="check_admin_id" lay-verify="required"  lay-reqText="请选择发票审核人">
+				    <select name="check_admin_id" lay-verify="required" lay-reqText="请选择发票审核人">
 						<option value="">请选择发票审核人</option>
 						{volist name=":get_check_user(3)" id="vo"}
 							<option value="{$vo.uid}">{$vo.user}</option>
@@ -96,7 +96,7 @@
 			</td>
 			<td class="layui-td-gray">开票主体<span style="color: red">*</span></td>
 			<td>
-				<select name="invoice_subject" lay-verify="required"  lay-reqText="请选择开票主体">
+				<select name="invoice_subject" lay-verify="required" lay-reqText="请选择开票主体">
 					<option value="">请选择开票主体</option>
 					{volist name=":get_invoice_subject()" id="vo"}
 					<option value="{$vo.id}" {eq name="$vo.id" value="$detail.invoice_subject"}selected{/eq}>{$vo.title}</option>
@@ -137,7 +137,7 @@
 			<td class="layui-td-gray">发票审核人<span style="color: red">*</span></td>
 			<td colspan="5">
 				<div style="width:300px;">
-				    <select name="check_admin_id" lay-verify="required"  lay-reqText="请选择发票审核人">
+				    <select name="check_admin_id" lay-verify="required" lay-reqText="请选择发票审核人">
 						<option value="">请选择发票审核人</option>
 						{volist name=":get_check_user(3)" id="vo"}
 							<option value="{$vo.uid}" {eq name="$vo.uid" value="$detail.check_admin_id"}selected{/eq}>{$vo.user}</option>
@@ -151,7 +151,7 @@
 
 	<div class="layui-form-item" style="padding-top:10px;">
 		<input name="id" id="id" type="hidden" value="{$id}">
-		<button class="layui-btn" lay-submit="" lay-filter="webform">立即提交</button>
+		<button class="layui-btn" lay-submit="" lay-filter="webform">保存并提交审核</button>
 		<button type="reset" class="layui-btn layui-btn-primary">重置</button>
 	</div>
 </form>

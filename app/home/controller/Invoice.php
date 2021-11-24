@@ -68,7 +68,7 @@ class Invoice extends BaseController
     {
         $rows = empty($param['limit']) ? get_config('app . page_size') : $param['limit'];
         $expense = InvoiceList::where($where)
-            ->order('create_time asc')
+            ->order('id desc')
             ->paginate($rows, false, ['query' => $param])
             ->each(function ($item, $key) {
                 $item->user = Db::name('Admin')->where(['id' => $item->admin_id])->value('name');
@@ -87,13 +87,16 @@ class Invoice extends BaseController
         if ($invoice) {
             $invoice['user'] = Db::name('Admin')->where(['id' => $invoice['admin_id']])->value('name');
             $invoice['department'] = Db::name('Department')->where(['id' => $invoice['did']])->value('title');
-            if ($invoice['check_admin_id'] > 0) {
-                $invoice['check_admin'] = Db::name('Admin')->where(['id' => $invoice['check_admin_id']])->value('name');
+            $invoice['check_admin'] = Db::name('Admin')->where(['id' => $invoice['check_admin_id']])->value('name');
+            $invoice['open_admin'] = Db::name('Admin')->where(['id' => $invoice['open_admin_id']])->value('name');
+            if ($invoice['check_time'] > 0) {
                 $invoice['check_time'] = empty($invoice['check_time']) ? '0' : date('Y-m-d H:i', $invoice['check_time']);
             }
-            if ($invoice['open_admin_id'] > 0) {
-                $invoice['open_name'] = Db::name('Admin')->where(['id' => $invoice['open_admin_id']])->value('name');
+            if ($invoice['open_time'] > 0) {
                 $invoice['open_time'] = empty($invoice['open_time']) ? '0' : date('Y-m-d H:i', $invoice['open_time']);
+            }
+            else{
+                $invoice['open_time'] = '-';
             }
         }
         return $invoice;
@@ -109,7 +112,11 @@ class Invoice extends BaseController
             $start_time = isset($param['start_time']) ? strtotime(urldecode($param['start_time'])) : 0;
             $end_time = isset($param['end_time']) ? strtotime(urldecode($param['end_time'])) : 0;
             if ($start_time > 0 && $end_time > 0) {
-                $where[] = ['expense_time', 'between', [$start_time, $end_time]];
+                $where[] = ['create_time', 'between', [$start_time, $end_time]];
+            }
+
+            if (isset($param['invoice_status']) && $param['invoice_status']!='') {
+                $where[] = ['invoice_status', '=', $param['invoice_status']];
             }
             $invoice = $this->get_list($param, $where);
             return table_assign(0, '', $invoice);
@@ -123,8 +130,8 @@ class Invoice extends BaseController
     {
         $param = get_params();
         if (request()->isAjax()) {
-            //人类型判断
-            if ($param['type'] == 2) {
+            $param['invoice_status'] = 1;
+            if ($param['type'] == 1) {
                 if (!$param['invoice_tax']) {
                     return to_assign(1, '纳税人识别号不能为空');
                 }
