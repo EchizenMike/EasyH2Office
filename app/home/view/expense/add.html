@@ -143,7 +143,7 @@
 
 	<div class="layui-form-item" style="padding-top:10px;">
 		<input name="id" id="id" type="hidden" value="{$id}">
-		<button class="layui-btn" lay-submit="" lay-filter="webform">立即提交</button>
+		<button class="layui-btn" lay-submit="" lay-filter="webform">保存并提交审核</button>
 		<button type="reset" class="layui-btn layui-btn-primary">重置</button>
 	</div>
 </form>
@@ -185,17 +185,23 @@
 				layer.msg('至少要保留一个报销选项');
 				return false;
 			}
-			$.ajax({
-			  url:"{:url('/home/expense/add')}",
-			  type:'post',
-			  data:data.field,
-			  success:function(e){
-				layer.msg(e.msg);
-				if(e.code==0){
-					parent.location.reload();
-				}
-			  }
-			})
+			layer.confirm('审核期间不能编辑修改，确定报销数据无误？', {
+					icon: 3,
+					title: '提示'
+				}, function(index) {
+					$.ajax({
+						url:"{:url('/home/expense/add')}",
+						type:'post',
+						data:data.field,
+						success:function(e){
+							layer.msg(e.msg);
+							if(e.code==0){
+								parent.location.reload();
+							}
+						}
+					})
+					layer.close(index);
+				});
 			return false;
 		});
 		

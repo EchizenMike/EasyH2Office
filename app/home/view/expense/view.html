@@ -32,27 +32,32 @@
 			{if condition="$expense.check_status == 0"}
 			<span style="color:#FF5722">审核不通过 【原因：{$expense.check_remark}】</span>
 			{elseif condition="$expense.check_status == 1"}
-			<span style="color:#393D49">报销审核中</span>
+			<span style="color:#FFB800">报销审核中</span>
 			{elseif condition="$expense.check_status == 2"}
-			<span style="color:#5FB878">审核通过</span>
+			<span style="color:#1E9FFF">审核通过</span>
 			{elseif condition="$expense.check_status == 3"}
 			<span style="color:#009688">已打款</span>
 			{/if}			
 			</td>
 		</tr>
-		{if condition="$expense.check_admin_id > 0"}
+		{if condition="$expense.check_time > 0"}
 		<tr>
 			<td class="layui-td-gray2">审核人</td>
 			<td>{$expense.check_admin}</td>
 			<td class="layui-td-gray2">审核时间</td>
 			<td colspan="3">{$expense.check_time}</td>
 		</tr>
+		{else/}
+		<tr>
+			<td class="layui-td-gray2">审核人</td>
+			<td colspan="5">{$expense.check_admin}</td>
+		</tr>
 		{/if}
 		{if condition="$expense.pay_admin_id > 0"}
 		<tr>
-			<td class="layui-td-gray2">打款确认人</td>
+			<td class="layui-td-gray2">打款人</td>
 			<td>{$expense.pay_admin}</td>
-			<td class="layui-td-gray2">打款确认时间</td>
+			<td class="layui-td-gray2">打款时间</td>
 			<td colspan="3">{$expense.pay_time}</td>
 		</tr>
 		{/if}
@@ -77,15 +82,30 @@
 				</div>
 			</td>
 		</tr>
+		{if condition="($expense.check_status == 1) AND ($uid == $expense.check_admin_id)"}
+		<tr>
+			<td class="layui-td-gray">选择打款人<span style="color: red">*</span></td>
+			<td>
+				<form class="layui-form">
+				<select name="pay_admin_id">
+					<option value="">请选择报销打款人</option>
+					{volist name=":get_check_user(2)" id="vo"}
+						<option value="{$vo.uid}">{$vo.user}</option>
+					{/volist}
+				</select>
+				</form>
+			</td>
+			<td colspan="4">	
+				<button class="layui-btn layui-btn-danger" lay-event="checkno">审核不通过</button>
+				<button class="layui-btn" lay-event="checkok">审核通过</button>
+			</td>
+		</tr>
+		{/if}
 	</table>
 	<div class="layui-form-item" style="padding-top:10px;">
 		<input name="id" id="id" type="hidden" value="{$expense.id}">
 		{if condition="($expense.check_status == 0) AND ($uid == $expense.admin_id)"}
 		<a class="layui-btn" href="/home/expense/add?id={$expense.id}">编辑</a>
-		{/if}
-		{if condition="($expense.check_status == 1) AND ($uid == $expense.check_admin_id)"}
-		<button class="layui-btn layui-btn-danger" lay-event="checkno">审核不通过</button>
-		<button class="layui-btn" lay-event="checkok">审核通过</button>
 		{/if}
 		{if condition="($expense.check_status == 2) AND ($uid == $expense.pay_admin_id)"}
 		<button class="layui-btn" lay-event="payed">打款确认</button>
@@ -101,10 +121,15 @@
 function init(layui) {	
 	$('.body-content').on('click', '[lay-event="checkok"]', function () {
 	    var id=$('#id').val();
+		var pay_admin=$('[name="pay_admin_id"]').val();
+		if(pay_admin == ''){
+			layer.msg('请选择报销打款人');
+			return false;
+		}
 		layer.confirm('确定审核通过该报销申请?', {icon: 3, title:'提示'}, function(index){
 			$.ajax({
 				url:"{:url('home/expense/check')}",
-				data:{id:id,check_status:2},
+				data:{id:id,check_status:2,pay_admin_id:pay_admin},
 				success:function(res){
 					layer.msg(res.msg);
 					if(res.code==0){
@@ -120,7 +145,7 @@ function init(layui) {
 
 	$('.body-content').on('click', '[lay-event="checkno"]', function () {
 		var id=$('#id').val();
-		layer.confirm('确定拒绝该提现申请?', {icon: 3, title:'提示'}, function(index){
+		layer.confirm('确定拒绝该报销申请?', {icon: 3, title:'提示'}, function(index){
 			layer.prompt({title: '拒绝的理由', formType: 3,value :''}, function(text, index){
 				if(text ==''){
 					layer.msg('请输入拒绝的理由');

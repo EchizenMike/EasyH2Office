@@ -2,6 +2,27 @@
 <!-- 主体 -->
 {block name="body"}
 <div class="body-content">
+	<form class="layui-form">
+		<div id="barDate" class="layui-input-inline">
+			<div class="layui-input-inline" style="width:110px;">
+				<input type="text" class="layui-input" id="start_time" placeholder="选择时间区间" readonly name="start_time">
+			</div>
+			~
+			<div class="layui-input-inline" style="width:110px;">
+				<input type="text" class="layui-input" id="end_time" placeholder="选择时间区间" readonly name="end_time">
+			</div>
+		</div>
+		<div class="layui-input-inline">
+			<select name="check_status">
+				<option value="">请选择状态</option>
+				<option value="1">未审核</option>
+				<option value="0">审核不通过</option>
+				<option value="2">审核通过</option>
+				<option value="3">已打款</option>
+			</select>
+		</div>
+		<button class="layui-btn layui-btn-danger" lay-submit="" lay-filter="webform">提交搜索</button>
+	</form>
 	<table class="layui-hide" id="test" lay-filter="test"></table>
 </div>
 <script type="text/html" id="toolbarDemo">
@@ -18,7 +39,20 @@
 	function init(layui) {
 		var table = layui.table,
 			rightpage = layui.rightpage,
-			form = layui.form;
+			form = layui.form,
+			laydate = layui.laydate;
+		//日期范围
+		laydate.render({
+			elem: '#barDate',
+			range: ['#start_time', '#end_time']
+		});
+		
+		//监听搜索提交
+		form.on('submit(webform)', function(data){
+			let f=data.field;
+			tableIns.reload({where:{check_status:f.check_status,start_time:f.start_time,end_time:f.end_time},page:{curr:1}});
+			return false;
+		});
 
 		var tableIns = table.render({
 			elem: '#test',
@@ -38,6 +72,7 @@
 						field: 'amount',
 						title: '报销总金额(元)',
 						align: 'right',
+						style: 'color:#1E9FFF',
 						width: 120,
 					},{
 						field: 'admin_name',
@@ -69,20 +104,20 @@
 						align: 'center',
 						width: 150
 					},{
-						field: 'status',
+						field: 'check_status',
 						title: '状态',
 						align: 'center',
 						width: 120,
 						templet:function(d){
 							var html='<span style="color:#FF5722">审核不通过</span>';
 							if(d.check_status==1){
-								html='<span style="color:#393D49">报销审核中</span>';
+								html='<span style="color:#5FB878">报销审核中</span>';
 							}
 							else if(d.check_status==2){
-								html='<span style="color:#5FB878">审核通过</span>';
+								html='<span style="color:#1E9FFF">审核通过</span>';
 							}
 							else if(d.check_status==3){
-								html='<span style="color:#009688">已打款</span>';
+								html='<span style="color:#FFB800">已打款</span>';
 							}
 							return html;
 						}
@@ -90,7 +125,7 @@
 						field: 'check_name',
 						title: '审核人',
 						align: 'center',
-						width: 100
+						width: 90
 					},{
 						field: 'check_time',
 						title: '审核时间',
@@ -98,9 +133,9 @@
 						width: 150
 					},{
 						field: 'pay_name',
-						title: '打款确认人',
+						title: '打款人',
 						align: 'center',
-						width: 100
+						width: 90
 					},{
 						field: 'pay_time',
 						title: '打款确认时间',
@@ -117,11 +152,9 @@
 							var btn1='<span class="layui-btn layui-btn-normal layui-btn-xs" lay-event="view">详情</span>';
 							var btn2='<span class="layui-btn layui-btn-xs" lay-event="edit">编辑</span>';
 							var btn3='<span class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</span>';
-							if(d.admin_id==login_user){
-								html+=btn1+btn2+btn3;
-							}
-							else{
-								html+=btn1+btn3;
+							html+=btn1;
+							if(d.check_status==0 && d.admin_id==login_user){
+								html+=btn2+btn3;
 							}
 							html+='</div>';
 							return html;

@@ -68,7 +68,7 @@ class Expense extends BaseController
     {
         $rows = empty($param['limit']) ? get_config('app . page_size') : $param['limit'];
         $expense = ExpenseList::where($where)
-            ->order('create_time asc')
+            ->order('id desc')
             ->paginate($rows, false, ['query' => $param])
             ->each(function ($item, $key) {
                 $item->income_month = empty($item->income_month) ? '-' : date('Y-m', $item->income_month);
@@ -93,19 +93,21 @@ class Expense extends BaseController
             $expense['user_name'] = Db::name('Admin')->where(['id' => $expense['admin_id']])->value('name');
             $expense['department'] = Db::name('Department')->where(['id' => $expense['did']])->value('title');
             $expense['amount'] = Db::name('ExpenseInterfix')->where(['exid' => $expense['id']])->sum('amount');
-
-            if ($expense['check_admin_id'] > 0) {
-                $expense['check_admin'] = Db::name('Admin')->where(['id' => $expense['check_admin_id']])->value('name');
+            $expense['check_admin'] = Db::name('Admin')->where(['id' => $expense['check_admin_id']])->value('name');
+            $expense['pay_admin'] = Db::name('Admin')->where(['id' => $expense['pay_admin_id']])->value('name');
+            if ($expense['check_time'] > 0) {
                 $expense['check_time'] = date('Y-m-d H:i:s', $expense['check_time']);
             }
-            if ($expense['pay_admin_id'] > 0) {
-                $expense['pay_admin'] = Db::name('Admin')->where(['id' => $expense['pay_admin_id']])->value('name');
+            if ($expense['pay_time'] > 0) {
                 $expense['pay_time'] = date('Y-m-d H:i:s', $expense['pay_time']);
+            }
+            else{
+                $expense['pay_time'] = '-';
             }
             $expense['list'] = Db::name('ExpenseInterfix')
                 ->field('a.*,c.title as cate_title')
                 ->alias('a')
-                ->join('ExpenseCate c', 'a.cate_id = c.id')
+                ->join('ExpenseCate c', 'a.cate_id = c.id','LEFT')
                 ->where(['a.exid' => $expense['id']])
                 ->select();
         }
@@ -124,6 +126,10 @@ class Expense extends BaseController
             if ($start_time > 0 && $end_time > 0) {
                 $where[] = ['expense_time', 'between', [$start_time, $end_time]];
             }
+
+            if (isset($param['check_status']) && $param['check_status']!='') {
+                $where[] = ['check_status', '=', $param['check_status']];
+            }            
             $expense = $this->get_list($param, $where);
             return table_assign(0, '', $expense);
         } else {

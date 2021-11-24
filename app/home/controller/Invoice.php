@@ -224,10 +224,10 @@ class Invoice extends BaseController
             if ($param['invoice_status'] == 2 || $param['invoice_status'] == 0) {
                 $param['check_time'] = time();
             }
-            if ($param['check_status'] == 3) {
+            if ($param['invoice_status'] == 3) {
                 $param['open_time'] = time();
             }
-            if ($param['check_status'] == 10) {
+            if ($param['invoice_status'] == 10) {
                 $param['update_time'] = time();
             }
             $res = InvoiceList::where('id', $param['id'])->strict(false)->field(true)->update($param);
