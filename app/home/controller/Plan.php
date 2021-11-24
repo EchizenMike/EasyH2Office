@@ -44,9 +44,10 @@ class Plan extends BaseController
                 ->order('a.id desc')
                 ->paginate($rows, false)
                 ->each(function ($item, $key) {
+                    $item->remind_time = empty($item->remind_time) ? '-' : date('Y-m-d H:i', $item->remind_time);
                     $item->start_time = empty($item->start_time) ? '' : date('Y-m-d H:i', $item->start_time);
-                    //$item->end_time = empty($item->end_time) ? '': date('Y-m-d H:i', $item->end_time);
-                    $item->end_time = empty($item->end_time) ? '' : date('H:i', $item->end_time);
+                    $item->end_time = empty($item->end_time) ? '': date('Y-m-d H:i', $item->end_time);
+                    //$item->end_time = empty($item->end_time) ? '' : date('H:i', $item->end_time);
                 });
             return table_assign(0, '', $plan);
         } else {
@@ -68,11 +69,12 @@ class Plan extends BaseController
             $where[] = ['end_time', '<=', strtotime($param['end'])];
             $where[] = ['admin_id', '=', $uid];
             $where[] = ['status', '=', 1];
-            $schedule = Db::name('Plan')->where($where)->field('id,title,color,start_time,end_time')->select()->toArray();
+            $schedule = Db::name('Plan')->where($where)->field('id,title,type,start_time,end_time')->select()->toArray();
             $events = [];
+            $color_array=['#393D49','#FF5722','#FFB800','#1E9FFF','#009688'];
             foreach ($schedule as $k => $v) {
-                $v['backgroundColor'] = $v['color'];
-                $v['borderColor'] = $v['color'];
+                $v['backgroundColor'] = $color_array[$v['type']];
+                $v['borderColor'] = $color_array[$v['type']];
                 $v['title'] = $v['title'];
                 $v['start'] = date('Y-m-d H:i', $v['start_time']);
                 $v['end'] = date('Y-m-d H:i', $v['end_time']);
@@ -109,43 +111,35 @@ class Plan extends BaseController
     {
         $param = get_params();
         $admin_id = $this->uid;
+        if (isset($param['start_time_a'])) {
+            $param['start_time'] = strtotime($param['start_time_a'] . '' . $param['start_time_b']);
+        }
+        if (isset($param['end_time_a'])) {
+            $param['end_time'] = strtotime($param['end_time_a'] . '' . $param['end_time_b']);
+        }
+        if ($param['end_time'] <= $param['start_time']) {
+            return to_assign(1, "结束时间需要大于开始时间");
+        }
+
+        if($param['remind_type']==1){
+            $param['remind_time'] = $param['start_time']-5*60;
+        }
+        if($param['remind_type']==2){
+            $param['remind_time'] = $param['start_time']-15*60;
+        }
+        if($param['remind_type']==3){
+            $param['remind_time'] = $param['start_time']-30*60;
+        }
+        if($param['remind_type']==4){
+            $param['remind_time'] = $param['start_time']-60*60;
+        }
+        if($param['remind_type']==5){
+            $param['remind_time'] = $param['start_time']-120*60;
+        }
+        if($param['remind_type']==6){
+            $param['remind_time'] = $param['start_time']-1440*60;
+        }
         if ($param['id'] == 0) {
-            if (isset($param['start_time'])) {
-                $param['start_time'] = strtotime($param['start_time'] . '' . $param['start_time_1']);
-            }
-            if (isset($param['end_time'])) {
-                $param['end_time'] = strtotime($param['end_time'] . '' . $param['end_time_1']);
-            }
-            if ($param['end_time'] <= $param['start_time']) {
-                return to_assign(1, "结束时间需要大于开始时间");
-            }
-            $where1[] = ['status', '=', 1];
-            $where1[] = ['admin_id', '=', $admin_id];
-            $where1[] = ['start_time', 'between', [$param['start_time'], $param['end_time'] - 1]];
-
-            $where2[] = ['status', '=', 1];
-            $where2[] = ['admin_id', '=', $admin_id];
-            $where2[] = ['start_time', '<=', $param['start_time']];
-            $where2[] = ['start_time', '>=', $param['end_time']];
-
-            $where3[] = ['status', '=', 1];
-            $where3[] = ['admin_id', '=', $admin_id];
-            $where3[] = ['end_time', 'between', [$param['start_time'] + 1, $param['end_time']]];
-
-            $record = Db::name('Plan')
-                ->where(function ($query) use ($where1) {
-                    $query->where($where1);
-                })
-                ->whereOr(function ($query) use ($where2) {
-                    $query->where($where2);
-                })
-                ->whereOr(function ($query) use ($where3) {
-                    $query->where($where3);
-                })
-                ->count();
-            if ($record > 0) {
-                return to_assign(1, "您所选的时间区间已有日程安排，请重新选时间");
-            }
             $param['admin_id'] = $admin_id;
             $param['did'] = get_admin($admin_id)['did'];
             $param['create_time'] = time();
@@ -160,7 +154,7 @@ class Plan extends BaseController
             $param['update_time'] = time();
             $res = Db::name('Plan')->strict(false)->field(true)->update($param);
             if ($res !== false) {
-                add_log('edit', $addid, $param);
+                add_log('edit', $param['id'], $param);
                 return to_assign(0, '操作成功');
             } else {
                 return to_assign(0, '操作失败');
@@ -188,6 +182,11 @@ class Plan extends BaseController
         $id = get_params('id');
         $schedule = Db::name('Plan')->where(['id' => $id])->find();
         if (!empty($schedule)) {
+            $schedule['remind_time'] = date('Y-m-d H:i', $schedule['remind_time']);
+            $schedule['start_time_a'] = date('Y-m-d', $schedule['start_time']);
+            $schedule['end_time_a'] = date('Y-m-d', $schedule['end_time']);
+            $schedule['start_time_b'] = date('H:i', $schedule['start_time']);
+            $schedule['end_time_b'] = date('H:i', $schedule['end_time']);
             $schedule['start_time'] = date('Y-m-d H:i', $schedule['start_time']);
             $schedule['end_time'] = date('Y-m-d H:i', $schedule['end_time']);
             $schedule['create_time'] = date('Y-m-d H:i:s', $schedule['create_time']);

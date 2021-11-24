@@ -810,7 +810,7 @@ DROP TABLE IF EXISTS `oa_plan`;
 CREATE TABLE `oa_plan`  (
   `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `title` varchar(255) NOT NULL DEFAULT '' COMMENT '工作安排主题',
-  `color` varchar(100) NOT NULL DEFAULT '' COMMENT '颜色',
+  `type` varchar(100) NOT NULL DEFAULT '' COMMENT '日程优先级',
   `cid` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '预设字段:关联工作内容类型ID',
   `cmid` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '预设字段:关联客户ID',
   `ptid` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '预设字段:关联项目ID',
@@ -818,6 +818,7 @@ CREATE TABLE `oa_plan`  (
   `did` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '所属部门',
   `start_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '开始时间',
   `end_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '结束时间',
+  `remind_type` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '提醒类型',
   `remind_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '提醒时间',
   `remark` text NOT NULL COMMENT '描述',
   `status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '状态：-1删除 0禁用 1启用',
