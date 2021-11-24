@@ -58,12 +58,16 @@ class Income extends BaseController
         if (request()->isAjax()) {
             $param = get_params();
             $where = [];
-            $where[] = ['status', 'in', [3,4,5]];
+            $where[] = ['status', '=', 1];
+            $where[] = ['invoice_status', '=', 3];
             //按时间检索
             $start_time = isset($param['start_time']) ? strtotime(urldecode($param['start_time'])) : 0;
             $end_time = isset($param['end_time']) ? strtotime(urldecode($param['end_time'])) : 0;
             if ($start_time > 0 && $end_time > 0) {
-                $where[] = ['expense_time', 'between', [$start_time, $end_time]];
+                $where[] = ['enter_time', 'between', [$start_time, $end_time]];
+            }
+            if (isset($param['is_cash']) && $param['is_cash']!='') {
+                $where[] = ['is_cash', '=', $param['is_cash']];
             }
             $invoice = $this->get_list($param, $where);
             return table_assign(0, '', $invoice);

@@ -2,6 +2,26 @@
 <!-- 主体 -->
 {block name="body"}
 <div class="body-content">
+	<form class="layui-form">
+		<div id="barDate" class="layui-input-inline">
+			<div class="layui-input-inline" style="width:110px;">
+				<input type="text" class="layui-input" id="start_time" placeholder="选择时间区间" readonly name="start_time">
+			</div>
+			~
+			<div class="layui-input-inline" style="width:110px;">
+				<input type="text" class="layui-input" id="end_time" placeholder="选择时间区间" readonly name="end_time">
+			</div>
+		</div>
+		<div class="layui-input-inline">
+			<select name="is_cash">
+				<option value="">请选择状态</option>
+				<option value="0">未到账</option>
+				<option value="1">部分到账</option>
+				<option value="2">全部到账</option>
+			</select>
+		</div>
+		<button class="layui-btn layui-btn-danger" lay-submit="" lay-filter="webform">提交搜索</button>
+	</form>
 	<table class="layui-hide" id="test" lay-filter="test"></table>
 </div>
 {/block}
@@ -13,7 +33,20 @@
 	function init(layui) {
 		var table = layui.table,
 			rightpage = layui.rightpage,
-			form = layui.form;
+			form = layui.form,
+			laydate = layui.laydate;
+		//日期范围
+		laydate.render({
+			elem: '#barDate',
+			range: ['#start_time', '#end_time']
+		});
+		
+		//监听搜索提交
+		form.on('submit(webform)', function(data){
+			let f=data.field;
+			tableIns.reload({where:{is_cash:f.is_cash,start_time:f.start_time,end_time:f.end_time},page:{curr:1}});
+			return false;
+		});
 
 		var tableIns = table.render({
 			elem: '#test',
@@ -30,13 +63,8 @@
 						align: 'center',
 						width: 80
 					},{
-						field: 'status',
-						title: '到账状态',
-						align: 'center',
-						width: 100,
-						{
 						field: 'is_cash',
-						title: '审核状态',
+						title: '到账状态',
 						align: 'center',
 						width: 100,
 						templet:function(d){
@@ -49,16 +77,30 @@
 							}
 							return html;
 						}
-					},
 					},{
 						field: 'enter_amount',
 						title: '到账金额(元)',
 						align: 'right',
 						width: 120,
+					},{
+						field: 'check_time',
+						title: '最新到账时间',
+						align: 'center',
+						width: 150
 					}, {
 						field: 'invoice_title',
 						title: '发票抬头',
-						width: 240,
+						width: 300,
+						templet:function(d){
+							var html='';
+							if(d.type==1){
+								html='<span class="layui-badge layui-bg-blue">企业</span> '+d.invoice_title;
+							}
+							else if(d.type==2){
+								html='<span class="layui-badge layui-bg-green">个人</span> '+d.invoice_title;
+							}
+							return html;
+						}
 					},{
 						field: 'amount',
 						title: '发票金额(元)',
@@ -95,36 +137,21 @@
 						align: 'center',
 						width: 150
 					},{
-						field: 'check_name',
-						title: '审核人',
-						align: 'center',
-						width: 90
-					},{
-						field: 'check_time',
-						title: '审核时间',
-						align: 'center',
-						width: 136
-					},{
-						field: 'pay_name',
-						title: '开票人',
-						align: 'center',
-						width: 90
-					},{
-						field: 'pay_time',
-						title: '开票时间',
-						align: 'center',
-						width: 136
-					},{
-						field: 'pay_time',
+						field: 'code',
 						title: '发票号码',
+						align: 'center',
+						width: 150
+					},{
+						field: 'open_time',
+						title: '开票时间',
 						align: 'center',
 						width: 136
 					}, {
 						field: 'right',
 						fixed: 'right',
 						title: '操作',
-						width: 60,
-						align: 'right',
+						width: 80,
+						align: 'center',
 						templet:function(d){
 							var html='<span class="layui-btn layui-btn-normal layui-btn-xs" lay-event="view">详情</span>';
 							return html;
