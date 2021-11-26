@@ -36,6 +36,7 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
+	var tableIns=null;
 	function init(layui) {
 		var table = layui.table,
 			rightpage = layui.rightpage,
@@ -54,7 +55,7 @@
 			return false;
 		});
 
-		var tableIns = table.render({
+		tableIns = table.render({
 			elem: '#test',
 			title: '报销管理列表',
 			toolbar: '#toolbarDemo',

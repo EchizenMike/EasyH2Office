@@ -24,7 +24,7 @@ class Department extends BaseController
                 ->field('d.*,a.name as leader')
                 ->alias('d')
                 ->join('Admin a', 'a.id = d.leader_id', 'LEFT')
-                ->order('id asc')
+                ->order('d.id asc')
                 ->select();
             return to_assign(0, '', $list);
         } else {

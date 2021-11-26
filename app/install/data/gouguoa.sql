@@ -327,10 +327,11 @@ INSERT INTO `oa_admin_rule` VALUES (111, 108, 'home/invoice/view', '查看发票
 INSERT INTO `oa_admin_rule` VALUES (112, 108, 'home/invoice/check', '设置发票状态','发票状态');
 
 INSERT INTO `oa_admin_rule` VALUES (113, 8, 'home/income/index', '到账管理','到账');
-INSERT INTO `oa_admin_rule` VALUES (114, 113, 'home/income/add', '新增到账','到账');
-INSERT INTO `oa_admin_rule` VALUES (115, 113, 'home/income/check', '设置到账状态','到账状态');
+INSERT INTO `oa_admin_rule` VALUES (114, 113, 'home/income/add', '新增到账记录','到账');
+INSERT INTO `oa_admin_rule` VALUES (115, 113, 'home/income/view', '到账详情','到账');
+INSERT INTO `oa_admin_rule` VALUES (116, 113, 'home/income/delete', '删除到账记录','反到账');
 
-INSERT INTO `oa_admin_rule` VALUES (116, 9, 'home/analysis/index', '智能分析','智能分析');
+INSERT INTO `oa_admin_rule` VALUES (117, 9, 'home/analysis/index', '智能分析','智能分析');
 
 -- ----------------------------
 -- Table structure for oa_article
@@ -430,10 +431,10 @@ CREATE TABLE `oa_check`  (
 -- ----------------------------
 -- Records of oa_check
 -- ----------------------------
-INSERT INTO `oa_check`(`id`, `uid`, `type`, `remark`, `status`, `create_time`, `update_time`) VALUES (1, 1, 1, '初始化设置', 1, 1558681814, 0);
-INSERT INTO `oa_check`(`id`, `uid`, `type`, `remark`, `status`, `create_time`, `update_time`) VALUES (2, 1, 2, '初始化设置', 1, 1558681814, 0);
-INSERT INTO `oa_check`(`id`, `uid`, `type`, `remark`, `status`, `create_time`, `update_time`) VALUES (3, 1, 3, '初始化设置', 1, 1558681814, 0);
-INSERT INTO `oa_check`(`id`, `uid`, `type`, `remark`, `status`, `create_time`, `update_time`) VALUES (4, 1, 4, '初始化设置', 1, 1558681814, 0);
+INSERT INTO `oa_check`(`id`, `uid`, `type`) VALUES (1, 1, 1, '初始化设置', 1, 1558681814, 0);
+INSERT INTO `oa_check`(`id`, `uid`, `type`) VALUES (2, 1, 2, '初始化设置', 1, 1558681814, 0);
+INSERT INTO `oa_check`(`id`, `uid`, `type`) VALUES (3, 1, 3, '初始化设置', 1, 1558681814, 0);
+INSERT INTO `oa_check`(`id`, `uid`, `type`) VALUES (4, 1, 4, '初始化设置', 1, 1558681814, 0);
 
 -- ----------------------------
 -- Table structure for oa_department
@@ -455,21 +456,21 @@ CREATE TABLE `oa_department`  (
 -- ----------------------------
 -- Records of oa_department
 -- ----------------------------
-INSERT INTO `oa_department`(`id`, `title`, `pid`, `leader_id`, `phone`, `remark`, `status`, `create_time`, `update_time`) VALUES (1, '董事会', 0, 0, '13688888888', '', 1, 0, 0);
-INSERT INTO `oa_department`(`id`, `title`, `pid`, `leader_id`, `phone`, `remark`, `status`, `create_time`, `update_time`) VALUES (2, '人事部', 1, 0, '13688888889', '', 1, 0, 0);
-INSERT INTO `oa_department`(`id`, `title`, `pid`, `leader_id`, `phone`, `remark`, `status`, `create_time`, `update_time`) VALUES (3, '财务部', 1, 0, '13688888898', '', 1, 0, 0);
-INSERT INTO `oa_department`(`id`, `title`, `pid`, `leader_id`, `phone`, `remark`, `status`, `create_time`, `update_time`) VALUES (4, '市场部', 1, 0, '13688888988', '', 1, 0, 0);
-INSERT INTO `oa_department`(`id`, `title`, `pid`, `leader_id`, `phone`, `remark`, `status`, `create_time`, `update_time`) VALUES (5, '销售部', 1, 0, '13688889888', '', 1, 0, 0);
-INSERT INTO `oa_department`(`id`, `title`, `pid`, `leader_id`, `phone`, `remark`, `status`, `create_time`, `update_time`) VALUES (6, '技术部', 1, 0, '13688898888', '', 1, 0, 0);
-INSERT INTO `oa_department`(`id`, `title`, `pid`, `leader_id`, `phone`, `remark`, `status`, `create_time`, `update_time`) VALUES (7, '客服部', 1, 0, '13688988888', '', 1, 0, 0);
-INSERT INTO `oa_department`(`id`, `title`, `pid`, `leader_id`, `phone`, `remark`, `status`, `create_time`, `update_time`) VALUES (8, '销售一部', 5, 0, '13688998888', '', 1, 0, 0);
-INSERT INTO `oa_department`(`id`, `title`, `pid`, `leader_id`, `phone`, `remark`, `status`, `create_time`, `update_time`) VALUES (9, '销售二部', 5, 0, '13688999888', '', 1, 0, 0);
-INSERT INTO `oa_department`(`id`, `title`, `pid`, `leader_id`, `phone`, `remark`, `status`, `create_time`, `update_time`) VALUES (10, '销售三部', 5, 0, '13688999988', '', 1, 0, 0);
-INSERT INTO `oa_department`(`id`, `title`, `pid`, `leader_id`, `phone`, `remark`, `status`, `create_time`, `update_time`) VALUES (11, '产品部', 6, 0, '13688888886', '', 1, 0, 0);
-INSERT INTO `oa_department`(`id`, `title`, `pid`, `leader_id`, `phone`, `remark`, `status`, `create_time`, `update_time`) VALUES (12, '设计部', 6, 0, '13688888866', '', 1, 0, 0);
-INSERT INTO `oa_department`(`id`, `title`, `pid`, `leader_id`, `phone`, `remark`, `status`, `create_time`, `update_time`) VALUES (13, '研发部', 6, 0, '13688888666', '', 1, 0, 0);
-INSERT INTO `oa_department`(`id`, `title`, `pid`, `leader_id`, `phone`, `remark`, `status`, `create_time`, `update_time`) VALUES (14, '客服一部', 7, 0, '13688888885', '', 1, 0, 0);
-INSERT INTO `oa_department`(`id`, `title`, `pid`, `leader_id`, `phone`, `remark`, `status`, `create_time`, `update_time`) VALUES (15, '客服二部', 7, 0, '13688888855', '', 1, 0, 0);
+INSERT INTO `oa_department`(`id`, `title`, `pid`, `leader_id`, `phone`) VALUES (1, '董事会', 0, 0, '13688888888');
+INSERT INTO `oa_department`(`id`, `title`, `pid`, `leader_id`, `phone`) VALUES (2, '人事部', 1, 0, '13688888889');
+INSERT INTO `oa_department`(`id`, `title`, `pid`, `leader_id`, `phone`) VALUES (3, '财务部', 1, 0, '13688888898');
+INSERT INTO `oa_department`(`id`, `title`, `pid`, `leader_id`, `phone`) VALUES (4, '市场部', 1, 0, '13688888978');
+INSERT INTO `oa_department`(`id`, `title`, `pid`, `leader_id`, `phone`) VALUES (5, '销售部', 1, 0, '13688889868');
+INSERT INTO `oa_department`(`id`, `title`, `pid`, `leader_id`, `phone`) VALUES (6, '技术部', 1, 0, '13688898858');
+INSERT INTO `oa_department`(`id`, `title`, `pid`, `leader_id`, `phone`) VALUES (7, '客服部', 1, 0, '13688988848');
+INSERT INTO `oa_department`(`id`, `title`, `pid`, `leader_id`, `phone`) VALUES (8, '销售一部', 5, 0, '13688998838');
+INSERT INTO `oa_department`(`id`, `title`, `pid`, `leader_id`, `phone`) VALUES (9, '销售二部', 5, 0, '13688999828');
+INSERT INTO `oa_department`(`id`, `title`, `pid`, `leader_id`, `phone`) VALUES (10, '销售三部', 5, 0, '13688999918');
+INSERT INTO `oa_department`(`id`, `title`, `pid`, `leader_id`, `phone`) VALUES (11, '产品部', 6, 0, '13688888886');
+INSERT INTO `oa_department`(`id`, `title`, `pid`, `leader_id`, `phone`) VALUES (12, '设计部', 6, 0, '13688888876');
+INSERT INTO `oa_department`(`id`, `title`, `pid`, `leader_id`, `phone`) VALUES (13, '研发部', 6, 0, '13688888666');
+INSERT INTO `oa_department`(`id`, `title`, `pid`, `leader_id`, `phone`) VALUES (14, '客服一部', 7, 0, '13688888865');
+INSERT INTO `oa_department`(`id`, `title`, `pid`, `leader_id`, `phone`) VALUES (15, '客服二部', 7, 0, '13688888855');
 
 -- ----------------------------
 -- Table structure for oa_department_change
@@ -480,7 +481,7 @@ CREATE TABLE `oa_department_change`  (
   `uid` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '用户ID',
   `from_did` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '原部门id',
   `to_did` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '调到部门id',
-  `remark` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '备注',
+  `remark` text CHARACTER SET utf8 COLLATE NULL COMMENT '备注',
   `admin_id` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建人',
   `status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '状态：-1删除 0禁用 1启用',
   `move_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '调到时间',
@@ -496,10 +497,10 @@ DROP TABLE IF EXISTS `oa_personal_quit`;
 CREATE TABLE `oa_personal_quit`  (
   `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `uid` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '用户ID',
-  `remark` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '备注',
+  `remark` text CHARACTER SET utf8 COLLATE NULL COMMENT '备注',
   `admin_id` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建人',
   `lead_admin_id` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '部门负责人',
-  `connect_uids` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '交接人',
+  `connect_uids` varchar(100) CHARACTER SET utf8 COLLATE NOT NULL DEFAULT '' COMMENT '交接人',
   `status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '状态：-1删除 0禁用 1启用',
   `quit_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '离职时间',
   `create_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
@@ -651,12 +652,12 @@ CREATE TABLE `oa_invoice_income`  (
   `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `inid` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '发票ID',
   `amount` decimal(15, 2) NULL DEFAULT 0.00 COMMENT '到账金额',
-  `remarks` text NULL COMMENT '备注',
   `admin_id` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '到账登记人',
-  `status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '状态：-1删除 0禁用 1正常 6作废',
   `enter_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '到账时间',
+  `remarks` text NULL COMMENT '备注',
   `create_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
   `update_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间',
+  `status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '状态：-1删除 0禁用 1正常 6作废',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COMMENT = '发票到账记录表';
 
@@ -784,7 +785,7 @@ CREATE TABLE `oa_position`  (
 -- ----------------------------
 -- Records of oa_position
 -- ----------------------------
-INSERT INTO `oa_position`(`id`, `title`, `work_price`, `remark`, `status`, `create_time`, `update_time`) VALUES (1, '超级岗位', 200, '超级岗位，不能轻易修改权限', 1, 0, 0);
+INSERT INTO `oa_position`(`id`, `title`, `work_price`) VALUES (1, '超级岗位', 200, '超级岗位，不能轻易修改权限', 1, 0, 0);
 
 -- ----------------------------
 -- Table structure for oa_position_group

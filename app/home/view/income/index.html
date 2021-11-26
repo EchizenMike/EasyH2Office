@@ -30,6 +30,7 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
+	var tableIns=null;
 	function init(layui) {
 		var table = layui.table,
 			rightpage = layui.rightpage,
@@ -48,7 +49,7 @@
 			return false;
 		});
 
-		var tableIns = table.render({
+		tableIns = table.render({
 			elem: '#test',
 			title: '到账列表',
 			toolbar: '#toolbarDemo',
@@ -81,12 +82,12 @@
 						field: 'enter_amount',
 						title: '到账金额(元)',
 						align: 'right',
-						width: 120,
+						width: 100,
 					},{
 						field: 'check_time',
 						title: '最新到账时间',
 						align: 'center',
-						width: 150
+						width: 136
 					}, {
 						field: 'invoice_title',
 						title: '发票抬头',
@@ -105,7 +106,7 @@
 						field: 'amount',
 						title: '发票金额(元)',
 						align: 'right',
-						width: 120,
+						width: 100,
 					},{
 						field: 'invoice_type',
 						title: '开票类型',
@@ -140,7 +141,7 @@
 						field: 'code',
 						title: '发票号码',
 						align: 'center',
-						width: 150
+						width: 136
 					},{
 						field: 'open_time',
 						title: '开票时间',
@@ -150,10 +151,10 @@
 						field: 'right',
 						fixed: 'right',
 						title: '操作',
-						width: 80,
+						width: 142,
 						align: 'center',
 						templet:function(d){
-							var html='<span class="layui-btn layui-btn-normal layui-btn-xs" lay-event="view">详情</span>';
+							var html='<div class="layui-btn-group"><span class="layui-btn layui-btn-xs" lay-event="add">到账管理</span><span class="layui-btn layui-btn-normal layui-btn-xs" lay-event="view">到账详情</span></div>';
 							return html;
 						}
 					}
@@ -164,6 +165,10 @@
 		//监听行工具事件
 		table.on('tool(test)', function(obj) {
 			var data = obj.data;
+			if (obj.event === 'add') {
+				rightpage.open("/home/income/add?id="+data.id);
+				return;
+			}
 			if (obj.event === 'view') {
 				rightpage.open("/home/income/view?id="+data.id);
 				return;

@@ -148,8 +148,9 @@ function init(layui) {
 				success:function(res){
 					layer.msg(res.msg);
 					if(res.code==0){
+						parent.tableIns.reload();
 						window.setTimeout(function(){
-							window.location.reload();
+							location.reload();
 						},1200)	
 					}
 				}
@@ -172,9 +173,10 @@ function init(layui) {
 					success:function(res){
 						layer.msg(res.msg);
 						if(res.code==0){
+							parent.tableIns.reload();
 							window.setTimeout(function(){
-								parent.location.reload();
-							},1200)							
+								location.reload();
+							},1200)	
 						}
 					}
 				})
@@ -197,8 +199,9 @@ function init(layui) {
 					success:function(res){
 						layer.msg(res.msg);
 						if(res.code==0){
+							parent.tableIns.reload();
 							window.setTimeout(function(){
-								parent.location.reload();
+								location.reload();
 							},1200)	
 						}
 					}
