@@ -290,6 +290,14 @@ function add_log($type, $param_id = '', $param = [])
         case 'check':
             $action = '审核';
             break;
+		case 'leave':
+            $action = '离职';
+            break;
+		case 'disable':
+            $action = '禁用';
+            break;
+		case 'recovery':
+            $action = '恢复';
             break;
 		case 'reset':
             $action = '重新设置';
