@@ -267,31 +267,32 @@ function check_auth($rule, $uid)
  */
 function add_log($type, $param_id = '', $param = [])
 {
-    $request = get_params();
-    switch ($type) {
+	$action = '未知操作';
+	switch ($type) {
         case 'login':
-            $title = '登录';
+            $action = '登录';
             break;
         case 'upload':
-            $title = '上传';
+            $action = '上传';
             break;
         case 'add':
-            $title = '新增';
+            $action = '新增';
             break;
         case 'edit':
-            $title = '编辑';
+            $action = '编辑';
             break;
         case 'view':
-            $title = '查看';
+            $action = '查看';
             break;
         case 'delete':
-            $title = '删除';
+            $action = '删除';
             break;
         case 'check':
-            $title = '审核';
+            $action = '审核';
             break;
-        default:
-            $title = '未知';
+            break;
+		case 'reset':
+            $action = '重新设置';
             break;
     }
     if ($type == 'login') {
@@ -304,15 +305,23 @@ function add_log($type, $param_id = '', $param = [])
     $data['uid'] = $login_admin['id'];
     $data['name'] = $login_admin['name'];
     $data['type'] = $type;
+    $data['action'] = $action;
     $data['param_id'] = $param_id;
     $data['param'] = json_encode($param);
     $data['module'] = \think\facade\App::initialize()->http->getName();
     $data['controller'] = strtolower(app('request')->controller());
     $data['function'] = app('request')->action();
     $parameter = $data['module'] . '/' . $data['controller'] . '/' . $data['function'];
-    $data['rule_menu'] = $parameter;
-    $data['title'] = Db::name('AdminRule')->where(array('src' => $parameter))->value('title') ?? $title;
-    $content = $login_admin['name'] . '在' . date('Y-m-d H:i:s') . '执行了' . $data['title'] . '操作';
+    $rule_menu = Db::name('AdminRule')->where(array('src' => $parameter))->find();
+	if($rule_menu){
+		$data['title'] = $rule_menu['title'];
+		$data['subject'] = $rule_menu['name'];
+	}
+	else{
+		$data['title'] = '';
+		$data['subject'] ='系统';
+	}
+    $content = $login_admin['name'] . '在' . date('Y-m-d H:i:s') . $data['action'] . '了' . $data['subject'];
     $data['content'] = $content;
     $data['ip'] = app('request')->ip();
     $data['create_time'] = time();

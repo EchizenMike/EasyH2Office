@@ -36,14 +36,7 @@ class AdminLog extends Model
         foreach ($content as $k => $v) {
             $data = $v;
             $param_array = json_decode($v['param'], true);
-            $name = '';
-            if (!empty($param_array['name'])) {
-                $name = '：' . $param_array['name'];
-            }
-            if (!empty($param_array['title'])) {
-                $name = '：' . $param_array['title'];
-            }
-            $data['content'] = $v['content'] . $name;
+            $data['content'] = $v['content'];
             $data['times'] = time_trans($v['create_time']);
             $content->offsetSet($k, $data);
         }

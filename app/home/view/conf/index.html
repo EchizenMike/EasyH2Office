@@ -19,12 +19,13 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
+	var tableIns = null;
 	function init(layui) {
 		var table = layui.table,
 			rightpage = layui.rightpage,
 			form = layui.form;
 
-		var tableIns = table.render({
+		tableIns = table.render({
 			elem: '#test',
 			title: '配置列表',
 			toolbar: '#toolbarDemo',

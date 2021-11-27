@@ -225,37 +225,54 @@ class Api extends BaseController
     //修改个人信息
     public function edit_personal()
     {
-        return view('admin/edit_personal', [
-            'admin' => get_admin($this->uid),
-        ]);
-    }
-
-    //保存个人信息修改
-    public function personal_submit()
-    {
-        if (request()->isAjax()) {
+		if (request()->isAjax()) {
             $param = get_params();
-            try {
-                validate(AdminCheck::class)->scene('editPersonal')->check($param);
-            } catch (ValidateException $e) {
-                // 验证失败 输出错误信息
-                return to_assign(1, $e->getError());
-            }
-            unset($param['username']);
             $uid = $this->uid;
             Db::name('Admin')->where(['id' => $uid])->strict(false)->field(true)->update($param);
             $session_admin = get_config('app.session_admin');
             Session::set($session_admin, Db::name('admin')->find($uid));
             return to_assign();
         }
+		else{
+			return view('admin/edit_personal', [
+				'admin' => get_admin($this->uid),
+			]);
+		}
     }
 
     //修改密码
     public function edit_password()
     {
-        return view('admin/edit_password', [
-            'admin' => get_admin($this->uid),
-        ]);
+		if (request()->isAjax()) {
+            $param = get_params();
+            try {
+                validate(AdminCheck::class)->scene('editPwd')->check($param);
+            } catch (ValidateException $e) {
+                // 验证失败 输出错误信息
+                return to_assign(1, $e->getError());
+            }
+            $uid = $this->uid;
+			
+			$admin = Db::name('Admin')->where(['id' => $uid])->find();
+			$old_psw = set_password($param['old_pwd'], $admin['salt']);
+			if ($admin['pwd'] != $old_psw) {
+				return to_assign(1, '旧密码错误');
+			}
+
+			$salt = set_salt(20);
+			$param['pwd'] = set_password($param['pwd'], $salt);
+            $param['reg_pwd'] = '';
+            $param['update_time'] = time();
+            Db::name('Admin')->where(['id' => $uid])->strict(false)->field(true)->update($param);
+            $session_admin = get_config('app.session_admin');
+            Session::set($session_admin, Db::name('admin')->find($uid));
+            return to_assign();
+        }
+		else{
+			return view('admin/edit_password', [
+				'admin' => get_admin($this->uid),
+			]);
+		}
     }
 
     //保存密码修改

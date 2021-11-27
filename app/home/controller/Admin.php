@@ -274,7 +274,7 @@ class Admin extends BaseController
             }
             $rows = empty($param['limit']) ? get_config(app . page_size) : $param['limit'];
             $content = DB::name('AdminLog')
-                ->field("id,uid,name,title,content,rule_menu,ip,param_id,param,FROM_UNIXTIME(create_time,'%Y-%m-%d %H:%i:%s') create_time")
+                ->field("id,uid,name,action,title,content,rule_menu,ip,param_id,param,FROM_UNIXTIME(create_time,'%Y-%m-%d %H:%i:%s') create_time")
                 ->order('create_time desc')
                 ->where($where)
                 ->paginate($rows, false, ['query' => $param]);

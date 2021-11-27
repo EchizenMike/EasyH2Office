@@ -23,9 +23,9 @@ class AdminCheck extends Validate
         'type' => 'require',
         'entry_time' => 'require',
         'id' => 'require',
+        'pwd' => 'require|min:6|confirm',
         'status' => 'require|checkStatus:-1,1',
         'old_pwd' => 'require|different:pwd',
-		'edit_pwd' => 'min:6|confirm',
     ];
 
     protected $message = [
@@ -45,9 +45,8 @@ class AdminCheck extends Validate
 		'entry_time.require' => '请选择入职时间',
         'id.require' => '缺少更新条件',
         'pwd.require' => '密码不能为空',
-        'pwd.min' => '密码至少要6个字符',
-		'edit_pwd.min' => '密码至少要6个字符',
-        'edit_pwd.confirm' => '两次密码不一致',
+		'pwd.min' => '密码至少要6个字符',
+        'pwd.confirm' => '两次密码不一致',
         'old_pwd.require' => '请提供旧密码',
         'old_pwd.different' => '新密码不能和旧密码一样',
     ];
@@ -55,8 +54,7 @@ class AdminCheck extends Validate
     protected $scene = [
         'add' => ['name', 'username', 'mobile','reg_pwd', 'did', 'position_id', 'type', 'entry_time'],
         'edit' => ['name', 'username', 'mobile', 'did', 'position_id', 'entry_time', 'id'],
-        'editPersonal' => ['mobile', 'name', 'id'],
-        'editpwd' => ['old_pwd', 'pwd', 'id'],
+        'editPwd' => ['old_pwd', 'pwd'],
     ];
 
 }
