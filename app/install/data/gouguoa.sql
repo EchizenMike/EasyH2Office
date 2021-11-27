@@ -67,7 +67,8 @@ CREATE TABLE `oa_admin_group`  (
 -- ----------------------------
 -- Records of cms_admin_group
 -- ----------------------------
-INSERT INTO `oa_admin_group` VALUES ('1', '超级员工权限', '1', '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117', '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43', '超级员工权限，拥有系统的最高权限，不可修改', '0', '0');
+INSERT INTO `oa_admin_group`(`id`, `title`, `status`, `rules`, `menus`, `desc`, `create_time`, `update_time`) VALUES (1, '超级员工权限', 1, '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117', '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43', '超级员工权限，拥有系统的最高权限，不可修改', 0, 0);
+INSERT INTO `oa_admin_group`(`id`, `title`, `status`, `rules`, `menus`, `desc`, `create_time`, `update_time`) VALUES (2, '人事总监权限', 1, '2,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,3,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,4,67,68,69,70,71,72,73,74,75,76,5,77,78,79,80,81,82,83,6,84,85,86,87,88,89,90,91,7,92,93,94,95,96,97,98,99,100,101,102,8,103,104,105,106,107,108,109,110,111,112,113,114,115,116,9,117', '2,17,18,19,20,21,3,22,23,24,25,26,4,27,28,29,30,5,31,32,6,33,34,35,7,36,37,38,39,8,40,41,9,43', '人力资源部门领导的最高管理权限', 0, 0);
 
 -- ----------------------------
 -- Table structure for oa_admin_log
@@ -366,7 +367,6 @@ CREATE TABLE `oa_article`  (
 -- ----------------------------
 INSERT INTO `oa_article`(`id`, `title`, `article_cate_id`, `keywords`, `desc`, `thumb`, `uid`, `did`, `origin_url`, `content`, `read`, `type`, `is_share`, `status`, `sort`, `create_time`, `update_time`, `delete_time`) VALUES (1, '勾股办公是一款简单实用的开源免费的企业办公系统框架', 2, '', '勾股办公是一款基于ThinkPHP6+Layui+MySql打造的，简单实用的开源免费的企业办公系统框架。系统集成了系统设置、人事管理模块、消息管理模块、日常办公、财务管理等基础模块。系统简约，易于功...', 0, 1, 0, '', '<p>勾股办公是一款基于ThinkPHP6 + Layui + MySql打造的，简单实用的开源免费的企业办公系统框架。系统集成了系统设置、人事管理模块、消息管理模块、日常办公、财务管理等基础模块。系统简约，易于功能扩展，方便二次开发，让开发者更专注于业务深度需求的开发，帮助开发者简单高效降低二次开发成本，通过二次开发之后可以用来做CRM，ERP，业务管理等系统。</p>', 1, 2, 1, 1, 1, 1637985280, 1637985340, 0);
 
-
 -- ----------------------------
 -- Table structure for oa_article_cate
 -- ----------------------------
@@ -421,11 +421,10 @@ CREATE TABLE `oa_config`  (
 -- ----------------------------
 -- Records of oa_config
 -- ----------------------------
-INSERT INTO `oa_config`(`id`, `title`, `name`, `content`, `status`, `create_time`, `update_time`) VALUES (1, '网站配置', 'web', 'a:13:{s:2:\"id\";s:1:\"1\";s:11:\"admin_title\";s:18:\"勾股办公系统\";s:5:\"title\";s:18:\"勾股办公系统\";s:4:\"logo\";s:52:\"/storage/202111/fc507cc8332d5ef49d9425185e4a9697.jpg\";s:4:\"file\";s:0:\"\";s:6:\"domain\";s:24:\"https://www.gougucms.com\";s:3:\"icp\";s:23:\"粤ICP备1xxxxxx11号-1\";s:8:\"keywords\";s:9:\"勾股cms\";s:5:\"beian\";s:29:\"粤公网安备1xxxxxx11号-1\";s:4:\"desc\";s:478:\"勾股办公是一款基于ThinkPHP6 + Layui + MySql打造的，简单实用的开源免费的企业办公系统框架。系统集成了系统设置、人事管理模块、消息管理模块、日常办公、财务管理等基础模块。系统简约，易于功能扩展，方便二次开发，让开发者更专注于业务深度需求的开发，帮助开发者简单高效降低二次开发成本，通过二次开发之后可以用来做CRM，ERP，业务管理等系统。\";s:4:\"code\";s:0:\"\";s:9:\"copyright\";s:32:\"© 2021 gougucms.com MIT license\";s:7:\"version\";s:5:\"1.0.2\";}', 1, 1612514630, 1637075196);
+INSERT INTO `oa_config`(`id`, `title`, `name`, `content`, `status`, `create_time`, `update_time`) VALUES (1, '网站配置', 'web', 'a:13:{s:2:\"id\";s:1:\"1\";s:11:\"admin_title\";s:8:\"勾股OA\";s:5:\"title\";s:8:\"勾股OA\";s:4:\"logo\";s:52:\"/storage/202111/fc507cc8332d5ef49d9425185e4a9697.jpg\";s:4:\"file\";s:0:\"\";s:6:\"domain\";s:23:\"https://oa.gougucms.com\";s:3:\"icp\";s:23:\"粤ICP备1xxxxxx11号-1\";s:8:\"keywords\";s:8:\"勾股OA\";s:5:\"beian\";s:29:\"粤公网安备1xxxxxx11号-1\";s:4:\"desc\";s:479:\"勾股办公是一款基于ThinkPHP6 + Layui + MySql打造的，简单实用的开源免费的企业办公系统框架。系统集成了系统设置、人事管理模块、消息管理模块、日常办公、财务管理等基础模块。系统简约，易于功能扩展，方便二次开发，让开发者更专注于业务深度需求的开发，帮助开发者简单高效降低二次开发成本，通过二次开发之后可以用来做CRM，ERP，业务管理等系统。 \";s:4:\"code\";s:0:\"\";s:9:\"copyright\";s:32:\"© 2021 gougucms.com MIT license\";s:7:\"version\";s:6:\"1.0.22\";}', 1, 1612514630, 1638010154);
 INSERT INTO `oa_config`(`id`, `title`, `name`, `content`, `status`, `create_time`, `update_time`) VALUES (2, '邮箱配置', 'email', 'a:8:{s:2:\"id\";s:1:\"2\";s:4:\"smtp\";s:11:\"smtp.qq.com\";s:9:\"smtp_port\";s:3:\"465\";s:9:\"smtp_user\";s:15:\"gougucms@qq.com\";s:8:\"smtp_pwd\";s:6:\"123456\";s:4:\"from\";s:24:\"勾股CMS系统管理员\";s:5:\"email\";s:18:\"admin@gougucms.com\";s:8:\"template\";s:485:\"<p>勾股办公是一款基于ThinkPHP6 + Layui + MySql打造的，简单实用的开源免费的企业办公系统框架。系统集成了系统设置、人事管理模块、消息管理模块、日常办公、财务管理等基础模块。系统简约，易于功能扩展，方便二次开发，让开发者更专注于业务深度需求的开发，帮助开发者简单高效降低二次开发成本，通过二次开发之后可以用来做CRM，ERP，业务管理等系统。</p>\";}', 1, 1612521657, 1637075205);
-INSERT INTO `oa_config`(`id`, `title`, `name`, `content`, `status`, `create_time`, `update_time`) VALUES (3, 'Api Token配置', 'token', 'a:5:{s:2:\"id\";s:1:\"4\";s:3:\"iss\";s:16:\"www.gougucms.com\";s:3:\"aud\";s:8:\"gougucms\";s:7:\"secrect\";s:8:\"GOUGUCMS\";s:7:\"exptime\";s:4:\"3600\";}', 1, 1627313142, 1635953635);
+INSERT INTO `oa_config`(`id`, `title`, `name`, `content`, `status`, `create_time`, `update_time`) VALUES (3, 'Api Token配置', 'token', 'a:5:{s:2:\"id\";s:1:\"3\";s:3:\"iss\";s:15:\"oa.gougucms.com\";s:3:\"aud\";s:7:\"gouguoa\";s:7:\"secrect\";s:7:\"GOUGUOA\";s:7:\"exptime\";s:4:\"3600\";}', 1, 1627313142, 1638010233);
 INSERT INTO `oa_config`(`id`, `title`, `name`, `content`, `status`, `create_time`, `update_time`) VALUES (4, '其他配置', 'other', 'a:3:{s:2:\"id\";s:1:\"5\";s:6:\"author\";s:15:\"勾股工作室\";s:7:\"version\";s:13:\"v1.2021.07.28\";}', 1, 1613725791, 1635953640);
-
 
 -- ----------------------------
 -- Table structure for oa_check
@@ -441,14 +440,6 @@ CREATE TABLE `oa_check`  (
   `update_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COMMENT = '审核人配置表';
-
--- ----------------------------
--- Records of oa_check
--- ----------------------------
-INSERT INTO `oa_check`(`id`, `uid`, `type`) VALUES (1, 1, 1, '初始化设置', 1, 1558681814, 0);
-INSERT INTO `oa_check`(`id`, `uid`, `type`) VALUES (2, 1, 2, '初始化设置', 1, 1558681814, 0);
-INSERT INTO `oa_check`(`id`, `uid`, `type`) VALUES (3, 1, 3, '初始化设置', 1, 1558681814, 0);
-INSERT INTO `oa_check`(`id`, `uid`, `type`) VALUES (4, 1, 4, '初始化设置', 1, 1558681814, 0);
 
 -- ----------------------------
 -- Table structure for oa_department
@@ -695,6 +686,11 @@ CREATE TABLE `oa_invoice_subject`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COMMENT = '发票主体名称';
 
 -- ----------------------------
+-- Records of oa_invoice_subject
+-- ----------------------------
+INSERT INTO `oa_invoice_subject`(`id`, `title`, `status`, `create_time`, `update_time`) VALUES (1, '勾股信息科技有限公司', 1, 1638006751, 0);
+
+-- ----------------------------
 -- Table structure for oa_keywords
 -- ----------------------------
 DROP TABLE IF EXISTS `oa_keywords`;
@@ -707,6 +703,11 @@ CREATE TABLE `oa_keywords`  (
   `update_time` int(11) NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COMMENT = '关键字表';
+
+-- ----------------------------
+-- Records of oa_keywords
+-- ----------------------------
+INSERT INTO `oa_keywords`(`id`, `title`, `sort`, `status`, `create_time`, `update_time`) VALUES (1, '勾股OA', 1, 1, 1638006730, 0);
 
 -- ----------------------------
 -- Table structure for oa_mail
@@ -816,17 +817,18 @@ CREATE TABLE `oa_position`  (
 -- ----------------------------
 -- Records of oa_position
 -- ----------------------------
-INSERT INTO `oa_position`(`id`, `title`, `work_price`) VALUES (1, '超级岗位', 200, '超级岗位，不能轻易修改权限', 1, 0, 0);
+INSERT INTO `oa_position`(`id`, `title`, `work_price`, `remark`, `status`, `create_time`, `update_time`) VALUES (1, '超级岗位', 1000, '超级岗位，不能轻易修改权限', 1, 0, 0);
+INSERT INTO `oa_position`(`id`, `title`, `work_price`, `remark`, `status`, `create_time`, `update_time`) VALUES (2, '人事总监', 1000, '人事部的最大领导', 1, 0, 0);
 
 -- ----------------------------
 -- Table structure for oa_position_group
 -- ----------------------------
 DROP TABLE IF EXISTS `oa_position_group`;
 CREATE TABLE `oa_position_group`  (
-  `pid` int(11) UNSIGNED NULL DEFAULT NULL,
-  `group_id` int(11) NULL DEFAULT NULL,
-  `create_time` int(11) NOT NULL DEFAULT 0,
-  `update_time` int(11) NOT NULL DEFAULT 0,
+  `pid` int(11) UNSIGNED NULL DEFAULT NULL COMMENT '岗位id',
+  `group_id` int(11) NULL DEFAULT NULL COMMENT '权限id',
+  `create_time` int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
+  `update_time` int(11) NOT NULL DEFAULT 0 COMMENT '更新时间',
   UNIQUE INDEX `pid_group_id`(`pid`, `group_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COMMENT = '权限分组和岗位的关联表';
 
@@ -834,6 +836,7 @@ CREATE TABLE `oa_position_group`  (
 -- Records of oa_position_group
 -- ----------------------------
 INSERT INTO `oa_position_group`(`pid`, `group_id`, `create_time`, `update_time`) VALUES (1, 1, 1635755739, 0);
+INSERT INTO `oa_position_group`(`pid`, `group_id`, `create_time`, `update_time`) VALUES (2, 2, 1638007427, 0);
 
 -- ----------------------------
 -- Table structure for oa_plan

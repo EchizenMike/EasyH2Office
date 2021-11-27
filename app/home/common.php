@@ -314,9 +314,6 @@ function add_log($type, $param_id = '', $param = [])
 		case 'tovoid':
             $action = '作废';
             break;
-		case 'back':
-            $action = '反到账';
-            break;	
 		case 'reset':
             $action = '重新设置';
             break;

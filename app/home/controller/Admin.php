@@ -240,6 +240,9 @@ class Admin extends BaseController
     public function reset_psw()
     {
         $id = get_params("id");
+		if($id == 1){
+			return to_assign(1, '该账号是超级管理员，不允许重置');
+		}
         $new_pwd = set_salt(6);
         $salt = set_salt(20);
         $list = [

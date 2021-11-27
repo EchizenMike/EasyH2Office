@@ -27,7 +27,7 @@ class AdminLog extends Model
         $where['status'] = 1;
         $rows = empty($param['limit']) ? get_config('app.pages') : $param['limit'];
         $content = \think\facade\Db::name('AdminLog')
-            ->field("id,uid,name,type,title,module,controller,function,param,content,create_time")
+            ->field("id,uid,name,type,title,module,controller,function,subject,action,create_time,param")
             ->order('create_time desc')
             ->where($where)
             ->paginate($rows, false, ['query' => $param]);
@@ -36,7 +36,7 @@ class AdminLog extends Model
         foreach ($content as $k => $v) {
             $data = $v;
             $param_array = json_decode($v['param'], true);
-            $data['content'] = $v['content'];
+            $data['content'] = $v['name']. $v['action'] . '了' . $v['subject'];
             $data['times'] = time_trans($v['create_time']);
             $content->offsetSet($k, $data);
         }
