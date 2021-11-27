@@ -261,7 +261,7 @@ INSERT INTO `oa_admin_rule` VALUES (56, 53, 'home/position/view', '查看岗位�
 
 INSERT INTO `oa_admin_rule` VALUES (57, 3, 'home/admin/index', '企业员工','员工',1,0,0);
 INSERT INTO `oa_admin_rule` VALUES (58, 57, 'home/admin/add', '添加/编辑员工','员工',1,0,0);
-INSERT INTO `oa_admin_rule` VALUES (59, 57, 'home/admin/view', '查看员工信息','员工',1,0,0);
+INSERT INTO `oa_admin_rule` VALUES (59, 57, 'home/admin/view', '查看员工信息','员工信息',1,0,0);
 INSERT INTO `oa_admin_rule` VALUES (60, 57, 'home/admin/set', '设置员工状态','员工状态',1,0,0);
 INSERT INTO `oa_admin_rule` VALUES (61, 57, 'home/admin/reset_psw', '重设员工密码','员工密码',1,0,0);
 
