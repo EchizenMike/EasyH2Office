@@ -320,18 +320,18 @@ INSERT INTO `oa_admin_rule` VALUES (103, 8, 'home/expense/index', '报销管理'
 INSERT INTO `oa_admin_rule` VALUES (104, 103, 'home/expense/add', '新增/编辑报销','报销',1,0,0);
 INSERT INTO `oa_admin_rule` VALUES (105, 103, 'home/expense/delete', '删除报销','报销',1,0,0);
 INSERT INTO `oa_admin_rule` VALUES (106, 103, 'home/expense/view', '查看报销信息','报销',1,0,0);
-INSERT INTO `oa_admin_rule` VALUES (107, 103, 'home/expense/check', '设置报销状态','报销状态',1,0,0);
+INSERT INTO `oa_admin_rule` VALUES (107, 103, 'home/expense/check', '设置报销状态','报销',1,0,0);
 
 INSERT INTO `oa_admin_rule` VALUES (108, 8, 'home/invoice/index', '发票管理','发票',1,0,0);
 INSERT INTO `oa_admin_rule` VALUES (109, 108, 'home/invoice/add', '新增/编辑发票','发票',1,0,0);
 INSERT INTO `oa_admin_rule` VALUES (110, 108, 'home/invoice/delete', '删除发票','发票',1,0,0);
 INSERT INTO `oa_admin_rule` VALUES (111, 108, 'home/invoice/view', '查看发票信息','发票',1,0,0);
-INSERT INTO `oa_admin_rule` VALUES (112, 108, 'home/invoice/check', '设置发票状态','发票状态',1,0,0);
+INSERT INTO `oa_admin_rule` VALUES (112, 108, 'home/invoice/check', '设置发票状态','发票',1,0,0);
 
-INSERT INTO `oa_admin_rule` VALUES (113, 8, 'home/income/index', '到账管理','到账',1,0,0);
-INSERT INTO `oa_admin_rule` VALUES (114, 113, 'home/income/add', '新增到账记录','到账',1,0,0);
-INSERT INTO `oa_admin_rule` VALUES (115, 113, 'home/income/view', '到账详情','到账',1,0,0);
-INSERT INTO `oa_admin_rule` VALUES (116, 113, 'home/income/delete', '删除到账记录','反到账',1,0,0);
+INSERT INTO `oa_admin_rule` VALUES (113, 8, 'home/income/index', '到账管理','到账记录',1,0,0);
+INSERT INTO `oa_admin_rule` VALUES (114, 113, 'home/income/add', '新增到账记录','到账记录',1,0,0);
+INSERT INTO `oa_admin_rule` VALUES (115, 113, 'home/income/view', '到账详情','到账记录',1,0,0);
+INSERT INTO `oa_admin_rule` VALUES (116, 113, 'home/income/delete', '删除到账记录','到账记录',1,0,0);
 
 INSERT INTO `oa_admin_rule` VALUES (117, 9, 'home/analysis/index', '智能分析','智能分析',1,0,0);
 
@@ -362,6 +362,12 @@ CREATE TABLE `oa_article`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COMMENT = '知识文章表';
 
 -- ----------------------------
+-- Records of oa_article
+-- ----------------------------
+INSERT INTO `oa_article`(`id`, `title`, `article_cate_id`, `keywords`, `desc`, `thumb`, `uid`, `did`, `origin_url`, `content`, `read`, `type`, `is_share`, `status`, `sort`, `create_time`, `update_time`, `delete_time`) VALUES (1, '勾股办公是一款简单实用的开源免费的企业办公系统框架', 2, '', '勾股办公是一款基于ThinkPHP6+Layui+MySql打造的，简单实用的开源免费的企业办公系统框架。系统集成了系统设置、人事管理模块、消息管理模块、日常办公、财务管理等基础模块。系统简约，易于功...', 0, 1, 0, '', '<p>勾股办公是一款基于ThinkPHP6 + Layui + MySql打造的，简单实用的开源免费的企业办公系统框架。系统集成了系统设置、人事管理模块、消息管理模块、日常办公、财务管理等基础模块。系统简约，易于功能扩展，方便二次开发，让开发者更专注于业务深度需求的开发，帮助开发者简单高效降低二次开发成本，通过二次开发之后可以用来做CRM，ERP，业务管理等系统。</p>', 1, 2, 1, 1, 1, 1637985280, 1637985340, 0);
+
+
+-- ----------------------------
 -- Table structure for oa_article_cate
 -- ----------------------------
 DROP TABLE IF EXISTS `oa_article_cate`;
@@ -375,6 +381,12 @@ CREATE TABLE `oa_article_cate`  (
   `update_time` int(11) NOT NULL DEFAULT 0 COMMENT '修改时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COMMENT = '知识文章分类表';
+
+-- ----------------------------
+-- Records of oa_article_cate
+-- ----------------------------
+INSERT INTO `oa_article_cate`(`id`, `pid`, `sort`, `title`, `desc`, `create_time`, `update_time`) VALUES (1, 0, 0, '办公技巧', '', 1637984651, 0);
+INSERT INTO `oa_article_cate`(`id`, `pid`, `sort`, `title`, `desc`, `create_time`, `update_time`) VALUES (2, 0, 0, '行业技能', '', 1637984739, 0);
 
 -- ----------------------------
 -- Table structure for oa_article_keywords
@@ -547,6 +559,12 @@ CREATE TABLE `oa_expense_cate`  (
   `update_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COMMENT = '报销类型';
+
+-- ----------------------------
+-- Records of oa_expense_cate
+-- ----------------------------
+INSERT INTO `oa_expense_cate`(`id`, `title`, `status`, `create_time`, `update_time`) VALUES (1, '交通费', 1, 1637987189, 0);
+INSERT INTO `oa_expense_cate`(`id`, `title`, `status`, `create_time`, `update_time`) VALUES (2, '住宿费', 1, 1637987199, 0);
 
 -- ----------------------------
 -- Table structure for oa_expense_file_interfix
@@ -744,7 +762,7 @@ CREATE TABLE `oa_note`  (
   `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `cate_id` int(11) NOT NULL DEFAULT 0 COMMENT '关联分类ID',
   `title` varchar(225) NULL DEFAULT NULL COMMENT '标题',
-  `content` varchar(100) NULL DEFAULT NULL COMMENT '内容',
+  `content` text NOT NULL COMMENT '公告内容',
   `src` varchar(100) NULL DEFAULT NULL COMMENT '关联链接',
   `status` int(1) NOT NULL DEFAULT 1 COMMENT '1可用-1禁用',
   `sort` int(11) NOT NULL DEFAULT 0,
@@ -754,6 +772,11 @@ CREATE TABLE `oa_note`  (
   `update_time` int(11) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COMMENT = '公告';
+
+-- ----------------------------
+-- Records of oa_note
+-- ----------------------------
+INSERT INTO `oa_note`(`id`, `cate_id`, `title`, `content`, `src`, `status`, `sort`, `start_time`, `end_time`, `create_time`, `update_time`) VALUES (1, 1, '欢迎使用勾股OA办公系统', '<p>欢迎使用勾股OA办公系统，勾股办公是一款基于ThinkPHP6 + Layui + MySql打造的，简单实用的开源免费的企业办公系统框架。系统集成了系统设置、人事管理模块、消息管理模块、日常办公、财务管理等基础模块。系统简约，易于功能扩展，方便二次开发，让开发者更专注于业务深度需求的开发，帮助开发者简单高效降低二次开发成本，通过二次开发之后可以用来做CRM，ERP，业务管理等系统。</p>', 'https://oa.gougucms.com', 1, 2, 1635696000, 1924876800, 1637984962, 1637984975);
 
 -- ----------------------------
 -- Table structure for oa_note_cate
@@ -768,6 +791,12 @@ CREATE TABLE `oa_note_cate`  (
   `update_time` int(11) NOT NULL DEFAULT 0 COMMENT '修改时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COMMENT = '公告分类';
+
+-- ----------------------------
+-- Records of oa_note_cate
+-- ----------------------------
+INSERT INTO `oa_note_cate`(`id`, `pid`, `sort`, `title`, `create_time`, `update_time`) VALUES (1, 0, 1, '普通公告', 1637984265, 1637984299);
+INSERT INTO `oa_note_cate`(`id`, `pid`, `sort`, `title`, `create_time`, `update_time`) VALUES (2, 0, 2, '紧急公告', 1637984283, 1637984310);
 
 -- ----------------------------
 -- Table structure for oa_position

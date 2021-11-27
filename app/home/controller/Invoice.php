@@ -41,10 +41,18 @@ class Invoice extends BaseController
                     // 验证失败 输出错误信息
                     return to_assign(1, $e->getError());
                 }
-                $data['update_time'] = time();
+                $param['update_time'] = time();
                 $res = InvoiceSubject::strict(false)->field(true)->update($param);
                 if ($res) {
-                    add_log('edit', $param['id'], $param);
+                    if($param['status'] == 0){
+                        add_log('disable', $param['id'], $param);
+                    }
+                    else if($param['status'] == 1){
+                        add_log('recovery', $param['id'], $param);
+                    }
+                    else{
+                        add_log('edit', $param['id'], $param);
+                    }
                 }
                 return to_assign();
             } else {
@@ -158,6 +166,7 @@ class Invoice extends BaseController
                 $param['update_time'] = time();
                 $res = InvoiceList::where('id', $param['id'])->strict(false)->field(true)->update($param);
                 if ($res !== false) {
+                    add_log('edit', $param['id'], $param);
                     return to_assign();   
                 } else {
                     return to_assign(1, '操作失败');
@@ -175,6 +184,7 @@ class Invoice extends BaseController
                 $param['create_time'] = time();
                 $exid = InvoiceList::strict(false)->field(true)->insertGetId($param);
                 if ($exid) {
+                    add_log('apply', $exid, $param);
                     return to_assign();   
                 } else {
                      return to_assign(1, '操作失败');
@@ -230,12 +240,21 @@ class Invoice extends BaseController
         if (request()->isAjax()) {
             if ($param['invoice_status'] == 2 || $param['invoice_status'] == 0) {
                 $param['check_time'] = time();
+                add_log('check', $param['id'],$param);
             }
             if ($param['invoice_status'] == 3) {
                 $param['open_time'] = time();
+                add_log('open', $param['id'],$param);
             }
             if ($param['invoice_status'] == 10) {
-                $param['update_time'] = time();
+                $count = Db::name('InvoiceIncome')->where(['inid'=>$param['id'],'status'=>1])->count();
+                if($count>0){
+                    return to_assign(1, "发票已经新增有到账记录，请先反到账后再作废发票");
+                }
+                else{
+                    $param['update_time'] = time();
+                    add_log('tovoid', $param['id'],$param);
+                }
             }
             $res = InvoiceList::where('id', $param['id'])->strict(false)->field(true)->update($param);
             if ($res !== false) {

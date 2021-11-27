@@ -64,12 +64,26 @@ class Plan extends BaseController
             if (!empty($param['uid'])) {
                 $uid = $param['uid'];
             }
-            $where = [];
-            $where[] = ['start_time', '>=', strtotime($param['start'])];
-            $where[] = ['end_time', '<=', strtotime($param['end'])];
-            $where[] = ['admin_id', '=', $uid];
-            $where[] = ['status', '=', 1];
-            $schedule = Db::name('Plan')->where($where)->field('id,title,type,start_time,end_time')->select()->toArray();
+            $where1 = [];
+            $where2 = [];
+
+            $where1[] = ['status', '=', 1];
+            $where1[] = ['admin_id', '=', $uid];
+            $where1[] = ['start_time', '>=', strtotime($param['start'])];
+
+            $where2[] = ['status', '=', 1];
+            $where2[] = ['admin_id', '=', $uid];
+            $where2[] = ['end_time', '<=', strtotime($param['end'])];
+
+            $schedule = Db::name('Plan')
+            ->where(function ($query) use ($where1) {
+                $query->where($where1);
+            })
+            ->whereOr(function ($query) use ($where2) {
+                $query->where($where2);
+            })
+            ->field('id,title,type,start_time,end_time')
+            ->select()->toArray();
             $events = [];
             $color_array=['#393D49','#FF5722','#FFB800','#1E9FFF','#009688'];
             foreach ($schedule as $k => $v) {

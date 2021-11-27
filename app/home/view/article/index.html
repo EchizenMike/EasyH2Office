@@ -19,11 +19,6 @@
 	<table class="layui-hide" id="test" lay-filter="test"></table>
 </div>
 
-<script type="text/html" id="toolbarDemo">
-<div class="layui-btn-container">
-   <span class="layui-btn layui-btn-normal layui-btn-sm" title="添加文章" lay-event="add">+ 添加知识文章</span>
-</div>
-</script>
 <script type="text/html" id="barDemo">
 <div class="layui-btn-group"><span class="layui-btn layui-btn-normal layui-btn-xs" lay-event="view">查看</span></div>
 </script>
@@ -92,13 +87,6 @@
 			]
 		});
 		
-		//表头工具栏事件
-		table.on('toolbar(test)', function(obj){
-			if (obj.event === 'add') {
-				rightpage.open("{:url('home/article/add')}");
-				return;
-			}
-		});
 		//监听行工具事件
 		table.on('tool(test)', function(obj) {
 			var data = obj.data;

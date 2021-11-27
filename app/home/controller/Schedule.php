@@ -142,8 +142,8 @@ class Schedule extends BaseController
             $events = [];
             $countEvents = [];
             foreach ($schedule as $k => $v) {
-                $v['backgroundColor'] = '#009688';
-                $v['borderColor'] = '#009688';
+                $v['backgroundColor'] = '#12bb37';
+                $v['borderColor'] = '#12bb37';
                 $v['title'] = '[' . $v['labor_time'] . '工时] ' . $v['title'];
                 $v['start'] = date('Y-m-d H:i', $v['start_time']);
                 $v['end'] = date('Y-m-d H:i', $v['end_time']);

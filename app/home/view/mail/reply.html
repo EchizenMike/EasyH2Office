@@ -6,7 +6,11 @@
 <!-- 主体 -->
 {block name="body"}
 <form class="layui-form body-content">
-	<h3 style="padding:5px 0;">回复消息</h3>
+	{if condition="$type eq 1"}
+	<h3 class="h3-title">回复消息</h3>
+	{else/}
+	<h3 class="h3-title">转发消息</h3>
+	{/if}
 	<table class="layui-table">
 		<tr>
 			<td class="layui-td-gray2">接收人类型</td>

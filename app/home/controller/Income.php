@@ -137,7 +137,7 @@ class Income extends BaseController
                                 //发票部分到账
                                 Db::name('Invoice')->where(['id'=>$inid])->update(['is_cash'=>1,'enter_amount'=>$incomeTotal,'enter_time'=>time()]);
                             }
-                            add_log('enter',$inid,$param);
+                            add_log('add',$inid,$param);
                             return to_assign();
                         }
                         else{
@@ -163,7 +163,7 @@ class Income extends BaseController
                 if($res!==false){
                     //设置发票全部到账
                     Db::name('Invoice')->where(['id'=>$inid])->update(['is_cash'=>2,'enter_amount'=>$invoiceAmount,'enter_time'=>time()]);
-                    add_log('enter',$inid,$param);
+                    add_log('add',$inid,$param);
                     return to_assign();
                 }
             }
@@ -173,7 +173,7 @@ class Income extends BaseController
                 if($res!==false){
                     //设置发票全部没到账
                     Db::name('Invoice')->where(['id'=>$inid])->update(['is_cash'=>0,'enter_amount'=>0,'enter_time'=>0]);
-                    add_log('del',$inid,$param);
+                    add_log('tovoid',$inid,$param);
                     return to_assign();
                 }                
             }

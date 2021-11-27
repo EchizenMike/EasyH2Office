@@ -284,6 +284,12 @@ function add_log($type, $param_id = '', $param = [])
         case 'view':
             $action = '查看';
             break;
+		case 'save':
+            $action = '保存';
+            break;
+        case 'send':
+            $action = '发送';
+            break;
         case 'delete':
             $action = '删除';
             break;
@@ -299,6 +305,18 @@ function add_log($type, $param_id = '', $param = [])
 		case 'recovery':
             $action = '恢复';
             break;
+		case 'apply':
+            $action = '申请';
+            break;
+		case 'open':
+            $action = '开具';
+            break;	
+		case 'tovoid':
+            $action = '作废';
+            break;
+		case 'back':
+            $action = '反到账';
+            break;	
 		case 'reset':
             $action = '重新设置';
             break;
