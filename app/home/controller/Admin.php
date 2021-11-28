@@ -67,6 +67,10 @@ class Admin extends BaseController
             $username = $pinyin->name($param['name'], PINYIN_UMLAUT_V);
             $param['username'] = implode('', $username);
             if (!empty($param['id']) && $param['id'] > 0) {
+				$count = Db::name('Admin')->where([['username', '=', $param['username']], ['id', '<>', $param['id']]])->count();
+				if ($count > 0) {
+					$param['username'] = implode('', $username) . $count;
+				}
                 try {
                     validate(AdminCheck::class)->scene('edit')->check($param);
                 } catch (ValidateException $e) {
@@ -76,10 +80,6 @@ class Admin extends BaseController
                 // 启动事务
                 Db::startTrans();
                 try {
-                    $count = Db::name('Admin')->where([['username', '=', $param['username']], ['id', '<>', $param['id']]])->count();
-                    if ($count > 0) {
-                        $param['username'] = implode('', $username) . $count;
-                    }
                     Db::name('Admin')->where(['id' => $param['id']])->strict(false)->field(true)->update($param);
                     if (!isset($param['thumb']) || $param['thumb'] == '') {
                         $char = mb_substr($param['name'], 0, 1, 'utf-8');
@@ -97,15 +97,15 @@ class Admin extends BaseController
                     return to_assign(1, '提交失败:' . $e->getMessage());
                 }
             } else {
+                $count = Db::name('Admin')->where('username', $param['username'])->count();
+                if ($count > 0) {
+                    $param['username'] = implode('', $username) . $count;
+                }
                 try {
                     validate(AdminCheck::class)->scene('add')->check($param);
                 } catch (ValidateException $e) {
                     // 验证失败 输出错误信息
                     return to_assign(1, $e->getError());
-                }
-                $count = Db::name('Admin')->where('username', $param['username'])->count();
-                if ($count > 0) {
-                    $param['username'] = implode('', $username) . $count;
                 }
                 $param['salt'] = set_salt(20);
                 $param['pwd'] = set_password($param['reg_pwd'], $param['salt']);

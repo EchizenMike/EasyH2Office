@@ -72,8 +72,8 @@
 				ids: ids,
 				names: names,
 				type: 0,
-				department_url:"{:url('/home/api/get_department_tree')}",
-				employee_url:"{:url('/home/api/get_employee')}",
+				department_url:"{:url('home/api/get_department_tree')}",
+				employee_url:"{:url('home/api/get_employee')}",
 				callback: function (ids, names, dids, departments) {
 					$('[name="uid"]').val(ids);
 					that.val(names);
@@ -235,7 +235,7 @@
 			detail['start_time_a']='';
 			detail['end_time_a']='';		
 			detail['start_time_b']='08:30';
-			detail['end_time_b']='09:00';		
+			detail['end_time_b']='18:00';		
 			detail['remark']='';
 			detail['type']=0;
 			detail['remind_type']=0;

@@ -89,6 +89,11 @@ abstract class BaseController
                 View::assign('login_user', $this->uid);
                 // 验证用户访问权限
                 if ($this->controller !== 'index' && $this->controller !== 'api') {
+					$reg_pwd = Db::name('Admin')->where(['id' => $this->uid])->value('reg_pwd');
+					if($reg_pwd!==''){
+						redirect('/home/api/edit_password.html')->send();
+						exit;
+					}
                     if (!$this->checkAuth()) {
                         if ($this->request->isAjax()) {
                             return to_assign(202, '你没有权限,请联系管理员或者人事部');
