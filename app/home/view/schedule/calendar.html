@@ -83,7 +83,7 @@
 		function addEvent(){
 			var detail={};
 			detail['id']=0;
-			detail['name']='';
+			detail['title']='';
 			detail['start_time']='';
 			detail['end_time']='';		
 			detail['start_time_1']='08:30';
@@ -104,7 +104,7 @@
 								</tr>\
 								<tr>\
 									<td class="layui-td-gray2">工作内容 <span style="color: red">*</span></td>\
-									<td colspan="3"><input name="name" class="layui-input" value="" lay-verify="required" lay-reqText="请完成工作内容"></td>\
+									<td colspan="3"><input name="title" class="layui-input" value="" lay-verify="required" lay-reqText="请完成工作内容"></td>\
 								</tr>\
 								<tr>\
 									<td class="layui-td-gray2">工作详细描述</td>\
@@ -205,7 +205,7 @@
 						layer.msg('请选择工作类型');
 						return;
 					}
-					if(detail.name==''){
+					if(detail.title==''){
 						layer.msg('请填写工作内容');
 						return;
 					}

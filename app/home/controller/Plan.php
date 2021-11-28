@@ -85,7 +85,7 @@ class Plan extends BaseController
             ->field('id,title,type,start_time,end_time')
             ->select()->toArray();
             $events = [];
-            $color_array=['#393D49','#FF5722','#FFB800','#1E9FFF','#009688'];
+            $color_array=['#393D49','#FF5722','#FFB800','#1E9FFF','#12bb37'];
             foreach ($schedule as $k => $v) {
                 $v['backgroundColor'] = $color_array[$v['type']];
                 $v['borderColor'] = $color_array[$v['type']];

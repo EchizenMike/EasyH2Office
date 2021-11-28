@@ -404,6 +404,11 @@ CREATE TABLE `oa_article_keywords`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COMMENT = '知识文章关联表';
 
 -- ----------------------------
+-- Records of oa_article_keywords
+-- ----------------------------
+INSERT INTO `oa_article_keywords`(`id`, `aid`, `keywords_id`, `status`, `create_time`) VALUES (1, 1, 1, 1, 1638093082);
+
+-- ----------------------------
 -- Table structure for oa_config
 -- ----------------------------
 DROP TABLE IF EXISTS `oa_config`;
@@ -556,6 +561,7 @@ CREATE TABLE `oa_expense_cate`  (
 -- ----------------------------
 INSERT INTO `oa_expense_cate`(`id`, `title`, `status`, `create_time`, `update_time`) VALUES (1, '交通费', 1, 1637987189, 0);
 INSERT INTO `oa_expense_cate`(`id`, `title`, `status`, `create_time`, `update_time`) VALUES (2, '住宿费', 1, 1637987199, 0);
+INSERT INTO `oa_expense_cate`(`id`, `title`, `status`, `create_time`, `update_time`) VALUES (3, '餐补费', 1, 1638088518, 0);
 
 -- ----------------------------
 -- Table structure for oa_expense_file_interfix

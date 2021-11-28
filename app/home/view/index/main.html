@@ -176,8 +176,9 @@
 <script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.1.2/echarts.min.js"></script>
 <script>
 	function init(layui) {
-		var layer = layui.layer, table = layui.table;
-		get_logs();
+		var TAB = parent.layui.tab,
+			layer = layui.layer,
+			table = layui.table;
 
 		//公告
 		table.render({
@@ -185,9 +186,13 @@
 			, url: "{:url('home/api/get_note_list')}" //数据接口
 			, page: false //开启分页
 			, cols: [[ //表头
-				{ field: 'cate_title', title: '公告分类', align: 'center','width': 120 },
+				{ field: 'cate_title', title: '公告分类', align: 'center','width': 90 },
 				{ field: 'title', title: '公告标题'},
-				{ field: 'create_time', title: '发布时间', align: 'center','width': 150}
+				{ field: 'view', title: '操作','width': 60 , align: 'center', templet:function(d){
+					var html='<button class="layui-btn layui-btn-xs layui-btn-normal" lay-event="view">详情</button>';
+					return html;
+				}},
+				{ field: 'create_time', title: '发布时间', align: 'center','width': 136}
 			]]
 		});
 		//文章
@@ -196,12 +201,34 @@
 			, url: "{:url('home/api/get_article_list')}" //数据接口
 			, page: false //开启分页
 			, cols: [[ //表头
-				{ field: 'cate_title', title: '知识分类', align: 'center','width': 120 },
+				{ field: 'cate_title', title: '知识分类', align: 'center','width': 90 },
 				{ field: 'title', title: '知识标题'},
 				{ field: 'read', title: '访问量', align: 'center','width': 80 },
-				{ field: 'create_time', title: '发布时间', align: 'center','width': 150}
+				{ field: 'view', title: '操作','width': 60 , align: 'center', templet:function(d){
+					var html='<button class="layui-btn layui-btn-xs layui-btn-normal" lay-event="view">详情</button>';
+					return html;
+				}},
+				{ field: 'create_time', title: '发布时间', align: 'center','width': 136}
 			]]
 		});
+		
+		//监听行工具事件
+		table.on('tool(Note)', function (obj) {
+			var data = obj.data;			
+			if (obj.event === 'view') {
+				TAB.sonAdd('/home/note/view?id='+data.id,'公告详情');
+				return;
+			}
+		});
+		table.on('tool(Article)', function (obj) {
+			var data = obj.data;			
+			if (obj.event === 'view') {
+				TAB.sonAdd('/home/article/view?id='+data.id,'知识文章详情');
+				return;
+			}
+		});
+		
+		get_logs();
 		
 		get_view_data();
 	}
@@ -240,6 +267,7 @@
 		}
 		return str;
 	}
+	
 	var chartView = echarts.init(document.getElementById('chartView'));
 	function get_view_data() {
 		$.ajax({
@@ -268,7 +296,7 @@
 					var ops = {
 						title: {
 							top: '15px',
-							text: '今日与昨日访问统计',
+							text: '今日与昨日员工活跃度',
 							left: '12px',
 							textStyle: {
 								fontSize: '18',
@@ -355,7 +383,7 @@
 					let option = {
 						title: {
 							top: '15px',
-							text: '近一年访问统计',
+							text: '近一年员工活跃度',
 							left: '12px',
 							textStyle: {
 								fontSize: '18',
@@ -366,7 +394,7 @@
 							padding: 6,
 							formatter: function (obj) {
 								var value = obj.value;
-								return '<div style="font-size: 12px;">' + value[0] + '：' + value[1] + ' 个访客</div>';
+								return '<div style="font-size: 12px;">' + value[0] + '员工活跃度：' + value[1] + '</div>';
 							}
 						},
 						visualMap: {
