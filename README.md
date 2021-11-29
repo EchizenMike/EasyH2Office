@@ -171,6 +171,9 @@ www  系统部署目录（或者子目录）
 
    勾股OA演示地址：[https://oa.gougucms.com](https://oa.gougucms.com)
 
+<font color=red>PS：为了给后面的人提供良好的演示体验，体验以查看为主，如果确实需要填写数据，大家最好填些看似正常的数据，请不要乱填数据，比如：1111，aaa那些数据就不要乱来了。
+如果大家不遵守体验规则，后期发现很多乱的数据的话，就关闭对应的填写权限了。</font>
+
    登录账号及密码：
 ~~~
    BOSS角色：suhaizhen     123456
@@ -179,7 +182,6 @@ www  系统部署目录（或者子目录）
    市场总监：qinjiaxian     123456
    技术总监：yexiaochai     123456
 ~~~
-$\color{red}{PS：为了给后面的人提供良好的演示体验，体验以查看为主，如果确实需要填写数据，大家最好填些看似正常的数据，请不要乱填数据，比如：1111，aaa那些数据就不要乱来了。如果大家不遵守，后期发现很多乱的数据的话，就关闭对应的填写权限了。}$
 
 三、系统安装
 
@@ -248,6 +250,10 @@ composer install
 
 7.  遇到问题请到QQ群：24641076 反馈。
 
+### 截图预览
+![输入图片说明](https://oa.gougucms.com/storage/image/oa1.png)
+![输入图片说明](https://oa.gougucms.com/storage/image/oa2.png)
+![输入图片说明](https://oa.gougucms.com/storage/image/oa3.png)
 
 ### 开源协议  
 勾股OA遵循GPL-2.0开源协议发布，并支持免费使用。 
