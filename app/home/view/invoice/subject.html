@@ -1,7 +1,7 @@
 {extend name="common/base"/}
 <!-- 主体 -->
 {block name="body"}
-<div class="body-content">
+<div class="body-table">
     <table class="layui-hide" id="test" lay-filter="test"></table>
 </div>
 <script type="text/html" id="toolbarDemo">
@@ -103,7 +103,7 @@
 				}
 			});
 			
-			$('.body-content').on('click','.addNew',function(){
+			$('.body-table').on('click','.addNew',function(){
 				addExpense(0,'');	
 			});
 			

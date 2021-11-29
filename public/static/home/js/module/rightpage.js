@@ -5,7 +5,7 @@ layui.define(['layer'], function(exports){
             layer.open({
                 type: 2,
                 title: '',
-                offset: ['1px', '100%'],
+                offset: ['0', '100%'],
                 skin: 'layui-anim layui-anim-rl layui-layer-admin-right',
                 closeBtn: 0,
                 content: content,

@@ -1,20 +1,12 @@
 {extend name="common/base"/}
 
-{block name="style"}
-<style>
-	html,body {
-		height: calc(100% - 20px);
-	}
-</style>
-{/block}
-
 <!-- 主体 -->
 {block name="body"}
-<div class="body-content" style="height: 100%">
-	<div style="height:42px">
+<div class="body-table" style="margin-bottom:0;">
+	<div class="layui-form-bar">
 		<button class="layui-btn layui-btn-normal layui-btn-sm add-menu">+ 添加菜单</button>
 	</div>
-	<div style="height: calc(100% - 30px)">
+	<div>
 		<table class="layui-hide" id="treeTable" lay-filter="treeTable"></table>
 	</div>
 </div>
@@ -56,7 +48,7 @@
 		});
 		
 		//表头工具栏事件
-		$('.body-content').on('click','.add-menu', function(){
+		$('.add-menu').on('click',function(){
 			rightpage.open("{:url('home/menu/add')}");
 			return;
 		});

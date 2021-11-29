@@ -39,10 +39,12 @@
  :-ms-input-placeholder { /* Internet Explorer 10-11 */
     color:    #aaa;
  }
- 
+ .layui-card { box-shadow: 0 1px 3px 0 rgb(5 32 96 / 10%);}
+ .layui-table, .layui-table-view{margin:0}
  .layui-table td,.layui-table th{padding:9px 10px;}
  .layui-table-cell{padding:0 10px;}
  .layui-table[lay-size=sm] td, .layui-table[lay-size=sm] th {padding: 5px;}
+ .layui-form-bar{padding:12px;border:1px solid #eee; border-bottom:none;}
  .auth-single .auth-icon{font-size:24px; float:left;}
  .auth-single .layui-form-radio,.auth-single .layui-form-checkbox{margin-left:0;}
  .auth-single .layui-form-radio{margin-top:0;}
@@ -64,8 +66,9 @@
  .layui-td-gray3{color:#999; width:120px; text-align:right; background-color:#f8f8f8;}
  .layui-td-gray4{color:#999; width:150px; text-align:right; background-color:#f8f8f8;}
  .layui-td-gray font,.layui-td-gray2 font,.layui-td-gray3 font{color:#FF6347; margin-left: 3px;}
- .main-body{padding:10px;padding-bottom: 0;min-width: 880px;}
+ .main-body{padding:15px;padding-bottom: 0;min-width: 868px;}
  .body-content{padding:10px;background-color:#fff;}
+ .body-table{background-color:#fff; margin-bottom:15px}
  .body-form-btn{padding:10px 0;}
  .span-color--1{color:#999999;}
  .span-color-0{color:#5FB878;}
@@ -96,7 +99,7 @@
 }
 .layui-layer-admin-right {
     box-shadow: 1px 1px 10px rgba(0,0,0,.1);
-    border-radius: 0;
+    border-radius: 0!important;
     overflow: auto;
 }
 .layui-anim-rl.layui-layer-iframe{

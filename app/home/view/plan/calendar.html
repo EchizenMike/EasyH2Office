@@ -7,14 +7,14 @@
 <link rel="stylesheet" href="{__JS__}/module/dtree/dtree.css">
 <link rel="stylesheet" href="{__JS__}/module/dtree/font/dtreefont.css">
 <style>
-#calendar {padding: 5px 0;}
 .fc .fc-day-header{padding:8px 0; background-color:#f2f2f2;}
 .fc-week-number,.fc-axis{background-color:#f2f2f2;}
 .layui-tags-span {padding: 3px 6px;font-size: 12px; background-color:#fff; border-radius: 3px; margin:2px 0; margin-right: 5px; border: 1px solid #e6e6e6; display: inline-block;}
 .layui-layer-content .layui-table-view .layui-table td,.layui-layer-content .layui-table-view .layui-table th{padding:1px 0;}
-.calendar-add{width:200px; height:38px; position:absolute; top:25px; left:180px; z-index:100;}
-.calendar-select{width:200px; height:38px; position:absolute; top:25px; right:153px; z-index:100;}
+.calendar-add{width:200px; height:38px; position:absolute; top:31px; left:188px; z-index:100;}
+.calendar-select{width:200px; height:38px; position:absolute; top:31px; right:160px; z-index:100;}
 .layui-unselect dl {max-height:188px;}
+.fc-toolbar.fc-header-toolbar{padding:15px 12px; margin-bottom:0; border:1px solid #ddd; border-bottom:none;}
 </style>
 {/block}
 <!-- 主体 -->
@@ -25,7 +25,7 @@
 <script src="{__STATIC__}/fullcalendar/daygrid/main.js"></script>
 <script src="{__STATIC__}/fullcalendar/timegrid/main.js"></script>
 <script src="{__STATIC__}/fullcalendar/list/main.js"></script>
-<div class="body-content">
+<div class="body-table">
 	<div id="calendar"></div>
 	<div class="calendar-add">	
 		<button class="layui-btn layui-btn-normal addLoan" style="padding:0 12px;">+新增日程安排</button>
@@ -50,7 +50,7 @@
 		,laydate = layui.laydate;
 		
 		// 选择员工
-		$('.body-content').on('click','[data-event="select"]',function(){
+		$('.body-table').on('click','[data-event="select"]',function(){
 			var that = $(this);
 			var names = that.val(), ids = $('[name="uid"]').val();
 			employeepicker.init({
@@ -69,7 +69,7 @@
 			})
 		});
 		// 去除员工
-		$('.body-content').on('click','[lay-filter="webform"]',function(){
+		$('.body-table').on('click','[lay-filter="webform"]',function(){
 			uid = 0;
 			$('[data-event="select"]').val('');
 			calendar.refetchEvents({
@@ -78,7 +78,7 @@
 		});
 		
 		
-		$('.body-content').on('click','.addLoan',function(){
+		$('.body-table').on('click','.addLoan',function(){
 			var detail={};
 			detail['id']=0;
 			detail['title']='';

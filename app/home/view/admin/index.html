@@ -1,7 +1,7 @@
 {extend name="common/base"/}
 {block name="style"}
   <style>
-	html,body{height: calc(100% - 18px);}
+	html,body{height: calc(100% - 12px);}
 	.layui-tree-entry{font-size:15px; line-height:24px}
 	.layui-tree-set{padding:2px 0}
 	.layui-tree-iconClick .layui-icon{color:#1E9FFF}
@@ -14,13 +14,13 @@
 {/block}
 <!-- 主体 -->
 {block name="body"}
-<div class="body-content" style="height: 100%">
+<div style="height: 100%">
 	<div class="tree-left">
 		<h3>企业组织架构</h3>
 		<div id="depament"></div>
 	</div>
-	<div style="margin-left:228px;">
-		<form class="layui-form">
+	<div class="body-table" style="margin-left:228px;">
+		<form class="layui-form layui-form-bar">
 			<div class="layui-input-inline" style="width:136px">
 				<select name="status">
 					<option value="">选择员工状态</option>
@@ -130,7 +130,7 @@
 						field: 'type',
 						title: '员工类型',
 						align: 'center',
-						width: 90,
+						width: 100,
 						templet: function (d) {
 							var html = '<span style="color:#393D49">正式员工</span>';
 							if(d.type == 2){
@@ -212,7 +212,7 @@
 							var btn1 = '<span class="layui-btn layui-btn-xs layui-btn-normal" lay-event="view">详情</span>';
 							var btn2 = '<span class="layui-btn layui-btn-xs" lay-event="edit">编辑</span>';
 							var btn3 = '<span class="layui-btn layui-btn-xs layui-btn-warm" lay-event="copy">复制密码</span>';
-							var btn4 = '<span class="layui-btn layui-btn-xs layui-btn-warm" lay-event="psw">重置密码</span>';
+							var btn4 = '<span class="layui-btn layui-btn-xs layui-btn-danger" lay-event="psw">重置密码</span>';
 							if(d.reg_pwd == ''){
 								html = '<div class="layui-btn-group">'+btn1+btn2+btn4+'</div>';
 							}
