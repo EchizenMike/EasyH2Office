@@ -62,6 +62,7 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
+	var tableIns = null;
 	function init(layui) {
 		var TAB = parent.layui.tab,
 			tree = layui.tree,
@@ -95,7 +96,7 @@
 			
 			
 			
-		var tableIns = table.render({
+		tableIns = table.render({
 			elem: '#test',
 			title: '员工列表',
 			toolbar: '#toolbarDemo',
@@ -326,9 +327,7 @@
 				success: function (e) {
 					layer.msg(e.msg);
 					if(e.code==0){
-						setTimeout(function(){
-							location.reload();
-						},2000);
+						tableIns.reload();
 					}							
 				}
 			})

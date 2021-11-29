@@ -260,10 +260,14 @@ class Api extends BaseController
 			}
 
 			$salt = set_salt(20);
-			$param['pwd'] = set_password($param['pwd'], $salt);
-            $param['reg_pwd'] = '';
-            $param['update_time'] = time();
-            Db::name('Admin')->where(['id' => $uid])->strict(false)->field(true)->update($param);
+			$new_pwd = set_password($param['pwd'], $salt);
+			$data = [
+				'reg_pwd' => '',
+				'salt' => $salt,
+				'pwd' => $new_pwd,
+				'update_time' => time(),
+			];
+            Db::name('Admin')->where(['id' => $uid])->strict(false)->field(true)->update($data);
             $session_admin = get_config('app.session_admin');
             Session::set($session_admin, Db::name('admin')->find($uid));
             return to_assign();

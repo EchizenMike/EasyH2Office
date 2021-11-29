@@ -245,15 +245,15 @@ class Admin extends BaseController
 		}
         $new_pwd = set_salt(6);
         $salt = set_salt(20);
-        $list = [
+        $data = [
             'reg_pwd' => $new_pwd,
             'salt' => $salt,
             'pwd' => set_password($new_pwd, $salt),
             'id' => $id,
             'update_time' => time(),
         ];
-        if (Db::name('Admin')->update($list) !== false) {
-            add_log('reset_psw', $id);
+        if (Db::name('Admin')->update($data) !== false) {
+            add_log('reset', $id);
             return to_assign(0, '操作成功');
         } else {
             return to_assign(1, '操作失败');
