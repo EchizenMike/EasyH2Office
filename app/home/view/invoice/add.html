@@ -185,7 +185,9 @@
 				success:function(e){
 					layer.msg(e.msg);
 					if(e.code==0){
-						parent.location.reload();
+						window.setTimeout(function(){
+							parent.location.reload();
+						},1200)							
 					}
 				}
 			})

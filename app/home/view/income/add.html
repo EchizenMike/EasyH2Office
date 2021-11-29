@@ -1,6 +1,7 @@
 {extend name="common/base"/}
 {block name="style"}
 <style>
+.layui-table-min{margin-bottom:6px;}
 .layui-table-min th{font-size:13px; text-align:center; background-color:#f8f8f8;}
 .layui-table-min td{font-size:13px; padding:6px;text-align:center;}
 </style>
@@ -99,7 +100,7 @@
 		{/if}
 	</table>
 	
-	<h3 class="h3-title">到账信息</h3>
+	<h3 class="h3-title2">到账信息</h3>
 	<form class="layui-form">
 		<table class="layui-table">
 			<tr>
@@ -113,9 +114,9 @@
 						<span style="color:#009688">全部到账</span>
 					{/if}
 				</td>
-				<td class="layui-td-gray">未到账金额</td>
+				<td class="layui-td-gray2">未到账金额(元)</td>
 				<td style="color:#FF5722">{$detail.not_income}</td>
-				<td class="layui-td-gray">已到账金额</td>
+				<td class="layui-td-gray2">已到账金额(元)</td>
 				<td style="color:#1E9FFF">{$detail.enter_amount}</td>
 			</tr>
 			<tr>
