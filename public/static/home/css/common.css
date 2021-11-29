@@ -67,7 +67,7 @@
  .layui-td-gray4{color:#999; width:150px; text-align:right; background-color:#f8f8f8;}
  .layui-td-gray font,.layui-td-gray2 font,.layui-td-gray3 font{color:#FF6347; margin-left: 3px;}
  .main-body{padding:15px;padding-bottom: 0; min-width: 868px;}
- .body-content{background-color:#fff;}
+ .body-content{background-color:#fff; padding:10px 15px;}
  .body-table{background-color:#fff; margin-bottom:15px}
  .h3-title{font-size:18px; height:39px; font-weight:800}
  .h3-title2{font-size:18px; height:39px; font-weight:800; padding-top:20px}
