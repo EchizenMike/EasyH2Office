@@ -139,7 +139,6 @@ class Mail extends BaseController
                     $item->from_name = Db::name('Admin')->where(['id' => $item->from_uid])->value('nickname');
                     $item->to_name = Db::name('Admin')->where(['id' => $item->to_uid])->value('nickname');
                     $item->type_title = MailList::$Type[$item->type];
-                    $item->is_read_title = MailList::$Read[$item->is_read];
                     $item->mail_type_title = MailList::$MailType[$item->mail_type];
                     $item->delete_source_title = MailList::$Source[$item->delete_source];
                     $item->files = Db::name('MailFileInterfix')->where(['mid' => $item->id, 'status' => 1])->count();
@@ -154,7 +153,6 @@ class Mail extends BaseController
                     $item->from_name = Db::name('Admin')->where(['id' => $item->from_uid])->value('nickname');
                     $item->to_name = Db::name('Admin')->where(['id' => $item->to_uid])->value('nickname');
                     $item->type_title = MailList::$Type[$item->type];
-                    $item->is_read_title = MailList::$Read[$item->is_read];
                     $item->mail_type_title = MailList::$MailType[$item->mail_type];
                     $item->files = Db::name('MailFileInterfix')->where(['mid' => $item->id, 'status' => 1])->count();
                 });

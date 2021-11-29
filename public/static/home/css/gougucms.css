@@ -77,3 +77,6 @@
 .layui-nav-img {width:25px;height:25px;margin-right:0;}
 .layui-layout-admin .layui-footer {left:200px;height:30px;line-height:30px;background-color:#f0f0f0;font-size:12px;}
 .layui-tab-content {padding:0px;}
+
+.layui-nav .msg-num { min-width: 18px;height: 18px;position: absolute;top: -10px;right: 5px;display: none;}
+.layui-nav .msg-num a {min-width: 18px; height: 18px; margin: 0; padding: 0; display: inline-block; font-size: 11px;line-height: 18px;text-align: center; background-color: #FF5722; color: #fff;border-radius: 12px; cursor: pointer;}

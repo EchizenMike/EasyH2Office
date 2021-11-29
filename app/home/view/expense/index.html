@@ -76,6 +76,24 @@
 						style: 'color:#1E9FFF',
 						width: 120,
 					},{
+						field: 'check_status',
+						title: '状态',
+						align: 'center',
+						width: 120,
+						templet:function(d){
+							var html='<span style="color:#FF5722">审核不通过</span>';
+							if(d.check_status==1){
+								html='<span style="color:#5FB878">报销审核中</span>';
+							}
+							else if(d.check_status==2){
+								html='<span style="color:#1E9FFF">审核通过</span>';
+							}
+							else if(d.check_status==3){
+								html='<span style="color:#FFB800">已打款</span>';
+							}
+							return html;
+						}
+					},{
 						field: 'admin_name',
 						title: '报销人',
 						align: 'center',
@@ -104,24 +122,6 @@
 						title: '录入时间',
 						align: 'center',
 						width: 150
-					},{
-						field: 'check_status',
-						title: '状态',
-						align: 'center',
-						width: 120,
-						templet:function(d){
-							var html='<span style="color:#FF5722">审核不通过</span>';
-							if(d.check_status==1){
-								html='<span style="color:#5FB878">报销审核中</span>';
-							}
-							else if(d.check_status==2){
-								html='<span style="color:#1E9FFF">审核通过</span>';
-							}
-							else if(d.check_status==3){
-								html='<span style="color:#FFB800">已打款</span>';
-							}
-							return html;
-						}
 					},{
 						field: 'check_name',
 						title: '审核人',

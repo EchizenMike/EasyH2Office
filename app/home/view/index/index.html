@@ -23,9 +23,9 @@
 				</li>
 				<li class="layui-nav-item" lay-unselect>
 					<a href="javascript:;" ittab-logout title="{:get_login_admin('nickname')}-点击退出登录">
-						<img src="{:get_login_admin('thumb')}" class="layui-nav-img"
-							onerror="javascript:this.src='{__IMG__}/nonepic360x360.jpg';this.onerror=null;">
+						<img src="{:get_login_admin('thumb')}" class="layui-nav-img" onerror="javascript:this.src='{__IMG__}/nonepic360x360.jpg';this.onerror=null;">
 					</a>
+					<div id="msgNum" class="msg-num"><a data-id="27" data-title="已收消息" data-src="/home/mail/inbox.html" class="site-menu-active" title="未读消息">0</a></div>
 				</li>
 			</ul>
 		</div>
@@ -99,6 +99,7 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
+	var msgStatus=0,isClose=0,msgNum = 0;
 	function init(layui) {
 		var layer = layui.layer;
 		$("[ittab-logout]").on("click", function () {
@@ -119,6 +120,55 @@
 			});
 		});
 	};
+	//轮循获取消息
+	var getStatus = setInterval(function () {
+		$.ajax({
+			url:"{:url('home/index/index')}",
+			type:'post',
+			success:function(e){
+				if(e.code==0 && e.data!=''){
+					if(e.data.num_mail>0){
+						$('#msgNum').show().find('a').html(e.data.num_mail);
+					}
+					else{
+						$('#msgNum').hide().find('a').html(0);
+					}
+					if(isClose==0){
+						var html = '<ul id="messageul" style="line-height:24px;">';						
+						$.each(e.data, function(key, value) {
+							if(key!='num_mail'){
+								html += '<li style="cursor:pointer;">'+value+'</li>';
+							}							
+						});
+						html +='</ul>'; 
+						if(msgStatus==1){
+							$('#msgBox').html(html);
+						}else{
+							layer.open({
+								type: 1
+								,title:'消息提醒'
+								,offset: 'rb'
+								,area:['240px','168px']
+								,content: '<div id="msgBox" style="padding:10px 15px;">'+html+'</div>'
+								,btnAlign: 'c' //按钮居中
+								,shade: 0 //不显示遮罩
+								,success:function(){
+									msgStatus=1;
+								}
+								,cancel:function(){
+									msgStatus=0;
+									isClose=1;
+								}
+							});
+						}
+					}
+				}else{
+					msgStatus=0;
+					layer.closeAll();
+				}
+			}
+		})
+	}, 10000);
 </script>
 {include file="common/layui" base='base' extend="['gougucms']" callback="init" /}
 {/block}

@@ -52,9 +52,4 @@ class Mail extends Model
         self::SOURCE_TWO => '同事消息',
     ];
 
-    public static $Read = [
-        self::READ_ONE => '未读',
-        self::READ_TWO => '已读',
-    ];
-
 }

@@ -36,9 +36,6 @@
 <script type="text/html" id="mail_type">
 	<span class="layui-type{{d.mail_type}}">{{d.mail_type_title}}</span>
 </script>
-<script type="text/html" id="is_read">
-	<span class="layui-type{{d.is_read}}">{{d.is_read_title}}</span>
-</script>
 
 <script type="text/html" id="toolbarDemo">
 	<div class="layui-btn-container">
@@ -88,7 +85,13 @@
 			  {field: 'from_name', title: '发件人', width:100,align:'center'},
 			  {field: 'name', title: '消息主题'},
 			  {field: 'send_time', title: '发件时间', align:'center',width:160},
-			  {field: 'is_read_title', title: '是否已读',toolbar: '#is_read',align:'center', width:86},
+			  {field: 'is_read', title: '是否已读',align:'center', width:86,templet:function(d){
+							var html='<span style="color:#FF5722">未读</span>';
+							if(d.is_read==2){
+								html='<span style="color:#5FB878">已读</span>';
+							}
+							return html;
+						}},
 			  {field: 'files', title: '附件(个)',align:'center', width:86},
 			  {field: 'right', title: '操作',fixed:'right', toolbar: '#barDemo', width:172, align:'center'}
 			]],

@@ -100,7 +100,7 @@ layui.define(['element'], function(exports){
 	})
 
     //当点击有site-menu-active属性的标签时，即左侧菜单栏中内容 ，触发点击事件
-    $('.site-menu-active').on('click', function() {
+    $('body').on('click', '.site-menu-active', function() {
         var dataid = $(this);
 		var src=dataid.data("src"),id=dataid.data("id"),title=dataid.data("title");
         //这时会判断右侧.layui-tab-title属性下的有lay-id属性的li的数目，即已经打开的tab项数目
