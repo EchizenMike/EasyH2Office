@@ -175,9 +175,9 @@
 					$('#end_time_1').append(html_2);
 					form.render();
 					
-					$('[name="name"]').on('input',function(){
+					$('[name="title"]').on('input',function(){
 						var _val=$(this).val();
-						detail.name=_val;
+						detail.title=_val;
 					});	
 					form.on('select(start_time_1)', function(data){
 						detail.start_time_1=data.value;
