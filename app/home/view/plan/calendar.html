@@ -1,38 +1,47 @@
 {extend name="common/base"/}
 {block name="style"}
-<link rel="stylesheet" href="{__STATIC__}/fullcalendar/core/main.css"/>
-<link rel="stylesheet" href="{__STATIC__}/fullcalendar/daygrid/main.css"/>
-<link rel="stylesheet" href="{__STATIC__}/fullcalendar/timegrid/main.css"/>
-<link rel="stylesheet" href="{__STATIC__}/fullcalendar/list/main.css"/>
+<link rel="stylesheet" href="{__STATIC__}/fullcalendar/main.min.css"/>
 <link rel="stylesheet" href="{__JS__}/module/dtree/dtree.css">
 <link rel="stylesheet" href="{__JS__}/module/dtree/font/dtreefont.css">
 <style>
-.fc .fc-day-header{padding:8px 0; background-color:#f2f2f2;}
-.fc-week-number,.fc-axis{background-color:#f2f2f2;}
+#calendar {width: 100%;margin: 0 auto;
+-moz-user-select: none; /*火狐*/
+-webkit-user-select: none; /*webkit浏览器*/
+-ms-user-select: none; /*IE10*/
+-khtml-user-select: none; /*早期浏览器*/
+user-select: none;}
+.fc .fc-toolbar.fc-header-toolbar{margin-bottom:0;border:1px solid #ddd; border-bottom:none;padding:15px 12px;background-color:#fafafa;}
+.fc-col-header{background-color:#fafafa;}
+.fc .fc-button-primary {
+    color: #fff;
+    background-color: #1E9FFF;
+    border-color: #1E9FFF;
+}
+.fc .fc-button-primary:not(:disabled).fc-button-active, .fc .fc-button-primary:not(:disabled):active {
+    color: #fff;
+    background-color: #FBBC05;
+    border-color: #FBBC05;
+}
+.fc .fc-button-primary:focus, .fc .fc-button-primary:not(:disabled).fc-button-active:focus, .fc .fc-button-primary:not(:disabled):active:focus {
+	box-shadow: 0 0 0 0;
+}
+.fc .fc-button-primary:hover{color:#fff; background-color:#52B5FF; border-color:#52B5FF;}
+.fc-daygrid-event-harness{cursor:pointer;}
+
 .layui-tags-span {padding: 3px 6px;font-size: 12px; background-color:#fff; border-radius: 3px; margin:2px 0; margin-right: 5px; border: 1px solid #e6e6e6; display: inline-block;}
 .layui-layer-content .layui-table-view .layui-table td,.layui-layer-content .layui-table-view .layui-table th{padding:1px 0;}
-.calendar-add{width:200px; height:38px; position:absolute; top:31px; left:188px; z-index:100;}
-.calendar-select{width:200px; height:38px; position:absolute; top:31px; right:160px; z-index:100;}
+.calendar-select{width:100px; height:38px; position:absolute; top:31px; right:255px; z-index:100;}
+.calendar-select .layui-input{height: 36px; line-height: 1.2;}
 .layui-unselect dl {max-height:188px;}
-.fc-toolbar.fc-header-toolbar{padding:15px 12px; margin-bottom:0; border:1px solid #ddd; border-bottom:none;}
 </style>
 {/block}
 <!-- 主体 -->
 {block name="body"}
-<script src="{__STATIC__}/fullcalendar/core/main.min.js"></script>
-<script src="{__STATIC__}/fullcalendar/core/locales-all.min.js"></script>
-<script src="{__STATIC__}/fullcalendar/interaction/main.js"></script>
-<script src="{__STATIC__}/fullcalendar/daygrid/main.js"></script>
-<script src="{__STATIC__}/fullcalendar/timegrid/main.js"></script>
-<script src="{__STATIC__}/fullcalendar/list/main.js"></script>
+<script src="{__STATIC__}/fullcalendar/main.min.js"></script>
 <div class="body-table">
 	<div id="calendar"></div>
-	<div class="calendar-add">	
-		<button class="layui-btn layui-btn-normal addLoan" style="padding:0 12px;">+新增日程安排</button>
-	</div>
 	<div class="calendar-select">
-		<div class="layui-input-inline" style="width: 110px;"><input type="text" placeholder="请选择员工" class="layui-input" data-event="select" autocomplete="off"/></div>		
-		<button class="layui-btn" lay-filter="webform" style="padding:0 12px;">清空员工</button>
+		<div class="layui-input-inline" style="width: 90px;"><input type="text" placeholder="请选择员工" class="layui-input" data-event="select" autocomplete="off"/></div>		
 	</div>
 </div>
 <!-- /主体 -->
@@ -41,7 +50,12 @@
 {block name="script"}
 <script type="text/javascript">
 	var uid=0;	
-	
+	function addZero(num){
+		if(num<10){
+			num='0'+num;
+		}
+		return num;
+	}
 	function init(layui){
 		var layer = layui.layer
 		,employeepicker = layui.employeepicker
@@ -57,8 +71,8 @@
 				ids: ids,
 				names: names,
 				type: 0,
-				department_url:"{:url('/home/api/get_department_tree')}",
-				employee_url:"{:url('/home/api/get_employee')}",
+				department_url:"{:url('home/api/get_department_tree')}",
+				employee_url:"{:url('home/api/get_employee')}",
 				callback: function (ids, names, dids, departments) {
 					uid = ids;
 					that.val(names);
@@ -67,29 +81,6 @@
 					});
 				}
 			})
-		});
-		// 去除员工
-		$('.body-table').on('click','[lay-filter="webform"]',function(){
-			uid = 0;
-			$('[data-event="select"]').val('');
-			calendar.refetchEvents({
-				url: '/home/plan/index?uid='+uid
-			});
-		});
-		
-		
-		$('.body-table').on('click','.addLoan',function(){
-			var detail={};
-			detail['id']=0;
-			detail['title']='';
-			detail['start_time_a']='';
-			detail['end_time_a']='';		
-			detail['start_time_b']='08:30';
-			detail['end_time_b']='18:00';		
-			detail['remark']='';
-			detail['type']=0;
-			detail['remind_type']=0;
-			addEvent(detail);		
 		});
 		  
 		function addEvent(detail){			
@@ -136,17 +127,17 @@
 									<td>\
 										<input id="start_time_a" name="start_time_a" style="width:120px; display:inline-block;" autocomplete="off" class="layui-input" value="'+detail.start_time_a+'" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间"><div style="display: inline-block; margin-left:3px; width: 86px;"><select lay-filter="start_time_b" id="start_time_b"></select></div> 至 <input id="end_time_a" name="end_time_a" style="width:120px; display:inline-block;" autocomplete="off" class="layui-input" value="'+detail.end_time_a+'" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间"><div style="display: inline-block; margin-left:3px; width: 86px;"><select lay-filter="end_time_b" id="end_time_b"></select></div>\
 									</td>\
-									<td class="layui-td-gray">日程优先级 <span style="color: red">*</span></td>\
+									<td class="layui-td-gray">提醒 <span style="color: red">*</span></td>\
 									<td>\
-										<div class="layui-input" id="type" style="width:120px; line-height:35px;">'+type+'</div>\
+										<div class="layui-input" id="remind_type" style="width:120px; line-height:35px;">'+remind_type+'</div>\
 									</td>\
 								</tr>\
 								<tr>\
 									<td class="layui-td-gray2">日程内容 <span style="color: red">*</span></td>\
 									<td><input name="title" class="layui-input" value="'+detail.title+'" lay-verify="required" placeholder="请完成日程内容" lay-reqText="请完成日程内容"></td>\
-									<td class="layui-td-gray">提醒 <span style="color: red">*</span></td>\
+									<td class="layui-td-gray">日程优先级 <span style="color: red">*</span></td>\
 									<td>\
-										<div class="layui-input" id="remind_type" style="width:120px; line-height:35px;">'+remind_type+'</div>\
+										<div class="layui-input" id="type" style="width:120px; line-height:35px;">'+type+'</div>\
 									</td>\
 								</tr>\
 								<tr>\
@@ -290,12 +281,12 @@
 						layer.msg('请完善日程时间范围');
 						return;
 					}
-					if(detail.type==0){
-						layer.msg('请选择日程优先级');
-						return;
-					}
 					if(detail.title==''){
 						layer.msg('请填写日程内容');
+						return;
+					}
+					if(detail.type==0){
+						layer.msg('请选择日程优先级');
 						return;
 					}
 					console.log(detail);
@@ -384,56 +375,152 @@
 				}
 			});			
 		}
-
-
+		
+		//日历
 		var calendarEl = document.getElementById('calendar');
 		var calendar = new FullCalendar.Calendar(calendarEl, {
-			plugins: [ 'interaction', 'dayGrid', 'timeGrid', 'list' ],
-			header: {
-				//right: 'prev,next today',
-				right: 'prev,next',
+			//initialDate: '2020-09-12',//默认显示日期
+			initialView: 'dayGridMonth',//默认显示月视图
+			customButtons: {
+				//自定义按钮
+                add: {
+					text: '+ 新建日程', click: function () {
+						var detail={};
+						detail['id']=0;
+						detail['title']='';
+						detail['start_time_a']='';
+						detail['end_time_a']='';		
+						detail['start_time_b']='08:30';
+						detail['end_time_b']='18:00';		
+						detail['remark']='';
+						detail['type']=0;
+						detail['remind_type']=0;
+						addEvent(detail);	
+					}
+				},
+				clear: {
+					text: '清空员工', click: function () {
+						uid = 0;
+						$('[data-event="select"]').val('');
+						calendar.refetchEvents({
+							url: '/home/plan/index?uid='+uid
+						});
+					}
+				}
+            },
+			headerToolbar: {
+				left: 'add prev,next',//prev,next today add
 				center: 'title',
-				left: 'dayGridMonth,timeGridWeek,listMonth'
-				//left: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
+				right: 'clear dayGridMonth,timeGridWeek,listWeek' //clear dayGridMonth,timeGridWeek,timeGridDay,listWeek
 			},
-			defaultView:'dayGridMonth',
-			locale: 'zh-cn',//语言
-			buttonIcons: false, // prev/next是否图表
-			weekNumbers: true,// 是否开启周数
-			navLinks: true, // 点击day/week 跳转到相应的视图
-			editable: true,
-			eventLimit: false, // 当事件过多时是否显示更多按钮
-			selectable: true,
-			select: function(arg) {
+			height: 'auto',//自动高度
+			navLinks: true, // can click day/week names to navigate views
+			editable: true,//确定是否可以拖拉调整日历事件的时间。
+			eventResizeStop:function(ev) {
+				var arg = ev.event
 				console.log(arg);
-				detail={};				
-				var startTime=arg.start.getFullYear()+'-'+(arg.start.getMonth()+1)+'-'+(arg.start.getDate())+' '+(arg.start.getHours())+':'+(arg.start.getMinutes());
-				var endTime=arg.end.getFullYear()+'-'+(arg.end.getMonth()+1)+'-'+(arg.end.getDate())+' '+(arg.end.getHours())+':'+(arg.end.getMinutes());
-			
-				detail['start_time']=startTime;
-				detail['end_time']= endTime;
-				detail['date_time']= startTime;	
-				//addEvent();
-				calendar.unselect()
-			}, 
-			eventClick: function(info) {
-				console.log(info.event);
-				eventApi(info.event.id);
+				var detail={};
+				detail['id']=arg.id;
+				detail['start_time_a']=arg.start.getFullYear()+'-'+(arg.start.getMonth()+1)+'-'+(arg.start.getDate());
+				detail['end_time_a']=arg.end.getFullYear()+'-'+(arg.end.getMonth()+1)+'-'+(arg.end.getDate());		
+				detail['start_time_b']=addZero(arg.start.getHours())+':'+addZero(arg.start.getMinutes());
+				detail['end_time_b']=addZero(arg.end.getHours())+':'+addZero(arg.end.getMinutes());	
+				console.log(detail);
+				$.ajax({
+					url:"{:url('home/plan/add')}",
+					type:'post',
+					data:detail,
+					success:function(e){
+						layer.msg(e.msg);
+						if(e.code==1){							
+							ev.revert();
+						}
+					}
+				})
 			},
+			eventDrop:function(ev) {
+				var arg = ev.event
+				console.log(arg);
+				var detail={};
+				detail['id']=arg.id;
+				detail['start_time_a']=arg.start.getFullYear()+'-'+(arg.start.getMonth()+1)+'-'+(arg.start.getDate());
+				detail['end_time_a']=arg.end.getFullYear()+'-'+(arg.end.getMonth()+1)+'-'+(arg.end.getDate());		
+				detail['start_time_b']=addZero(arg.start.getHours())+':'+addZero(arg.start.getMinutes());
+				detail['end_time_b']=addZero(arg.end.getHours())+':'+addZero(arg.end.getMinutes());	
+				console.log(detail);
+				$.ajax({
+					url:"{:url('home/plan/add')}",
+					type:'post',
+					data:detail,
+					success:function(e){
+						layer.msg(e.msg);
+						if(e.code==1){							
+							ev.revert();
+						}
+					}
+				})
+			},
+			selectable: true,//拖拉选择日期
+			selectMirror: true,//是否在用户拖动时绘制"占位符"事件。
+			select: function(arg) {
+				//console.log(arg);				
+				var detail={};
+				detail['id']=0;
+				detail['title']='';
+				detail['start_time_a']=arg.start.getFullYear()+'-'+(arg.start.getMonth()+1)+'-'+(arg.start.getDate());
+				detail['end_time_a']=arg.end.getFullYear()+'-'+(arg.end.getMonth()+1)+'-'+(arg.end.getDate());		
+				detail['start_time_b']=addZero(arg.start.getHours())+':'+addZero(arg.start.getMinutes());
+				detail['end_time_b']=addZero(arg.end.getHours())+':'+addZero(arg.end.getMinutes());		
+				detail['remark']='';
+				detail['type']=0;
+				detail['remind_type']=0;
+				//console.log(detail);	
+				addEvent(detail);
+				calendar.unselect()
+			},
+			nowIndicator: true,
+			weekNumbers: true,// 是否开启周数
+			displayEventEnd: false, //所有视图显示结束时间
+			eventTimeFormat: { // like '14:30:00'
+				hour: '2-digit',
+				minute: '2-digit',
+				//second: '2-digit',
+				meridiem: false,
+				hour12: false //设置时间为24小时
+			},
+			locale: 'zh-cn',//语言
+			buttonText: {
+				//按钮文本
+				today: '今天',
+				month: '月',
+				week: '周',
+				day: '日',
+				list: '日程列表',
+			},
+			weekText: '周',
+			allDayText: '全天',
+			moreLinkText: function(n) {
+				return '另外 ' + n + ' 个'
+			},
+			noEventsText: '没有事件显示',
 			events: function(fetchInfo, successCallback, failureCallback ){
 				$.ajax({
 					type:"POST",
-					url:"/home/plan/calendar",
+					url:"{:url('home/plan/calendar')}",
 					dataType:"json",
 					data:{start:fetchInfo.startStr,end:fetchInfo.endStr,uid:uid},
 					success:function(result){
-						console.info(result);
+						//console.info(result);
 						successCallback(result);
 					},
 					error:function(){
 						failureCallback();
 					}
 				})
+			},
+			eventClick: function(info) {
+				//console.log(info.event);
+				eventApi(info.event.id);
 			}
 		});
 		calendar.render();

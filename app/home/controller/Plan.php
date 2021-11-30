@@ -82,7 +82,7 @@ class Plan extends BaseController
             ->whereOr(function ($query) use ($where2) {
                 $query->where($where2);
             })
-            ->field('id,title,type,start_time,end_time')
+            ->field('id,title,type,remind_type,start_time,end_time')
             ->select()->toArray();
             $events = [];
             $color_array=['#393D49','#FF5722','#FFB800','#1E9FFF','#12bb37'];
@@ -134,25 +134,26 @@ class Plan extends BaseController
         if ($param['end_time'] <= $param['start_time']) {
             return to_assign(1, "结束时间需要大于开始时间");
         }
-
-        if($param['remind_type']==1){
-            $param['remind_time'] = $param['start_time']-5*60;
-        }
-        if($param['remind_type']==2){
-            $param['remind_time'] = $param['start_time']-15*60;
-        }
-        if($param['remind_type']==3){
-            $param['remind_time'] = $param['start_time']-30*60;
-        }
-        if($param['remind_type']==4){
-            $param['remind_time'] = $param['start_time']-60*60;
-        }
-        if($param['remind_type']==5){
-            $param['remind_time'] = $param['start_time']-120*60;
-        }
-        if($param['remind_type']==6){
-            $param['remind_time'] = $param['start_time']-1440*60;
-        }
+		if (isset($param['remind_type'])) {
+			if($param['remind_type']==1){
+				$param['remind_time'] = $param['start_time']-5*60;
+			}
+			if($param['remind_type']==2){
+				$param['remind_time'] = $param['start_time']-15*60;
+			}
+			if($param['remind_type']==3){
+				$param['remind_time'] = $param['start_time']-30*60;
+			}
+			if($param['remind_type']==4){
+				$param['remind_time'] = $param['start_time']-60*60;
+			}
+			if($param['remind_type']==5){
+				$param['remind_time'] = $param['start_time']-120*60;
+			}
+			if($param['remind_type']==6){
+				$param['remind_time'] = $param['start_time']-1440*60;
+			}
+		}
         if ($param['id'] == 0) {
             $param['admin_id'] = $admin_id;
             $param['did'] = get_admin($admin_id)['did'];
