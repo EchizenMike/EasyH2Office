@@ -416,13 +416,13 @@ user-select: none;}
 			height: 'auto',//自动高度
 			navLinks: true, // can click day/week names to navigate views
 			editable: true,//确定是否可以拖拉调整日历事件的时间。
-			eventResizeStop:function(ev) {
+			eventResize:function(ev) {
 				var arg = ev.event
 				console.log(arg);
 				var detail={};
 				detail['id']=arg.id;
-				detail['start_time_a']=arg.start.getFullYear()+'-'+(arg.start.getMonth()+1)+'-'+(arg.start.getDate());
-				detail['end_time_a']=arg.end.getFullYear()+'-'+(arg.end.getMonth()+1)+'-'+(arg.end.getDate());		
+				detail['start_time_a']=arg.start.getFullYear()+'-'+addZero(arg.start.getMonth()+1)+'-'+addZero(arg.start.getDate());
+				detail['end_time_a']=arg.end.getFullYear()+'-'+addZero(arg.end.getMonth()+1)+'-'+addZero(arg.end.getDate());		
 				detail['start_time_b']=addZero(arg.start.getHours())+':'+addZero(arg.start.getMinutes());
 				detail['end_time_b']=addZero(arg.end.getHours())+':'+addZero(arg.end.getMinutes());	
 				console.log(detail);
@@ -443,8 +443,8 @@ user-select: none;}
 				console.log(arg);
 				var detail={};
 				detail['id']=arg.id;
-				detail['start_time_a']=arg.start.getFullYear()+'-'+(arg.start.getMonth()+1)+'-'+(arg.start.getDate());
-				detail['end_time_a']=arg.end.getFullYear()+'-'+(arg.end.getMonth()+1)+'-'+(arg.end.getDate());		
+				detail['start_time_a']=arg.start.getFullYear()+'-'+addZero(arg.start.getMonth()+1)+'-'+addZero(arg.start.getDate());
+				detail['end_time_a']=arg.end.getFullYear()+'-'+addZero(arg.end.getMonth()+1)+'-'+addZero(arg.end.getDate());		
 				detail['start_time_b']=addZero(arg.start.getHours())+':'+addZero(arg.start.getMinutes());
 				detail['end_time_b']=addZero(arg.end.getHours())+':'+addZero(arg.end.getMinutes());	
 				console.log(detail);
@@ -463,25 +463,30 @@ user-select: none;}
 			selectable: true,//拖拉选择日期
 			selectMirror: true,//是否在用户拖动时绘制"占位符"事件。
 			select: function(arg) {
-				//console.log(arg);				
 				var detail={};
 				detail['id']=0;
 				detail['title']='';
-				detail['start_time_a']=arg.start.getFullYear()+'-'+(arg.start.getMonth()+1)+'-'+(arg.start.getDate());
-				detail['end_time_a']=arg.end.getFullYear()+'-'+(arg.end.getMonth()+1)+'-'+(arg.end.getDate());		
+				detail['start_time_a']=arg.start.getFullYear()+'-'+addZero(arg.start.getMonth()+1)+'-'+addZero(arg.start.getDate());
+				detail['end_time_a']=arg.end.getFullYear()+'-'+addZero(arg.end.getMonth()+1)+'-'+addZero(arg.end.getDate());		
 				detail['start_time_b']=addZero(arg.start.getHours())+':'+addZero(arg.start.getMinutes());
 				detail['end_time_b']=addZero(arg.end.getHours())+':'+addZero(arg.end.getMinutes());		
 				detail['remark']='';
 				detail['type']=0;
 				detail['remind_type']=0;
 				//console.log(detail);	
-				addEvent(detail);
-				calendar.unselect()
+				addEvent(detail);	
 			},
 			nowIndicator: true,
 			weekNumbers: true,// 是否开启周数
 			displayEventEnd: false, //所有视图显示结束时间
-			eventTimeFormat: { // like '14:30:00'
+			eventTimeFormat: { // 事件的时间格式，like '14:30:00'
+				hour: '2-digit',
+				minute: '2-digit',
+				//second: '2-digit',
+				meridiem: false,
+				hour12: false //设置时间为24小时
+			},
+			slotLabelFormat: { // 列表视图左边的时间格式，like '14:30:00'
 				hour: '2-digit',
 				minute: '2-digit',
 				//second: '2-digit',

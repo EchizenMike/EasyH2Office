@@ -134,6 +134,9 @@ class Plan extends BaseController
         if ($param['end_time'] <= $param['start_time']) {
             return to_assign(1, "结束时间需要大于开始时间");
         }
+		if ($param['start_time'] <= time()) {
+            return to_assign(1, "开始时间需要大于当前时间");
+        }
 		if (isset($param['remind_type'])) {
 			if($param['remind_type']==1){
 				$param['remind_time'] = $param['start_time']-5*60;
@@ -197,7 +200,7 @@ class Plan extends BaseController
         $id = get_params('id');
         $schedule = Db::name('Plan')->where(['id' => $id])->find();
         if (!empty($schedule)) {
-            $schedule['remind_time'] = date('Y-m-d H:i', $schedule['remind_time']);
+            $schedule['remind_time'] = $schedule['remind_time'] == 0?'-':date('Y-m-d H:i', $schedule['remind_time']);
             $schedule['start_time_a'] = date('Y-m-d', $schedule['start_time']);
             $schedule['end_time_a'] = date('Y-m-d', $schedule['end_time']);
             $schedule['start_time_b'] = date('H:i', $schedule['start_time']);
