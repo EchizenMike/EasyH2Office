@@ -27,21 +27,17 @@ user-select: none;}
 }
 .fc .fc-button-primary:hover{color:#fff; background-color:#52B5FF; border-color:#52B5FF;}
 .fc-daygrid-event-harness{cursor:pointer;}
-.fc .fc-daygrid-week-number{background-color: #F3FFDF; font-size:12px;}
-/*今天背景色和字体颜色chocolate */
+.fc .fc-daygrid-week-number{font-size:12px;}
+/*今天背景色和字体颜色 */
 .fc .fc-daygrid-day.fc-day-today .fc-event-title,.fc .fc-daygrid-day.fc-day-today .fc-event-time,.fc .fc-daygrid-day.fc-day-today .fc-daygrid-day-number{
 	font-weight:800;
 	color:#FF5722;
 }
-/*星期六背景色和字体颜色 */
-.fc-day-sat{
-    background-color: #F3FFDF;
+/*星期六,星期天背景色和字体颜色
+.fc-day-sat,.fc-day-sun{
+    background-color: #fafafa;
 }
-/*星期天背景色和字体颜色 */
-.fc-day-sun{
-    background-color: #F3FFDF;
-}
-
+*/
 .calendar-select{width:100px; height:38px; position:absolute; top:31px; right:255px; z-index:100;}
 .calendar-select .layui-input{height: 36px; line-height: 1.2;}
 .layui-tags-span {padding: 3px 6px;font-size: 12px; background-color:#fff; border-radius: 3px; margin:2px 0; margin-right: 5px; border: 1px solid #e6e6e6; display: inline-block;}
@@ -199,7 +195,7 @@ user-select: none;}
 						var t_1=t+':00',t_2=t+':15',t_3=t+':30',t_4=t+':45';
 						hourArray.push(t_1,t_2,t_3,t_4);
 					}					
-					var html_1='', html_2='',def_h1=detail.start_time_b,def_h2=detail.end_time_b;
+					var html_1='', html_2='',def_h1=detail.start_time_b=='00:00'?'09:00':detail.start_time_b,def_h2=detail.end_time_b=='00:00'?'18:00':detail.end_time_b;
 					for(var s=0;s<hourArray.length;s++){
 						var check_1='',check_2='';
 						if(hourArray[s]==def_h1){
@@ -393,25 +389,31 @@ user-select: none;}
 		//日历
 		var calendarEl = document.getElementById('calendar');
 		var calendar = new FullCalendar.Calendar(calendarEl, {
+			views: {
+				dayGrid: {
+					viewDidMount:function(arg){
+						calendar.setOption('height', window.innerHeight-30);
+					}
+				},
+				timeGrid: {
+					viewDidMount:function(arg){
+						calendar.setOption('height', 'auto');
+					}
+				},
+				week: {
+					viewDidMount:function(arg){
+						calendar.setOption('height', 'auto');
+					}
+				},
+				day: {
+					viewDidMount:function(arg){
+						calendar.setOption('height', 'auto');
+					}
+				}
+			},
 			//initialDate: '2020-09-12',//默认显示日期
 			initialView: 'dayGridMonth',//默认显示月视图
 			customButtons: {
-				//自定义按钮
-                add: {
-					text: '+ 新建日程', click: function () {
-						var detail={};
-						detail['id']=0;
-						detail['title']='';
-						detail['start_time_a']='';
-						detail['end_time_a']='';		
-						detail['start_time_b']='08:30';
-						detail['end_time_b']='18:00';		
-						detail['remark']='';
-						detail['type']=0;
-						detail['remind_type']=0;
-						addEvent(detail);	
-					}
-				},
 				clear: {
 					text: '清空员工', click: function () {
 						uid = 0;
@@ -423,11 +425,15 @@ user-select: none;}
 				}
             },
 			headerToolbar: {
-				left: 'add prev,next',//prev,next today add
+				left: 'prev,next',//prev,next today add
 				center: 'title',
 				right: 'clear dayGridMonth,timeGridWeek,listWeek' //clear dayGridMonth,timeGridWeek,timeGridDay,listWeek
 			},
 			height: 'auto',//自动高度
+			viewRender:function(view,element){
+				console.log(view);
+				console.log(element);
+			},
 			navLinks: true, // can click day/week names to navigate views
 			editable: true,//确定是否可以拖拉调整日历事件的时间。
 			eventResize:function(ev) {
@@ -487,10 +493,11 @@ user-select: none;}
 				detail['remark']='';
 				detail['type']=0;
 				detail['remind_type']=0;
-				//console.log(detail);	
+				console.log(detail);	
 				addEvent(detail);	
 			},
 			nowIndicator: true,
+			firstDay: 1,
 			weekNumbers: true,// 是否开启周数
 			displayEventEnd: false, //所有视图显示结束时间
 			eventTimeFormat: { // 事件的时间格式，like '14:30:00'

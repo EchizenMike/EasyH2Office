@@ -139,7 +139,7 @@
 								<tr>\
 									<td class="layui-td-gray2">工作时间范围 <span style="color: red">*</span></td>\
 									<td>\
-										<input id="start_time_a" name="start_time_a" style="width:110px; display:inline-block;" autocomplete="off" class="layui-input" value="" readonly lay-verify="required" lay-reqText="请选择"><div style="display: inline-block; margin-left:5px; width: 80px;"><select lay-filter="start_time_1" id="start_time_1"></select></div> 至 <input id="end_time_a" name="end_time_a" style="width:110px; display:inline-block;" autocomplete="off" class="layui-input" value="" readonly lay-verify="required" lay-reqText="请选择"><div style="display: inline-block; margin-left:5px; width: 80px;"><select lay-filter="end_time_1" id="end_time_1"></select></div>\
+										<input id="start_time_a" name="start_time_a" style="width:110px; display:inline-block;" autocomplete="off" class="layui-input" value="" readonly lay-verify="required" lay-reqText="请选择"><div style="display: inline-block; margin-left:5px; width: 80px;"><select lay-filter="start_time_b" id="start_time_b"></select></div> 至 <input id="end_time_a" name="end_time_a" style="width:110px; display:inline-block;" autocomplete="off" class="layui-input" value="" readonly lay-verify="required" lay-reqText="请选择"><div style="display: inline-block; margin-left:5px; width: 80px;"><select lay-filter="end_time_b" id="end_time_b"></select></div>\
 									</td>\
 								</tr>\
 							</table>\
@@ -173,7 +173,7 @@
 								$('#start_time_a').val(a);
 							}
 						});
-						$('#start_time_1,#end_time_1').empty();
+						$('#start_time_b,#end_time_b').empty();
 						
 						var hourArray=[];
 						for(var h=0;h<24;h++){
@@ -182,7 +182,7 @@
 							hourArray.push(t_1,t_2,t_3,t_4);
 						}
 						
-						var html_1='', html_2='',def_h1='08:30',def_h2='09:00';
+						var html_1='', html_2='',def_h1='09:00',def_h2='09:30';
 						for(var s=0;s<hourArray.length;s++){
 							var check_1='',check_2='';
 							if(hourArray[s]==def_h1){
@@ -195,32 +195,32 @@
 							html_2 += '<option value="'+hourArray[s]+'" '+check_2+'>'+hourArray[s]+'</option>';
 						}
 						
-						$('#start_time_1').append(html_1);
-						$('#end_time_1').append(html_2);
+						$('#start_time_b').append(html_1);
+						$('#end_time_b').append(html_2);
 						form.render();
 					
 					},
 					btn: ['确定提交'],
 					btnAlign: 'c',
 					yes: function(idx){
-						let start_time = $('#start_time_a').val();
-						let end_time = $('#end_time_a').val();
-						let start_time_1 = $('#start_time_1').val();
-						let end_time_1 = $('#end_time_1').val();
+						let start_time_a = $('#start_time_a').val();
+						let end_time_a = $('#end_time_a').val();
+						let start_time_b = $('#start_time_b').val();
+						let end_time_b = $('#end_time_b').val();
 						if(start_time=='' || end_time==''){
 							layer.msg('请选择工作时间范围');
 							return;
-							}
+						}
 						$.ajax({
 							url:"{:url('home/schedule/update_labor_time')}",
 							type:'post',
 							data:{
 								id:data.id,
 								admin_id:data.admin_id,
-								start_time:start_time,
-								end_time:end_time,
-								start_time_1:start_time_1,
-								end_time_1:end_time_1
+								start_time_a:start_time_a,
+								end_time_a:end_time_a,
+								start_time_b:start_time_b,
+								end_time_b:end_time_b
 							},
 							success:function(e){
 								layer.msg(e.msg);
@@ -395,10 +395,10 @@
 			var detail={};
 			detail['id']=0;
 			detail['title']='';
-			detail['start_time']='';
-			detail['end_time']='';		
-			detail['start_time_1']='08:30';
-			detail['end_time_1']='09:00';		
+			detail['start_time_a']='';
+			detail['end_time_a']='';		
+			detail['start_time_b']='09:00';
+			detail['end_time_b']='09:30';		
 			detail['remark']='';
 			detail['labor_type']=0;
 			var content='<form class="layui-form" style="width:868px">\
@@ -406,7 +406,7 @@
 								<tr>\
 									<td class="layui-td-gray2">工作时间范围 <span style="color: red">*</span></td>\
 									<td>\
-										<input id="start_time_a" name="start_time_a" style="width:100px; display:inline-block;" autocomplete="off" class="layui-input" value="" readonly lay-verify="required" lay-reqText="请选择"><div style="display: inline-block; margin-left:3px; width: 80px;"><select lay-filter="start_time_1" id="start_time_1"></select></div> 至 <input id="end_time_a" name="end_time_a" style="width:100px; display:inline-block;" autocomplete="off" class="layui-input" value="" readonly lay-verify="required" lay-reqText="请选择"><div style="display: inline-block; margin-left:3px; width: 80px;"><select lay-filter="end_time_1" id="end_time_1"></select></div>\
+										<input id="start_time_a" name="start_time_a" style="width:100px; display:inline-block;" autocomplete="off" class="layui-input" value="" readonly lay-verify="required" lay-reqText="请选择"><div style="display: inline-block; margin-left:3px; width: 80px;"><select lay-filter="start_time_b" id="start_time_b"></select></div> 至 <input id="end_time_a" name="end_time_a" style="width:100px; display:inline-block;" autocomplete="off" class="layui-input" value="" readonly lay-verify="required" lay-reqText="请选择"><div style="display: inline-block; margin-left:3px; width: 80px;"><select lay-filter="end_time_b" id="end_time_b"></select></div>\
 									</td>\
 									<td class="layui-td-gray">工作类型 <span style="color: red">*</span></td>\
 									<td>\
@@ -441,8 +441,8 @@
 						showBottom: false,
 						done:function(a,b,c){
 							$('#end_time_a').val(a);
-							detail.start_time=a;
-							detail.end_time=a;
+							detail.start_time_a=a;
+							detail.end_time_a=a;
 						}
 					});
 
@@ -456,11 +456,11 @@
 						showBottom: false,
 						done:function(a,b,c){
 							$('#start_time_a').val(a);
-							detail.start_time=a;
-							detail.end_time=a;
+							detail.start_time_a=a;
+							detail.end_time_a=a;
 						}
 					});
-					$('#start_time_1,#end_time_1').empty();
+					$('#start_time_b,#end_time_b').empty();
 					
 					var hourArray=[];
 					for(var h=0;h<24;h++){
@@ -469,7 +469,7 @@
 						hourArray.push(t_1,t_2,t_3,t_4);
 					}
 					
-					var html_1='', html_2='',def_h1='08:30',def_h2='09:00';
+					var html_1='', html_2='',def_h1='09:00',def_h2='09:30';
 					for(var s=0;s<hourArray.length;s++){
 						var check_1='',check_2='';
 						if(hourArray[s]==def_h1){
@@ -482,20 +482,20 @@
 						html_2 += '<option value="'+hourArray[s]+'" '+check_2+'>'+hourArray[s]+'</option>';
 					}
 					
-					$('#start_time_1').append(html_1);
-					$('#end_time_1').append(html_2);
+					$('#start_time_b').append(html_1);
+					$('#end_time_b').append(html_2);
 					form.render();
 					
 					$('[name="title"]').on('input',function(){
 						var _val=$(this).val();
 						detail.title=_val;
 					});	
-					form.on('select(start_time_1)', function(data){
-						detail.start_time_1=data.value;
+					form.on('select(start_time_b)', function(data){
+						detail.start_time_b=data.value;
 						console.log(data);
 					});
-					form.on('select(end_time_1)', function(data){
-						detail.end_time_1=data.value;
+					form.on('select(end_time_b)', function(data){
+						detail.end_time_b=data.value;
 					});
 					$('[form-input="remark"]').on('input',function(){
 						var _val=$(this).val();
@@ -508,7 +508,7 @@
 				btn: ['确定提交'],
 				btnAlign:'c',
 				yes: function(idx){
-					if(detail.start_time=='' || detail.end_time==''){
+					if(detail.start_time_a=='' || detail.end_time_a==''){
 						layer.msg('请选择工作时间范围');
 						return;
 					}

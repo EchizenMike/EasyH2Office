@@ -197,12 +197,15 @@ class Schedule extends BaseController
         $param = get_params();
         $admin_id = $this->uid;
         if ($param['id'] == 0) {
-            if (isset($param['start_time'])) {
-                $param['start_time'] = strtotime($param['start_time'] . '' . $param['start_time_1']);
+            if (isset($param['start_time_a'])) {
+                $param['start_time'] = strtotime($param['start_time_a'] . '' . $param['start_time_b']);
             }
-            if (isset($param['end_time'])) {
-                $param['end_time'] = strtotime($param['end_time'] . '' . $param['end_time_1']);
+            if (isset($param['end_time_a'])) {
+                $param['end_time'] = strtotime($param['end_time_a'] . '' . $param['end_time_b']);
             }
+			if($param['start_time']>time()){
+				return to_assign(1, "开始时间不能大于当前时间");			
+			}
             if ($param['end_time'] <= $param['start_time']) {
                 return to_assign(1, "结束时间需要大于开始时间");
             }
@@ -260,12 +263,15 @@ class Schedule extends BaseController
     public function update_labor_time()
     {
         $param = get_params();
-        if (isset($param['start_time'])) {
-            $param['start_time'] = strtotime($param['start_time'] . '' . $param['start_time_1']);
+        if (isset($param['start_time_a'])) {
+            $param['start_time'] = strtotime($param['start_time_a'] . '' . $param['start_time_b']);
         }
-        if (isset($param['end_time'])) {
-            $param['end_time'] = strtotime($param['end_time'] . '' . $param['end_time_1']);
+        if (isset($param['end_time_a'])) {
+            $param['end_time'] = strtotime($param['end_time_a'] . '' . $param['end_time_b']);
         }
+		if($param['start_time']>time()){
+			return to_assign(1, "开始时间不能大于当前时间");		
+		}
         if ($param['end_time'] <= $param['start_time']) {
             return to_assign(1, "结束时间需要大于开始时间");
         }
