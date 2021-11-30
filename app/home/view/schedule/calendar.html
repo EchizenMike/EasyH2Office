@@ -27,11 +27,26 @@ user-select: none;}
 }
 .fc .fc-button-primary:hover{color:#fff; background-color:#52B5FF; border-color:#52B5FF;}
 .fc-daygrid-event-harness{cursor:pointer;}
+.fc .fc-daygrid-week-number{background-color: #F3FFDF; font-size:12px;}
+/*今天背景色和字体颜色chocolate */
+.fc .fc-daygrid-day.fc-day-today .fc-event-title,.fc .fc-daygrid-day.fc-day-today .fc-event-time,.fc .fc-daygrid-day.fc-day-today .fc-daygrid-day-number{
+	font-weight:800;
+	color:#FF5722;
+}
+/*星期六背景色和字体颜色 */
+.fc-day-sat{
+    background-color: #F3FFDF;
+}
+/*星期天背景色和字体颜色 */
+.fc-day-sun{
+    background-color: #F3FFDF;
+}
+.fc-h-event .fc-event-main{color:#333}
 
-.layui-tags-span {padding: 3px 6px;font-size: 12px; background-color:#fff; border-radius: 3px; margin:2px 0; margin-right: 5px; border: 1px solid #e6e6e6; display: inline-block;}
-.layui-layer-content .layui-table-view .layui-table td,.layui-layer-content .layui-table-view .layui-table th{padding:1px 0;}
 .calendar-select{width:100px; height:38px; position:absolute; top:31px; right:255px; z-index:100;}
 .calendar-select .layui-input{height: 36px; line-height: 1.2;}
+.layui-tags-span {padding: 3px 6px;font-size: 12px; background-color:#fff; border-radius: 3px; margin:2px 0; margin-right: 5px; border: 1px solid #e6e6e6; display: inline-block;}
+.layui-layer-content .layui-table-view .layui-table td,.layui-layer-content .layui-table-view .layui-table th{padding:1px 0;}
 .layui-unselect dl {max-height:188px;}
 </style>
 {/block}
@@ -262,7 +277,7 @@ user-select: none;}
 						</form>';
 			layer.open({
 				type:1,
-				title:'工作记录',
+				title:'查看工作记录',
 				area:['800px','336px'],
 				content:content,
 				success:function(){
