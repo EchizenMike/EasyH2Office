@@ -81,8 +81,8 @@ user-select: none;}
 				ids: ids,
 				names: names,
 				type: 0,
-				department_url:"{:url('home/api/get_department_tree')}",
-				employee_url:"{:url('home/api/get_employee')}",
+				department_url: "/home/api/get_department_tree",
+				employee_url: "/home/api/get_employee",
 				callback: function (ids, names, dids, departments) {
 					uid = ids;
 					that.val(names);
@@ -301,7 +301,7 @@ user-select: none;}
 					}
 					console.log(detail);
 					$.ajax({
-						url:"{:url('home/plan/add')}",
+						url: "/home/plan/add",
 						type:'post',
 						data:detail,
 						success:function(e){
@@ -376,7 +376,7 @@ user-select: none;}
 				return false;
 			}
 			$.ajax({
-				url:"{:url('home/plan/detail')}",
+				url: "/home/plan/detail",
 				type:'post',
 				data:{id:id},
 				success:function(res){					
@@ -447,7 +447,7 @@ user-select: none;}
 				detail['end_time_b']=addZero(arg.end.getHours())+':'+addZero(arg.end.getMinutes());	
 				console.log(detail);
 				$.ajax({
-					url:"{:url('home/plan/add')}",
+					url: "/home/plan/add",
 					type:'post',
 					data:detail,
 					success:function(e){
@@ -469,7 +469,7 @@ user-select: none;}
 				detail['end_time_b']=addZero(arg.end.getHours())+':'+addZero(arg.end.getMinutes());	
 				console.log(detail);
 				$.ajax({
-					url:"{:url('home/plan/add')}",
+					url: "/home/plan/add",
 					type:'post',
 					data:detail,
 					success:function(e){
@@ -532,7 +532,7 @@ user-select: none;}
 			events: function(fetchInfo, successCallback, failureCallback ){
 				$.ajax({
 					type:"POST",
-					url:"{:url('home/plan/calendar')}",
+					url: "/home/plan/calendar",
 					dataType:"json",
 					data:{start:fetchInfo.startStr,end:fetchInfo.endStr,uid:uid},
 					success:function(result){

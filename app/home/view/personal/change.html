@@ -30,7 +30,7 @@
 		var tableIns = table.render({
 			elem: '#test'
 			, toolbar: '#toolbarDemo'
-			, url: "{:url('home/personal/change')}"
+			, url: "/home/personal/change"
 			, page: true //开启分页
 			, limit: 20
 			, cols: [[
@@ -63,7 +63,7 @@
 		//表头工具栏事件
 		table.on('toolbar(test)', function(obj){
 			if (obj.event === 'add') {
-				rightpage.open("{:url('home/personal/change_add')}");
+				rightpage.open("/home/personal/change_add");
 				return;
 			}
 		});

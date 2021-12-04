@@ -60,7 +60,7 @@
 			elem: '#test',
 			title: '发票列表',
 			toolbar: '#toolbarDemo',
-			url: "{:url('home/invoice/index')}", //数据接口		
+			url: "/home/invoice/index", //数据接口		
 			page: true, //开启分页
 			limit: 20,
 			cols: [
@@ -196,7 +196,7 @@
 		//表头工具栏事件
 		table.on('toolbar(test)', function(obj){
 			if (obj.event === 'add') {
-				rightpage.open("{:url('home/invoice/add')}");
+				rightpage.open("/home/invoice/add");
 				return;
 			}
 		});
@@ -217,7 +217,7 @@
 					title: '提示'
 				}, function(index) {
 					$.ajax({
-						url: "{:url('home/invoice/delete')}",
+						url: "/home/invoice/delete",
 						data: {
 							id: data.id
 						},
@@ -237,7 +237,7 @@
 					title: '提示'
 				}, function(index) {
 					$.ajax({
-						url: "{:url('home/invoice/check')}",
+						url: "/home/invoice/check",
 						data: {
 							id: data.id,
 							invoice_status:10

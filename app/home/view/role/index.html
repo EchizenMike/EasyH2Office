@@ -33,7 +33,7 @@
 		var tableIns = table.render({
 			elem: '#test',
 			toolbar: '#toolbarDemo',
-			url: "{:url('home/role/index')}", //数据接口
+			url: "/home/role/index", //数据接口
 			page: true, //开启分页
 			limit: 20,
 			cols: [[ //表头
@@ -52,7 +52,7 @@
 		//表头工具栏事件
 		table.on('toolbar(test)', function(obj){
 			if (obj.event === 'add') {
-				rightpage.open("{:url('home/role/add')}");
+				rightpage.open("/home/role/add");
 				return;
 			}
 		});
@@ -66,7 +66,7 @@
 			if (obj.event === 'del') {
 				layer.confirm('确定要删除该权限角色吗？', { icon: 3, title: '提示' }, function (index) {
 					$.ajax({
-						url: "{:url('home/role/delete')}",
+						url: "/home/role/delete",
 						data: { id: data.id },
 						success: function (e) {
 							layer.msg(e.msg);

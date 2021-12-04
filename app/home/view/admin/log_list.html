@@ -27,7 +27,7 @@
 	var page=1,limit=20;
 	function getLogs() {
 		$.ajax({
-			url: "{:url('home/api/get_log_list')}",
+			url: "/home/api/get_log_list",
 			type: 'post',
 			data: {
 				page:page,

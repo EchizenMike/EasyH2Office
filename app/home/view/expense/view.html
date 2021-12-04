@@ -128,7 +128,7 @@ function init(layui) {
 		}
 		layer.confirm('确定审核通过该报销申请?', {icon: 3, title:'提示'}, function(index){
 			$.ajax({
-				url:"{:url('home/expense/check')}",
+				url: "/home/expense/check",
 				data:{id:id,check_status:2,pay_admin_id:pay_admin},
 				success:function(res){
 					layer.msg(res.msg);
@@ -153,7 +153,7 @@ function init(layui) {
 					return false;
 				}
 				$.ajax({
-					url:"{:url('home/expense/check')}",
+					url: "/home/expense/check",
 					data:{id:id,check_status:0,check_remark:text},
 					success:function(res){
 						layer.msg(res.msg);
@@ -174,7 +174,7 @@ function init(layui) {
 		var id=$('#id').val();
 		layer.confirm('确定已经打款?', {icon: 3, title:'提示'}, function(index){
 			$.ajax({
-				url:"{:url('home/expense/check')}",
+				url: "/home/expense/check",
 				data:{id:id,check_status:3},
 				success:function(res){
 					layer.msg(res.msg);

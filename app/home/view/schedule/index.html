@@ -71,8 +71,8 @@
 				ids: ids,
 				names: names,
 				type: 0,
-				department_url:"{:url('/home/api/get_department_tree')}",
-				employee_url:"{:url('/home/api/get_employee')}",
+				department_url: "/home/api/get_department_tree",
+				employee_url: "/home/api/get_employee",
 				callback: function (ids, names, dids, departments) {
 					$('[name="uid"]').val(ids);
 					that.val(names);
@@ -92,7 +92,7 @@
 			elem: '#test'
 			,toolbar: '#toolbarDemo'
 			,title:'工作记录列表'
-			,url:"{:url('home/schedule/index')}"
+			,url: "/home/schedule/index"
 			,page: true //开启分页
 			,limit: 20
 			,cellMinWidth: 80
@@ -212,7 +212,7 @@
 							return;
 						}
 						$.ajax({
-							url:"{:url('home/schedule/update_labor_time')}",
+							url: "/home/schedule/update_labor_time",
 							type:'post',
 							data:{
 								id:data.id,
@@ -237,7 +237,7 @@
 			}
 			else if(obj.event === 'edit'){
 				$.ajax({
-					url:"{:url('home/schedule/detail')}",
+					url: "/home/schedule/detail",
 					data:{
 						id:data.id
 					},
@@ -250,7 +250,7 @@
 			}
 			else if(obj.event === 'view'){
 				$.ajax({
-					url:"{:url('home/schedule/detail')}",
+					url: "/home/schedule/detail",
 					data:{
 						id:data.id
 					},
@@ -325,7 +325,7 @@
 					}
 					console.log(detail);
 					$.ajax({
-						url:"{:url('home/schedule/add')}",
+						url: "/home/schedule/add",
 						type:'post',
 						data:detail,
 						success:function(e){
@@ -522,7 +522,7 @@
 					}
 					console.log(detail);
 					$.ajax({
-						url:"{:url('home/schedule/add')}",
+						url: "/home/schedule/add",
 						type:'post',
 						data:detail,
 						success:function(e){

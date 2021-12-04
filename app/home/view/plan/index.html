@@ -72,8 +72,8 @@
 				ids: ids,
 				names: names,
 				type: 0,
-				department_url:"{:url('home/api/get_department_tree')}",
-				employee_url:"{:url('home/api/get_employee')}",
+				department_url: "/home/api/get_department_tree",
+				employee_url: "/home/api/get_employee",
 				callback: function (ids, names, dids, departments) {
 					$('[name="uid"]').val(ids);
 					that.val(names);
@@ -93,7 +93,7 @@
 			elem: '#test'
 			,toolbar: '#toolbarDemo'
 			,title:'日程安排列表'
-			,url:"{:url('home/plan/index')}"
+			,url: "/home/plan/index"
 			,page: true //开启分页
 			,limit: 20
 			,cellMinWidth: 80
@@ -141,7 +141,7 @@
 			var data = obj.data;
 			if(obj.event === 'edit'){
 				$.ajax({
-					url:"{:url('home/plan/detail')}",
+					url: "/home/plan/detail",
 					data:{
 						id:data.id
 					},
@@ -164,7 +164,7 @@
 			}
 			else if(obj.event === 'view'){
 				$.ajax({
-					url:"{:url('home/plan/detail')}",
+					url: "/home/plan/detail",
 					data:{
 						id:data.id
 					},
@@ -451,7 +451,7 @@
 					}
 					console.log(detail);
 					$.ajax({
-						url:"{:url('home/plan/add')}",
+						url: "/home/plan/add",
 						type:'post',
 						data:detail,
 						success:function(e){

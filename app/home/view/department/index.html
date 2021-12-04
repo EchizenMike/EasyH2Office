@@ -23,7 +23,7 @@
 			id: 'treeTable'
 			, elem: '#treeTable'
 			, idField: 'id'
-			, url: "{:url('home/department/index')}"
+			, url: "/home/department/index"
 			, cellMinWidth: 100
 			, treeId: 'id'//树形id字段名称
 			, treeUpId: 'pid'//树形父id字段名称
@@ -47,7 +47,7 @@
 		
 		//表头工具栏事件
 		$('.body-table').on('click','.add-menu', function(){
-			rightpage.open("{:url('home/department/add')}");
+			rightpage.open("/home/department/add");
 			return;
 		});
 
@@ -64,7 +64,7 @@
 			if (obj.event === 'del') {
 				layer.confirm('确定要删除吗?', { icon: 3, title: '提示' }, function (index) {
 					$.ajax({
-						url: "{:url('home/department/delete')}",
+						url: "/home/department/delete",
 						type: 'post',
 						data: { id: obj.data.id },
 						success: function (e) {

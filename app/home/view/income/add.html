@@ -214,7 +214,7 @@ function init(layui) {
 		var inid=that.data('inid');
 		layer.confirm('确定要删除该到账记录?', {icon: 3, title:'提示'}, function(index){
 			$.ajax({
-				url:"{:url('home/income/delete')}",
+				url: "/home/income/delete",
 				data:{id:id,inid:inid},
 				success:function(res){
 					layer.msg(res.msg);
@@ -237,7 +237,7 @@ function init(layui) {
 			return false;
 		}
 		$.ajax({
-			url:"{:url('home/income/add')}",
+			url: "/home/income/add",
 			type:'post',
 			data:data.field,
 			success:function(res){
@@ -257,7 +257,7 @@ function init(layui) {
 		var inid=$('#inid').val();
 		layer.confirm('确定要全部反到账?', {icon: 3, title:'提示'}, function(index){
 			$.ajax({
-				url:"{:url('home/income/add')}",
+				url: "/home/income/add",
 				data:{inid:inid,enter_type:3},
 				success:function(res){
 					layer.msg(res.msg);
@@ -292,7 +292,7 @@ function init(layui) {
 					return false;
 				}
 				$.ajax({
-					url:"{:url('home/income/add')}",
+					url: "/home/income/add",
 				data:{inid:inid,enter_type:2,enter_time:enter_time},
 					success:function(res){
 						layer.msg(res.msg);

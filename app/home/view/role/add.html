@@ -127,7 +127,7 @@
 		form.on('submit(webform)', function (obj) {
 			console.log(obj.field);
 			$.ajax({
-				url: "{:url('home/role/add')}",
+				url: "/home/role/add",
 				data: obj.field,
 				type: 'post',
 				success: function (e) {

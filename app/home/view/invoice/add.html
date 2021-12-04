@@ -179,7 +179,7 @@
 		form.on('submit(webform)', function(data){
 		  	
 			$.ajax({
-				url:"{:url('/home/invoice/add')}",
+				url: "/home/invoice/add",
 				type:'post',
 				data:data.field,
 				success:function(e){

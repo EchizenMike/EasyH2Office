@@ -205,7 +205,7 @@ class Admin extends BaseController
         add_log('view', get_params('id'));
         return view();
     }
-    //禁用,离职，恢复
+    //禁用,恢复
     public function set()
     {
         $type = get_params("type");
@@ -224,11 +224,9 @@ class Admin extends BaseController
         }
         foreach ($list as $key => $v) {
             if (Db::name('Admin')->update($v) !== false) {
-                if ($type = 0) {
+                if ($type == 0) {
                     add_log('disable', $v['id']);
-                } else if ($type = 1) {
-                    add_log('leave', $v['id']);
-                } else if ($type = 2) {
+                } else if ($type == 1) {
                     add_log('recovery', $v['id']);
                 }
             }

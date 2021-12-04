@@ -26,7 +26,7 @@
 			id:'treeTable'
 			,elem: '#treeTable'
 			,idField:'id'
-			,url:"{:url('home/note/cate')}"
+			,url: "/home/note/cate"
 			,cellMinWidth: 100
 			,treeId:'id'//树形id字段名称
 			,treeUpId:'pid'//树形父id字段名称
@@ -50,7 +50,7 @@
 			
 		//表头工具栏事件
 		$('.add-menu').on('click', function(){
-			rightpage.open("{:url('home/note/cate_add')}");
+			rightpage.open("/home/note/cate_add");
 			return;
 		});
 		
@@ -67,7 +67,7 @@
 			if (obj.event === 'del') {
 				layer.confirm('确定要删除吗?', { icon: 3, title: '提示' }, function (index) {
 					$.ajax({
-						url: "{:url('home/note/cate_delete')}",
+						url: "/home/note/cate_delete",
 						type: 'post',
 						data: { id: obj.data.id },
 						success: function (e) {

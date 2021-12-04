@@ -25,7 +25,7 @@
 			elem: '#test',
 			title: '数据备份',
 			toolbar: '#toolbarDemo',
-			url: "{:url('home/database/database')}", //数据接口
+			url: "/home/database/database", //数据接口
 			page: false,
 			cols: [
 				[ //表头
@@ -98,7 +98,7 @@
 					title: '提示'
 				}, function (index) {
 					$.ajax({
-						url: "{:url('home/database/backup')}",
+						url: "/home/database/backup",
 						data: {'id':ids},
 						success: function (res) {
 							layer.msg(res.msg);
@@ -115,7 +115,7 @@
 					title: '提示'
 				}, function (index) {
 					$.ajax({
-						url: "{:url('home/database/optimize')}",
+						url: "/home/database/optimize",
 						data: {'id':ids},
 						success: function (res) {
 							layer.msg(res.msg);
@@ -132,7 +132,7 @@
 					title: '提示'
 				}, function (index) {
 					$.ajax({
-						url: "{:url('home/database/repair')}",
+						url: "/home/database/repair",
 						data: {'id':ids},
 						success: function (res) {
 							layer.msg(res.msg);

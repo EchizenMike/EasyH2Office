@@ -161,7 +161,7 @@
 			<div class="table-title">员工动态</div>
 			<div class="layui-card-body">
 				<ul class="layui-timeline" id="logs"></ul>
-				<div class="panel-more"><a href="{:url('home/api/log_list')}">查看更多动态</a></div>
+				<div class="panel-more"><a href="/home/api/log_list">查看更多动态</a></div>
 			</div>
 		</div>
 	</div>
@@ -181,7 +181,7 @@
 		//公告
 		table.render({
 			elem: '#Note'
-			, url: "{:url('home/api/get_note_list')}" //数据接口
+			, url: "/home/api/get_note_list" //数据接口
 			, page: false //开启分页
 			, cols: [[ //表头
 				{ field: 'cate_title', title: '公告分类', align: 'center','width': 90 },
@@ -196,7 +196,7 @@
 		//文章
 		table.render({
 			elem: '#Article'
-			, url: "{:url('home/api/get_article_list')}" //数据接口
+			, url: "/home/api/get_article_list" //数据接口
 			, page: false //开启分页
 			, cols: [[ //表头
 				{ field: 'cate_title', title: '知识分类', align: 'center','width': 90 },
@@ -234,7 +234,7 @@
 
 	function get_logs() {
 		$.ajax({
-			url: "{:url('home/api/get_log_list')}",
+			url: "/home/api/get_log_list",
 			type: 'post',
 			data: {
 				page: 1,
@@ -269,7 +269,7 @@
 	var chartView = echarts.init(document.getElementById('chartView'));
 	function get_view_data() {
 		$.ajax({
-			url: "{:url('home/api/get_view_data')}",
+			url: "/home/api/get_view_data",
 			type: 'post',
 			data: {},
 			success: function (e) {

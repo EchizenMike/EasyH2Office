@@ -32,7 +32,7 @@
 			elem: '#test',
 			title: '岗位列表',
 			toolbar: '#toolbarDemo',
-			url: "{:url('home/position/index')}", //数据接口				
+			url: "/home/position/index", //数据接口				
 			page: false, //开启分页
 			cols: [
 				[
@@ -77,7 +77,7 @@
 		//表头工具栏事件
 		table.on('toolbar(test)', function(obj){
 			if (obj.event === 'add') {
-				rightpage.open("{:url('home/position/add')}");
+				rightpage.open("/home/position/add");
 				return;
 			}
 		});
@@ -108,7 +108,7 @@
 					title: '提示'
 				}, function (index) {
 					$.ajax({
-						url: "{:url('home/position/delete')}",
+						url: "/home/position/delete",
 						data: {
 							id: data.id
 						},

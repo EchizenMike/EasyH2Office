@@ -82,7 +82,7 @@
 		//监听提交
 		form.on('submit(webform)', function (data) {
 			$.ajax({
-				url: "{:url('home/conf/edit')}",
+				url: "/home/conf/edit",
 				type: 'post',
 				data: data.field,
 				success: function (e) {
@@ -111,7 +111,7 @@
 					return false;
 				}
 				$.ajax({
-					url: "{:url('home/api/email_test')}",
+					url: "/home/api/email_test",
 					data: { email: value },
 					type: "post",
 					beforeSend: function () {

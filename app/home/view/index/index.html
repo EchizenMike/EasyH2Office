@@ -33,7 +33,7 @@
 		<div class="layui-side ittab-bg-gray">
 			<div class="ittab-menulist">
 				<div class="ittab-menulist-top">
-					<a href="/" title="返回首页" style="background-color: #E94335"><i class="layui-icon layui-icon-home"></i></a><a href="javascript:;" title="修改个人信息" style="background-color:#fbbc05" data-id="10000" data-title="修改个人信息" data-src="{:url('home/api/edit_personal')}" class="site-menu-active"><i class="layui-icon layui-icon-username"></i></a><a href="javascript:;" title="修改密码" style="background-color:#4285f4" data-id="10001" data-title="修改密码" data-src="{:url('home/api/edit_password')}" class="site-menu-active"><i class="layui-icon layui-icon-password"></i></a>
+					<a href="/" title="返回首页" style="background-color: #E94335"><i class="layui-icon layui-icon-home"></i></a><a href="javascript:;" title="修改个人信息" style="background-color:#fbbc05" data-id="10000" data-title="修改个人信息" data-src="/home/api/edit_personal" class="site-menu-active"><i class="layui-icon layui-icon-username"></i></a><a href="javascript:;" title="修改密码" style="background-color:#4285f4" data-id="10001" data-title="修改密码" data-src="/home/api/edit_password" class="site-menu-active"><i class="layui-icon layui-icon-password"></i></a>
 				</div>
 				<div class="ittab-menulist-1">
 					{foreach name="menu" item="a"}
@@ -87,7 +87,7 @@
 				<div class="layui-icon layui-icon-next" id="right_button" title="向右滚动菜单"></div>
 				<div class="layui-tab-content" style="height: 100%;">
 					<div class="layui-tab-item layui-show">
-						<iframe id="0" data-frameid="0" name="myiframe" src="{:url('home/index/main')}" frameborder="0" align="left" width="100%" height="100%" scrolling="yes"></iframe>
+						<iframe id="0" data-frameid="0" name="myiframe" src="/home/index/main" frameborder="0" align="left" width="100%" height="100%" scrolling="yes"></iframe>
 					</div>
 				</div>
 			</div>
@@ -106,12 +106,12 @@
 			layer.confirm('确认注销登录吗?', { icon: 7, title: '警告' }, function (index) {
 				//注销
 				$.ajax({
-					url: "{:url('home/login/login_out')}",
+					url: "/home/login/login_out",
 					success: function (e) {
 						layer.msg(e.msg);
 						if (e.code == 0) {
 							setTimeout(function () {
-								location.href = "{:url('home/login/index')}"
+								location.href = "/home/login/index"
 							}, 1000)
 						}
 					}
@@ -123,7 +123,7 @@
 	//轮循获取消息
 	var getStatus = setInterval(function () {
 		$.ajax({
-			url:"{:url('home/index/index')}",
+			url: "/home/index/index",
 			type:'post',
 			success:function(e){
 				if(e.code==0 && e.data!=''){

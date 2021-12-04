@@ -55,7 +55,7 @@
 		//监听提交
 		form.on('submit(webform)', function (data) {
 			$.ajax({
-				url: "{:url('home/conf/edit')}",
+				url: "/home/conf/edit",
 				type: 'post',
 				data: data.field,
 				success: function (e) {
@@ -83,7 +83,7 @@
 			headers: {
 				Token: token
 			},
-			url: "{:url('home/api/index/demo')}",
+			url: "/home/api/index/demo",
 			type: "get",
 			success: function (res) {
 				$('#res').html(JSON.stringify(res));
@@ -128,7 +128,7 @@
 					return;
 				}
 				$.ajax({
-					url:"{:url('home/api/index/reg')}",
+					url: "/home/api/index/reg",
 					type:'post',
 					data:{username:username,pwd:password},
 					success:function(res){
@@ -172,7 +172,7 @@
 						return;
 					}
 					$.ajax({
-						url:"{:url('home/api/index/login')}",
+						url: "/home/api/index/login",
 						type:'post',
 						data:{username:username,password:password},
 						success:function(res){

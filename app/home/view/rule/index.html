@@ -24,7 +24,7 @@
 			id: tableId
 			, elem: '#' + tableId
 			, idField: 'id'
-			, url: "{:url('home/rule/index')}"
+			, url: "/home/rule/index"
 			, cellMinWidth: 100
 			, treeId: 'id'//树形id字段名称
 			, treeUpId: 'pid'//树形父id字段名称
@@ -47,7 +47,7 @@
 		});
 		//表头工具栏事件
 		$('.add-menu').on('click',function(){
-			rightpage.open("{:url('home/rule/add')}");
+			rightpage.open("/home/rule/add");
 			return;
 		});
 
@@ -64,7 +64,7 @@
 			if (obj.event === 'del') {
 				layer.confirm('确定要删除吗?', { icon: 3, title: '提示' }, function (index) {
 					$.ajax({
-						url: "{:url('home/rule/delete')}",
+						url: "/home/rule/delete",
 						type: 'post',
 						data: { id: obj.data.id },
 						success: function (e) {

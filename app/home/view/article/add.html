@@ -93,7 +93,7 @@ function init(layui) {
       , upload = layui.upload;
 
     var tags = new tagspicker({
-		'url': "{:url('home/api/get_keyword_cate')}",
+		'url': "/home/api/get_keyword_cate",
 		'target': 'keyword_name',
 		'tag_ids': 'keyword_id',
 		'tag_tags': 'keyword_name',
@@ -104,7 +104,7 @@ function init(layui) {
     //封面上传
     var uploadInst = upload.render({
 		elem: '#test1'
-		, url: "{:url('home/api/upload')}"
+		, url: "/home/api/upload"
 		, done: function (res) {
 			//如果上传失败
 			if (res.code == 1) {
@@ -119,7 +119,7 @@ function init(layui) {
     //监听提交
     form.on('submit(webform)', function (data) {
 		$.ajax({
-			url: "{:url('home/article/add')}",
+			url: "/home/article/add",
 			type: 'post',
 			data: data.field,
 			success: function (e) {

@@ -60,7 +60,7 @@
 			elem: '#test',
 			toolbar: '#toolbarDemo',
 			title:'垃圾箱',
-			url: "{:url('home/mail/rubbish')}", //数据接口
+			url: "/home/mail/rubbish", //数据接口
 			page: true ,//开启分页
 			limit: 15,
 			cellMinWidth: 80, //全局定义常规单元格的最小宽度，layui 2.2.1 新增
@@ -86,7 +86,7 @@
 			if(obj.event === 'del'){
 				layer.confirm('确定把该信息彻底删除吗?', {icon: 3, title:'提示'}, function(index){
 					$.ajax({
-						url:"{:url('home/mail/check')}",
+						url: "/home/mail/check",
 						data:{ids:data.id,type:4},
 						success:function(e){
 							layer.msg(e.msg);
@@ -101,7 +101,7 @@
 			if(obj.event === 'recover'){
 				layer.confirm('确定把该信息移出垃圾箱吗?', {icon: 3, title:'提示'}, function(index){
 					$.ajax({
-						url:"{:url('home/mail/check')}",
+						url: "/home/mail/check",
 						data:{ids:data.id,type:3},
 						success:function(e){
 							layer.msg(e.msg);
@@ -120,7 +120,7 @@
 			var checkStatus = table.checkStatus(obj.config.id); //获取选中行状态
 			var data = checkStatus.data;
 			if (obj.event === 'add') {
-				rightpage.open("{:url('home/mail/add')}");
+				rightpage.open("/home/mail/add");
 				return;
 			}
 			if(data.length==0){
@@ -147,7 +147,7 @@
 				title: '提示'
 			}, function (index) {
 				$.ajax({
-					url:"{:url('home/mail/check')}",
+					url: "/home/mail/check",
 					data: {
 						ids: idArray.join(','),
 						type:type

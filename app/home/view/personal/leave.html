@@ -30,7 +30,7 @@
 		var tableIns = table.render({
 			elem: '#test'
 			, toolbar: '#toolbarDemo'
-			, url: "{:url('home/personal/leave')}"
+			, url: "/home/personal/leave"
 			, page: true //开启分页
 			, limit: 20
 			, cols: [[
@@ -85,7 +85,7 @@
 			var checkStatus = table.checkStatus(obj.config.id); //获取选中行状态
 			var data = checkStatus.data; 
 			if (obj.event === 'add') {
-				rightpage.open("{:url('home/personal/leave_add')}");
+				rightpage.open("/home/personal/leave_add");
 				return;
 			}
 		});

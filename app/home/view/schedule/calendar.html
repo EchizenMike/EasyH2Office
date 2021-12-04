@@ -82,8 +82,8 @@ user-select: none;}
 				ids: ids,
 				names: names,
 				type: 0,
-				department_url:"{:url('/home/api/get_department_tree')}",
-				employee_url:"{:url('/home/api/get_employee')}",
+				department_url: "/home/api/get_department_tree",
+				employee_url: "/home/api/get_employee",
 				callback: function (ids, names, dids, departments) {
 					uid = ids;
 					that.val(names);
@@ -216,7 +216,7 @@ user-select: none;}
 					}
 					console.log(detail);
 					$.ajax({
-						url:"{:url('home/schedule/add')}",
+						url: "/home/schedule/add",
 						type:'post',
 						data:detail,
 						success:function(e){
@@ -285,7 +285,7 @@ user-select: none;}
 				return false;
 			}
 			$.ajax({
-				url:"{:url('home/schedule/detail')}",
+				url: "/home/schedule/detail",
 				type:'post',
 				data:{id:id},
 				success:function(res){					
@@ -389,7 +389,7 @@ user-select: none;}
 			events: function(fetchInfo, successCallback, failureCallback ){
 				$.ajax({
 					type:"POST",
-					url:"{:url('home/schedule/calendar')}",
+					url: "/home/schedule/calendar",
 					dataType:"json",
 					data:{start:fetchInfo.startStr,end:fetchInfo.endStr,uid:uid},
 					success:function(result){

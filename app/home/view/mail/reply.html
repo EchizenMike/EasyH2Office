@@ -142,14 +142,14 @@
 		//监听保存到草稿并发送
 		form.on('submit(webform)', function(data){
 			$.ajax({
-				url:"{:url('home/mail/save')}",
+				url: "/home/mail/save",
 				type:'post',
 				data:data.field,
 				success:function(e){
 					if(e.code==0){
 						layer.msg('消息保存成功，正在发送中...');
 						$.ajax({
-							url:"{:url('home/mail/send')}",
+							url: "/home/mail/send",
 							type:'post',
 							data:{'id':e.data},
 							success:function(e){
@@ -173,7 +173,7 @@
 		//监听保存到草稿
 		form.on('submit(draftform)', function(data){
 			$.ajax({
-				url:"{:url('home/mail/save')}",
+				url: "/home/mail/save",
 				type:'post',
 				data:data.field,
 				success:function(e){
@@ -196,7 +196,7 @@
 		var demoListView = $('#demoList')
 			,uploadListIns = upload.render({
 			elem: '#testList'
-			,url: "{:url('home/api/upload')}"
+			,url: "/home/api/upload"
 			,accept: 'file'
 			,multiple: true
 			,auto: false
@@ -303,8 +303,8 @@
 				namesArray=names.split(',');
 			}
 			employeepicker.init({
-				department_url:"{:url('/home/api/get_department_tree')}",
-				employee_url:"{:url('/home/api/get_employee')}",
+				department_url: "/home/api/get_department_tree",
+				employee_url: "/home/api/get_employee",
 				ids:idsArray,
 				names:namesArray,
 				callback:function(ids,names){
@@ -326,7 +326,7 @@
 				content:tpl,
 				success:function(){
 					$.ajax({
-						url:"{:url('/home/api/get_department_tree')}",
+						url: "/home/api/get_department_tree",
 						type:'post',
 						success:function(res){					
 							dtree.render({
@@ -369,7 +369,7 @@
 				success:function(){
 					tableid=table.render({
 						elem: '#vaeservice'
-						,url:"{:url('/home/api/get_position')}"
+						,url: "/home/api/get_position"
 						,page: false //开启分页
 						,cols: [[
 						   {type:'checkbox',title: '选择'}

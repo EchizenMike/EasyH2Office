@@ -122,8 +122,8 @@
 				ids:ids,
 				names:names,
 				departments:departments,
-				department_url:"{:url('/home/api/get_department_tree')}",
-				employee_url:"{:url('/home/api/get_employee')}",
+				department_url: "/home/api/get_department_tree",
+				employee_url: "/home/api/get_employee",
 				type:0,
 				callback:function(ids,names,dids,departments){
 					$('[name="uid"]').val(ids);
@@ -139,8 +139,8 @@
 			employeepicker.init({
 				ids:ids,
 				names:names,
-				department_url:"{:url('/home/api/get_department_tree')}",
-				employee_url:"{:url('/home/api/get_employee')}",
+				department_url: "/home/api/get_department_tree",
+				employee_url: "/home/api/get_employee",
 				type:0,
 				callback:function(ids,names,dids,departments){
 					$('[name="lead_admin_id"]').val(ids);
@@ -159,8 +159,8 @@
 			employeepicker.init({
 				ids:idsArray,
 				names:namesArray,
-				department_url:"{:url('/home/api/get_department_tree')}",
-				employee_url:"{:url('/home/api/get_employee')}",
+				department_url: "/home/api/get_department_tree",
+				employee_url: "/home/api/get_employee",
 				callback:function(ids,names){
 					$('[name="connect_uids"]').val(ids.join(',')),
 					$('[name="connect_names"]').val(names.join(','));
@@ -179,7 +179,7 @@
 				return false;
 			}
 			$.ajax({
-				url: "{:url('home/personal/leave_add')}",
+				url: "/home/personal/leave_add",
 				type: 'post',
 				data: data.field,
 				success: function (e) {

@@ -143,7 +143,7 @@ function init(layui) {
 		}
 		layer.confirm('确定审核通过该发票申请?', {icon: 3, title:'提示'}, function(index){
 			$.ajax({
-				url:"{:url('home/invoice/check')}",
+				url: "/home/invoice/check",
 				data:{id:id,invoice_status:2,open_admin_id:open_admin},
 				success:function(res){
 					layer.msg(res.msg);
@@ -168,7 +168,7 @@ function init(layui) {
 					return false;
 				}
 				$.ajax({
-					url:"{:url('home/invoice/check')}",
+					url: "/home/invoice/check",
 					data:{id:id,invoice_status:0,check_remark:text},
 					success:function(res){
 						layer.msg(res.msg);
@@ -194,7 +194,7 @@ function init(layui) {
 					return false;
 				}
 				$.ajax({
-					url:"{:url('home/invoice/check')}",
+					url: "/home/invoice/check",
 					data:{id:id,invoice_status:3,code:text},
 					success:function(res){
 						layer.msg(res.msg);

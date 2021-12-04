@@ -190,7 +190,7 @@
 					title: '提示'
 				}, function(index) {
 					$.ajax({
-						url:"{:url('/home/expense/add')}",
+						url: "/home/expense/add",
 						type:'post',
 						data:data.field,
 						success:function(e){
@@ -234,7 +234,7 @@
 					title: '提示'
 				}, function(index) {
 					$.ajax({
-						url: "{:url('home/api/del_expense_interfix')}",
+						url: "/home/api/del_expense_interfix",
 						data: {
 							id: _id
 						},

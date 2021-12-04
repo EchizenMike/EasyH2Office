@@ -45,7 +45,7 @@
 		//监听提交
 		form.on('submit(webform)', function (data) {
 			$.ajax({
-				url: "{:url('home/keywords/add')}",
+				url: "/home/keywords/add",
 				type: 'post',
 				data: data.field,
 				success: function (e) {

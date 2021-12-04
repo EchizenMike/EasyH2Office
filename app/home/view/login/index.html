@@ -83,7 +83,7 @@
 					$ = layui.$;
 				form.on('submit(login-submit)', function(data) {
 					$.ajax({
-						url: "{:url('/home/login/login_submit')}",
+						url: "/home/login/login_submit",
 						data: $('#gougu-login').serialize(),
 						type: 'post',
 						async: false,

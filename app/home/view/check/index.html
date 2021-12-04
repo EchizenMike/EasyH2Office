@@ -24,7 +24,7 @@
 			elem: '#test',
 			title: '配置列表',
 			toolbar: '#toolbarDemo',
-			url: "{:url('home/check/index')}",
+			url: "/home/check/index",
 			page: true, //开启分页				
 			limit: 20,
 			cols: [
@@ -62,7 +62,7 @@
 		//表头工具栏事件
 		table.on('toolbar(test)', function(obj){
 			if (obj.event === 'add') {
-				rightpage.open("{:url('home/check/add')}");
+				rightpage.open("/home/check/add");
 				return;
 			}
 		});
@@ -76,7 +76,7 @@
 			if (obj.event === 'del') {
 				layer.confirm('确定要删除吗？', { icon: 3, title: '提示' }, function (index) {
 					$.ajax({
-						url: "{:url('home/check/delete')}",
+						url: "/home/check/delete",
 						data: { id: data.id },
 						success: function (e) {
 							layer.msg(e.msg);

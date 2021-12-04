@@ -103,6 +103,20 @@ function format_bytes($size, $delimiter = '')
 }
 
 /**
+ * PHP截取文字长度
+ * @return string
+ */
+function sub_str($str,$len=20){
+    $strlen=strlen($str)/3;#在编码utf8下计算字符串的长度，并把它交给变量$strlen
+    #echo $strlen;#输出字符串长度
+    if($strlen<$len){
+        return $str;
+    }else{
+        return mb_substr($str,0,$len,"utf-8")."...";
+    }
+}
+
+/**
  *数据处理成树形格式1
  * @return array
  */

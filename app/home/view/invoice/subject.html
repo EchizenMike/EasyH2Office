@@ -24,7 +24,7 @@
 			elem: '#test'
 			,toolbar: '#toolbarDemo'
 			,title:'报销类别列表'
-			,url:"{:url('home/invoice/subject')}"
+			,url: "/home/invoice/subject"
 			,page: true //开启分页
 			,limit: 20
 			,cellMinWidth: 80
@@ -64,7 +64,7 @@
 				if(obj.event === 'disable'){
 					layer.confirm('确定要禁用该发票主体吗?', {icon: 3, title:'提示'}, function(index){
 						$.ajax({
-							url: "{:url('home/invoice/subject_add')}",
+							url: "/home/invoice/subject_add",
 							type: 'post',
 							data: {
 								id: obj.data.id,
@@ -84,7 +84,7 @@
 				if(obj.event === 'open'){
 					layer.confirm('确定要启用该发票主体吗?', {icon: 3, title:'提示'}, function(index){
 						$.ajax({
-							url: "{:url('home/invoice/subject_add')}",
+							url: "/home/invoice/subject_add",
 							type: 'post',
 							data: {
 								id: obj.data.id,
@@ -120,7 +120,7 @@
 						var value = layero.find(".layui-layer-input").val();
 						if (value) {
 							$.ajax({
-								url: "{:url('home/invoice/subject_add')}",
+								url: "/home/invoice/subject_add",
 								type: 'post',
 								data: {
 									id: id,

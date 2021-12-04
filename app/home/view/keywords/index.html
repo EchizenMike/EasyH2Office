@@ -34,7 +34,7 @@
 			elem: '#test',
 			title: '关键字列表',
 			toolbar: '#toolbarDemo',
-			url: "{:url('home/keywords/index')}",
+			url: "/home/keywords/index",
 			page: true, //开启分页				
 			limit: 20,
 			cols: [
@@ -91,7 +91,7 @@
 		//表头工具栏事件
 		table.on('toolbar(test)', function(obj){
 			if (obj.event === 'add') {
-				rightpage.open("{:url('home/keywords/add')}");
+				rightpage.open("/home/keywords/add");
 				return;
 			}
 		});
@@ -105,7 +105,7 @@
 			if (obj.event === 'del') {
 				layer.confirm('确定要删除吗？', { icon: 3, title: '提示' }, function (index) {
 					$.ajax({
-						url: "{:url('home/keywords/delete')}",
+						url: "/home/keywords/delete",
 						data: { id: data.id },
 						success: function (e) {
 							layer.msg(e.msg);
