@@ -16,16 +16,15 @@
 	<meta name="description" content="{:get_system_config('web','desc')}"/>
 {/block}
 {block name="css"}
-  <link rel="stylesheet" href="{__LAYUI__}/css/layui.css?v={:get_system_config('web','version')}" media="all">
-  <link rel="stylesheet" href="{__CSS__}/common.css?v={:get_system_config('web','version')}" media="all">
+	<link rel="stylesheet" href="{__LAYUI__}/css/layui.css?v={:get_system_config('web','version')}" media="all">
+	<link rel="stylesheet" href="{__CSS__}/common.css?v={:get_system_config('web','version')}" media="all">
 {/block}
 {block name="style"}{/block}
-{block name="js"}
 <script src="{__STATIC__}/jquery.min.js"></script>
 <script>
-const login_user={$login_user};
+	const login_user={$login_user};
 </script>
-{/block}
+{block name="js"}{/block}
 </head>
 <body class="main-body">
 	<!-- 主体 -->

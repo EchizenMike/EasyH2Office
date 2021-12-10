@@ -13,6 +13,24 @@
 - [开源项目系列之勾股CMS](https://www.gougucms.com) 
 - [开源项目系列之勾股博客](https://blog.gougucms.com) 
 
+### 演示地址
+
+   勾股OA演示地址：[https://oa.gougucms.com](https://oa.gougucms.com)
+   
+   勾股OA文档地址：[https://blog.gougucms.com/home/book/detail/bid/3.html](https://blog.gougucms.com/home/book/detail/bid/3.html)
+
+PS：为了给后面的人提供良好的演示体验，体验以查看为主，如果确实需要填写数据，大家最好填些看似正常的数据，请不要乱填数据，比如：1111，aaa那些数据就不要乱来了。
+如果大家不遵守体验规则，后期发现很多乱的数据的话，就关闭对应的填写权限了。
+
+   登录账号及密码：
+~~~
+   BOSS角色：suhaizhen     123456
+   人事总监：fengcailing    123456
+   财务总监：yucixin        123456
+   市场总监：qinjiaxian     123456
+   技术总监：yexiaochai     123456
+~~~
+
 ### 介绍
 - 勾股OA是一款基于ThinkPHP6 + Layui + MySql打造的，简单实用的开源免费的企业办公系统框架。
 - 系统各功能模块，一目了然，操作简单；通用型的后台权限管理框架，员工的操作记录覆盖跟踪，紧随潮流、极低门槛、开箱即用。
@@ -165,22 +183,6 @@ www  系统部署目录（或者子目录）
     MBstring PHP Extension  
     CURL PHP Extension  
     Composer (用于管理第三方扩展包)
-~~~
-
-三、演示地址
-
-   勾股OA演示地址：[https://oa.gougucms.com](https://oa.gougucms.com)
-
-PS：为了给后面的人提供良好的演示体验，体验以查看为主，如果确实需要填写数据，大家最好填些看似正常的数据，请不要乱填数据，比如：1111，aaa那些数据就不要乱来了。
-如果大家不遵守体验规则，后期发现很多乱的数据的话，就关闭对应的填写权限了。
-
-   登录账号及密码：
-~~~
-   BOSS角色：suhaizhen     123456
-   人事总监：fengcailing    123456
-   财务总监：yucixin        123456
-   市场总监：qinjiaxian     123456
-   技术总监：yexiaochai     123456
 ~~~
 
 三、系统安装
