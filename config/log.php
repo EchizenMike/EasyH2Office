@@ -59,6 +59,7 @@ return [
 		'check'      => '审核通过',
 		'refue'      => '审核拒绝',
 		'open'       => '开具',
+		'enter'      => '到账',
 		'tovoid'     => '作废',
 		'leave'      => '离职',
 		'reset'      => '重新设置',
