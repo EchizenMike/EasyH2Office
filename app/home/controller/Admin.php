@@ -9,7 +9,7 @@ declare (strict_types = 1);
 
 namespace app\home\controller;
 
-use app\home\BaseController;
+use app\base\BaseController;
 use app\home\model\Admin as AdminList;
 use app\home\validate\AdminCheck;
 use avatars\MDAvatars;

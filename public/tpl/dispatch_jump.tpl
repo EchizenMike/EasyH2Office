@@ -6,7 +6,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>跳转提示</title>
-    <?php if(isMobile()==true){?>
+    <?php if(is_mobile()==true){?>
     <style type="text/css">
         body, h1, h2, p,dl,dd,dt{margin: 0;padding: 0;font: 15px/1.5 微软雅黑,tahoma,arial;}
         body{background:#efefef;}

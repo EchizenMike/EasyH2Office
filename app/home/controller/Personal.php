@@ -9,7 +9,7 @@ declare (strict_types = 1);
 
 namespace app\home\controller;
 
-use app\home\BaseController;
+use app\base\BaseController;
 use app\home\model\DepartmentChange as DepartmentChange;
 use app\home\model\PersonalQuit as PersonalQuit;
 use think\exception\ValidateException;

@@ -145,10 +145,10 @@ INSERT INTO `oa_admin_menu` VALUES (24, 3, '企业员工', 'home/admin/index', '
 INSERT INTO `oa_admin_menu` VALUES (25, 3, '人事调动', 'home/personal/change', '',1,0,0);
 INSERT INTO `oa_admin_menu` VALUES (26, 3, '离职档案', 'home/personal/leave', '',1,0,0);
 
-INSERT INTO `oa_admin_menu` VALUES (27, 4, '收件箱', 'home/mail/inbox', '',1,0,0);
-INSERT INTO `oa_admin_menu` VALUES (28, 4, '已发送', 'home/mail/sendbox', '',1,0,0);
-INSERT INTO `oa_admin_menu` VALUES (29, 4, '草稿箱', 'home/mail/draft', '',1,0,0);
-INSERT INTO `oa_admin_menu` VALUES (30, 4, '垃圾箱', 'home/mail/rubbish', '',1,0,0);
+INSERT INTO `oa_admin_menu` VALUES (27, 4, '收件箱', 'home/message/inbox', '',1,0,0);
+INSERT INTO `oa_admin_menu` VALUES (28, 4, '已发送', 'home/message/sendbox', '',1,0,0);
+INSERT INTO `oa_admin_menu` VALUES (29, 4, '草稿箱', 'home/message/draft', '',1,0,0);
+INSERT INTO `oa_admin_menu` VALUES (30, 4, '垃圾箱', 'home/message/rubbish', '',1,0,0);
 
 INSERT INTO `oa_admin_menu` VALUES (31, 5, '公告类别', 'home/note/cate', '',1,0,0);
 INSERT INTO `oa_admin_menu` VALUES (32, 5, '公告列表', 'home/note/index', '',1,0,0);
@@ -272,17 +272,17 @@ INSERT INTO `oa_admin_rule` VALUES (64, 3, 'home/personal/leave', '离职档案'
 INSERT INTO `oa_admin_rule` VALUES (65, 64, 'home/personal/leave_add', '新增/编辑离职档案','离职档案',1,0,0);
 INSERT INTO `oa_admin_rule` VALUES (66, 64, 'home/personal/leave_delete', '删除离职档案','离职档案',1,0,0);
 
-INSERT INTO `oa_admin_rule` VALUES (67, 4, 'home/mail/inbox', '收件箱','收件箱',1,0,0);
-INSERT INTO `oa_admin_rule` VALUES (68, 67, 'home/mail/add', '添加/修改消息','消息',1,0,0);
-INSERT INTO `oa_admin_rule` VALUES (69, 67, 'home/mail/send', '发送消息','消息',1,0,0);
-INSERT INTO `oa_admin_rule` VALUES (70, 67, 'home/mail/save', '保存消息到草稿','消息到草稿',1,0,0);
-INSERT INTO `oa_admin_rule` VALUES (71, 67, 'home/mail/reply', '回复消息','消息',1,0,0);
-INSERT INTO `oa_admin_rule` VALUES (72, 67, 'home/mail/check', '设置消息状态','消息状态',1,0,0);
-INSERT INTO `oa_admin_rule` VALUES (73, 67, 'home/mail/read', '查看消息','消息',1,0,0);
+INSERT INTO `oa_admin_rule` VALUES (67, 4, 'home/message/inbox', '收件箱','收件箱',1,0,0);
+INSERT INTO `oa_admin_rule` VALUES (68, 67, 'home/message/add', '添加/修改消息','消息',1,0,0);
+INSERT INTO `oa_admin_rule` VALUES (69, 67, 'home/message/send', '发送消息','消息',1,0,0);
+INSERT INTO `oa_admin_rule` VALUES (70, 67, 'home/message/save', '保存消息到草稿','消息到草稿',1,0,0);
+INSERT INTO `oa_admin_rule` VALUES (71, 67, 'home/message/reply', '回复消息','消息',1,0,0);
+INSERT INTO `oa_admin_rule` VALUES (72, 67, 'home/message/check', '设置消息状态','消息状态',1,0,0);
+INSERT INTO `oa_admin_rule` VALUES (73, 67, 'home/message/read', '查看消息','消息',1,0,0);
 
-INSERT INTO `oa_admin_rule` VALUES (74, 4, 'home/mail/sendbox', '发件箱','发件箱',1,0,0);
-INSERT INTO `oa_admin_rule` VALUES (75, 4, 'home/mail/draft', '草稿箱','草稿箱',1,0,0);
-INSERT INTO `oa_admin_rule` VALUES (76, 4, 'home/mail/rubbish', '垃圾箱','垃圾箱',1,0,0);
+INSERT INTO `oa_admin_rule` VALUES (74, 4, 'home/message/sendbox', '发件箱','发件箱',1,0,0);
+INSERT INTO `oa_admin_rule` VALUES (75, 4, 'home/message/draft', '草稿箱','草稿箱',1,0,0);
+INSERT INTO `oa_admin_rule` VALUES (76, 4, 'home/message/rubbish', '垃圾箱','垃圾箱',1,0,0);
 
 INSERT INTO `oa_admin_rule` VALUES (77, 5, 'home/note/cate', '公告分类','公告分类',1,0,0);
 INSERT INTO `oa_admin_rule` VALUES (78, 77, 'home/note/cate_add', '添加/修改公告分类','公告分类',1,0,0);
@@ -716,39 +716,39 @@ CREATE TABLE `oa_keywords`  (
 INSERT INTO `oa_keywords`(`id`, `title`, `sort`, `status`, `create_time`, `update_time`) VALUES (1, '勾股OA', 1, 1, 1638006730, 0);
 
 -- ----------------------------
--- Table structure for oa_mail
+-- Table structure for oa_message
 -- ----------------------------
-DROP TABLE IF EXISTS `oa_mail`;
-CREATE TABLE `oa_mail`  (
+DROP TABLE IF EXISTS `oa_message`;
+CREATE TABLE `oa_message`  (
   `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `name` varchar(100) NOT NULL DEFAULT '' COMMENT '消息主题',
-  `type` tinyint(1) UNSIGNED NULL DEFAULT 0 COMMENT '阅览人类型：0 人员 1部门 2岗位 3全部',
-  `type_user` text NULL COMMENT '人员ID或部门ID或角色ID，全员则为空',
-  `mail_type` tinyint(1) UNSIGNED NULL DEFAULT 1 COMMENT '消息类型：1系统消息，2同事消息',
+  `title` varchar(100) NOT NULL DEFAULT '' COMMENT '消息主题',
+  `template` tinyint(2) NOT NULL DEFAULT 0 COMMENT '消息模板，用于前端拼接消息',
+  `content` text NULL COMMENT '消息内容',
   `from_uid` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '发送人id',
   `to_uid` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '接收人id',
+  `type` tinyint(1) UNSIGNED NULL DEFAULT 0 COMMENT '阅览人类型：1 人员 2部门 3岗位 4全部',
+  `type_user` text NULL COMMENT '人员ID或部门ID或角色ID，全员则为空',
   `send_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '发送日期',
-  `content` text NULL COMMENT '消息内容',
-  `is_read` tinyint(1) UNSIGNED NOT NULL DEFAULT 1 COMMENT '是否已读：1未读消息，2已读消息',
-  `admin_id` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建人',
-  `did` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建人所属部门',
+  `read_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '阅读时间',
+  `module_name` varchar(30) NOT NULL COMMENT '模块',
+  `controller_name` varchar(30) NOT NULL COMMENT '控制器',
+  `action_name` varchar(30) NOT NULL COMMENT '方法',
+  `action_id` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '操作模块数据的id（针对系统消息）',
   `pid` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '来源发件id',
   `fid` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '转发或回复消息关联id',
   `status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '状态：-1已删除消息 0垃圾消息 1正常消息',
   `is_draft` tinyint(1) NOT NULL DEFAULT 1 COMMENT '是否是草稿：1正常消息 2草稿消息',
   `delete_source` tinyint(1) UNSIGNED NULL DEFAULT 0 COMMENT '垃圾消息来源： 1已发消息 2草稿消息 3已收消息',
-  `action` varchar(50) NOT NULL DEFAULT '' COMMENT '来源模块（针对系统消息）',
-  `action_id` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '来源模块数据的id（针对系统消息）',
   `create_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
   `update_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COMMENT = '消息表';
 
 -- ----------------------------
--- Table structure for oa_mail_file_interfix
+-- Table structure for oa_message_file_interfix
 -- ----------------------------
-DROP TABLE IF EXISTS `oa_mail_file_interfix`;
-CREATE TABLE `oa_mail_file_interfix`  (
+DROP TABLE IF EXISTS `oa_message_file_interfix`;
+CREATE TABLE `oa_message_file_interfix`  (
   `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `mid` int(11) UNSIGNED NOT NULL COMMENT '消息id',
   `file_id` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '相关联附件id',

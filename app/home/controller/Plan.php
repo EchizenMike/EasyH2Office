@@ -9,7 +9,7 @@ declare (strict_types = 1);
 
 namespace app\home\controller;
 
-use app\home\BaseController;
+use app\base\BaseController;
 use app\home\model\Plan as PlanList;
 use schedule\Schedule as ScheduleIndex;
 use think\facade\Db;

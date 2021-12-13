@@ -7,7 +7,7 @@
 
 declare (strict_types = 1);
 
-namespace app\home;
+namespace app\base;
 
 use think\App;
 use think\exception\HttpResponseException;
@@ -53,9 +53,9 @@ abstract class BaseController
      */
     public function __construct(App $app)
     {
-        $this->module = strtolower(app('http')->getName());
         $this->app = $app;
         $this->request = $this->app->request;
+        $this->module = strtolower(app('http')->getName());
         $this->controller = strtolower($this->request->controller());
         $this->action = strtolower($this->request->action());
         $this->uid = 0;

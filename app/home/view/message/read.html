@@ -6,7 +6,7 @@
 	<table class="layui-table">
 		<tr>
 			<td class="layui-td-gray2">信息主题</td>
-			<td colspan="5">{$detail.name}</td>
+			<td colspan="5">{$detail.title}</td>
 		</tr>
 		<tr>
 			<td class="layui-td-gray2">发送人</td>
@@ -94,7 +94,7 @@
 		</tr>
 		{/notempty}
 	</table>
-	{if condition="($detail.mail_type == 2) AND ($detail.pid != 0)"}
+	{if condition="($detail.template == 0) AND ($detail.pid != 0)"}
 	<div class="layui-form-item" style=" padding-top:10px;">
 		<a class="layui-btn" href="/home/mail/reply?id={$detail.id}&type=1">回复</a>
 	</div>

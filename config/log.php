@@ -41,5 +41,27 @@ return [
         ],
         // 其它日志通道配置
     ],
+	'type_action' => [
+		'login'      => '登录',
+		'upload'     => '上传',
+		'down'       => '下载',
+		'import'     => '导入',
+		'export'     => '导出',
+		'add'        => '新增',
+		'edit'       => '编辑',
+		'view'       => '查看',
+		'save'       => '保存',
+		'delete'     => '删除',
+		'send'       => '发送',
+		'disable'    => '禁用',
+		'recovery'   => '恢复',
+		'apply'      => '申请',
+		'check'      => '审核通过',
+		'refue'      => '审核拒绝',
+		'open'       => '开具',
+		'tovoid'     => '作废',
+		'leave'      => '离职',
+		'reset'      => '重新设置',
+    ],
 
 ];

@@ -127,8 +127,8 @@
 			type:'post',
 			success:function(e){
 				if(e.code==0 && e.data!=''){
-					if(e.data.num_mail>0){
-						$('#msgNum').show().find('a').html(e.data.num_mail);
+					if(e.data.msg_num>0){
+						$('#msgNum').show().find('a').html(e.data.msg_num);
 					}
 					else{
 						$('#msgNum').hide().find('a').html(0);
@@ -136,7 +136,7 @@
 					if(isClose==0){
 						var html = '<ul id="messageul" style="line-height:24px;">';						
 						$.each(e.data, function(key, value) {
-							if(key!='num_mail'){
+							if(key!='msg_num'){
 								html += '<li style="cursor:pointer;">'+value+'</li>';
 							}							
 						});

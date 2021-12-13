@@ -15,10 +15,10 @@
 		<tr>
 			<td class="layui-td-gray2">接收人类型</td>
 			<td>
-				<input type="radio" name="type"  lay-filter="type" value="0" title="同事" checked>
-				<input type="radio" name="type"  lay-filter="type" value="1" title="部门">
-				<input type="radio" name="type"  lay-filter="type" value="2" title="岗位">
-				<input type="radio" name="type"  lay-filter="type" value="3" title="全部">
+				<input type="radio" name="type"  lay-filter="type" value="1" title="同事" checked>
+				<input type="radio" name="type"  lay-filter="type" value="2" title="部门">
+				<input type="radio" name="type"  lay-filter="type" value="3" title="岗位">
+				<input type="radio" name="type"  lay-filter="type" value="4" title="全部">
 			</td>
 		</tr>
 		{if condition="$type eq 1"}
@@ -34,7 +34,7 @@
 		<tr>
 			<td class="layui-td-gray2">主题<span style="color: red">*</span></td>
 			<td>
-				<input type="text" name="name" value="回复：{$detail.name}" lay-verify="required" lay-reqText="请输入消息主题" placeholder="请输入消息主题" class="layui-input" lay-verify="required">
+				<input type="text" name="title" value="回复：{$detail.title}" lay-verify="required" lay-reqText="请输入消息主题" placeholder="请输入消息主题" class="layui-input" lay-verify="required">
 			</td>
 		</tr>
 		{else/}
@@ -50,7 +50,7 @@
 		<tr>
 			<td class="layui-td-gray2">主题<span style="color: red">*</span></td>
 			<td>
-				<input type="text" name="name" value="转发：{$detail.name}" lay-verify="required" lay-reqText="请输入消息主题" placeholder="请输入消息主题" class="layui-input" lay-verify="required">
+				<input type="text" name="title" value="转发：{$detail.title}" lay-verify="required" lay-reqText="请输入消息主题" placeholder="请输入消息主题" class="layui-input" lay-verify="required">
 			</td>
 		</tr>
 		{/if}
@@ -142,14 +142,14 @@
 		//监听保存到草稿并发送
 		form.on('submit(webform)', function(data){
 			$.ajax({
-				url: "/home/mail/save",
+				url: "/home/message/save",
 				type:'post',
 				data:data.field,
 				success:function(e){
 					if(e.code==0){
 						layer.msg('消息保存成功，正在发送中...');
 						$.ajax({
-							url: "/home/mail/send",
+							url: "/home/message/send",
 							type:'post',
 							data:{'id':e.data},
 							success:function(e){
@@ -173,7 +173,7 @@
 		//监听保存到草稿
 		form.on('submit(draftform)', function(data){
 			$.ajax({
-				url: "/home/mail/save",
+				url: "/home/message/save",
 				type:'post',
 				data:data.field,
 				success:function(e){
@@ -286,11 +286,11 @@
 		//选择对应人
 		$('[name="person_name"]').on('click',function(){
 			type = $("input[name='type']:checked").val();
-			if(type == 0){
+			if(type == 1){
 			   addEmployee();
-			}else if(type == 1){
-			   selectDepartment();
 			}else if(type == 2){
+			   selectDepartment();
+			}else if(type == 3){
 			  selectAuditor();
 			}
 		});

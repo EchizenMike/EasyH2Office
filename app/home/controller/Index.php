@@ -9,7 +9,7 @@ declare (strict_types = 1);
 
 namespace app\home\controller;
 
-use app\home\BaseController;
+use app\base\BaseController;
 use think\facade\Db;
 use think\facade\View;
 
@@ -53,14 +53,14 @@ class Index extends BaseController
             }
 
             //未读消息统计
-            $mail_map[] = ['to_uid','=',$admin_id];
-            $mail_map[] = ['is_read','=',1];
-            $mail_map[] = ['status','=',1];
-            $mail_count = Db::name('Mail')->where($mail_map)->count();
-            $statistics['mail_html'] = '<a data-id="27" data-title="收件箱" data-src="/home/mail/inbox.html" class="site-menu-active"> 您有<font style="color:#FF0000">'.$mail_count.'</font>条未读消息</a>';
-            $statistics['num_mail'] = $mail_count;            
-            if($mail_count==0){
-                $statistics['mail_html'] = '';
+            $msg_map[] = ['to_uid','=',$admin_id];
+            $msg_map[] = ['read_time','=',0];
+            $msg_map[] = ['status','=',1];
+            $msg_count = Db::name('Message')->where($msg_map)->count();
+            $statistics['msg_html'] = '<a data-id="27" data-title="收件箱" data-src="/home/message/inbox.html" class="site-menu-active"> 您有<font style="color:#FF0000">'.$msg_count.'</font>条未读消息</a>';
+            $statistics['msg_num'] = $msg_count;            
+            if($msg_count==0){
+                $statistics['msg_html'] = '';
             }
 
             foreach ($statistics as $key => $value) {

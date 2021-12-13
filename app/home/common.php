@@ -55,9 +55,14 @@ function get_system_config($name, $key = '')
 //获取指定管理员的信息
 function get_admin($id)
 {
-    $admin = Db::name('Admin')->where(['id' => $id])->find();
-    $admin['department'] = Db::name('Department')->where(['id' => $admin['did']])->value('title');
-    $admin['position'] = Db::name('Position')->where(['id' => $admin['position_id']])->value('title');
+    $admin = Db::name('Admin')
+	->alias('a')
+	->field('a.*,d.title as department,p.title as position')
+	->leftJoin ('Department d ','d.id= a.did')
+	->leftJoin ('Position p ','p.id= a.position_id')
+	->where(['a.id' => $id])
+	->cache(true,60)
+	->find();
     $admin['last_login_time'] = empty($admin['last_login_time']) ? '-' : date('Y-m-d H:i', $admin['last_login_time']);
     return $admin;
 }
@@ -113,7 +118,7 @@ function get_admin_group_info($id)
     return $group;
 }
 
-//菜单父子关系排序，用于后台菜单
+//菜单父子关系排序，用于菜单
 function get_admin_menus()
 {
     $admin = get_login_admin();
@@ -134,6 +139,21 @@ function get_admin_menus()
     return $list;
 }
 
+
+/**
+ * 节点权限判断
+ * @return bool
+ */
+function check_auth($rule, $uid)
+{
+    $auth_list = Cache::get('RulesSrc' . $uid);
+    if (!in_array($rule, $auth_list)) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
 //读取部门列表
 function get_department()
 {
@@ -141,7 +161,7 @@ function get_department()
     return $department;
 }
 
-//获取某部门的子部门id
+//获取某部门的子部门id.$is_self时候包含自己
 function get_department_son($did = 0, $is_self = 1)
 {
     $department = get_department();
@@ -247,18 +267,52 @@ function get_file($id)
 }
 
 /**
- * 节点权限判断
- * @return bool
+ * 发送站内信
+ * @param  $user_id 接收人user_id
+ * @param  $data 操作内容
+ * @param  $sysMessage 1为系统消息
+ * @param  $template 消息模板
+ * @return
  */
-function check_auth($rule, $uid)
+function sendMessage($user_id, $template, $data=[])
 {
-    $auth_list = Cache::get('RulesSrc' . $uid);
-    if (!in_array($rule, $auth_list)) {
-        return false;
+    $content = get_config('message.template')[$template]['template'];
+	foreach ($data as $key => $val) {
+		$content = str_replace('{' . $key . '}', $val, $content);
+	}
+	if(isSet($data['from_uid'])){
+		$content = str_replace('{from_user}', get_admin($data['from_uid'])['name'], $content);
+	}
+	$content = str_replace('{date}', date('Y-m-d'), $content);
+		
+    if (!$user_id) return false;
+    if (!$content) return false;
+    if (!is_array($user_id)) {
+        $users[] = $user_id;
     } else {
-        return true;
+        $users = $user_id;
     }
+    $users = array_unique(array_filter($users));
+	//组合要发的消息
+	$send_data = [];
+	foreach ($users as $key => $value) {
+		$send_data[] = array(
+			'to_uid' => $value,//接收人
+			'action_id' => $data['action_id'],
+			'title' => $data['title'],
+			'content' => $content,
+			'template' => $template,
+			'module_name' => strtolower(app('http')->getName()),
+			'controller_name' => strtolower(app('request')->controller()),
+			'action_name' => strtolower(app('request')->action()),
+			'send_time' => time(),
+			'create_time' => time()
+		);
+	}
+	$res = Db::name('Message')->strict(false)->field(true)->insertAll($send_data);
+    return $res;
 }
+
 /**
  * 员工操作日志
  * @param string $type 操作类型 login add edit view delete
@@ -268,56 +322,10 @@ function check_auth($rule, $uid)
 function add_log($type, $param_id = '', $param = [])
 {
 	$action = '未知操作';
-	switch ($type) {
-        case 'login':
-            $action = '登录';
-            break;
-        case 'upload':
-            $action = '上传';
-            break;
-        case 'add':
-            $action = '新增';
-            break;
-        case 'edit':
-            $action = '编辑';
-            break;
-        case 'view':
-            $action = '查看';
-            break;
-		case 'save':
-            $action = '保存';
-            break;
-        case 'send':
-            $action = '发送';
-            break;
-        case 'delete':
-            $action = '删除';
-            break;
-        case 'check':
-            $action = '审核';
-            break;
-		case 'leave':
-            $action = '离职';
-            break;
-		case 'disable':
-            $action = '禁用';
-            break;
-		case 'recovery':
-            $action = '恢复';
-            break;
-		case 'apply':
-            $action = '申请';
-            break;
-		case 'open':
-            $action = '开具';
-            break;	
-		case 'tovoid':
-            $action = '作废';
-            break;
-		case 'reset':
-            $action = '重新设置';
-            break;
-    }
+	$type_action = get_config('log.type_action');
+	if($type_action[$type]){
+		$action = $type_action[$type];
+	}
     if ($type == 'login') {
         $login_admin = Db::name('Admin')->where(array('id' => $param_id))->find();
     } else {
@@ -331,9 +339,9 @@ function add_log($type, $param_id = '', $param = [])
     $data['action'] = $action;
     $data['param_id'] = $param_id;
     $data['param'] = json_encode($param);
-    $data['module'] = \think\facade\App::initialize()->http->getName();
+    $data['module'] = strtolower(app('http')->getName());
     $data['controller'] = strtolower(app('request')->controller());
-    $data['function'] = app('request')->action();
+    $data['function'] = strtolower(app('request')->action());
     $parameter = $data['module'] . '/' . $data['controller'] . '/' . $data['function'];
     $rule_menu = Db::name('AdminRule')->where(array('src' => $parameter))->find();
 	if($rule_menu){
@@ -362,9 +370,7 @@ function add_log($type, $param_id = '', $param = [])
 function send_email($to, $subject = '', $content = '')
 {
     $mail = new PHPMailer\PHPMailer\PHPMailer();
-    $email_config = Db::name('config')
-        ->where('name', 'email')
-        ->find();
+    $email_config = Db::name('config')->where('name', 'email')->find();
     $config = unserialize($email_config['content']);
 
     $mail->CharSet = 'UTF-8'; //设定邮件编码，默认ISO-8859-1，如果发中文此项必须设置，否则乱码

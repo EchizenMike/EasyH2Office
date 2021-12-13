@@ -9,7 +9,7 @@ declare (strict_types = 1);
 
 namespace app\home\controller;
 
-use app\home\BaseController;
+use app\base\BaseController;
 use app\home\model\Note as NoteList;
 use app\home\model\NoteCate;
 use app\home\validate\NoteCateCheck;
@@ -158,6 +158,8 @@ class Note extends BaseController
                 $sid = NoteList::strict(false)->field(true)->insertGetId($param);
                 if ($sid) {
                     add_log('add', $sid, $param);
+					$users= Db::name('Admin')->field('id as from_uid')->where(['status' => 1])->column('id');
+					sendMessage($users,1,['title'=>$param['title'],'action_id'=>$sid]);
                 }
 
                 return to_assign();

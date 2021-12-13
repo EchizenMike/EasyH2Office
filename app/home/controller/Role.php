@@ -9,7 +9,7 @@ declare (strict_types = 1);
 
 namespace app\home\controller;
 
-use app\home\BaseController;
+use app\base\BaseController;
 use app\home\model\AdminGroup;
 use app\home\validate\GroupCheck;
 use think\exception\ValidateException;

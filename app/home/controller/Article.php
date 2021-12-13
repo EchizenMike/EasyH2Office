@@ -9,7 +9,7 @@ declare (strict_types = 1);
 
 namespace app\home\controller;
 
-use app\home\BaseController;
+use app\base\BaseController;
 use app\home\model\Article as ArticleList;
 use app\home\model\ArticleCate;
 use app\home\validate\ArticleCateCheck;
