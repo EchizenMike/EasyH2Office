@@ -1,17 +1,19 @@
 # 勾股OA
 
-[![勾股CMS](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://gitee.com/gougucms/gougucms/)
-[![勾股CMS](https://img.shields.io/badge/GouguCMS-1.0.0-brightgreen.svg)](https://gitee.com/gougucms/gougucms/)
-[![star](https://gitee.com/gougucms/gougucms/badge/star.svg?theme=dark)](https://gitee.com/gougucms/gougucms/stargazers)
-[![fork](https://gitee.com/gougucms/gougucms/badge/fork.svg?theme=dark)](https://gitee.com/gougucms/gougucms/members)
+[![勾股OA](https://img.shields.io/badge/GouguOA-1.1.6-brightgreen.svg)](https://gitee.com/gougucms/office/)
+[![star](https://gitee.com/gougucms/office/badge/star.svg?theme=dark)](https://gitee.com/gougucms/office/stargazers)
+[![fork](https://gitee.com/gougucms/office/badge/fork.svg?theme=dark)](https://gitee.com/gougucms/office/members)
 
 ### 链接
-- 勾股OA：https://oa.gougucms.com
+- 演示地址：https://oa.gougucms.com
 - gitee：https://gitee.com/gougucms/office.git
+- 文档地址：[https://blog.gougucms.com/home/book/detail/bid/3.html](https://blog.gougucms.com/home/book/detail/bid/3.html)
 - 项目会不定时进行更新，建议⭐star⭐和👁️watch👁️一份。
-### 其他开源项目
+
+### 开源项目
+- [开源项目系列之勾股OA](https://gitee.com/gougucms/office)  
 - [开源项目系列之勾股CMS](https://www.gougucms.com) 
-- [开源项目系列之勾股博客](https://blog.gougucms.com) 
+- [开源项目系列之勾股BLOG](https://blog.gougucms.com) 
 
 ### 介绍
 勾股OA是一款基于ThinkPHP6 + Layui + MySql打造的简单实用的开源免费的企业办公系统框架。可以帮助解决企业办公项目60%的重复工作，让开发更多关注业务逻辑。既能快速提高开发效率，帮助公司节省人力成本，同时又不失灵活性。使用勾股OA可以简单快速地开发出企业级的Web应用系统。
