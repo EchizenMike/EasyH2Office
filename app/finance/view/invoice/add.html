@@ -32,7 +32,7 @@
 			<td>
 				<select name="invoice_subject" lay-verify="required" lay-reqText="请选择开票主体">
 					<option value="">请选择开票主体</option>
-					{volist name=":oa_invoice_subject()" id="vo"}
+					{volist name=":finance_invoice_subject()" id="vo"}
 					<option value="{$vo.id}">{$vo.title}</option>
 					{/volist}
 				</select>
@@ -104,7 +104,7 @@
 			<td>
 				<select name="invoice_subject" lay-verify="required" lay-reqText="请选择开票主体">
 					<option value="">请选择开票主体</option>
-					{volist name=":oa_invoice_subject()" id="vo"}
+					{volist name=":finance_invoice_subject()" id="vo"}
 					<option value="{$vo.id}" {eq name="$vo.id" value="$detail.invoice_subject"}selected{/eq}>{$vo.title}</option>
 					{/volist}
 				</select>

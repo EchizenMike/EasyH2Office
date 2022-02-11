@@ -9,6 +9,7 @@
  *模块数据获取公共文件
 ======================
  */
+use think\facade\Db;
 //读取开票主体
 function finance_invoice_subject()
 {
