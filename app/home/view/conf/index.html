@@ -1,4 +1,4 @@
-{extend name="common/base"/}
+{extend name="../../base/view/common/base" /}
 <!-- 主体 -->
 {block name="body"}
 <div class="body-table">
@@ -100,7 +100,7 @@
 		//表头工具栏事件
 		table.on('toolbar(test)', function(obj){
 			if (obj.event === 'add') {
-				rightpage.open("/home/conf/add");
+				rightpage.open("/home/conf/add",'900px');
 				return;
 			}
 		});
@@ -123,6 +123,6 @@
 		});
 	}
 </script>
-{include file="common/layui" base="base" extend="['rightpage']" callback="init" /}
+{include file="../../base/view/common/layui" base="base" extend="['rightpage']" callback="init" /}
 {/block}
 <!-- /脚本 -->

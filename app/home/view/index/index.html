@@ -1,4 +1,4 @@
-{extend name="common/base"/}
+{extend name="../../base/view/common/base" /}
 {block name="style"}
 <link rel="stylesheet" href="{__LAYUI__}/font/extend/iconfont.css?v={:get_system_config('web','version')}">
 <link rel="stylesheet" href="{__CSS__}/gougucms.css?v={:get_system_config('web','version')}">
@@ -10,71 +10,64 @@
 	<div class="layui-layout layui-layout-admin">
 		<div class="layui-header">
 			<div class="layui-logo" ittab-home><img src="{__IMG__}/syslogo.png" width="166" alt="{:get_system_config('web','admin_title')}" /></div>
-			<ul class="layui-nav layui-layout-right">
+			<ul class="layui-layout-right">
 				<li class="layui-nav-item" lay-unselect>
-					<a href="javascript:;" ittab-refresh class="refreshThis" id="ittab-refresh" title="刷新当前页"
-						style="margin-top:3px;">
-						<i class="layui-icon layui-icon-refresh-3"></i>
+					<a href="javascript:;" ittab-refresh class="refreshThis" id="ittab-refresh" title="刷新当前页">
+						<i class="layui-icon layui-icon-refresh"></i>
 					</a>
 				</li>
 				<li class="layui-nav-item" lay-unselect>
-					<a href="javascript:;" ittab-del-cache id="ittab-del-cache" style="margin-top:2px;" title="清空缓存"><i
-							class="layui-icon layui-icon-fonts-clear"></i></a>
+					<a href="javascript:;" ittab-notice class="noticeThis menu-active" data-src="/message/index/inbox" id="ittab-refresh" data-title="已收消息" title="消息通知">
+						<i class="layui-icon layui-icon-notice"></i>
+					</a>
+					<div id="msgNum" class="msg-num"><a data-title="已收消息" class="menu-active" data-src="/message/index/inbox" title="未读消息">0</a></div>
 				</li>
 				<li class="layui-nav-item" lay-unselect>
 					<a href="javascript:;" ittab-logout title="{:get_login_admin('nickname')}-点击退出登录">
 						<img src="{:get_login_admin('thumb')}" class="layui-nav-img" onerror="javascript:this.src='{__IMG__}/nonepic360x360.jpg';this.onerror=null;">
 					</a>
-					<div id="msgNum" class="msg-num"><a data-id="27" data-title="已收消息" data-src="/home/mail/inbox.html" class="site-menu-active" title="未读消息">0</a></div>
 				</li>
 			</ul>
 		</div>
 
-		<div class="layui-side ittab-bg-gray">
-			<div class="ittab-menulist">
-				<div class="ittab-menulist-top">
-					<a href="/" title="返回首页" style="background-color: #E94335"><i class="layui-icon layui-icon-home"></i></a><a href="javascript:;" title="修改个人信息" style="background-color:#fbbc05" data-id="10000" data-title="修改个人信息" data-src="/home/api/edit_personal" class="site-menu-active"><i class="layui-icon layui-icon-username"></i></a><a href="javascript:;" title="修改密码" style="background-color:#4285f4" data-id="10001" data-title="修改密码" data-src="/home/api/edit_password" class="site-menu-active"><i class="layui-icon layui-icon-password"></i></a>
+		<div class="layui-side menulist-bg-gray">
+			<div class="menulist">
+				<div class="menulist-top">
+					<a href="/" title="返回首页" style="background-color: #E94335"><i class="layui-icon layui-icon-home"></i></a><a href="javascript:;" title="修改个人信息" style="background-color:#fbbc05" data-title="修改个人信息" data-src="/api/index/edit_personal" class="menu-active"><i class="layui-icon layui-icon-username"></i></a><a href="javascript:;" title="修改密码" style="background-color:#4285f4" data-title="修改密码" data-src="/api/index/edit_password" class="menu-active"><i class="layui-icon layui-icon-password"></i></a><a href="javascript:;" ittab-del-cache id="ittab-del-cache" style="margin-top:2px;" title="清空缓存" style="background-color:#12bb37"><i class="layui-icon layui-icon-fonts-clear"></i></a>
 				</div>
-				<div class="ittab-menulist-1">
+				
+				<ul class="layui-nav layui-nav-tree layui-inline" lay-shrink="all">
 					{foreach name="menu" item="a"}
-					<div class="ittab-menulist-2"><i class="iconfont {$a.icon}"></i> {$a.title}</div>
-					{notempty name="$a.list"}
-					<div class="ittab-menulist-3">
-						<ul>
-							{foreach name="$a.list" item="b"}
-							{empty name="$b.list"}
-							<li data-id="{$b.id}" data-title="{$b.title}" data-src="{:url($b.src)}"
-								class="site-menu-active"><span>{$b.title}</span></li>
-							{else /}
-							<li class="ittab-menulist-2">{$b.title}<i class="layui-icon layui-icon-triangle-r"></i></li>
-							<div class="ittab-menulist-3 ittab-menulist-4">
-								<ul>
-									{foreach name="$b.list" item="c"}
-									{empty name="$c.list"}
-									<li data-id="{$c.id}" data-title="{$c.title}" data-src="{:url($c.src)}"
-										class="site-menu-active"><span>{$c.title}</span></li>
-									{else /}
-									<li class="ittab-menulist-2">{$c.title}<i
-											class="layui-icon layui-icon-triangle-r"></i></li>
-									<div class="ittab-menulist-3 ittab-menulist-5">
-										<ul>
-											{foreach name="$c.list" item="d"}
-											<li data-id="{$d.id}" data-title="{$d.title}" data-src="{:url($d.src)}"
-												class="site-menu-active"><span>{$d.title}</span></li>
-											{/foreach}
-										</ul>
-									</div>
-									{/empty}
-									{/foreach}
-								</ul>
-							</div>
-							{/empty}
-							{/foreach}
-						</ul>
-					</div>
-					{/notempty}
+						<li class="layui-nav-item">
+							<a href="javascript:;" class="menu-active" data-id="{$a.id}" data-title="{$a.title}" data-src="/{$a.src}"><i class="iconfont {$a.icon}"></i> {$a.title}</a>
+							{notempty name="$a.list"}
+								<dl class="layui-nav-child">
+								{foreach name="$a.list" item="b"}
+									<dd>
+									<a href="javascript:;" class="menu-active menu-b" data-id="{$b.id}" data-title="{$b.title}" data-src="/{$b.src}">{$b.title}</a>
+									{notempty name="$b.list"}
+										<dl class="layui-nav-child">
+										{foreach name="$b.list" item="c"}
+											<dd>
+											<a href="javascript:;" class="menu-active menu-c" data-id="{$c.id}" data-title="{$c.title}" data-src="/{$c.src}">{$c.title}</a>
+											{notempty name="$c.list"}
+												<dl class="layui-nav-child">
+												{foreach name="$c.list" item="d"}
+													<dd><a href="javascript:;" class="menu-active menu-d" data-id="{$d.id}" data-title="{$d.title}" data-src="/{$d.src}">{$d.title}</a></dd>
+												{/foreach}
+												</dl>
+											{/notempty}
+											</dd>
+										{/foreach}
+										</dl>
+									{/notempty}
+									</dd>
+								{/foreach}
+								</dl>
+							{/notempty}
+						</li>			
 					{/foreach}
-				</div>
+				</ul>
 			</div>
 		</div>
 
@@ -170,6 +163,6 @@
 		})
 	}, 10000);
 </script>
-{include file="common/layui" base='base' extend="['gougucms']" callback="init" /}
+{include file="../../base/view/common/layui" base='base' extend="['gougucms']" callback="init" /}
 {/block}
 <!-- /脚本 -->

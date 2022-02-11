@@ -1,4 +1,4 @@
-{extend name="common/base"/}
+{extend name="../../base/view/common/base" /}
 <!-- 主体 -->
 {block name="body"}
 <div class="body-table">
@@ -25,12 +25,13 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
+	var tableIns = null;
 	function init(layui) {
 		var table = layui.table,
 			rightpage = layui.rightpage,
 			form = layui.form;
 
-		var tableIns = table.render({
+		tableIns = table.render({
 			elem: '#test',
 			title: '关键字列表',
 			toolbar: '#toolbarDemo',
@@ -91,7 +92,7 @@
 		//表头工具栏事件
 		table.on('toolbar(test)', function(obj){
 			if (obj.event === 'add') {
-				rightpage.open("/home/keywords/add");
+				rightpage.open("/home/keywords/add",'900px');
 				return;
 			}
 		});
@@ -99,7 +100,7 @@
 		table.on('tool(test)', function (obj) {
 			var data = obj.data;
 			if (obj.event === 'edit') {
-				rightpage.open('/home/keywords/add?id='+obj.data.id);
+				rightpage.open('/home/keywords/add?id='+obj.data.id,'900px');
 				return;
 			}
 			if (obj.event === 'del') {
@@ -120,6 +121,6 @@
 		});
 	}
 </script>
-{include file="common/layui" base="base" extend="['rightpage']" callback="init" /}
+{include file="../../base/view/common/layui" base="base" extend="['rightpage']" callback="init" /}
 {/block}
 <!-- /脚本 -->

@@ -244,13 +244,6 @@
       "unicode_decimal": 59149
     },
     {
-      "icon_id": "8827467",
-      "name": "招生统计",
-      "font_class": "zhaoshengtongji1",
-      "unicode": "e70e",
-      "unicode_decimal": 59150
-    },
-    {
       "icon_id": "8827470",
       "name": "教务统计",
       "font_class": "jiaowutongji",
@@ -270,13 +263,6 @@
       "font_class": "shoufeitongji",
       "unicode": "e711",
       "unicode_decimal": 59153
-    },
-    {
-      "icon_id": "8827481",
-      "name": "学生统计",
-      "font_class": "xueshengtongji",
-      "unicode": "e712",
-      "unicode_decimal": 59154
     },
     {
       "icon_id": "8827489",

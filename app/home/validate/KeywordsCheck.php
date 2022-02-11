@@ -7,7 +7,6 @@
 
 namespace app\home\validate;
 
-use think\facade\Db;
 use think\Validate;
 
 class KeywordsCheck extends Validate

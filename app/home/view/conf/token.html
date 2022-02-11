@@ -1,7 +1,7 @@
-{extend name="common/base"/}
+{extend name="../../base/view/common/base" /}
 <!-- 主体 -->
 {block name="body"}
-<form class="layui-form body-content">
+<form class="layui-form page-content">
 	<h3 class="h3-title">Token配置</h3>
 	<table class="layui-table">
 		<tr>
@@ -59,12 +59,11 @@
 				type: 'post',
 				data: data.field,
 				success: function (e) {
+					layer.msg(e.msg);
 					if (e.code == 0) {
-						layer.confirm('保存成功,返回列表页吗?', { icon: 3, title: '提示' }, function (index) {
-							parent.location.reload();
-						});
-					} else {
-						layer.msg(e.msg);
+						setTimeout(function(){
+							parent.layui.rightpage.close();
+						},1000);
 					}
 				}
 			})
@@ -188,6 +187,6 @@
 			})	
 		}
 </script>
-{include file="common/layui" base="base" extend="[]" callback="init" /}
+{include file="../../base/view/common/layui" base="base" extend="[]" callback="init" /}
 {/block}
 <!-- /脚本 -->

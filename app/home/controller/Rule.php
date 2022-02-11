@@ -20,7 +20,12 @@ class Rule extends BaseController
     public function index()
     {
         if (request()->isAjax()) {
-            $rule = Db::name('adminRule')->order('create_time asc')->select();
+            $rule = Db::name('adminRule')
+			->field('a.*,m.title as module_title')
+			->alias('a')
+			->leftJoin('adminModule m','a.module = m.name')
+			->order('a.sort asc a.id asc')
+			->select();
             return to_assign(0, '', $rule);
         } else {
             return view();
@@ -32,6 +37,7 @@ class Rule extends BaseController
     {
         $param = get_params();
         if (request()->isAjax()) {
+			$param['src'] = preg_replace('# #','',$param['src']);
             if ($param['id'] > 0) {
                 try {
                     validate(RuleCheck::class)->scene('edit')->check($param);

@@ -7,6 +7,49 @@
 // 应用公共文件,内置主要的数据处理方法
 use think\facade\Config;
 use think\facade\Request;
+use think\facade\Cache;
+use think\facade\Db;
+
+//设置缓存
+function set_cache($key, $value, $date = 86400)
+{
+    Cache::set($key, $value, $date);
+}
+
+//读取缓存
+function get_cache($key)
+{
+    return Cache::get($key);
+}
+
+//清空缓存
+function clear_cache($key)
+{
+    Cache::clear($key);
+}
+
+//读取系统配置
+function get_system_config($name, $key = '')
+{
+    $config = [];
+    if (get_cache('system_config' . $name)) {
+        $config = get_cache('system_config' . $name);
+    } else {
+        $conf = Db::name('config')->where('name', $name)->find();
+        if ($conf['content']) {
+            $config = unserialize($conf['content']);
+        }
+        set_cache('system_config' . $name, $config);
+    }
+    if ($key == '') {
+        return $config;
+    } else {
+        if ($config[$key]) {
+            return $config[$key];
+        }
+    }
+}
+
 
 //读取文件配置
 function get_config($key)
@@ -67,6 +110,320 @@ function set_password($pwd, $salt)
 {
     return md5(md5($pwd . $salt) . $salt);
 }
+
+//获取指定管理员的信息
+function get_admin($id)
+{
+    $admin = Db::name('Admin')
+	->alias('a')
+	->field('a.*,d.title as department,p.title as position')
+	->leftJoin ('Department d ','d.id= a.did')
+	->leftJoin ('Position p ','p.id= a.position_id')
+	->where(['a.id' => $id])
+	->cache(true,60)
+	->find();
+    $admin['last_login_time'] = empty($admin['last_login_time']) ? '-' : date('Y-m-d H:i', $admin['last_login_time']);
+    return $admin;
+}
+
+//获取当前登录用户的信息
+function get_login_admin($key = '')
+{
+    $session_admin = get_config('app.session_admin');
+    if (\think\facade\Session::has($session_admin)) {
+        $gougu_admin = \think\facade\Session::get($session_admin);
+        $admin = get_admin($gougu_admin['id']);
+        if (!empty($key)) {
+            if (isset($admin[$key])) {
+                return $admin[$key];
+            } else {
+                return '';
+            }
+        } else {
+            return $admin;
+        }
+    } else {
+        return '';
+    }
+}
+
+/**
+ * 节点权限判断
+ * @return bool
+ */
+function check_auth($rule, $uid)
+{
+    $auth_list = Cache::get('RulesSrc' . $uid);
+    if (!in_array($rule, $auth_list)) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+//读取部门列表
+function get_department()
+{
+    $department = Db::name('Department')->where(['status' => 1])->select()->toArray();
+    return $department;
+}
+
+//获取某部门的子部门id.$is_self时候包含自己
+function get_department_son($did = 0, $is_self = 1)
+{
+    $department = get_department();
+    $department_list = get_data_node($department, $did);
+    $department_array = array_column($department_list, 'id');
+    if ($is_self == 1) {
+        //包括自己在内
+        $department_array[] = $did;
+    }
+    return $department_array;
+}
+
+//读取员工所在部门的负责人
+function get_department_leader($uid=0,$pid=0)
+{
+	$did = get_admin($uid)['did'];
+	if($pid==0){
+		$leader = Db::name('Department')->where(['id' => $did])->value('leader_id');
+	}
+	else{
+		$pdid = Db::name('Department')->where(['id' => $did])->value('pid');
+		if($pdid == 0){
+			$leader = 0;
+		}
+		else{
+			$leader = Db::name('Department')->where(['id' => $pdid])->value('leader_id');
+		}		
+	}    
+    return $leader;
+}
+
+//读取职位
+function get_position()
+{
+    $position = Db::name('Position')->where(['status' => 1])->select()->toArray();
+    return $position;
+}
+
+//根据流程模块读取某部门某模块的审核流程
+function get_flows($type=1,$department=0)
+{
+	$map1 = [];
+	$map2 = [];
+	$map1[] = ['status', '=', 1];
+	$map1[] = ['flow_cate', '=', $type];
+	$map1[] = ['department_ids', '=', ''];
+
+	$map2[] = ['status', '=', 1];
+	$map2[] = ['flow_cate', '=', $type];
+	$map2[] = ['', 'exp', Db::raw("FIND_IN_SET('{$department}',department_ids)")];
+
+    $list = Db::name('Flow')
+		->field('id,name,check_type')
+		->whereOr([$map1,$map2])
+		->order('id desc')->select()->toArray();
+    return $list;
+}
+
+//根据流程所属模块读取某部门某模块的审核流程
+function get_type_flows($module=6,$department=0)
+{
+	$map1 = [];
+	$map2 = [];
+	$map1[] = ['status', '=', 1];
+	$map1[] = ['type', '=', $module];
+	$map1[] = ['department_ids', '=', ''];
+
+	$map2[] = ['status', '=', 1];
+	$map2[] = ['type', '=', $module];
+	$map2[] = ['', 'exp', Db::raw("FIND_IN_SET('{$department}',department_ids)")];
+
+    $list = Db::name('Flow')
+		->field('id,name,check_type')
+		->whereOr([$map1,$map2])
+		->order('id desc')->select()->toArray();
+    return $list;
+}
+
+/**
+ * 根据附件表的id返回url地址
+ * @param  [type] $id [description]
+ */
+function get_file($id)
+{
+    if ($id) {
+        $geturl = Db::name("file")->where(['id' => $id])->find();
+        if ($geturl['status'] == 1) {
+            //审核通过
+            //获取签名的URL
+            $url = $geturl['filepath'];
+            return $url;
+        } elseif ($geturl['status'] == 0) {
+            //待审核
+            return '/static/home/images/none_pic.jpg';
+        } else {
+            //不通过
+            return '/static/home/images/none_pic.jpg';
+        }
+    }
+    return false;
+}
+
+/**
+ * 员工操作日志
+ * @param string $type 操作类型 login add edit view delete
+ * @param int    $param_id 操作类型
+ * @param array  $param 提交的参数
+ */
+function add_log($type, $param_id = '', $param = [])
+{
+	$action = '未知操作';
+	$type_action = get_config('log.type_action');
+	if($type_action[$type]){
+		$action = $type_action[$type];
+	}
+    if ($type == 'login') {
+        $login_admin = Db::name('Admin')->where(array('id' => $param_id))->find();
+    } else {
+        $session_admin = get_config('app.session_admin');
+        $login_admin = \think\facade\Session::get($session_admin);
+    }
+    $data = [];
+    $data['uid'] = $login_admin['id'];
+    $data['name'] = $login_admin['name'];
+    $data['type'] = $type;
+    $data['action'] = $action;
+    $data['param_id'] = $param_id;
+    $data['param'] = json_encode($param);
+    $data['module'] = strtolower(app('http')->getName());
+    $data['controller'] = strtolower(app('request')->controller());
+    $data['function'] = strtolower(app('request')->action());
+    $parameter = $data['module'] . '/' . $data['controller'] . '/' . $data['function'];
+    $rule_menu = Db::name('AdminRule')->where(array('src' => $parameter))->find();
+	if($rule_menu){
+		$data['title'] = $rule_menu['title'];
+		$data['subject'] = $rule_menu['name'];
+	}
+	else{
+		$data['title'] = '';
+		$data['subject'] ='系统';
+	}
+    $content = $login_admin['name'] . '在' . date('Y-m-d H:i:s') . $data['action'] . '了' . $data['subject'];
+    $data['content'] = $content;
+    $data['ip'] = app('request')->ip();
+    $data['create_time'] = time();
+    Db::name('AdminLog')->strict(false)->field(true)->insert($data);
+}
+
+/**
+ * 发送站内信
+ * @param  $user_id 接收人user_id
+ * @param  $data 操作内容
+ * @param  $sysMessage 1为系统消息
+ * @param  $template 消息模板
+ * @return
+ */
+function sendMessage($user_id, $template, $data=[])
+{
+    $content = get_config('message.template')[$template]['template'];
+	foreach ($data as $key => $val) {
+		$content = str_replace('{' . $key . '}', $val, $content);
+	}
+	if(isSet($data['from_uid'])){
+		$content = str_replace('{from_user}', get_admin($data['from_uid'])['name'], $content);
+	}
+	$content = str_replace('{date}', date('Y-m-d'), $content);
+		
+    if (!$user_id) return false;
+    if (!$content) return false;
+    if (!is_array($user_id)) {
+        $users[] = $user_id;
+    } else {
+        $users = $user_id;
+    }
+    $users = array_unique(array_filter($users));
+	//组合要发的消息
+	$send_data = [];
+	foreach ($users as $key => $value) {
+		$send_data[] = array(
+			'to_uid' => $value,//接收人
+			'action_id' => $data['action_id'],
+			'title' => $data['title'],
+			'content' => $content,
+			'template' => $template,
+			'module_name' => strtolower(app('http')->getName()),
+			'controller_name' => strtolower(app('request')->controller()),
+			'action_name' => strtolower(app('request')->action()),
+			'send_time' => time(),
+			'create_time' => time()
+		);
+	}
+	$res = Db::name('Message')->strict(false)->field(true)->insertAll($send_data);
+    return $res;
+}
+
+/**
+ * 邮件发送
+ * @param $to    接收人
+ * @param string $subject 邮件标题
+ * @param string $content 邮件内容(html模板渲染后的内容)
+ * @throws Exception
+ * @throws phpmailerException
+ */
+function send_email($to, $subject = '', $content = '')
+{
+    $mail = new PHPMailer\PHPMailer\PHPMailer();
+    $email_config = Db::name('config')->where('name', 'email')->find();
+    $config = unserialize($email_config['content']);
+
+    $mail->CharSet = 'UTF-8'; //设定邮件编码，默认ISO-8859-1，如果发中文此项必须设置，否则乱码
+    $mail->isSMTP();
+    $mail->SMTPDebug = 0;
+
+    //调试输出格式
+    //$mail->Debugoutput = 'html';
+    //smtp服务器
+    $mail->Host = $config['smtp'];
+    //端口 - likely to be 25, 465 or 587
+    $mail->Port = $config['smtp_port'];
+    if ($mail->Port == '465') {
+        $mail->SMTPSecure = 'ssl'; // 使用安全协议
+    }
+    //Whether to use SMTP authentication
+    $mail->SMTPAuth = true;
+    //发送邮箱
+    $mail->Username = $config['smtp_user'];
+    //密码
+    $mail->Password = $config['smtp_pwd'];
+    //Set who the message is to be sent from
+    $mail->setFrom($config['email'], $config['from']);
+    //回复地址
+    //$mail->addReplyTo('replyto@example.com', 'First Last');
+    //接收邮件方
+    if (is_array($to)) {
+        foreach ($to as $v) {
+            $mail->addAddress($v);
+        }
+    } else {
+        $mail->addAddress($to);
+    }
+
+    $mail->isHTML(true); // send as HTML
+    //标题
+    $mail->Subject = $subject;
+    //HTML内容转换
+    $mail->msgHTML($content);
+    $status = $mail->send();
+    if ($status) {
+        return true;
+    } else {
+        //  echo "Mailer Error: ".$mail->ErrorInfo;// 输出错误信息
+        //  die;
+        return false;
+    }
+}
 /**
  * 截取文章摘要
  *  @return bool
@@ -86,6 +443,17 @@ function get_desc_content($content, $count)
         $res = $res . "...";
     }
     return $res;
+}
+
+/**
+ * PHP去除空格
+ * @param string $str 字符串
+ * @return string     字符串
+ */
+function trim_space($str=''){
+	$str = mb_ereg_replace('^(　| )+', '', $str);
+	$str = mb_ereg_replace('(　| )+$', '', $str);
+	return mb_ereg_replace('　　', "\n　　", $str);
 }
 /**
  * PHP格式化字节大小
@@ -246,6 +614,29 @@ function get_tree($data, $pId ,$open=0,$deep=0)
 		$v['children'] = get_tree($data, $v['id'],$open,$deep);
 		$tree[] = $v;
 		//unset($data[$k]);
+	   }
+	}
+	return array_values($tree);
+}
+
+//递归返回树形菜单数据
+function get_select_tree($data, $pId ,$deep=0, $selected=[])
+{
+	$tree = [];		
+	foreach($data as $k => $v)
+	{	
+		$vv=[];
+		$vv['name']=$v['title'];	
+		$vv['value']=$v['id'];
+		$vv['selected']='';
+		if(in_array($v['id'],$selected)){
+			$vv['selected'] = 'selected';
+		}
+		if($v['pid'] == $pId){ 
+		//父亲找到儿子
+		$deep++;
+		$vv['children'] = get_select_tree($data, $v['id'],$deep,$selected);
+		$tree[] = $vv;
 	   }
 	}
 	return array_values($tree);
@@ -684,152 +1075,180 @@ function monthList($start, $end)
 /**
  * 等于（时间段）数据处理
  *
- * @param $data
+ * @param $type
  * @return array
  * @since 2021-06-11
  * @author fanqi
  */
-function advancedDate($data)
+function advancedDate($type)
 {
     // 本年度
-    if ($data['value'][0] == 'year') {
+    if ($type == 'year') {
         $arrTime = DataTime::year();
-        $data['value'][0] = date('Y-m-d 00:00:00', $arrTime[0]);
-        $data['value'][1] = date('Y-m-d 23:59:59', $arrTime[1]);
+        $start_time = date('Y-m-d 00:00:00', $arrTime[0]);
+        $end_time = date('Y-m-d 23:59:59', $arrTime[1]);
     }
 
     // 上一年度
-    if ($data['value'][0] == 'lastYear') {
-        $data['value'][0] = date('Y-m-d 00:00:00', strtotime(date('Y-m-d') . '-1 year'));
-        $data['value'][1] = date('Y-m-d 23:59:59', strtotime(date('Y-m-d') . '-1 year'));
+    if ($type == 'lastYear') {
+        $start_time = date('Y-m-d 00:00:00', strtotime(date('Y-m-d') . '-1 year'));
+        $end_time = date('Y-m-d 23:59:59', strtotime(date('Y-m-d') . '-1 year'));
     }
 
     // 下一年度
-    if ($data['value'][0] == 'nextYear') {
-        $data['value'][0] = date('Y-m-d 00:00:00', strtotime(date('Y-m-d') . '+1 year'));
-        $data['value'][1] = date('Y-m-d 23:59:59', strtotime(date('Y-m-d') . '+1 year'));
+    if ($type == 'nextYear') {
+        $start_time = date('Y-m-d 00:00:00', strtotime(date('Y-m-d') . '+1 year'));
+        $end_time = date('Y-m-d 23:59:59', strtotime(date('Y-m-d') . '+1 year'));
     }
 
     // 上半年
-    if ($data['value'][0] == 'firstHalfYear') {
-        $data['value'][0] = date('Y-01-01 00:00:00');
-        $data['value'][1] = date('Y-06-30 23:59:59');
+    if ($type == 'firstHalfYear') {
+        $start_time = date('Y-01-01 00:00:00');
+        $end_time = date('Y-06-30 23:59:59');
     }
 
     // 下半年
-    if ($data['value'][0] == 'nextHalfYear') {
-        $data['value'][0] = date('Y-07-01 00:00:00');
-        $data['value'][1] = date('Y-12-31 23:59:59');
+    if ($type == 'nextHalfYear') {
+        $start_time = date('Y-07-01 00:00:00');
+        $end_time = date('Y-12-31 23:59:59');
     }
 
     // 本季度
-    if ($data['value'][0] == 'quarter') {
+    if ($type == 'quarter') {
         $season = ceil((date('n')) / 3);
-        $data['value'][0] = date('Y-m-d H:i:s', mktime(0, 0, 0, $season * 3 - 3 + 1, 1, date('Y')));
-        $data['value'][1] = date('Y-m-d H:i:s', mktime(23, 59, 59, $season * 3, date('t', mktime(0, 0, 0, $season * 3, 1, date("Y"))), date('Y')));
+        $start_time = date('Y-m-d H:i:s', mktime(0, 0, 0, $season * 3 - 3 + 1, 1, date('Y')));
+        $end_time = date('Y-m-d H:i:s', mktime(23, 59, 59, $season * 3, date('t', mktime(0, 0, 0, $season * 3, 1, date("Y"))), date('Y')));
     }
 
     // 上一季度
-    if ($data['value'][0] == 'lastQuarter') {
+    if ($type == 'lastQuarter') {
         $season = ceil((date('n')) / 3) - 1;
-        $data['value'][0] = date('Y-m-d H:i:s', mktime(0, 0, 0, $season * 3 - 3 + 1, 1, date('Y')));
-        $data['value'][1] = date('Y-m-d H:i:s', mktime(23, 59, 59, $season * 3, date('t', mktime(0, 0, 0, $season * 3, 1, date("Y"))), date('Y')));
+        $start_time = date('Y-m-d H:i:s', mktime(0, 0, 0, $season * 3 - 3 + 1, 1, date('Y')));
+        $end_time = date('Y-m-d H:i:s', mktime(23, 59, 59, $season * 3, date('t', mktime(0, 0, 0, $season * 3, 1, date("Y"))), date('Y')));
     }
 
     // 下一季度
-    if ($data['value'][0] == 'nextQuarter') {
+    if ($type == 'nextQuarter') {
         $season = ceil((date('n')) / 3);
-        $data['value'][0] = date('Y-m-d H:i:s', mktime(0, 0, 0, $season * 3 + 1, 1, date('Y')));
-        $data['value'][1] = date('Y-m-d H:i:s', mktime(23, 59, 59, $season * 3 + 3, date('t', mktime(0, 0, 0, $season * 3, 1, date("Y"))), date('Y')));
+        $start_time = date('Y-m-d H:i:s', mktime(0, 0, 0, $season * 3 + 1, 1, date('Y')));
+        $end_time = date('Y-m-d H:i:s', mktime(23, 59, 59, $season * 3 + 3, date('t', mktime(0, 0, 0, $season * 3, 1, date("Y"))), date('Y')));
     }
 
     // 本月
-    if ($data['value'][0] == 'month') {
-        $data['value'][0] = date('Y-m-01 00:00:00');
-        $data['value'][1] = date('Y-m-31 23:59:59');
+    if ($type == 'month') {
+        $start_time = date('Y-m-01 00:00:00');
+        $end_time = date('Y-m-31 23:59:59');
     }
 
     // 上月
-    if ($data['value'][0] == 'lastMonth') {
-        $data['value'][0] = date('Y-m-01 00:00:00', strtotime(date('Y-m-d') . '-1 month'));
-        $data['value'][1] = date('Y-m-31 23:59:59', strtotime(date('Y-m-d') . '-1 month'));
+    if ($type == 'lastMonth') {
+        $start_time = date('Y-m-01 00:00:00', strtotime(date('Y-m-d') . '-1 month'));
+        $end_time = date('Y-m-31 23:59:59', strtotime(date('Y-m-d') . '-1 month'));
     }
 
     // 下月
-    if ($data['value'][0] == 'nextMonth') {
-        $data['value'][0] = date('Y-m-01 00:00:00', strtotime(date('Y-m-d') . '+1 month'));
-        $data['value'][1] = date('Y-m-31 23:59:59', strtotime(date('Y-m-d') . '+1 month'));
+    if ($type == 'nextMonth') {
+        $start_time = date('Y-m-01 00:00:00', strtotime(date('Y-m-d') . '+1 month'));
+        $end_time = date('Y-m-31 23:59:59', strtotime(date('Y-m-d') . '+1 month'));
     }
 
     // 本周
-    if ($data['value'][0] == 'week') {
-        $data['value'][0] = date('Y-m-d 00:00:00', mktime(0, 0, 0, date('m'), date('d') - date('w') + 1, date('Y')));
-        $data['value'][1] = date('Y-m-d 23:59:59', mktime(23, 59, 59, date('m'), date('d') - date('w') + 7, date('Y')));
+    if ($type == 'week') {
+        $start_time = date('Y-m-d 00:00:00', mktime(0, 0, 0, date('m'), date('d') - date('w') + 1, date('Y')));
+        $end_time = date('Y-m-d 23:59:59', mktime(23, 59, 59, date('m'), date('d') - date('w') + 7, date('Y')));
     }
 
     // 上周
-    if ($data['value'][0] == 'lastWeek') {
+    if ($type == 'lastWeek') {
         $date = date("Y-m-d");
         $w = date("w", strtotime($date));
         $d = $w ? $w - 1 : 6;
         $start = date("Y-m-d", strtotime($date . " - " . $d . " days"));
-        $data['value'][0] = date('Y-m-d', strtotime($start . " - 7 days"));
-        $data['value'][1] = date('Y-m-d', strtotime($start . " - 1 days"));
+        $start_time = date('Y-m-d', strtotime($start . " - 7 days"));
+        $end_time = date('Y-m-d', strtotime($start . " - 1 days"));
     }
 
     // 下周
-    if ($data['value'][0] == 'nextWeek') {
+    if ($type == 'nextWeek') {
         $date = date("Y-m-d");
         $w = date("w", strtotime($date));
         $d = $w ? $w - 1 : 6;
         $start = date("Y-m-d", strtotime($date . " - " . $d . " days"));
-        $data['value'][0] = date('Y-m-d', strtotime($start . " + 7 days"));
-        $data['value'][1] = date('Y-m-d', strtotime($start . " + 13 days"));
+        $start_time = date('Y-m-d', strtotime($start . " + 7 days"));
+        $end_time = date('Y-m-d', strtotime($start . " + 13 days"));
     }
 
     // 今天
-    if ($data['value'][0] == 'today') {
-        $data['value'][0] = date('Y-m-d 00:00:00');
-        $data['value'][1] = date('Y-m-d 23:59:59');
+    if ($type == 'today') {
+        $start_time = date('Y-m-d 00:00:00');
+        $end_time = date('Y-m-d 23:59:59');
     }
 
     // 昨天
-    if ($data['value'][0] == 'yesterday') {
-        $data['value'][0] = date('Y-m-d 00:00:00', strtotime(date('Y-m-d') . '-1 day'));
-        $data['value'][1] = date('Y-m-d 23:59:59', strtotime(date('Y-m-d') . '-1 day'));
+    if ($type == 'yesterday') {
+        $start_time = date('Y-m-d 00:00:00', strtotime(date('Y-m-d') . '-1 day'));
+        $end_time = date('Y-m-d 23:59:59', strtotime(date('Y-m-d') . '-1 day'));
     }
 
     // 明天
-    if ($data['value'][0] == 'tomorrow') {
-        $data['value'][0] = date('Y-m-d 00:00:00', strtotime(date('Y-m-d') . '+1 day'));
-        $data['value'][1] = date('Y-m-d 23:59:59', strtotime(date('Y-m-d') . '+1 day'));
+    if ($type == 'tomorrow') {
+        $start_time = date('Y-m-d 00:00:00', strtotime(date('Y-m-d') . '+1 day'));
+        $end_time = date('Y-m-d 23:59:59', strtotime(date('Y-m-d') . '+1 day'));
+    }
+
+    // 过去3天
+    if ($type == 'previous3day') {
+        $start_time = date('Y-m-d 00:00:00', strtotime(date('Y-m-d') . '-3 day'));
+        $end_time = date('Y-m-d 23:59:59', strtotime(date('Y-m-d') . '-1 day'));
+    }
+
+    // 过去5天
+    if ($type == 'previous5day') {
+        $start_time = date('Y-m-d 00:00:00', strtotime(date('Y-m-d') . '-5 day'));
+        $end_time = date('Y-m-d 23:59:59', strtotime(date('Y-m-d') . '-1 day'));
     }
 
     // 过去7天
-    if ($data['value'][0] == 'previous7day') {
-        $data['value'][0] = date('Y-m-d 00:00:00', strtotime(date('Y-m-d') . '-7 day'));
-        $data['value'][1] = date('Y-m-d 23:59:59', strtotime(date('Y-m-d') . '-1 day'));
+    if ($type == 'previous7day') {
+        $start_time = date('Y-m-d 00:00:00', strtotime(date('Y-m-d') . '-7 day'));
+        $end_time = date('Y-m-d 23:59:59', strtotime(date('Y-m-d') . '-1 day'));
     }
-
+    // 过去10天
+    if ($type == 'previous10day') {
+        $start_time = date('Y-m-d 00:00:00', strtotime(date('Y-m-d') . '-10 day'));
+        $end_time = date('Y-m-d 23:59:59', strtotime(date('Y-m-d') . '-1 day'));
+    }
     // 过去30天
-    if ($data['value'][0] == 'previous30day') {
-        $data['value'][0] = date('Y-m-d 00:00:00', strtotime(date('Y-m-d') . '-30 day'));
-        $data['value'][1] = date('Y-m-d 23:59:59', strtotime(date('Y-m-d') . '-1 day'));
+    if ($type == 'previous30day') {
+        $start_time = date('Y-m-d 00:00:00', strtotime(date('Y-m-d') . '-30 day'));
+        $end_time = date('Y-m-d 23:59:59', strtotime(date('Y-m-d') . '-1 day'));
     }
-
+    // 未来3天
+    if ($type == 'future3day') {
+        $start_time = date('Y-m-d 00:00:00', strtotime(date('Y-m-d') . '+1 day'));
+        $end_time = date('Y-m-d 23:59:59', strtotime(date('Y-m-d') . '+3 day'));
+    }
+    // 未来5天
+    if ($type == 'future5day') {
+        $start_time = date('Y-m-d 00:00:00', strtotime(date('Y-m-d') . '+1 day'));
+        $end_time = date('Y-m-d 23:59:59', strtotime(date('Y-m-d') . '+5 day'));
+    }
     // 未来7天
-    if ($data['value'][0] == 'future7day') {
-        $data['value'][0] = date('Y-m-d 00:00:00', strtotime(date('Y-m-d') . '+1 day'));
-        $data['value'][1] = date('Y-m-d 23:59:59', strtotime(date('Y-m-d') . '+7 day'));
+    if ($type == 'future7day') {
+        $start_time = date('Y-m-d 00:00:00', strtotime(date('Y-m-d') . '+1 day'));
+        $end_time = date('Y-m-d 23:59:59', strtotime(date('Y-m-d') . '+7 day'));
     }
-
+    // 未来10天
+    if ($type == 'future10day') {
+        $start_time = date('Y-m-d 00:00:00', strtotime(date('Y-m-d') . '+1 day'));
+        $end_time = date('Y-m-d 23:59:59', strtotime(date('Y-m-d') . '+10 day'));
+    }
     // 未来30天
-    if ($data['value'][0] == 'future30day') {
-        $data['value'][0] = date('Y-m-d 00:00:00', strtotime(date('Y-m-d') . '+1 day'));
-        $data['value'][1] = date('Y-m-d 23:59:59', strtotime(date('Y-m-d') . '+30 day'));
+    if ($type == 'future30day') {
+        $start_time = date('Y-m-d 00:00:00', strtotime(date('Y-m-d') . '+1 day'));
+        $end_time = date('Y-m-d 23:59:59', strtotime(date('Y-m-d') . '+30 day'));
     }
-
-    return $data;
+    return [$start_time,$end_time];
 }
 
 /**

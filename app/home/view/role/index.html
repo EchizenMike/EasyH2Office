@@ -1,4 +1,4 @@
-{extend name="common/base"/}
+{extend name="../../base/view/common/base" /}
 <!-- 主体 -->
 {block name="body"}
 <div class="body-table">
@@ -25,12 +25,13 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
+	var tableIns = null;
 	function init(layui) {
 		var table = layui.table,
 			rightpage = layui.rightpage,
 			form = layui.form;
 
-		var tableIns = table.render({
+		tableIns = table.render({
 			elem: '#test',
 			toolbar: '#toolbarDemo',
 			url: "/home/role/index", //数据接口
@@ -91,6 +92,6 @@
 	}
 
 </script>
-{include file="common/layui" base="base" extend="['rightpage']" callback="init" /}
+{include file="../../base/view/common/layui" base="base" extend="['rightpage']" callback="init" /}
 {/block}
 <!-- /脚本 -->

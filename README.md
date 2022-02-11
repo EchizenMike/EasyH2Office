@@ -1,6 +1,6 @@
 # 勾股OA
 
-[![勾股OA](https://img.shields.io/badge/GouguOA-1.1.6-brightgreen.svg)](https://gitee.com/gougucms/office/)
+[![勾股OA](https://img.shields.io/badge/GouguOA-2.0.9-brightgreen.svg)](https://gitee.com/gougucms/office/)
 [![star](https://gitee.com/gougucms/office/badge/star.svg?theme=dark)](https://gitee.com/gougucms/office/stargazers)
 [![fork](https://gitee.com/gougucms/office/badge/fork.svg?theme=dark)](https://gitee.com/gougucms/office/members)
 
@@ -50,13 +50,48 @@ PS：为了给后面的人提供良好的演示体验，体验以查看为主，
 www  系统部署目录（或者子目录）
 ├─app           		应用目录
 │  │
-│  ├─home               前台模块目录
+│  ├─api                公共api模块目录
 │  │  ├─controller      控制器目录
 │  │  ├─middleware      中间层目录
 │  │  ├─model           模型目录
 │  │  ├─validate        校验器目录
 │  │  ├─view            视图模板目录
+│  │  ├─common.php      模块函数文件
+│  │
+│  ├─article            知识模块目录
+│  │  ├─controller      控制器目录
+│  │  ├─middleware      中间层目录
+│  │  ├─model           模型目录
+│  │  ├─validate        校验器目录
+│  │  ├─view            视图模板目录
+│  │  ├─common.php      模块函数文件
+│  │
+│  ├─base                公共api模块目录
+│  │  ├─view            视图模板目录
 │  │  ├─BaseController.php      基础控制器
+│  │
+│  ├─business           商业智能模块目录
+│  │  ├─controller      控制器目录
+│  │  ├─middleware      中间层目录
+│  │  ├─model           模型目录
+│  │  ├─validate        校验器目录
+│  │  ├─view            视图模板目录
+│  │  ├─common.php      模块函数文件
+│  │
+│  ├─finance            财务模块目录
+│  │  ├─controller      控制器目录
+│  │  ├─middleware      中间层目录
+│  │  ├─model           模型目录
+│  │  ├─validate        校验器目录
+│  │  ├─view            视图模板目录
+│  │  ├─common.php      模块函数文件
+│  │
+│  ├─home               系统模块目录
+│  │  ├─controller      控制器目录
+│  │  ├─middleware      中间层目录
+│  │  ├─model           模型目录
+│  │  ├─validate        校验器目录
+│  │  ├─view            视图模板目录
 │  │  ├─common.php      模块函数文件
 │  │
 │  ├─install            安装模块目录(系统安装完后，建议删除)
@@ -64,6 +99,38 @@ www  系统部署目录（或者子目录）
 │  │  ├─data            初始化数据库文件
 │  │  ├─validate        校验器目录
 │  │  ├─view            视图模板目录
+│  │
+│  ├─message            消息模块目录
+│  │  ├─controller      控制器目录
+│  │  ├─middleware      中间层目录
+│  │  ├─model           模型目录
+│  │  ├─validate        校验器目录
+│  │  ├─view            视图模板目录
+│  │  ├─common.php      模块函数文件
+│  │
+│  ├─note               公告模块目录
+│  │  ├─controller      控制器目录
+│  │  ├─middleware      中间层目录
+│  │  ├─model           模型目录
+│  │  ├─validate        校验器目录
+│  │  ├─view            视图模板目录
+│  │  ├─common.php      模块函数文件
+│  │
+│  ├─oa                 办公模块目录
+│  │  ├─controller      控制器目录
+│  │  ├─middleware      中间层目录
+│  │  ├─model           模型目录
+│  │  ├─validate        校验器目录
+│  │  ├─view            视图模板目录
+│  │  ├─common.php      模块函数文件
+│  │
+│  ├─user               用户模块目录
+│  │  ├─controller      控制器目录
+│  │  ├─middleware      中间层目录
+│  │  ├─model           模型目录
+│  │  ├─validate        校验器目录
+│  │  ├─view            视图模板目录
+│  │  ├─common.php      模块函数文件
 │  │
 ├─config                配置文件目录
 │  ├─app.php            系统主要配置文件
@@ -99,7 +166,7 @@ www  系统部署目录（或者子目录）
 
 ### 功能矩阵
 
-系统后台集成了主流的通用功能，如：登录验证、系统配置、操作日志管理、用户（组）管理、用户（组）权限、功能管理（后台菜单管理）、TAG关键字管理、文件上传、数据备份/还原、基础数据、人力资源、消息通知、企业公告、知识文章、日常办公、财务管理、商业智能、 API接口等。更多的个性化功能可以基于当前系统便捷做二次开发。
+系统后台集成了主流的通用功能，如：登录验证、系统配置、操作日志管理、用户（组）管理、用户（组）权限、功能管理（后台菜单管理）、TAG关键字管理、文件上传、数据备份/还原、基础数据、审批流程、员工管理、消息通知、企业公告、知识文章、办公审批、日常办公、财务管理、商业智能、 API接口等。更多的个性化功能可以基于当前系统便捷做二次开发。
 
 具体功能如下：
 
@@ -108,7 +175,7 @@ www  系统部署目录（或者子目录）
 │        		
 ├─系统管理           		
 │  ├─系统配置
-│  ├─功能菜单
+│  ├─功能模块
 │  ├─功能节点
 │  ├─权限角色
 │  ├─操作日志
@@ -117,13 +184,17 @@ www  系统部署目录（或者子目录）
 │  ├─数据还原
 │
 ├─基础数据
-│  ├─审核人相关配置
-│  ├─工作类型设置
-│  ├─知识关键字设置
-│  ├─报销类型设置
-│  ├─发票主体设置 
+│  ├─审核类型
+│  ├─审核流程
+│  ├─报销类型
+│  ├─费用类型
+│  ├─印章类型 
+│  ├─车辆类型
+│  ├─发票主体
+│  ├─公告类型 
+│  ├─知识类型
 │ 
-├─人力资源
+├─员工管理
 │  ├─部门架构
 │  ├─岗位职称
 │  ├─企业员工
@@ -137,7 +208,6 @@ www  系统部署目录（或者子目录）
 │  ├─垃圾箱
 │
 ├─企业公告
-│  ├─公告类别
 │  ├─公告列表
 │
 ├─知识文章
@@ -145,15 +215,26 @@ www  系统部署目录（或者子目录）
 │  ├─共享知识
 │  ├─个人知识
 │
+├─办公审批
+│  ├─我发起的审批
+│  ├─我负责的审批
+│
 ├─日常办公
-│  ├─工作计划
-│  ├─计划日历
-│  ├─工作记录
+│  ├─日程日历
+│  ├─日程安排
 │  ├─工作日历
+│  ├─工作记录
+│  ├─工作汇报
 │
 ├─财务管理
 │  ├─报销管理
+│  │  ├─我申请的报销
+│  │  ├─我负责的报销
+│  │
 │  ├─发票管理
+│  │  ├─我申请的发票
+│  │  ├─我负责的发票
+│  │
 │  ├─到账管理
 │
 ├─商业智能
@@ -163,6 +244,9 @@ www  系统部署目录（或者子目录）
 ├─...
 ~~~
 
+
+### 功能导图
+![输入图片说明](https://oa.gougucms.com/storage/image/gouguoa2.0.png)
 
 ### 安装教程
 

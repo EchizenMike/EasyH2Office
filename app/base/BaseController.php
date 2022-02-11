@@ -91,7 +91,7 @@ abstract class BaseController
                 if ($this->controller !== 'index' && $this->controller !== 'api') {
 					$reg_pwd = Db::name('Admin')->where(['id' => $this->uid])->value('reg_pwd');
 					if($reg_pwd!==''){
-						redirect('/home/api/edit_password.html')->send();
+						redirect('/api/index/edit_password.html')->send();
 						exit;
 					}
                     if (!$this->checkAuth()) {

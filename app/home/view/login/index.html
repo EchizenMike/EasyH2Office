@@ -79,8 +79,10 @@
 		<script type="text/javascript">
 			layui.use(['form'], function() {
 				var form = layui.form,
-					layer = layui.layer,
 					$ = layui.$;
+					layer = layui.layer;
+				// 登录过期的时候，跳出ifram框架
+				if (top.location != self.location) top.location = self.location;
 				form.on('submit(login-submit)', function(data) {
 					$.ajax({
 						url: "/home/login/login_submit",

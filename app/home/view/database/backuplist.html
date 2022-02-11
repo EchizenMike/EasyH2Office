@@ -1,4 +1,4 @@
-{extend name="common/base"/}
+{extend name="../../base/view/common/base" /}
 <!-- 主体 -->
 {block name="body"}
 <div class="body-table">
@@ -9,7 +9,7 @@
 			<th style=" text-align: center; font-weight: 800;"><span>文件大小</span></th>
 			<th style=" text-align: center; font-weight: 800;"><span>文件格式</span></th>
 			<th style=" text-align: center; font-weight: 800;"><span>分隔符</span></th>
-			<th style=" text-align: center; font-weight: 800;"><span>操作</span></th>
+			<th style=" text-align: center; font-weight: 800; width:222px"><span>操作</span></th>
 		</tr>			
 		{empty name="list"}
 		<tr>
@@ -17,8 +17,8 @@
 		</tr>
 		{/empty}
 			{volist name="list" id="vo" key="k"}
-			<tr style="background-color: #f5f5f5;">
-				<td colspan="6">备份时间：{$vo.time}</td>
+			<tr style="background-color: #fafafa;">
+				<td colspan="6"><strong>备份时间：{$vo.time}</strong></td>
 			</tr>
 			{volist name="vo.data" id="voo"}
 			<tr>
@@ -86,6 +86,6 @@
 		})
 	}
 </script>
-{include file="common/layui" base="base" extend="[]" callback="init" /}
+{include file="../../base/view/common/layui" base="base" extend="[]" callback="init" /}
 {/block}
 <!-- /脚本 -->

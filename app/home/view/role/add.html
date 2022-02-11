@@ -1,7 +1,11 @@
-{extend name="common/base"/}
+{extend name="../../base/view/common/base" /}
 <!-- 主体 -->
 {block name="body"}
-<form class="layui-form body-content">
+<style>
+.checkbox16 .layui-form-checkbox span{font-size:15px;font-weight:800;}
+#rule .layui-checkbox-disabled span {color: #666666!important;}
+</style>
+<form class="layui-form page-content">
 	<h3 class="h3-title">权限角色</h3>
 	<table class="layui-table">
 		<tr>
@@ -25,45 +29,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td class="layui-td-gray2" style="vertical-align:top">权限配置<br>操作菜单可见</td>
-			<td colspan="3">
-				<table style="width:100%">
-					<tr>
-						<td style="text-align:left; background-color:#f8f8f8; width:160px;">选择要显示的顶级菜单  <font style="color:red">↓</font></td>
-						<td style="text-align:left; background-color:#f8f8f8;">选择要显示的子级菜单  <font style="color:red">↓</font></td>
-					</tr>
-					{volist name="role_menu" id="vo"}
-					<tr>
-						<td style="font-weight:800">
-						  <input type="checkbox" name="menu[]" value="{$vo.id}" title="{$vo.title}" {eq name="$vo.checked" value="true" }checked{/eq}>
-						</td>
-						{notempty name="vo.children"}
-							<td>
-								<div style="padding:10px 0;">
-								{volist name="vo.children" key="k" id="voo"}
-									<div class="layui-input-inline" style="margin-right:10px; font-weight:800">
-										<input type="checkbox" lay-filter="menu" name="menu[]" value="{$voo.id}" lay-skin="primary" title="{$voo.title}" {eq name="$voo.checked" value="true" }checked{/eq}>
-									</div>
-									{notempty name="voo.children"}
-										<div style="padding:10px 0 0 28px; {if condition='$k != count($vo.children)'}margin-bottom:12px; padding-bottom:16px; border-bottom:1px solid #eee;{/if}">
-										{volist name="voo.children" id="vooo"}
-											<div class="layui-input-inline" style="margin-right:10px;">
-												<input type="checkbox" data-menu="{$voo.id}" name="menu[]" value="{$vooo.id}" lay-skin="primary" title="{$vooo.title}" {eq name="$vooo.checked" value="true" }checked{/eq}>
-											</div>
-										{/volist}
-										</div>
-									{/notempty}
-								{/volist}
-								</div>
-							</td>
-						{/notempty}
-					</tr>
-					{/volist}
-				</table>
-			</td>
-		</tr>
-		<tr>
-			<td class="layui-td-gray2" style="vertical-align:top">权限配置<br>操作节点可用</td>
+			<td class="layui-td-gray2" style="vertical-align:top">权限配置</td>
 			<td colspan="3">	
 				<table style="width:100%" id="rule">
 					<tr>
@@ -72,18 +38,18 @@
 					</tr>
 					{volist name="role_rule" id="vo"}
 					<tr>
-						<td style="font-weight:800">
+						<td style="font-weight:800;">
 						  <input type="checkbox" name="rule[]" value="{$vo.id}" title="{$vo.title}" {eq name="$vo.checked" value="true" }checked{/eq}>
 						</td>
 						{notempty name="vo.children"}
 							<td>
-								<div style="padding:10px 0;">
+								<div style="padding:0 0 0 10px;">
 								{volist name="vo.children" key="k" id="voo"}
-									<div class="layui-input-inline" style="margin-right:10px; font-weight:800">
+									<div class="checkbox16" style="padding:10px 0;">
 										<input type="checkbox" lay-filter="rule" name="rule[]" value="{$voo.id}" lay-skin="primary" title="{$voo.title}" {eq name="$voo.checked" value="true" }checked{/eq}>
 									</div>
 									{notempty name="voo.children"}
-										<div style="padding:10px 0 0 28px; {if condition='$k != count($vo.children)'}margin-bottom:12px; padding-bottom:16px; border-bottom:1px solid #eee;{/if}">
+										<div style="padding:0 0 3px; {if condition='$k != count($vo.children)'}margin-bottom:3px; padding-bottom:16px; border-bottom:1px solid #eee;{/if}">
 										{volist name="voo.children" id="vooo"}
 											<div class="layui-input-inline" style="margin-right:10px;">
 												<input type="checkbox" data-rule="{$voo.id}" name="rule[]" value="{$vooo.id}" lay-skin="primary" title="{$vooo.title}" {eq name="$vooo.checked" value="true" }checked{/eq}>
@@ -131,12 +97,12 @@
 				data: obj.field,
 				type: 'post',
 				success: function (e) {
+					layer.msg(e.msg);
 					if (e.code == 0) {
-						layer.confirm('保存成功,返回列表页吗?', { icon: 3, title: '提示' }, function (index) {
-							parent.location.reload();
-						});
-					} else {
-						layer.msg(e.msg);
+						parent.tableIns.reload();
+						setTimeout(function(){
+							parent.layui.rightpage.close();
+						},1000);
 					}
 				}
 			});
@@ -171,6 +137,6 @@
 		});
 	}
 </script>
-{include file="common/layui" base="base" extend="[]" callback="init" /}
+{include file="../../base/view/common/layui" base="base" extend="[]" callback="init" /}
 {/block}
 <!-- /脚本 -->

@@ -58,6 +58,8 @@ return [
 		'apply'      => '申请',
 		'check'      => '审核通过',
 		'refue'      => '审核拒绝',
+		'back'       => '撤销',
+		'topay'      => '打款',
 		'open'       => '开具',
 		'enter'      => '到账',
 		'tovoid'     => '作废',

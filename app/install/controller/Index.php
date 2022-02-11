@@ -117,9 +117,9 @@ class Index
         $update_time = time();
 
         $create_admin_sql = "INSERT INTO " . $data['DB_PREFIX'] . "admin " .
-            "(username,salt,pwd,name,nickname,position_id,mobile,thumb,create_time,update_time) "
+            "(username,salt,pwd,name,nickname,position_id,did,sex,mobile,thumb,create_time,update_time)"
             . "VALUES "
-            . "('$username','$salt','$password','$name','$nickname',1,'13800138000','$thumb','$create_time','$update_time')";
+            . "('$username','$salt','$password','$name','$nickname',1,1,1,'13800138000','$thumb','$create_time','$update_time')";
         if (!$link->query($create_admin_sql)) {
             return to_assign(1, '创建管理员信息失败');
         }

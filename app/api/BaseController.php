@@ -12,7 +12,9 @@ namespace app\api;
 use think\App;
 use think\exception\HttpResponseException;
 use think\facade\Request;
+use think\facade\Session;
 use think\Response;
+use think\facade\View;
 
 /**
  * 控制器基础类
@@ -58,6 +60,10 @@ abstract class BaseController
     {
         $this->app = $app;
         $this->request = $this->app->request;
+        $this->module = strtolower(app('http')->getName());
+        $this->controller = strtolower($this->request->controller());
+        $this->action = strtolower($this->request->action());
+        $this->uid = 0;
 
         // 控制器初始化
         $this->initialize();
@@ -66,10 +72,26 @@ abstract class BaseController
     // 初始化
     protected function initialize()
     {
+        // 检测权限
+        $this->checkLogin();
         //每页显示数据量
         $this->pageSize = Request::param('page_size', \think\facade\Config::get('app.page_size'));
     }
 
+    /**
+     *验证用户登录
+     */
+    protected function checkLogin()
+    {
+		$session_admin = get_config('app.session_admin');
+		if (!Session::has($session_admin)) {
+			$this->apiError('请先登录');
+		}
+		else{
+			$this->uid = Session::get($session_admin)['id'];
+            View::assign('login_user', $this->uid);
+		}
+    }
     /**
      * Api处理成功结果返回方法
      * @param      $message

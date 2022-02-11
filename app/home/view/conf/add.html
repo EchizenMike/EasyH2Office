@@ -1,17 +1,17 @@
-{extend name="common/base"/}
+{extend name="../../base/view/common/base" /}
 <!-- 主体 -->
 {block name="body"}
-<form class="layui-form body-content">
+<form class="layui-form page-content">
 	<h3 class="h3-title">配置项</h3>
 	<table class="layui-table">
 		<tr>
-			<td class="layui-td-gray2">配置名称<font>*</font>
+			<td class="layui-td-gray">配置名称<font>*</font>
 			</td>
 			<td>
 				<input type="hidden" name="id" value="{$id}" />
 				<input type="text" name="title" lay-verify="required" autocomplete="off" placeholder="请输入配置名称" lay-reqText="请输入配置名称" class="layui-input"  {notempty name="$config.title"} value="{$config.title}" {/notempty}>
 			</td>
-			<td class="layui-td-gray2">状态<font>*</font></td>
+			<td class="layui-td-gray">状态<font>*</font></td>
 			<td>{if condition="$id eq 0"}
 				<input type="radio" name="status" value="1" title="正常" checked>
 				<input type="radio" name="status" value="0" title="禁用">
@@ -24,12 +24,19 @@
 			</td>
 		</tr>
 		<tr>
-			<td class="layui-td-gray2" style="vertical-align: top;">
+			<td class="layui-td-gray" style="vertical-align: top;">
 				配置标识<font>*</font>
 			</td>
 			<td colspan="3">
-				<input style="width: 300px;" type="text" name="name" lay-verify="required" placeholder="请输入配置标识" lay-reqText="请输入配置标识" autocomplete="off" class="layui-input" {notempty name="$config.name"} value="{$config.name}" {/notempty}>
-				<span style ="color: red; font-size: 12px; margin-top: 5px;">（注意：新增配置项以后，需要对应新增模板文件，模板文件名称需与标识名称一致，建议复制现有的配置模板文件，然后根据需求修改对应的表单即可）</span>
+				<input type="text" name="name" lay-verify="required" placeholder="请输入配置标识" lay-reqText="请输入配置标识" autocomplete="off" class="layui-input" {notempty name="$config.name"} value="{$config.name}" {/notempty}>
+			</td>
+		</tr>
+		<tr>
+			<td class="layui-td-gray2" style="vertical-align: top;">
+				注意
+			</td>
+			<td colspan="3">
+				<span style ="color: red; font-size: 12px;">（注意：新增配置项以后，需要对应新增模板文件，模板文件名称需与标识名称一致，建议复制现有的配置模板文件，然后根据需求修改对应的表单即可）</span>
 			</td>
 		</tr>
 	</table>
@@ -54,12 +61,12 @@
 				type: 'post',
 				data: data.field,
 				success: function (e) {
+					layer.msg(e.msg);
 					if (e.code == 0) {
-						layer.confirm('保存成功,返回列表页吗?', { icon: 3, title: '提示' }, function (index) {
-							parent.location.reload();
-						});
-					} else {
-						layer.msg(e.msg);
+						parent.tableIns.reload();
+						setTimeout(function(){
+							parent.layui.rightpage.close();
+						},1000);
 					}
 				}
 			})
@@ -68,6 +75,6 @@
 	}
 
 </script>
-{include file="common/layui" base="base" extend="[]" callback="init" /}
+{include file="../../base/view/common/layui" base="base" extend="[]" callback="init" /}
 {/block}
 <!-- /脚本 -->

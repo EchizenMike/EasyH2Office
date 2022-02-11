@@ -1,7 +1,7 @@
-{extend name="common/base"/}
+{extend name="../../base/view/common/base" /}
 <!-- 主体 -->
 {block name="body"}
-<form class="layui-form body-content">
+<form class="layui-form page-content">
 	<h3 class="h3-title">知识关键字</h3>
 	<table class="layui-table">
 		<tr>
@@ -12,8 +12,10 @@
 			<td class="layui-td-gray">排序</td>
 			<td><input type="text" name="sort" placeholder="请输入排序，数字" autocomplete="off" class="layui-input" {notempty name="$keywords.sort" }value="{$keywords.sort}" {/notempty}>
 			</td>
+		</tr>
+		<tr>
 			<td class="layui-td-gray">状态<font>*</font></td>
-			<td>
+			<td colspan = "3">
 				{if condition="$id eq 0"}
 				<input type="radio" name="status" value="1" title="正常" checked>
 				<input type="radio" name="status" value="0" title="禁用">
@@ -49,12 +51,12 @@
 				type: 'post',
 				data: data.field,
 				success: function (e) {
+					layer.msg(e.msg);
 					if (e.code == 0) {
-						layer.confirm('保存成功,返回列表页吗?', { icon: 3, title: '提示' }, function (index) {
-							parent.location.reload();
-						});
-					} else {
-						layer.msg(e.msg);
+						parent.tableIns.reload();
+						setTimeout(function(){
+							parent.layui.rightpage.close();
+						},1000);
 					}
 				}
 			})
@@ -63,6 +65,6 @@
 	}
 
 </script>
-{include file="common/layui" base="base" extend="[]" callback="init" /}
+{include file="../../base/view/common/layui" base="base" extend="[]" callback="init" /}
 {/block}
 <!-- /脚本 -->

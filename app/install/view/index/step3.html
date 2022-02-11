@@ -7,7 +7,7 @@
 	<meta name="renderer" content="webkit">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-	<link rel="stylesheet" href="/static/layui/css/layui.css" media="all">
+	<link rel="stylesheet" href="{__LAYUI__}/css/layui.css" media="all">
 	<style>
 		body {
 			width: 100%;
@@ -137,7 +137,7 @@
 		</div>
 	</div>
 
-	<script src="/static/layui/layui.js" charset="utf-8"></script>
+	<script src="{__LAYUI__}/layui.js" charset="utf-8"></script>
 	<script>
 		layui.use(['element', 'jquery', 'layer', 'form'], function () {
 			var $ = layui.jquery,
@@ -155,7 +155,7 @@
 						clearInterval(timer);
 					}
 					element.progress('demo', n + '%');
-				}, 30 + Math.random() * 100);
+				}, 20 + Math.random() * 100);
 
 				$.ajax({
 					url: "/index.php?s=/install/index/install",
@@ -179,9 +179,9 @@
 								$('#complete').show();
 								return false;
 							} else if (n < 99) {
-								var ref = setInterval(function () {
+								var count = setInterval(function () {
 									if (n == 99) {
-										clearInterval(ref);
+										clearInterval(count);
 										element.progress('demo', 100 + '%');
 										$('#form').hide();
 										$('#complete').show();

@@ -41,9 +41,7 @@ class Role extends BaseController
     {
         $param = get_params();
         if (request()->isAjax()) {
-            $menuData = isset($param['menu']) ? $param['menu'] : 0;
             $ruleData = isset($param['rule']) ? $param['rule'] : 0;
-            $param['menus'] = implode(',', $menuData);
             $param['rules'] = implode(',', $ruleData);
             if (!empty($param['id']) && $param['id'] > 0) {
                 try {
@@ -74,19 +72,15 @@ class Role extends BaseController
             return to_assign();
         } else {
             $id = isset($param['id']) ? $param['id'] : 0;
-            $menu = get_admin_menu();
-            $rule = get_admin_rule();
+            $rule = admin_rule();
             if ($id > 0) {
-                $group = get_admin_group_info($id);
-                $role_menu = create_tree_list(0, $menu, $group['menus']);
-                $role_rule = create_tree_list(0, $rule, $group['rules']);
+                $rules = admin_group_info($id);
+                $role_rule = create_tree_list(0, $rule, $rules);
                 $role = Db::name('AdminGroup')->where(['id' => $id])->find();
                 View::assign('role', $role);
             } else {
-                $role_menu = create_tree_list(0, $menu, []);
                 $role_rule = create_tree_list(0, $rule, []);
             }
-            View::assign('role_menu', $role_menu);
             View::assign('role_rule', $role_rule);
             View::assign('id', $id);
             return view();
