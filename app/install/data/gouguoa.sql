@@ -136,7 +136,7 @@ CREATE TABLE `oa_admin_rule`  (
   `name` varchar(255) NOT NULL DEFAULT '' COMMENT '日志操作名称',
   `module` varchar(255) NOT NULL DEFAULT '' COMMENT '所属模块',
   `icon` varchar(255) NOT NULL DEFAULT '' COMMENT '图标',
-  `menu` int(1) NOT NULL DEFAULT 0 COMMENT '是否是菜单,0不是,1是',
+  `menu` int(1) NOT NULL DEFAULT 0 COMMENT '是否是菜单,1是,2不是',
   `sort` int(11) NOT NULL DEFAULT 1 COMMENT '越小越靠前',
   `status` int(1) NOT NULL DEFAULT 1 COMMENT '状态,0禁用,1正常',
   `create_time` int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
