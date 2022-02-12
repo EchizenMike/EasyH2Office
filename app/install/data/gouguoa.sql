@@ -160,9 +160,9 @@ INSERT INTO `oa_admin_rule` VALUES (9, 0, '', '财务管理', '财务管理', 'C
 INSERT INTO `oa_admin_rule` VALUES (10, 0, '', '商业智能', '商业智能', 'BI', 'icon-jiaoxuetongji', 1, 10, 1, 0, 0);
 
 INSERT INTO `oa_admin_rule` VALUES (11, 1, 'home/conf/index', '系统配置', '系统配置', 'HOME', '', 1, 1, 1, 0, 0);
-INSERT INTO `oa_admin_rule` VALUES (12, 11, 'home/conf/add', '新建/编辑配置项', '配置项', 'HOME', '', 2, 1, 1, 0, 0);
-INSERT INTO `oa_admin_rule` VALUES (13, 11, 'home/conf/edit', '编辑配置详情', '配置详情', 'HOME', '', 2, 1, 1, 0, 0);
-INSERT INTO `oa_admin_rule` VALUES (14, 11, 'home/conf/delete', '删除配置项', '配置项', 'HOME', '', 2, 1, 1, 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (12, 11, 'home/conf/add', '新建/编辑', '配置项', 'HOME', '', 2, 1, 1, 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (13, 11, 'home/conf/delete', '删除', '配置项', 'HOME', '', 2, 1, 1, 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (14, 11, 'home/conf/edit', '编辑', '配置详情', 'HOME', '', 2, 1, 1, 0, 0);
 
 INSERT INTO `oa_admin_rule` VALUES (15, 1, 'home/module/index', '功能模块', '功能模块', 'HOME', '', 1, 1, 1, 0, 0);
 INSERT INTO `oa_admin_rule` VALUES (16, 15, 'home/module/add', '新建/编辑', '功能模块', 'HOME', '', 2, 1, 1, 0, 0);

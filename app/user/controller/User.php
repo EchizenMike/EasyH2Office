@@ -88,7 +88,6 @@ class User extends BaseController
                     add_log('edit', $param['id'], $param);
                     //清除菜单\权限缓存
                     clear_cache('adminMenu');
-                    clear_cache('adminRules');
                     // 提交事务
                     Db::commit();
                 } catch (\Exception $e) {

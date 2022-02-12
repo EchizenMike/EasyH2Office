@@ -34,8 +34,9 @@ class Module extends BaseController
         if (request()->isAjax()) {
 			$param['name'] = preg_replace('# #','',$param['name']);
             if ($param['id'] > 0) {
-				if($param['id'] == 1 || $param['id'] == 2){
-					return to_assign(1,'系统默认模块不能编辑');
+				$module = Db::name('AdminModule')->where('id',$param['id'])->find();
+				if($module['type'] == 1){
+					return to_assign(1,'系统模块不能编辑');
 				}
                 try {
                     validate(ModuleCheck::class)->scene('edit')->check($param);

@@ -68,7 +68,6 @@ class Role extends BaseController
             }
             //清除菜单\权限缓存
             clear_cache('adminMenu');
-            clear_cache('adminRules');
             return to_assign();
         } else {
             $id = isset($param['id']) ? $param['id'] : 0;
