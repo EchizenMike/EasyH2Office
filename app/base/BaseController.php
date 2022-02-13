@@ -88,7 +88,10 @@ abstract class BaseController
                 $this->uid = Session::get($session_admin)['id'];
                 View::assign('login_user', $this->uid);
                 // 验证用户访问权限
-                if ($this->controller !== 'index' && $this->controller !== 'api') {
+                if (($this->module == 'api') || ($this->module == 'home' && $this->controller == 'index')) {
+					return true;
+				}
+				else{
 					$reg_pwd = Db::name('Admin')->where(['id' => $this->uid])->value('reg_pwd');
 					if($reg_pwd!==''){
 						redirect('/api/index/edit_password.html')->send();
@@ -135,9 +138,9 @@ abstract class BaseController
             }
             $ids = array_unique($ids);
             //读取所有权限规则
-            $rules_all = Db::name('AdminRule')->field('src')->select();
+            $rules_all = Db::name('AdminRule')->field('src')->select()->toArray();
             //读取用户组所有权限规则
-            $rules = Db::name('AdminRule')->where('id', 'in', $ids)->field('src')->select();
+            $rules = Db::name('AdminRule')->where('id', 'in', $ids)->field('src')->select()->toArray();
             //循环规则，判断结果。
             $auth_list_all = [];
             $auth_list = [];
@@ -163,7 +166,7 @@ abstract class BaseController
     }
 
     //
-    // 以下为新增，为了使用旧版的 success error redirect 跳转  start
+    // 以下为新增，为了使用旧版TP的 success error redirect 跳转  start
     //
 
     /**
