@@ -97,8 +97,8 @@ class Index
         }
         $link->select_db($data['DB_NAME']);
         // 导入sql数据并创建表
-        $fqcms_sql = file_get_contents(CMS_ROOT . '/app/install/data/gouguoa.sql');
-        $sql_array = preg_split("/;[\r\n]+/", str_replace("oa_", $data['DB_PREFIX'], $fqcms_sql));
+        $oa_sql = file_get_contents(CMS_ROOT . '/app/install/data/gouguoa.sql');
+        $sql_array = preg_split("/;[\r\n]+/", str_replace("oa_", $data['DB_PREFIX'], $oa_sql));
         foreach ($sql_array as $k => $v) {
             if (!empty($v)) {
                 $link->query($v);

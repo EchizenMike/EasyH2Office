@@ -24,7 +24,7 @@ class Rule extends BaseController
 			->field('a.*,m.title as module_title')
 			->alias('a')
 			->leftJoin('adminModule m','a.module = m.name')
-			->order('a.sort asc a.id asc')
+			->order('a.sort asc,a.id asc')
 			->select();
             return to_assign(0, '', $rule);
         } else {
