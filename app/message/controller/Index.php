@@ -309,7 +309,7 @@ class Index extends BaseController
             ->where(array('mf.mid' => $detail['id']))
             ->select()->toArray();
         $detail['file_array'] = $file_array;
-        $detail['send_time'] = date('Y-m-d h:i:s',$detail['send_time']);    
+        $detail['send_time'] = date('Y-m-d H:i:s',,$detail['send_time']);    
         //发送人查询
         $user_names=[];
         //已读回执
