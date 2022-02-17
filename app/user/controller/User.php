@@ -39,7 +39,7 @@ class User extends BaseController
                 $department_array = get_department_son($param['did']);
                 $where[] = ['did', 'in', $department_array];
             }
-            $rows = empty($param['limit']) ? get_config(app . page_size) : $param['limit'];
+            $rows = empty($param['limit']) ? get_config('app . page_size') : $param['limit'];
             $admin = AdminList::where($where)
                 ->order('id desc')
                 ->paginate($rows, false, ['query' => $param])
@@ -267,7 +267,7 @@ class User extends BaseController
             if (!empty($param['rule_menu'])) {
                 $where['rule_menu'] = $param['rule_menu'];
             }
-            $rows = empty($param['limit']) ? get_config(app . page_size) : $param['limit'];
+            $rows = empty($param['limit']) ? get_config('app . page_size') : $param['limit'];
             $content = DB::name('AdminLog')
                 ->field("id,uid,name,action,title,content,rule_menu,ip,param_id,param,FROM_UNIXTIME(create_time,'%Y-%m-%d %H:%i:%s') create_time")
                 ->order('create_time desc')
