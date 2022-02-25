@@ -60,7 +60,7 @@
 			</td>
 			<td class="layui-td-gray">发票主体</td>
 			<td>
-				{volist name=":oa_invoice_subject()" id="vo"}
+				{volist name=":finance_invoice_subject()" id="vo"}
 				{eq name="$vo.id" value="$detail.invoice_subject"}{$vo.title}{/eq}
 				{/volist}
 			</td>
