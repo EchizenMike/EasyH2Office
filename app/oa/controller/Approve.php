@@ -177,6 +177,7 @@ class Approve extends BaseController
             if ($param['id'] > 0) {
                 $param['update_time'] = time();
                 $param['check_status'] = 0;
+				$param['check_step_sort'] = 0;
 				Db::name('FlowStep')->where(['action_id'=>$param['id'],'type'=>1,'delete_time'=>0])->update(['delete_time'=>time()]);
 				Db::name('FlowRecord')->where(['action_id'=>$param['id'],'type'=>1,'delete_time'=>0])->update(['delete_time'=>time()]);				
 				

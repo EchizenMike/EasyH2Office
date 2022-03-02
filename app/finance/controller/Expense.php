@@ -174,6 +174,7 @@ class Expense extends BaseController
             $param['income_month'] = isset($param['income_month']) ? strtotime(urldecode($param['income_month'])) : 0;
             $param['expense_time'] = isset($param['expense_time']) ? strtotime(urldecode($param['expense_time'])) : 0;
             $param['check_status'] = 1;
+			$param['check_step_sort'] = 0;
 			$flow_list = Db::name('Flow')->where('id',$param['flow_id'])->value('flow_list');
 			$flow = unserialize($flow_list);
             if (!empty($param['id']) && $param['id'] > 0) {

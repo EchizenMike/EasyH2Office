@@ -184,6 +184,7 @@ class Invoice extends BaseController
         $param = get_params();
         if (request()->isAjax()) {
             $param['check_status'] = 1;
+			$param['check_step_sort'] = 0;
 			$flow_list = Db::name('Flow')->where('id',$param['flow_id'])->value('flow_list');
 			$flow = unserialize($flow_list);
             if ($param['type'] == 1) {
