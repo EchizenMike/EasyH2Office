@@ -48,12 +48,14 @@
 	<input type="hidden" name="id" value="{$detail.id}">
 	<input type="hidden" name="flow_type" value="{$flows.flow_type}">
 	<div id="formBtn" style="padding: 10px 0">
-		{eq name="$is_check_admin" value='1'}
-		<span class="layui-btn layui-btn-normal" data-status="1"><i class="layui-icon layui-icon-ok"></i> 通过</span>
-		<span class="layui-btn layui-btn-danger" data-status="2"><i class="layui-icon layui-icon-close"></i> 拒绝</span>
-		{/eq}
-		{if ( $detail.check_status lt 2) AND ( $is_create_admin eq 1) }
-		<span class="layui-btn layui-btn-primary" data-status="3"><i class="layui-icon layui-icon-reduce-circle"></i> 撤回</span>
+		{if ( $detail.check_status lt 2)}
+			{eq name="$is_check_admin" value='1'}
+			<span class="layui-btn layui-btn-normal" data-status="1"><i class="layui-icon layui-icon-ok"></i> 通过</span>
+			<span class="layui-btn layui-btn-danger" data-status="2"><i class="layui-icon layui-icon-close"></i> 拒绝</span>
+			{/eq}
+			{eq name="$is_create_admin" value='1'}
+			<span class="layui-btn layui-btn-primary" data-status="3"><i class="layui-icon layui-icon-reduce-circle"></i> 撤回</span>
+			{/eq}
 		{/if}
 		{if ( $detail.check_status gt 2) AND ( $is_create_admin eq 1) }
 		<a class="layui-btn" href="/oa/approve/add?id={$detail.id}">重新编辑</a>

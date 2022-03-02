@@ -71,9 +71,9 @@ class Expense extends BaseController
             $expense['create_user'] = Db::name('Admin')->where(['id' => $expense['admin_id']])->value('name');
             $expense['department'] = Db::name('Department')->where(['id' => $expense['did']])->value('title');
             $expense['amount'] = Db::name('ExpenseInterfix')->where(['exid' => $expense['id']])->sum('amount');
-            $expense['pay_admin'] = Db::name('Admin')->where(['id' => $expense['pay_admin_id']])->value('name');
             if ($expense['pay_time'] > 0) {
                 $expense['pay_time'] = date('Y-m-d H:i:s', $expense['pay_time']);
+				$expense['pay_admin'] = Db::name('Admin')->where(['id' => $expense['pay_admin_id']])->value('name');
             }
             else{
                 $expense['pay_time'] = '-';
@@ -621,6 +621,7 @@ class Expense extends BaseController
     {
         $param = get_params();
         if (request()->isAjax()) {
+			//打款，数据操作
             $param['check_status'] = 5;
             $param['pay_admin_id'] = $this->uid;
             $param['pay_time'] = time();
