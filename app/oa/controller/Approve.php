@@ -10,7 +10,6 @@ declare (strict_types = 1);
 namespace app\oa\controller;
 
 use app\base\BaseController;
-use think\exception\ValidateException;
 use think\facade\Db;
 use think\facade\View;
 
