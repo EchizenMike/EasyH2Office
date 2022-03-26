@@ -533,6 +533,53 @@ INSERT INTO `oa_flow_type` VALUES (19, 4, '招聘需求', 'zhaopin', 'icon-zhaop
 INSERT INTO `oa_flow_type` VALUES (20, 6, '报销', 'baoxiao', 'icon-jizhang', 1, 1641804488, 0);
 INSERT INTO `oa_flow_type` VALUES (21, 7, '发票', 'fapiao', 'icon-fuwuliebiao', 1, 1642904833, 0);
 
+-- ----------------------------
+-- Table structure for oa_flow
+-- ----------------------------
+DROP TABLE IF EXISTS `oa_flow`;
+CREATE TABLE `oa_flow`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL COMMENT '审批流名称',
+  `check_type` tinyint(4) NOT NULL COMMENT '1固定审批,2授权审批人',
+  `type` tinyint(4) NOT NULL COMMENT '应用模块,1假勤,2行政,3财务,4人事,5其他,6报销,7发票',
+  `flow_cate` tinyint(11) NOT NULL DEFAULT 0 COMMENT '应用审批类型id',
+  `department_ids` varchar(500) NOT NULL DEFAULT '' COMMENT '应用部门ID（0为全部）1,2,3',
+  `user_ids` varchar(500) NOT NULL DEFAULT '' COMMENT '员工ID',
+  `remark` varchar(500) NOT NULL DEFAULT '' COMMENT '流程说明',
+  `flow_list` varchar(1000) NULL DEFAULT '' COMMENT '流程数据序列化',
+  `admin_id` int(11) NOT NULL COMMENT '创建人ID',
+  `create_time` int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
+  `update_time` int(11) NOT NULL DEFAULT 0 COMMENT '更新时间',
+  `status` tinyint(4) NOT NULL DEFAULT 1 COMMENT '状态 1启用，0禁用',
+  `delete_time` int(11) NOT NULL DEFAULT 0 COMMENT '删除时间',
+  `delete_user_id` int(11) NOT NULL DEFAULT 0 COMMENT '删除人ID',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COMMENT = '审批流程表';
+
+-- ----------------------------
+-- Records of oa_flow
+-- ----------------------------
+INSERT INTO `oa_flow` VALUES (1, '请假审批', 2, 1, 1, '', '', '请假审批流程', 'a:1:{i:0;a:2:{s:9:\"flow_type\";s:1:\"1\";s:9:\"flow_uids\";s:0:\"\";}}', 1, 1644401970, 1644402071, 1, 0, 0);
+INSERT INTO `oa_flow` VALUES (2, '出差审批', 2, 1, 2, '', '', '请假审批流程', 'a:1:{i:0;a:2:{s:9:\"flow_type\";s:1:\"1\";s:9:\"flow_uids\";s:0:\"\";}}', 1, 1644402054, 0, 1, 0, 0);
+INSERT INTO `oa_flow` VALUES (3, '外出审批', 2, 1, 3, '', '', '外出审批流程', 'a:1:{i:0;a:2:{s:9:\"flow_type\";s:1:\"1\";s:9:\"flow_uids\";s:0:\"\";}}', 1, 1644402116, 0, 1, 0, 0);
+INSERT INTO `oa_flow` VALUES (4, '加班申请审批', 2, 1, 4, '', '', '加班申请审批流程', 'a:1:{i:0;a:2:{s:9:\"flow_type\";s:1:\"1\";s:9:\"flow_uids\";s:0:\"\";}}', 1, 1644402147, 1644456735, 1, 0, 0);
+INSERT INTO `oa_flow` VALUES (5, '会议室预定审批', 2, 2, 5, '', '', '会议室预定审批流程', 'a:1:{i:0;a:2:{s:9:\"flow_type\";s:1:\"1\";s:9:\"flow_uids\";s:0:\"\";}}', 1, 1644402193, 0, 1, 0, 0);
+INSERT INTO `oa_flow` VALUES (6, '公文流转审批', 2, 2, 6, '', '', '公文流转审批流程', 'a:1:{i:0;a:2:{s:9:\"flow_type\";s:1:\"1\";s:9:\"flow_uids\";s:0:\"\";}}', 1, 1644402386, 0, 1, 0, 0);
+INSERT INTO `oa_flow` VALUES (7, '物品维修审批', 2, 2, 7, '', '', '物品维修审批流程', 'a:1:{i:0;a:2:{s:9:\"flow_type\";s:1:\"1\";s:9:\"flow_uids\";s:0:\"\";}}', 1, 1644402473, 0, 1, 0, 0);
+INSERT INTO `oa_flow` VALUES (8, '用章审批', 2, 2, 8, '', '', '用章审批流程', 'a:1:{i:0;a:2:{s:9:\"flow_type\";s:1:\"1\";s:9:\"flow_uids\";s:0:\"\";}}', 1, 1644402499, 0, 1, 0, 0);
+INSERT INTO `oa_flow` VALUES (9, '用车审批', 2, 2, 9, '', '', '用车审批流程', 'a:1:{i:0;a:2:{s:9:\"flow_type\";s:1:\"1\";s:9:\"flow_uids\";s:0:\"\";}}', 1, 1644402525, 0, 1, 0, 0);
+INSERT INTO `oa_flow` VALUES (10, '用车归还审批', 2, 2, 10, '', '', '用车归还审批流程', 'a:1:{i:0;a:2:{s:9:\"flow_type\";s:1:\"1\";s:9:\"flow_uids\";s:0:\"\";}}', 1, 1644402549, 0, 1, 0, 0);
+INSERT INTO `oa_flow` VALUES (11, '借款申请审批', 2, 3, 11, '', '', '借款申请审批流程', 'a:1:{i:0;a:2:{s:9:\"flow_type\";s:1:\"1\";s:9:\"flow_uids\";s:0:\"\";}}', 1, 1644402611, 0, 1, 0, 0);
+INSERT INTO `oa_flow` VALUES (12, '付款申请审批', 2, 3, 12, '', '', '付款申请审批流程', 'a:1:{i:0;a:2:{s:9:\"flow_type\";s:1:\"1\";s:9:\"flow_uids\";s:0:\"\";}}', 1, 1644402679, 0, 1, 0, 0);
+INSERT INTO `oa_flow` VALUES (13, '奖励申请审批', 2, 3, 13, '', '', '奖励申请审批流程', 'a:1:{i:0;a:2:{s:9:\"flow_type\";s:1:\"1\";s:9:\"flow_uids\";s:0:\"\";}}', 1, 1644402705, 0, 1, 0, 0);
+INSERT INTO `oa_flow` VALUES (14, '采购申请审批', 2, 3, 14, '', '', '采购申请审批流程', 'a:1:{i:0;a:2:{s:9:\"flow_type\";s:1:\"1\";s:9:\"flow_uids\";s:0:\"\";}}', 1, 1644402739, 0, 1, 0, 0);
+INSERT INTO `oa_flow` VALUES (15, '活动经费审批', 2, 3, 15, '', '', '活动经费审批流程', 'a:1:{i:0;a:2:{s:9:\"flow_type\";s:1:\"1\";s:9:\"flow_uids\";s:0:\"\";}}', 1, 1644402762, 0, 1, 0, 0);
+INSERT INTO `oa_flow` VALUES (16, '入职申请审批', 2, 4, 16, '', '', '入职申请审批流程', 'a:1:{i:0;a:2:{s:9:\"flow_type\";s:1:\"1\";s:9:\"flow_uids\";s:0:\"\";}}', 1, 1644402791, 0, 1, 0, 0);
+INSERT INTO `oa_flow` VALUES (17, '转正申请审批', 2, 4, 17, '', '', '转正申请审批流程', 'a:1:{i:0;a:2:{s:9:\"flow_type\";s:1:\"1\";s:9:\"flow_uids\";s:0:\"\";}}', 1, 1644402812, 0, 1, 0, 0);
+INSERT INTO `oa_flow` VALUES (18, '离职申请审批', 2, 4, 18, '', '', '离职申请审批流程', 'a:1:{i:0;a:2:{s:9:\"flow_type\";s:1:\"1\";s:9:\"flow_uids\";s:0:\"\";}}', 1, 1644402834, 0, 1, 0, 0);
+INSERT INTO `oa_flow` VALUES (19, '招聘需求审批', 2, 4, 19, '', '', '招聘需求审批流程', 'a:1:{i:0;a:2:{s:9:\"flow_type\";s:1:\"1\";s:9:\"flow_uids\";s:0:\"\";}}', 1, 1644402855, 0, 1, 0, 0);
+INSERT INTO `oa_flow` VALUES (20, '报销审批', 2, 6, 20, '', '', '报销审批流程', 'a:1:{i:0;a:2:{s:9:\"flow_type\";s:1:\"1\";s:9:\"flow_uids\";s:0:\"\";}}', 1, 1644490024, 0, 1, 0, 0);
+INSERT INTO `oa_flow` VALUES (21, '发票审批', 2, 7, 21, '', '', '报销审批流程', 'a:1:{i:0;a:2:{s:9:\"flow_type\";s:1:\"1\";s:9:\"flow_uids\";s:0:\"\";}}', 1, 1644490053, 0, 1, 0, 0);
 
 -- ----------------------------
 -- Table structure for oa_cost_cate
@@ -1031,54 +1078,6 @@ CREATE TABLE `oa_approve`  (
   `amount` decimal(18, 2) NOT NULL DEFAULT 0.00 COMMENT '金额',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COMMENT = '日常审批表';
-
--- ----------------------------
--- Table structure for oa_flow
--- ----------------------------
-DROP TABLE IF EXISTS `oa_flow`;
-CREATE TABLE `oa_flow`  (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) NOT NULL COMMENT '审批流名称',
-  `check_type` tinyint(4) NOT NULL COMMENT '1固定审批,2授权审批人',
-  `type` tinyint(4) NOT NULL COMMENT '应用模块,1假勤,2行政,3财务,4人事,5其他,6报销,7发票',
-  `flow_cate` tinyint(11) NOT NULL DEFAULT 0 COMMENT '应用审批类型id',
-  `department_ids` varchar(500) NOT NULL DEFAULT '' COMMENT '应用部门ID（0为全部）1,2,3',
-  `user_ids` varchar(500) NOT NULL DEFAULT '' COMMENT '员工ID',
-  `remark` varchar(500) NOT NULL DEFAULT '' COMMENT '流程说明',
-  `flow_list` varchar(1000) NULL DEFAULT '' COMMENT '流程数据序列化',
-  `admin_id` int(11) NOT NULL COMMENT '创建人ID',
-  `create_time` int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
-  `update_time` int(11) NOT NULL DEFAULT 0 COMMENT '更新时间',
-  `status` tinyint(4) NOT NULL DEFAULT 1 COMMENT '状态 1启用，0禁用',
-  `delete_time` int(11) NOT NULL DEFAULT 0 COMMENT '删除时间',
-  `delete_user_id` int(11) NOT NULL DEFAULT 0 COMMENT '删除人ID',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COMMENT = '审批流程表';
-
--- ----------------------------
--- Records of oa_flow
--- ----------------------------
-INSERT INTO `oa_flow` VALUES (1, '请假审批', 2, 1, 1, '', '', '请假审批流程', 'a:1:{i:0;a:2:{s:9:\"flow_type\";s:1:\"1\";s:9:\"flow_uids\";s:0:\"\";}}', 1, 1644401970, 1644402071, 1, 0, 0);
-INSERT INTO `oa_flow` VALUES (2, '出差审批', 2, 1, 2, '', '', '请假审批流程', 'a:1:{i:0;a:2:{s:9:\"flow_type\";s:1:\"1\";s:9:\"flow_uids\";s:0:\"\";}}', 1, 1644402054, 0, 1, 0, 0);
-INSERT INTO `oa_flow` VALUES (3, '外出审批', 2, 1, 3, '', '', '外出审批流程', 'a:1:{i:0;a:2:{s:9:\"flow_type\";s:1:\"1\";s:9:\"flow_uids\";s:0:\"\";}}', 1, 1644402116, 0, 1, 0, 0);
-INSERT INTO `oa_flow` VALUES (4, '加班申请审批', 2, 1, 4, '', '', '加班申请审批流程', 'a:1:{i:0;a:2:{s:9:\"flow_type\";s:1:\"1\";s:9:\"flow_uids\";s:0:\"\";}}', 1, 1644402147, 1644456735, 1, 0, 0);
-INSERT INTO `oa_flow` VALUES (5, '会议室预定审批', 2, 2, 5, '', '', '会议室预定审批流程', 'a:1:{i:0;a:2:{s:9:\"flow_type\";s:1:\"1\";s:9:\"flow_uids\";s:0:\"\";}}', 1, 1644402193, 0, 1, 0, 0);
-INSERT INTO `oa_flow` VALUES (6, '公文流转审批', 2, 2, 6, '', '', '公文流转审批流程', 'a:1:{i:0;a:2:{s:9:\"flow_type\";s:1:\"1\";s:9:\"flow_uids\";s:0:\"\";}}', 1, 1644402386, 0, 1, 0, 0);
-INSERT INTO `oa_flow` VALUES (7, '物品维修审批', 2, 2, 7, '', '', '物品维修审批流程', 'a:1:{i:0;a:2:{s:9:\"flow_type\";s:1:\"1\";s:9:\"flow_uids\";s:0:\"\";}}', 1, 1644402473, 0, 1, 0, 0);
-INSERT INTO `oa_flow` VALUES (8, '用章审批', 2, 2, 8, '', '', '用章审批流程', 'a:1:{i:0;a:2:{s:9:\"flow_type\";s:1:\"1\";s:9:\"flow_uids\";s:0:\"\";}}', 1, 1644402499, 0, 1, 0, 0);
-INSERT INTO `oa_flow` VALUES (9, '用车审批', 2, 2, 9, '', '', '用车审批流程', 'a:1:{i:0;a:2:{s:9:\"flow_type\";s:1:\"1\";s:9:\"flow_uids\";s:0:\"\";}}', 1, 1644402525, 0, 1, 0, 0);
-INSERT INTO `oa_flow` VALUES (10, '用车归还审批', 2, 2, 10, '', '', '用车归还审批流程', 'a:1:{i:0;a:2:{s:9:\"flow_type\";s:1:\"1\";s:9:\"flow_uids\";s:0:\"\";}}', 1, 1644402549, 0, 1, 0, 0);
-INSERT INTO `oa_flow` VALUES (11, '借款申请审批', 2, 3, 11, '', '', '借款申请审批流程', 'a:1:{i:0;a:2:{s:9:\"flow_type\";s:1:\"1\";s:9:\"flow_uids\";s:0:\"\";}}', 1, 1644402611, 0, 1, 0, 0);
-INSERT INTO `oa_flow` VALUES (12, '付款申请审批', 2, 3, 12, '', '', '付款申请审批流程', 'a:1:{i:0;a:2:{s:9:\"flow_type\";s:1:\"1\";s:9:\"flow_uids\";s:0:\"\";}}', 1, 1644402679, 0, 1, 0, 0);
-INSERT INTO `oa_flow` VALUES (13, '奖励申请审批', 2, 3, 13, '', '', '奖励申请审批流程', 'a:1:{i:0;a:2:{s:9:\"flow_type\";s:1:\"1\";s:9:\"flow_uids\";s:0:\"\";}}', 1, 1644402705, 0, 1, 0, 0);
-INSERT INTO `oa_flow` VALUES (14, '采购申请审批', 2, 3, 14, '', '', '采购申请审批流程', 'a:1:{i:0;a:2:{s:9:\"flow_type\";s:1:\"1\";s:9:\"flow_uids\";s:0:\"\";}}', 1, 1644402739, 0, 1, 0, 0);
-INSERT INTO `oa_flow` VALUES (15, '活动经费审批', 2, 3, 15, '', '', '活动经费审批流程', 'a:1:{i:0;a:2:{s:9:\"flow_type\";s:1:\"1\";s:9:\"flow_uids\";s:0:\"\";}}', 1, 1644402762, 0, 1, 0, 0);
-INSERT INTO `oa_flow` VALUES (16, '入职申请审批', 2, 4, 16, '', '', '入职申请审批流程', 'a:1:{i:0;a:2:{s:9:\"flow_type\";s:1:\"1\";s:9:\"flow_uids\";s:0:\"\";}}', 1, 1644402791, 0, 1, 0, 0);
-INSERT INTO `oa_flow` VALUES (17, '转正申请审批', 2, 4, 17, '', '', '转正申请审批流程', 'a:1:{i:0;a:2:{s:9:\"flow_type\";s:1:\"1\";s:9:\"flow_uids\";s:0:\"\";}}', 1, 1644402812, 0, 1, 0, 0);
-INSERT INTO `oa_flow` VALUES (18, '离职申请审批', 2, 4, 18, '', '', '离职申请审批流程', 'a:1:{i:0;a:2:{s:9:\"flow_type\";s:1:\"1\";s:9:\"flow_uids\";s:0:\"\";}}', 1, 1644402834, 0, 1, 0, 0);
-INSERT INTO `oa_flow` VALUES (19, '招聘需求审批', 2, 4, 19, '', '', '招聘需求审批流程', 'a:1:{i:0;a:2:{s:9:\"flow_type\";s:1:\"1\";s:9:\"flow_uids\";s:0:\"\";}}', 1, 1644402855, 0, 1, 0, 0);
-INSERT INTO `oa_flow` VALUES (20, '报销审批', 2, 6, 20, '', '', '报销审批流程', 'a:1:{i:0;a:2:{s:9:\"flow_type\";s:1:\"1\";s:9:\"flow_uids\";s:0:\"\";}}', 1, 1644490024, 0, 1, 0, 0);
-INSERT INTO `oa_flow` VALUES (21, '发票审批', 2, 7, 21, '', '', '报销审批流程', 'a:1:{i:0;a:2:{s:9:\"flow_type\";s:1:\"1\";s:9:\"flow_uids\";s:0:\"\";}}', 1, 1644490053, 0, 1, 0, 0);
 
 -- ----------------------------
 -- Table structure for oa_flow_step
