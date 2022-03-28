@@ -25,7 +25,7 @@ class Log extends BaseController
                 $where[] = ['name|rule_menu|param_id', 'like', '%' . $param['keywords'] . '%'];
             }
             if (!empty($param['action'])) {
-                $where['action'] = $param['action'];
+                $where[] = ['title','=',$param['action']];
             }
             $rows = empty($param['limit']) ? get_config('app . page_size') : $param['limit'];
             $content = DB::name('AdminLog')
