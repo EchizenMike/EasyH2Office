@@ -8,10 +8,10 @@
 - 项目会不定时进行更新，建议⭐star⭐和👁️watch👁️一份。
 
 ### ⭕ 开源项目
-1. [![勾股OA](https://img.shields.io/badge/GouguOA-2.0.9-brightgreen.svg)](https://gitee.com/gougucms/office) [开源项目系列之勾股OA](https://gitee.com/gougucms/office)
-2. [![勾股CMS](https://img.shields.io/badge/GouguCMS-2.0.18-brightgreen.svg)](https://gitee.com/gougucms/gougucms) [开源项目系列之勾股CMS](https://gitee.com/gougucms/gougucms)
-3. [![勾股BLOG](https://img.shields.io/badge/GouguBLOG-2.0.16-brightgreen.svg)](https://gitee.com/gougucms/blog) [开源项目系列之勾股BLOG](https://gitee.com/gougucms/blog)
-4. [![勾股DEV](https://img.shields.io/badge/GouguDEV-1.4.18-brightgreen.svg)](https://gitee.com/gougucms/dev) [开源项目系列之勾股DEV](https://gitee.com/gougucms/dev)
+1. [![勾股OA](https://img.shields.io/badge/GouguOA-2.0.9-brightgreen.svg)](https://gitee.com/gougucms/office) [开源项目系列：勾股OA —— OA协同办公系统框架](https://gitee.com/gougucms/office)
+2. [![勾股CMS](https://img.shields.io/badge/GouguCMS-2.0.18-brightgreen.svg)](https://gitee.com/gougucms/gougucms) [开源项目系列：勾股CMS —— CMS内容管理系统框架](https://gitee.com/gougucms/gougucms)
+3. [![勾股BLOG](https://img.shields.io/badge/GouguBLOG-2.0.16-brightgreen.svg)](https://gitee.com/gougucms/blog) [开源项目系列：勾股BLOG —— 个人&工作室博客系统](https://gitee.com/gougucms/blog)
+4. [![勾股DEV](https://img.shields.io/badge/GouguDEV-1.4.18-brightgreen.svg)](https://gitee.com/gougucms/dev) [开源项目系列：勾股DEV —— 项目研发管理系统](https://gitee.com/gougucms/dev)
 
 
 ### 📋 系统介绍
