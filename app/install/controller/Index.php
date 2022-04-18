@@ -113,13 +113,12 @@ class Index
         $thumb = '/static/home/images/icon.png';
         $salt = set_salt(20);
         $password = set_password($password, $salt);
-        $create_time = time();
-        $update_time = time();
+        $now_time = time();
 
         $create_admin_sql = "INSERT INTO " . $data['DB_PREFIX'] . "admin " .
-            "(username,salt,pwd,name,nickname,position_id,did,sex,mobile,type,thumb,create_time,update_time)"
+            "(username,salt,pwd,name,nickname,position_id,did,sex,mobile,type,thumb,entry_time,create_time,update_time)"
             . "VALUES "
-            . "('$username','$salt','$password','$name','$nickname',1,1,1,'13800138000',1,'$thumb','$create_time','$update_time')";
+            . "('$username','$salt','$password','$name','$nickname',1,1,1,'13800138000',1,'$thumb','$now_time','$now_time','$now_time')";
         if (!$link->query($create_admin_sql)) {
             return to_assign(1, '创建管理员信息失败');
         }
