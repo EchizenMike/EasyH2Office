@@ -1,4 +1,4 @@
-# 📐 勾股OA
+## 📐 勾股OA
 
 ![勾股OA](https://oa.gougucms.com/storage/image/slogo.jpg)
 
