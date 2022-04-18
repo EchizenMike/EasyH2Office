@@ -376,6 +376,7 @@ class Approve extends BaseController
 				//查询当前会签记录数
 				$check_count = Db::name('FlowRecord')->where(['action_id'=>$detail['id'],'type'=>1,'step_id'=>$step['id']])->count();
 				//当前会签记应有记录数
+				$param['check_admin_ids'] = $step['flow_uids'];
 				$flow_count = explode(',', $step['flow_uids']);
 				if(($check_count+1) >=count($flow_count)){
 					$next_step = Db::name('FlowStep')->where(['action_id'=>$detail['id'],'type'=>1,'sort'=>($detail['check_step_sort']+1),'delete_time'=>0])->find();
@@ -383,10 +384,12 @@ class Approve extends BaseController
 						//存在下一步审核
 						$param['check_step_sort'] = $detail['check_step_sort']+1;
 						$param['check_status'] = 1;
+						$param['check_admin_ids'] = $next_step['flow_uids'];
 					}
 					else{
 						//不存在下一步审核，审核结束
 						$param['check_status'] = 2;
+						$param['check_admin_ids'] ='';
 					}
 				}
 			}
@@ -402,7 +405,6 @@ class Approve extends BaseController
 					);
 					$fid = Db::name('FlowStep')->strict(false)->field(true)->insertGetId($flow_step);
 					//下一步审核步骤
-					$param['check_admin_ids'] = $param['check_admin_ids'];
 					$param['check_step_sort'] = $next_step;
 					$param['check_status'] = 1;
 				}
