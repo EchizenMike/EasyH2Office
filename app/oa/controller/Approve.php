@@ -325,11 +325,11 @@ class Approve extends BaseController
 		if($detail['check_status']<2){
 			if($flows['flow_type']==1){
 				$detail['check_user'] = '部门负责人';				
-				$check_user_ids[]=get_department_leader($detail['create_admin_id']);
+				$check_user_ids = explode(',',$detail['check_admin_ids']);
 			}
 			else if($flows['flow_type']==2){
 				$detail['check_user'] = '上级部门负责人';
-				$check_user_ids[]=get_department_leader($detail['create_admin_id'],1);
+				$check_user_ids = explode(',',$detail['check_admin_ids']);
 			}
 			else{
 				$check_user_ids = explode(',',$flows['flow_uids']);
