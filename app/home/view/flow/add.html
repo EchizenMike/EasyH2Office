@@ -72,7 +72,7 @@
 							<select name="flowType[]" lay-filter="flowtype">
 								<option value="1">当前部门负责人</option>
 								<option value="2">上一级部门负责人</option>
-								<option value="3">指定人员(任意一人)</option>
+								<option value="3">指定人员(多人或签)</option>
 								<option value="4">指定人员(多人会签)</option>
 							</select>
 						  </div>
@@ -88,9 +88,11 @@
 				<span id="addFlow" class="layui-btn layui-btn-xs layui-btn-normal">+ 添加审批层级</span>
 				<div style="padding:10px; margin-top:10px; font-size:12px; background-color:#fffcf0">
 					<p><strong>温馨提示</strong></p>
-					<p>1、当选择“负责人主管”审批时。系统仅会通知负责人主管。</p>
-					<p>2、当选择多个“指定人员”审批时。如果指定用户没有权限查看对应的合同，系统会通知其审批，但是他无法查看此数据信息。</p>
-					<p>3、当选择“指定人员（任意一人）”表示指定用户中任意一人审批即可。当选择“指定人员（多人会签）”表示 指定人员中所有人都要审批。</p>
+					<p>1、当选择<strong> “当前部门负责人” </strong>审批时。系统仅会通知当前部门的负责人。</p>
+					<p>2、当选择<strong> “上一级部门负责人” </strong>审批时。系统仅会通知当前部门的上一级部门的负责人。</p>
+					<p>3、当选择<strong> “指定人员(多人或签)” </strong>时，表示指定用户中任意一人审批即可。</p>
+					<p>4、当选择<strong> “指定人员(多人会签)” </strong>时，表示指定人员中所有人都需要审批。</p>
+					<p>5、如果指定用户没有分配查看审批模块的功能权限，系统会通知其审批，但是他无法查看此审批数据信息。</p>
 				</div>
 			</td>
 		</tr>
@@ -177,9 +179,11 @@
 				<span id="addFlow" class="layui-btn layui-btn-xs layui-btn-normal">+ 添加审批层级</span>
 				<div style="padding:10px; margin-top:10px; font-size:12px; background-color:#fffcf0">
 					<p><strong>温馨提示</strong></p>
-					<p>1、当选择“负责人主管”审批时。系统仅会通知负责人主管。</p>
-					<p>2、当选择多个“指定人员”审批时。如果指定用户没有权限查看对应的合同，系统会通知其审批，但是他无法查看此数据信息。</p>
-					<p>3、当选择“指定人员（任意一人）”表示指定用户中任意一人审批即可。当选择“指定人员（多人会签）”表示 指定人员中所有人都要审批。</p>
+					<p>1、当选择<strong> “当前部门负责人” </strong>审批时。系统仅会通知当前部门的负责人。</p>
+					<p>2、当选择<strong> “上一级部门负责人” </strong>审批时。系统仅会通知当前部门的上一级部门的负责人。</p>
+					<p>3、当选择<strong> “指定人员(多人或签)” </strong>时，表示指定用户中任意一人审批即可。</p>
+					<p>4、当选择<strong> “指定人员(多人会签)” </strong>时，表示指定人员中所有人都需要审批。</p>
+					<p>5、如果指定用户没有分配查看审批模块的功能权限，系统会通知其审批，但是他无法查看此审批数据信息。</p>
 				</div>
 			</td>
 		</tr>
