@@ -18,11 +18,13 @@ layui.define(['layer'], function(exports){
 					if($('#rightPopup'+index).length<1){
 						var btn='<div id="rightPopup'+index+'" class="right-popup-close" title="关闭">关闭</div>';
 						obj.append(btn);
+						$('body').addClass('right-open');
 						$('#rightPopup'+index).click(function(){
 							let op_width = $('.layui-anim-rl').outerWidth();
-							$('.layui-anim-rl').animate({left:'+='+op_width+'px'}, 200, 'linear', function () {
-								$('.layui-anim-rl').remove()
-								$('.layui-layer-shade').remove()
+							$('.layui-anim-rl').animate({left:'+='+op_width+'px'}, 200, 'linear', function () {								
+								$('body').removeClass('right-open');
+								$('.layui-anim-rl').remove();
+								$('.layui-layer-shade').remove();
 							})
 						})
 					}
