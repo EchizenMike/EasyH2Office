@@ -83,6 +83,7 @@ class Index extends BaseController
 				\think\facade\Cache::tag('adminMenu')->set('menu' . $admin['id'], $list);
 			}
             View::assign('menu', $list);
+			View::assign('TP_VERSION',\think\facade\App::version());
             return View();
         }
     }
