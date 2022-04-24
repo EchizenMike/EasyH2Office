@@ -83,7 +83,6 @@ class Index extends BaseController
 				\think\facade\Cache::tag('adminMenu')->set('menu' . $admin['id'], $list);
 			}
             View::assign('menu', $list);
-			View::assign('TP_VERSION',\think\facade\App::version());
             return View();
         }
     }
@@ -99,12 +98,13 @@ class Index extends BaseController
         $approveCount = Db::name('Approve')->count();
         $expenseCount = Db::name('Expense')->count();
         $invoiceCount = Db::name('Invoice')->count();
-        View::assign('install', $install);
         View::assign('adminCount', $adminCount);
         View::assign('articleCount', $articleCount);
         View::assign('approveCount', $approveCount);
         View::assign('expenseCount', $expenseCount);
         View::assign('invoiceCount', $invoiceCount);
+        View::assign('install', $install);
+		View::assign('TP_VERSION',\think\facade\App::version());
         return View();
     }
 
