@@ -178,15 +178,15 @@ INSERT INTO `oa_admin_rule` VALUES (23, 21, 'home/role/delete', '删除', '权�
 
 INSERT INTO `oa_admin_rule` VALUES (24, 1, 'home/log/index', '操作日志', '操作日志', 'HOME', '', 1, 1, 1, 0, 0);
 
-INSERT INTO `oa_admin_rule` VALUES (25, 1, 'home/database/database', '备份数据', '备份数据', 'HOME', '', 1, 1, 1, 0, 0);
-INSERT INTO `oa_admin_rule` VALUES (26, 25, 'home/database/backup', '备份数据表', '备份数据', 'HOME', '', 2, 1, 1, 0, 0);
-INSERT INTO `oa_admin_rule` VALUES (27, 25, 'home/database/optimize', '优化数据表', '优化数据表', 'HOME', '', 2, 1, 1, 0, 0);
-INSERT INTO `oa_admin_rule` VALUES (28, 25, 'home/database/repair', '修复数据表', '修复数据表', 'HOME', '', 2, 1, 1, 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (25, 1, 'home/database/database', '备份数据', '数据备份', 'HOME', '', 1, 1, 1, 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (26, 25, 'home/database/backup', '备份数据表', '数据', 'HOME', '', 2, 1, 1, 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (27, 25, 'home/database/optimize', '优化数据表', '数据表', 'HOME', '', 2, 1, 1, 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (28, 25, 'home/database/repair', '修复数据表', '数据表', 'HOME', '', 2, 1, 1, 0, 0);
 
-INSERT INTO `oa_admin_rule` VALUES (29, 1, 'home/database/backuplist', '还原数据', '还原数据', 'HOME', '', 1, 1, 1, 0, 0);
-INSERT INTO `oa_admin_rule` VALUES (30, 29, 'home/database/import', '还原数据表', '还原数据', 'HOME', '', 2, 1, 1, 0, 0);
-INSERT INTO `oa_admin_rule` VALUES (31, 29, 'home/database/downfile', '下载备份数据', '下载备份数据', 'HOME', '', 2, 1, 1, 0, 0);
-INSERT INTO `oa_admin_rule` VALUES (32, 29, 'home/database/del', '删除备份数据', '删除备份数据', 'HOME', '', 2, 1, 1, 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (29, 1, 'home/database/backuplist', '还原数据', '数据还原', 'HOME', '', 1, 1, 1, 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (30, 29, 'home/database/import', '还原数据表', '数据', 'HOME', '', 2, 1, 1, 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (31, 29, 'home/database/downfile', '下载备份数据', '备份数据', 'HOME', '', 2, 1, 1, 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (32, 29, 'home/database/del', '删除备份数据', '备份数据', 'HOME', '', 2, 1, 1, 0, 0);
 
 INSERT INTO `oa_admin_rule` VALUES (33, 2, 'home/cate/flow_type', '审批类型', '审批类型', 'HOME', '', 1, 1, 1, 0, 0);
 INSERT INTO `oa_admin_rule` VALUES (34, 33, 'home/cate/flow_type_add', '新建/编辑', '审批类型', 'HOME', '', 2, 1, 1, 0, 0);
