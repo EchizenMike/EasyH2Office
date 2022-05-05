@@ -4,7 +4,7 @@
 <div class="body-table">
 	<form class="layui-form layui-form-bar">
 		<div class="layui-input-inline" style="width:300px;">
-			<input type="text" name="keywords" placeholder="昵称/操作节点名称/操作数据ID" class="layui-input" autocomplete="off" />
+			<input type="text" name="keywords" placeholder="昵称/操作数据id/操作描述" class="layui-input" autocomplete="off" />
 		</div>
 		<div class="layui-input-inline">
 			<select name="action">
@@ -49,18 +49,14 @@
 						width: 80
 					}, {
 						field: 'content',
-						title: '操作描述',
-						width: 348
+						title: '操作描述'
 					}, {
 						field: 'param_id',
 						title: '操作数据ID',
 						align: 'center',
 						width: 100
-					}, {
-						field: 'param',
-						title: '操作数据'
-					}, {
-						field: 'name',
+					},{
+						field: 'nickname',
 						title: '操作用户',
 						align: 'center',
 						width: 100
