@@ -56,7 +56,7 @@ class Database extends BaseController
             }
             // 检查备份目录是否可写
             if(!is_writeable($fileinfo['filepath'])){
-				return to_assign(1, '备份目录不存在或不可写，请检查后重试！');
+				return to_assign(1, '备份目录不存在或不可写，请检查后重试');
             }
  
 			//缓存锁文件
@@ -67,9 +67,9 @@ class Database extends BaseController
 			Session::set('backup_tables', $tables);
 			//创建备份文件
 			if(false !== $db->Backup_Init()){
-				return to_assign(0, '初始化成功',['tab'=>['id' => 0, 'start' => 0,'table'=>$tables[0]]]);
+				return to_assign(0, '初始化成功，开始备份...',['tab'=>['id' => 0, 'start' => 0,'table'=>$tables[0]]]);
 			}else{
-				return to_assign(1, '初始化失败，备份文件创建失败！');
+				return to_assign(1, '初始化失败，备份文件创建失败');
 			}
 		}else if(request()->isGet()){
 			$tables = Session::get('backup_tables');
@@ -78,7 +78,7 @@ class Database extends BaseController
 			$start=get_params('start');
 			$start= $db->setFile($file)->backup($tables[$id], $start);
 			if(false === $start){
-				return to_assign(1, '备份出错!');
+				return to_assign(1, '备份出错');
 			}else if(0 === $start){
 				if(isset($tables[++$id])){
 				   return to_assign(0, '备份完成',['tab'=>['id' => $id, 'start' => 0,'table'=>$tables[$id-1]]]);
@@ -155,7 +155,7 @@ class Database extends BaseController
 			$list  = $db->getFile('timeverif',$time);
 			if(is_array($list)){
 				Session::set('backup_list', $list);
-				return to_assign(0, '初始化完成',array('part' => 1, 'start' => 0,'time' => $time));
+				return to_assign(0, '初始化完成，开始还原...',array('part' => 1, 'start' => 0,'time' => $time));
 			}else{
 				return to_assign(1, '备份文件可能已经损坏,请检查');
 			}
