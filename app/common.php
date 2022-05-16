@@ -149,6 +149,8 @@ function get_login_admin($key = '')
 
 /**
  * 节点权限判断
+ * @rule String
+ * @uid Int
  * @return bool
  */
 function check_auth($rule, $uid)
