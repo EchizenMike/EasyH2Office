@@ -491,6 +491,9 @@ class Invoice extends BaseController
 					$param['check_status'] = 2;
 					$param['check_admin_ids'] ='';
 				}
+			}
+			if($param['check_status'] = 1 && $param['check_admin_ids']==''){
+				return to_assign(1,'找不到下一步的审批人，该审批流程设置有问题，请联系HR或者管理员');
 			}			
 			//审核通过数据操作
 			$param['last_admin_id'] = $this->uid;
