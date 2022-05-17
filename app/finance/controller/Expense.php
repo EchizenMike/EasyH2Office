@@ -175,8 +175,38 @@ class Expense extends BaseController
             $param['expense_time'] = isset($param['expense_time']) ? strtotime(urldecode($param['expense_time'])) : 0;
             $param['check_status'] = 1;
 			$param['check_step_sort'] = 0;
+			
+			$amountData = isset($param['amount']) ? $param['amount'] : '0';
+			if ($amountData == 0) {
+				return to_assign(1,'报销金额不完善');
+			}
+			else{
+				foreach ($amountData as $key => $value) {
+					if ($value == 0) {
+						return to_assign(1,'第' . ($key + 1) . '条报销金额不能为零');
+					}
+				}
+			}
+			
 			$flow_list = Db::name('Flow')->where('id',$param['flow_id'])->value('flow_list');
-			$flow = unserialize($flow_list);
+			$flow = unserialize($flow_list);	
+			if (!isset($param['check_admin_ids'])) {
+				if($flow[0]['flow_type'] == 1){
+					//部门负责人
+					$leader = get_department_leader($admin_id);
+					if($leader == 0){
+						return to_assign(1,'审批流程设置有问题：当前部门负责人还未设置，请联系HR或者管理员');
+					}					
+				}
+				else if($flow[0]['flow_type'] == 2){
+					//上级部门负责人
+					$leader = get_department_leader($admin_id,1);
+					if($leader == 0){
+						return to_assign(1,'审批流程设置有问题：上级部门负责人还未设置，请联系HR或者管理员');
+					}
+				}
+			}
+			
             if (!empty($param['id']) && $param['id'] > 0) {
                 try {
                     validate(ExpenseCheck::class)->scene('edit')->check($param);
@@ -193,23 +223,11 @@ class Expense extends BaseController
 					if (!isset($param['check_admin_ids'])) {
 						if($flow[0]['flow_type'] == 1){
 							//部门负责人
-							$leader = get_department_leader($this->uid);
-							if($leader == 0){
-								return to_assign(1,'审批流程设置有问题：当前部门负责人还未设置，请联系HR或者管理员');
-							}
-							else{
-								$param['check_admin_ids'] = $leader;
-							}						
+							$param['check_admin_ids'] = get_department_leader($admin_id);						
 						}
 						else if($flow[0]['flow_type'] == 2){
 							//上级部门负责人
-							$leader = get_department_leader($this->uid,1);
-							if($leader == 0){
-								return to_assign(1,'审批流程设置有问题：上级部门负责人还未设置，请联系HR或者管理员');
-							}
-							else{
-								$param['check_admin_ids'] = $leader;
-							}
+							$param['check_admin_ids'] = get_department_leader($admin_id,1);
 						}
 						else{
 							$param['check_admin_ids'] = $flow[0]['flow_uids'];
@@ -254,10 +272,6 @@ class Expense extends BaseController
                                 $data['amount'] = $amountData[$key];
                                 $data['cate_id'] = $cateData[$key];
                                 $data['remarks'] = $remarksData[$key];
-                                if ($data['amount'] == 0) {
-                                    Db::rollback();
-                                    return to_assign(1, '第' . ($key + 1) . '条报销金额不能为零');
-                                }
                                 if ($data['id'] > 0) {
                                     $data['update_time'] = time();
                                     $resa = Db::name('ExpenseInterfix')->strict(false)->field(true)->update($data);
@@ -266,8 +280,7 @@ class Expense extends BaseController
                                     $eid = Db::name('ExpenseInterfix')->strict(false)->field(true)->insertGetId($data);
                                 }
                             }
-                        }		
-						
+                        }						
                         add_log('edit', $exid, $param);
                         Db::commit();
                         $dbRes = true;
@@ -293,23 +306,11 @@ class Expense extends BaseController
 					if (!isset($param['check_admin_ids'])) {
 						if($flow[0]['flow_type'] == 1){
 							//部门负责人
-							$leader = get_department_leader($this->uid);
-							if($leader == 0){
-								return to_assign(1,'审批流程设置有问题：当前部门负责人还未设置，请联系HR或者管理员');
-							}
-							else{
-								$param['check_admin_ids'] = $leader;
-							}						
+							$param['check_admin_ids'] = get_department_leader($admin_id);							
 						}
 						else if($flow[0]['flow_type'] == 2){
 							//上级部门负责人
-							$leader = get_department_leader($this->uid,1);
-							if($leader == 0){
-								return to_assign(1,'审批流程设置有问题：上级部门负责人还未设置，请联系HR或者管理员');
-							}
-							else{
-								$param['check_admin_ids'] = $leader;
-							}
+							$param['check_admin_ids'] = get_department_leader($admin_id,1);	
 						}
 						else{
 							$param['check_admin_ids'] = $flow[0]['flow_uids'];
@@ -353,10 +354,6 @@ class Expense extends BaseController
                                 $data['cate_id'] = $cateData[$key];
                                 $data['remarks'] = $remarksData[$key];
                                 $data['create_time'] = time();
-                                if ($data['amount'] == 0) {
-                                    Db::rollback();
-                                    return to_assign(1, '第' . ($key + 1) . '条报销金额不能为零');
-                                }
                                 $eid = Db::name('ExpenseInterfix')->strict(false)->field(true)->insertGetId($data);
                             }
                         }						
@@ -538,6 +535,9 @@ class Expense extends BaseController
 					$param['check_status'] = 2;
 					$param['check_admin_ids'] ='';
 				}
+			}
+			if($param['check_status'] = 1 && $param['check_admin_ids']==''){
+				return to_assign(1,'找不到下一步的审批人，该审批流程设置有问题，请联系HR或者管理员');
 			}			
 			//审核通过数据操作
 			$param['last_admin_id'] = $this->uid;
