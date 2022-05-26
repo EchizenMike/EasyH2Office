@@ -194,7 +194,7 @@ class Index extends BaseController
     public function get_note_list()
     {
         $list = Db::name('Note')
-            ->field('a.*,c.title as cate_title')
+            ->field('a.id,a.title,a.create_time,c.title as cate_title')
             ->alias('a')
             ->join('note_cate c', 'a.cate_id = c.id')
             ->where(['a.status' => 1])
@@ -212,7 +212,7 @@ class Index extends BaseController
     public function get_article_list()
     {
         $list = Db::name('Article')
-            ->field('a.*,c.title as cate_title')
+            ->field('a.id,a.title,a.create_time,a.read,c.title as cate_title')
             ->alias('a')
             ->join('article_cate c', 'a.article_cate_id = c.id')
             ->where(['a.status' => 1])
