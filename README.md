@@ -1,4 +1,4 @@
-## 📐 勾股OA2.0
+## 📐 勾股OA3.0
 
 ![勾股OA](https://oa.gougucms.com/storage/image/slogo.jpg)
 
@@ -8,11 +8,11 @@
 - 项目会不定时进行更新，建议⭐star⭐和👁️watch👁️一份。
 
 ### ⭕ 开源项目
-1. [![勾股OA](https://img.shields.io/badge/GouguOA-2.5.8-brightgreen.svg)](https://gitee.com/gougucms/office) [开源项目系列：勾股OA —— OA协同办公系统框架](https://gitee.com/gougucms/office)
-2. [![勾股CMS](https://img.shields.io/badge/GouguCMS-3.0.64-brightgreen.svg)](https://gitee.com/gougucms/gougucms) [开源项目系列：勾股CMS —— CMS内容管理系统框架](https://gitee.com/gougucms/gougucms)
-3. [![勾股BLOG](https://img.shields.io/badge/GouguBLOG-2.5.9-brightgreen.svg)](https://gitee.com/gougucms/blog) [开源项目系列：勾股BLOG —— 个人&工作室博客系统](https://gitee.com/gougucms/blog)
-4. [![勾股DEV](https://img.shields.io/badge/GouguDEV-2.6.01-brightgreen.svg)](https://gitee.com/gougucms/dev) [开源项目系列：勾股DEV —— 项目研发管理系统](https://gitee.com/gougucms/dev)
-5. [![勾股Admin](https://img.shields.io/badge/GouguADMIN-1.6.01-brightgreen.svg)](https://gitee.com/gouguopen/guoguadmin.git) [开源项目系列：勾股Admin —— 基于Layui的Web UI解决方案。](https://gitee.com/gouguopen/guoguadmin.gitv)
+1. [开源项目系列：勾股OA —— OA协同办公系统框架](https://gitee.com/gougucms/office)
+2. [开源项目系列：勾股CMS —— CMS内容管理系统框架](https://gitee.com/gougucms/gougucms)
+3. [开源项目系列：勾股BLOG —— 个人&工作室博客系统](https://gitee.com/gougucms/blog)
+4. [开源项目系列：勾股DEV —— 项目研发管理系统](https://gitee.com/gougucms/dev)
+5. [开源项目系列：勾股Admin —— 基于Layui的Web UI解决方案。](https://gitee.com/gouguopen/guoguadmin.gitv)
 
 
 ### 📋 系统介绍
