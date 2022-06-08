@@ -358,9 +358,9 @@ const moduleInit = ['tool','employeepicker'];
 				success: function (e) {
 					layer.msg(e.msg);
 					if (e.code == 0) {	
-						parent.layui.pageTable.reload();
-						setTimeout(function(){							
+						setTimeout(function(){															
 							parent.layui.tool.close();
+							parent.layui.pageTable.reload();		
 						},1000);
 					}
 				}

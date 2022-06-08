@@ -291,12 +291,20 @@ class Approve extends BaseController
 			//获取审批流程
 			$flows = get_flows($type,$department);
 			$moban=Db::name('FlowType')->where('id',$type)->value('name');
+			$module = strtolower(app('http')->getName());
+            $class = strtolower(app('request')->controller());
+            $action = strtolower(app('request')->action());
+            $template = $module . '/view/'. $class .'/add_'.$moban.'.html';
 			View::assign([
 				'flows' => $flows,
 				'id' => $id,
 				'type' => $type,
 			]);
-            return view('add_'.$moban);
+			if(isTemplate($template)){
+                return view('add_'.$moban);
+            }else{                
+                return view('Base@common/errortemplate',['file' =>$template]);
+            }            
         }
     }
 
@@ -355,11 +363,19 @@ class Approve extends BaseController
 			}
 		}
 		$moban=Db::name('FlowType')->where('id',$detail['type'])->value('name');
+		$module = strtolower(app('http')->getName());
+		$class = strtolower(app('request')->controller());
+		$action = strtolower(app('request')->action());
+		$template = $module . '/view/'. $class .'/view_'.$moban.'.html';
 		View::assign('is_create_admin', $is_create_admin);
 		View::assign('is_check_admin', $is_check_admin);
 		View::assign('detail', $detail);
 		View::assign('flows', $flows);
-        return view('view_'.$moban);
+		if(isTemplate($template)){
+			return view('view_'.$moban);
+		}else{                
+			return view('Base@common/errortemplate',['file' =>$template]);
+		}        
     }
 
     //审核

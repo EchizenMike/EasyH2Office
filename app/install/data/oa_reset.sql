@@ -196,8 +196,8 @@ INSERT INTO `oa_admin_rule` VALUES (94, 93, 'article/index/add', '新建/编辑'
 INSERT INTO `oa_admin_rule` VALUES (95, 93, 'article/index/delete', '删除', '知识文章', 'KQ', '', 2, 1, 1, 0, 0);
 INSERT INTO `oa_admin_rule` VALUES (96, 93, 'article/index/view', '查看', '知识文章', 'KQ', '', 2, 1, 1, 0, 0);
 
-INSERT INTO `oa_admin_rule` VALUES (97, 7, 'oa/approve/index', '我发起的审批', '办公审批', 'OA', '', 1, 1, 1, 0, 0);
-INSERT INTO `oa_admin_rule` VALUES (98, 7, 'oa/approve/list', '待我处理的审批', '办公审批', 'OA', '', 1, 1, 1, 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (97, 7, 'oa/approve/index', '我发起的', '办公审批', 'OA', '', 1, 1, 1, 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (98, 7, 'oa/approve/list', '我处理的', '办公审批', 'OA', '', 1, 1, 1, 0, 0);
 INSERT INTO `oa_admin_rule` VALUES (99, 97, 'oa/approve/add', '新建/编辑', '办公审批', 'OA', '', 2, 1, 1, 0, 0);
 INSERT INTO `oa_admin_rule` VALUES (100, 97, 'oa/approve/view', '查看', '办公审批', 'OA', '', 2, 1, 1, 0, 0);
 INSERT INTO `oa_admin_rule` VALUES (101, 97, 'oa/approve/check', '审核', '办公审批', 'OA', '', 2, 1, 1, 0, 0);
@@ -222,8 +222,8 @@ INSERT INTO `oa_admin_rule` VALUES (116, 113, 'oa/work/read', '查看', '工作�
 INSERT INTO `oa_admin_rule` VALUES (117, 113, 'oa/work/delete', '删除', '工作汇报', 'OA', '', 2, 1, 1, 0, 0);
 
 INSERT INTO `oa_admin_rule` VALUES (118, 9, '', '报销管理', '报销', 'CF', '', 1, 1, 1, 0, 0);
-INSERT INTO `oa_admin_rule` VALUES (119, 118, 'finance/expense/index', '我申请的报销', '报销', 'CF', '', 1, 1, 1, 0, 0);
-INSERT INTO `oa_admin_rule` VALUES (120, 118, 'finance/expense/list', '我负责的报销', '报销', 'CF', '', 1, 1, 1, 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (119, 118, 'finance/expense/index', '我申请的', '报销', 'CF', '', 1, 1, 1, 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (120, 118, 'finance/expense/list', '我处理的', '报销', 'CF', '', 1, 1, 1, 0, 0);
 INSERT INTO `oa_admin_rule` VALUES (121, 118, 'finance/expense/checkedlist', '报销打款', '报销', 'CF', '', 1, 1, 1, 0, 0);
 
 INSERT INTO `oa_admin_rule` VALUES (122, 118, 'finance/expense/add', '新建/编辑', '报销', 'CF', '', 2, 1, 1, 0, 0);
@@ -233,8 +233,8 @@ INSERT INTO `oa_admin_rule` VALUES (125, 118, 'finance/expense/check', '审核',
 INSERT INTO `oa_admin_rule` VALUES (126, 118, 'finance/expense/topay', '打款', '报销', 'CF', '', 2, 1, 1, 0, 0);
 
 INSERT INTO `oa_admin_rule` VALUES (127, 9, '', '发票管理', '发票', 'CF', '', 1, 1, 1, 0, 0);
-INSERT INTO `oa_admin_rule` VALUES (128, 127, 'finance/invoice/index', '我申请的发票', '发票', 'CF', '', 1, 1, 1, 0, 0);
-INSERT INTO `oa_admin_rule` VALUES (129, 127, 'finance/invoice/list', '我负责的发票', '发票', 'CF', '', 1, 1, 1, 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (128, 127, 'finance/invoice/index', '我申请的', '发票', 'CF', '', 1, 1, 1, 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (129, 127, 'finance/invoice/list', '我处理的', '发票', 'CF', '', 1, 1, 1, 0, 0);
 INSERT INTO `oa_admin_rule` VALUES (130, 127, 'finance/invoice/checkedlist', '发票开具', '发票', 'CF', '', 1, 1, 1, 0, 0);
 
 INSERT INTO `oa_admin_rule` VALUES (131, 127, 'finance/invoice/add', '新建/编辑', '发票', 'CF', '', 2, 1, 1, 0, 0);
@@ -249,7 +249,6 @@ INSERT INTO `oa_admin_rule` VALUES (138, 137, 'finance/income/add', '新建/编�
 INSERT INTO `oa_admin_rule` VALUES (139, 137, 'finance/income/view', '查看', '到账记录', 'CF', '', 2, 1, 1, 0, 0);
 INSERT INTO `oa_admin_rule` VALUES (140, 137, 'finance/income/delete', '删除', '到账记录', 'CF', '', 2, 1, 1, 0, 0);
 INSERT INTO `oa_admin_rule` VALUES (141, 10, 'business/analysis/index', '智能分析', '智能分析', 'BI', '', 1, 1, 1, 0, 0);
-
 
 -- ----------------------------
 -- Table structure for oa_article_cate
@@ -396,7 +395,7 @@ CREATE TABLE `oa_personal_quit`  (
 DROP TABLE IF EXISTS `oa_flow_type`;
 CREATE TABLE `oa_flow_type`  (
   `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `type` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '1假勤,2行政,3财务,4人事,5其他',
+  `type` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '1假勤,2行政,3财务,4人事,5其他,6报销,发票,合同',
   `title` varchar(100) NOT NULL DEFAULT '' COMMENT '审批名称',
   `name` varchar(100) NOT NULL DEFAULT '' COMMENT '审批标识',
   `icon` varchar(255) NOT NULL DEFAULT '' COMMENT '图标',
@@ -416,20 +415,23 @@ INSERT INTO `oa_flow_type` VALUES (4, 1, '加班', 'jiaban', 'icon-xueshengcheng
 INSERT INTO `oa_flow_type` VALUES (5, 2, '会议室预定', 'huiyishi', 'icon-kehuguanli', 1, 1641802939, 0);
 INSERT INTO `oa_flow_type` VALUES (6, 2, '公文流转', 'gongwen', 'icon-jiaoxuejihua', 1, 1641802976, 0);
 INSERT INTO `oa_flow_type` VALUES (7, 2, '物品维修', 'weixiu', 'icon-chuangjianxitong', 1, 1641803005, 0);
-INSERT INTO `oa_flow_type` VALUES (8, 2, '用章', 'yongzhang', 'icon-shenpishezhi', 1, 1641804126, 0);
-INSERT INTO `oa_flow_type` VALUES (9, 2, '用车', 'yongche', 'icon-dongtaiguanli', 1, 1641804283, 0);
+INSERT INTO `oa_flow_type` VALUES (8, 2, '用章申请', 'yongzhang', 'icon-shenpishezhi', 1, 1641804126, 0);
+INSERT INTO `oa_flow_type` VALUES (9, 2, '用车申请', 'yongche', 'icon-dongtaiguanli', 1, 1641804283, 0);
 INSERT INTO `oa_flow_type` VALUES (10, 2, '用车归还', 'yongcheguihai', 'icon-kaoheguanli', 1, 1641804411, 0);
 INSERT INTO `oa_flow_type` VALUES (11, 3, '借款申请', 'jiekuan', 'icon-zhangbuguanli', 1, 1641804537, 0);
 INSERT INTO `oa_flow_type` VALUES (12, 3, '付款申请', 'fukuan', 'icon-gongziguanli', 1, 1641804601, 0);
-INSERT INTO `oa_flow_type` VALUES (13, 3, '奖励申请', 'jiangli', 'icon-hetongguanli', 1, 1641804711, 0);
-INSERT INTO `oa_flow_type` VALUES (14, 3, '采购', 'caigou', 'icon-xiaoshoupin', 1, 1641804917, 0);
-INSERT INTO `oa_flow_type` VALUES (15, 3, '活动经费', 'huodong', 'icon-wangxiaoshezhi1', 1, 1641805110, 0);
-INSERT INTO `oa_flow_type` VALUES (16, 4, '入职', 'ruzhi', 'icon-xueshengdaoru', 1, 1641893853, 0);
-INSERT INTO `oa_flow_type` VALUES (17, 4, '转正', 'zhuanzheng', 'icon-xueshengyidong', 1, 1641893926, 0);
-INSERT INTO `oa_flow_type` VALUES (18, 4, '离职', 'lizhi', 'icon-banjiguanli', 1, 1641894048, 0);
-INSERT INTO `oa_flow_type` VALUES (19, 4, '招聘需求', 'zhaopin', 'icon-zhaopinguanli', 1, 1641894080, 0);
-INSERT INTO `oa_flow_type` VALUES (20, 6, '报销', 'baoxiao', 'icon-jizhang', 1, 1641804488, 0);
-INSERT INTO `oa_flow_type` VALUES (21, 7, '发票', 'fapiao', 'icon-fuwuliebiao', 1, 1642904833, 0);
+INSERT INTO `oa_flow_type` VALUES (13, 3, '奖励申请', 'jiangli', 'icon-bulujiesuan', 1, 1641804711, 0);
+INSERT INTO `oa_flow_type` VALUES (14, 3, '采购申请', 'caigou', 'icon-shoufeiguanli', 1, 1641804917, 0);
+INSERT INTO `oa_flow_type` VALUES (15, 3, '活动经费', 'huodong', 'icon-shoufeipeizhi', 1, 1641805110, 0);
+INSERT INTO `oa_flow_type` VALUES (16, 4, '入职申请', 'ruzhi', 'icon-xueshengdaoru', 1, 1641893853, 0);
+INSERT INTO `oa_flow_type` VALUES (17, 4, '转正申请', 'zhuanzheng', 'icon-wodeshenpi', 1, 1641893926, 0);
+INSERT INTO `oa_flow_type` VALUES (18, 4, '离职申请', 'lizhi', 'icon-xuexitongji', 1, 1641894048, 0);
+INSERT INTO `oa_flow_type` VALUES (19, 4, '转岗申请', 'zhuangang', 'icon-xueshengyidong', 1, 1654681664, 0);
+INSERT INTO `oa_flow_type` VALUES (20, 4, '招聘需求', 'zhaopin', 'icon-xiaoxizhongxin', 1, 1641894080, 0);
+INSERT INTO `oa_flow_type` VALUES (21, 5, '通用审批', 'tongyong', 'icon-zhaoshengzhunbei', 1, 1654685923, 0);
+INSERT INTO `oa_flow_type` VALUES (22, 6, '报销审批', 'baoxiao', 'icon-jizhang', 1, 1641804488, 0);
+INSERT INTO `oa_flow_type` VALUES (23, 7, '发票审批', 'fapiao', 'icon-fuwuliebiao', 1, 1642904833, 0);
+INSERT INTO `oa_flow_type` VALUES (24, 8, '合同审批', 'hetong', 'icon-hetongshezhi', 1, 1654692083, 0);
 
 -- ----------------------------
 -- Table structure for oa_flow
@@ -439,7 +441,7 @@ CREATE TABLE `oa_flow`  (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL COMMENT '审批流名称',
   `check_type` tinyint(4) NOT NULL COMMENT '1固定审批,2授权审批人',
-  `type` tinyint(4) NOT NULL COMMENT '应用模块,1假勤,2行政,3财务,4人事,5其他,6报销,7发票',
+  `type` tinyint(4) NOT NULL COMMENT '应用模块,1假勤,2行政,3财务,4人事,5其他,6报销,7发票,8合同',
   `flow_cate` tinyint(11) NOT NULL DEFAULT 0 COMMENT '应用审批类型id',
   `department_ids` varchar(500) NOT NULL DEFAULT '' COMMENT '应用部门ID（0为全部）1,2,3',
   `user_ids` varchar(500) NOT NULL DEFAULT '' COMMENT '员工ID',
@@ -475,9 +477,12 @@ INSERT INTO `oa_flow` VALUES (15, '活动经费审批', 2, 3, 15, '', '', '活�
 INSERT INTO `oa_flow` VALUES (16, '入职申请审批', 2, 4, 16, '', '', '入职申请审批流程', 'a:1:{i:0;a:2:{s:9:\"flow_type\";s:1:\"1\";s:9:\"flow_uids\";s:0:\"\";}}', 1, 1644402791, 0, 1, 0, 0);
 INSERT INTO `oa_flow` VALUES (17, '转正申请审批', 2, 4, 17, '', '', '转正申请审批流程', 'a:1:{i:0;a:2:{s:9:\"flow_type\";s:1:\"1\";s:9:\"flow_uids\";s:0:\"\";}}', 1, 1644402812, 0, 1, 0, 0);
 INSERT INTO `oa_flow` VALUES (18, '离职申请审批', 2, 4, 18, '', '', '离职申请审批流程', 'a:1:{i:0;a:2:{s:9:\"flow_type\";s:1:\"1\";s:9:\"flow_uids\";s:0:\"\";}}', 1, 1644402834, 0, 1, 0, 0);
-INSERT INTO `oa_flow` VALUES (19, '招聘需求审批', 2, 4, 19, '', '', '招聘需求审批流程', 'a:1:{i:0;a:2:{s:9:\"flow_type\";s:1:\"1\";s:9:\"flow_uids\";s:0:\"\";}}', 1, 1644402855, 0, 1, 0, 0);
-INSERT INTO `oa_flow` VALUES (20, '报销审批', 2, 6, 20, '', '', '报销审批流程', 'a:1:{i:0;a:2:{s:9:\"flow_type\";s:1:\"1\";s:9:\"flow_uids\";s:0:\"\";}}', 1, 1644490024, 0, 1, 0, 0);
-INSERT INTO `oa_flow` VALUES (21, '发票审批', 2, 7, 21, '', '', '报销审批流程', 'a:1:{i:0;a:2:{s:9:\"flow_type\";s:1:\"1\";s:9:\"flow_uids\";s:0:\"\";}}', 1, 1644490053, 0, 1, 0, 0);
+INSERT INTO `oa_flow` VALUES (19, '转岗申请审批', 2, 4, 19, '', '', '转岗申请审核流程', 'a:1:{i:0;a:2:{s:9:\"flow_type\";s:1:\"1\";s:9:\"flow_uids\";s:0:\"\";}}', 1, 1654681954, 0, 1, 0, 0);
+INSERT INTO `oa_flow` VALUES (20, '招聘需求审批', 2, 4, 21, '', '', '招聘需求审批流程', 'a:1:{i:0;a:2:{s:9:\"flow_type\";s:1:\"1\";s:9:\"flow_uids\";s:0:\"\";}}', 1, 1644402855, 0, 1, 0, 0);
+INSERT INTO `oa_flow` VALUES (21, '通用审批', 2, 5, 21, '', '', '通用审批流程', 'a:1:{i:0;a:2:{s:9:\"flow_type\";s:1:\"1\";s:9:\"flow_uids\";s:0:\"\";}}', 1, 1654686338, 0, 1, 0, 0);
+INSERT INTO `oa_flow` VALUES (22, '报销审批', 2, 6, 22, '', '', '报销审批流程', 'a:1:{i:0;a:2:{s:9:\"flow_type\";s:1:\"1\";s:9:\"flow_uids\";s:0:\"\";}}', 1, 1644490024, 0, 1, 0, 0);
+INSERT INTO `oa_flow` VALUES (23, '发票审批', 2, 7, 23, '', '', '发票审批流程', 'a:1:{i:0;a:2:{s:9:\"flow_type\";s:1:\"1\";s:9:\"flow_uids\";s:0:\"\";}}', 1, 1644490053, 0, 1, 0, 0);
+INSERT INTO `oa_flow` VALUES (24, '合同审批', 2, 8, 24, '', '', '合同审批流程', 'a:1:{i:0;a:2:{s:9:\"flow_type\";s:1:\"1\";s:9:\"flow_uids\";s:0:\"\";}}', 1, 1654692519, 0, 1, 0, 0);
 
 -- ----------------------------
 -- Table structure for oa_cost_cate

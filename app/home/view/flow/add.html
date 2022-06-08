@@ -31,6 +31,7 @@
 				  <option value="5">其他</option>
 				  <option value="6">报销</option>
 				  <option value="7">发票</option>
+				  <option value="8">合同</option>
 				</select>
 			</td>
 			<td class="layui-td-gray">审批类型<font>*</font></td>
@@ -114,6 +115,7 @@
 				  <option value="5" {eq name="$detail.type" value="5"}selected=""{/eq}>其他</option>
 				  <option value="6" {eq name="$detail.type" value="6"}selected=""{/eq}>报销</option>
 				  <option value="7" {eq name="$detail.type" value="7"}selected=""{/eq}>发票</option>
+				  <option value="8" {eq name="$detail.type" value="8"}selected=""{/eq}>合同</option>
 				</select>
 			</td>
 			<td class="layui-td-gray">审批类型<font>*</font></td>
@@ -206,7 +208,6 @@
 		  
 		form.on('select(type)', function(data){
 			let callback = function (e) {
-				layer.msg(e.msg);
 				if (e.code == 0) {
 					if(e.data.length>0){
 						let ops='<option value="">--请选择--</option>';
@@ -231,9 +232,9 @@
 			let callback = function (e) {
 				layer.msg(e.msg);
 				if (e.code == 0) {
-					parent.layui.pageTable.reload();
 					setTimeout(function () {
 						parent.layui.tool.close();
+						parent.layui.pageTable.reload();
 					}, 1000);					
 				}
 			}
@@ -275,7 +276,6 @@
 		
 		form.on('select(flowtype)', function(data){
 		  $(data.elem).parents('.layui-form-item').find('.layui-inline').eq(1).attr('class','layui-inline select-'+data.value);
-		 // console.log(data.value); //得到被选中的值
 		});
     
 		

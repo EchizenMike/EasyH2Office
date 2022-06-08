@@ -5,7 +5,7 @@
 <!-- 主体 -->
 {block name="body"}
 <form class="layui-form p-4">
-	<h3 class="pb-3">物品维修审批</h3>
+	<h3 class="pb-3">通用审批</h3>
 	<table class="layui-table layui-table-form">
 		<tr>
 			<td class="layui-td-gray">紧急程度</td>
@@ -14,17 +14,11 @@
 				  {eq name="$detail.detail_type" value="2"}紧急{/eq}
 				  {eq name="$detail.detail_type" value="3"}特急{/eq}
 			</td>
-			<td class="layui-td-gray-2">故障设备名称</td>
+			<td class="layui-td-gray-2">审批内容</td>
 			<td>{$detail.name}</td>
 		</tr>
 		<tr>
-			<td class="layui-td-gray">报修日期</td>
-			<td>{$detail.detail_time}</td>
-			<td class="layui-td-gray-2">预计维修费用</td>
-			<td>{$detail.amount}</td>
-		</tr>
-		<tr>
-			<td class="layui-td-gray">故障描述</td>
+			<td class="layui-td-gray-2">审批详细描述</td>
 			<td colspan="3">{$detail.content}</td>
 		</tr>
 	</table>

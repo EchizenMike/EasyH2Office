@@ -103,13 +103,21 @@ class Conf extends BaseController
         } else {
             $id = isset($param['id']) ? $param['id'] : 0;
             $conf = Db::name('Config')->where('id', $id)->find();
+            $module = strtolower(app('http')->getName());
+            $class = strtolower(app('request')->controller());
+            $action = strtolower(app('request')->action());
+            $template = $module . '/view/'. $class .'/'.$conf['name'].'.html';
             $config = [];
             if ($conf['content']) {
                 $config = unserialize($conf['content']);
             }
             View::assign('id', $id);
             View::assign('config', $config);
-            return view($conf['name']);
+            if(isTemplate($template)){
+                return view($conf['name']);
+            }else{                
+                return view('Base@common/errortemplate',['file' =>$template]);
+            }
         }
     }
 }

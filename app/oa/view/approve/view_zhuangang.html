@@ -14,13 +14,13 @@
 			<td>{$detail.detail_time}</td>
 		</tr>
 		<tr>
-			<td class="layui-td-gray">所在部门</td>
+			<td class="layui-td-gray">当前所在部门</td>
 			<td>
 				{volist name=":get_department()" id="vo"}
 					{eq name="$detail.department_type" value="$vo.id"}{$vo.title}{/eq}
 				{/volist}
 			</td>
-			<td class="layui-td-gray">担任职务</td>
+			<td class="layui-td-gray">当前担任职务</td>
 			<td>
 				{volist name=":get_position()" id="vo"}
 					{eq name="$detail.position_type" value="$vo.id"}{$vo.title}{/eq}
@@ -28,13 +28,27 @@
 			</td>
 		</tr>
 		<tr>
-			<td class="layui-td-gray">申请离职日期</td>
+			<td class="layui-td-gray">转岗后部门</td>
+			<td>
+				{volist name=":get_department()" id="vo"}
+					{eq name="$detail.num" value="$vo.id"}{$vo.title}{/eq}
+				{/volist}
+			</td>
+			<td class="layui-td-gray">转岗后职务</td>
+			<td>
+				{volist name=":get_position()" id="vo"}
+					{eq name="$detail.num1" value="$vo.id"}{$vo.title}{/eq}
+				{/volist}
+			</td>
+		</tr>
+		<tr>
+			<td class="layui-td-gray-2">申请转岗日期</td>
 			<td>{$detail.start_time}</td>
-			<td class="layui-td-gray">预计离职日期</td>
+			<td class="layui-td-gray-2">预计转岗日期</td>
 			<td>{$detail.end_time}</td>
 		</tr>
 		<tr>
-			<td class="layui-td-gray">申请离职原因</td>
+			<td class="layui-td-gray-2">申请转岗原因</td>
 			<td colspan="3">{$detail.content}</td>
 		</tr>
 	</table>

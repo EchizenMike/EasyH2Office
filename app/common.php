@@ -67,6 +67,15 @@ function is_installed()
     return $isInstalled;
 }
 
+//判断cms是否存在模板
+function isTemplate($url='')
+{
+    static $isTemplate;
+    if (empty($isTemplate)) {
+        $isTemplate = file_exists(CMS_ROOT . 'app/'.$url);
+    }
+    return $isTemplate;
+}
 
 //获取服务器信息
 function get_system_info($key)

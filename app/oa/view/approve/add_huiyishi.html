@@ -260,9 +260,9 @@ const moduleInit = ['tool','employeepicker'];
 				success: function (e) {
 					layer.msg(e.msg);
 					if (e.code == 0) {	
-						parent.tableIns.reload();
-						setTimeout(function(){							
-							parent.layui.rightpage.close();
+						setTimeout(function(){															
+							parent.layui.tool.close();
+							parent.layui.pageTable.reload();		
 						},1000);
 					}
 				}

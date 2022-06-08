@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>找不到模板</title>
+    <style>
+        .box-404{padding: 36px 0; text-align: center;}
+        .error-404{max-width:666px; margin: 0 auto; line-height: 2;}
+        .title-404{font-size: 24px; color: #EA4335;}
+        .text-404{font-size: 16px; color:#EA4335;}
+        .btn-404{padding-top: 16px;color:#EA4335;}
+    </style>
+</head>
+<body>
+<div class="box-404">
+    <div><img src="{__IMG__}/404.gif" width="500" height="300" alt="404"></div>
+</div>
+<div class="error-404">
+    <div class="title-404">出错啦！</div>
+    <div class="text-404">对不起，找不到模板文件...</div>
+    <div class="btn-404">{$file | default=""}模板不存在，请检查对应的目录文件，注意区分大小写！</div>
+</div>
+</body>
+</html>
