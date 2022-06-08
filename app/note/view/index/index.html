@@ -1,7 +1,7 @@
 {extend name="../../base/view/common/base" /}
 <!-- 主体 -->
 {block name="body"}
-<div class="body-table">
+<div class="p-3">
 	<table class="layui-hide" id="test" lay-filter="test"></table>
 </div>
 
@@ -22,13 +22,10 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
-	var tableIns = null;
-	function init(layui) {
-		var table = layui.table,
-			rightpage = layui.rightpage,
-			form = layui.form;
-
-		tableIns = table.render({
+	const moduleInit = ['tool'];
+	function gouguInit() {
+		var table = layui.table, tool = layui.tool ,form = layui.form;	
+		layui.pageTable = table.render({
 			elem: '#test',
 			title: '公告列表',
 			toolbar: '#toolbarDemo',
@@ -82,7 +79,7 @@
 		//表头工具栏事件
 		table.on('toolbar(test)', function(obj){
 			if (obj.event === 'add') {
-				rightpage.open("/note/index/add");
+				tool.side("/note/index/add");
 				return;
 			}
 		})
@@ -91,11 +88,11 @@
 		table.on('tool(test)', function(obj) {
 			var data = obj.data;
 			if (obj.event === 'view') {
-				rightpage.open("/note/index/view?id="+data.id,'900px');
+				tool.side("/note/index/view?id="+data.id);
 				return;
 			}
 			if (obj.event === 'edit') {
-				rightpage.open("/note/index/add?id="+data.id);
+				tool.side("/note/index/add?id="+data.id);
 				return;
 			}
 			if (obj.event === 'del') {
@@ -103,24 +100,18 @@
 					icon: 3,
 					title: '提示'
 				}, function(index) {
-					$.ajax({
-						url: "/note/index/delete",
-						data: {
-							id: data.id
-						},
-						success: function(res) {
-							layer.msg(res.msg);
-							if (res.code == 1) {
-								obj.del();
-							}
+					let callback = function (e) {
+						layer.msg(res.msg);
+						if (res.code == 1) {
+							obj.del();
 						}
-					})
+					}
+					tool.delete("/note/index/delete", {id: data.id}, callback);
 					layer.close(index);
 				});
 			}
 		});
 	}
 </script>
-{include file="../../base/view/common/layui" base='base' extend="['rightpage']" use="['table','form']" callback="init" /}
 {/block}
 <!-- /脚本 -->

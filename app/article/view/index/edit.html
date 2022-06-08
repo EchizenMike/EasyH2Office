@@ -1,8 +1,8 @@
 {extend name="../../base/view/common/base" /}
 <!-- 主体 -->
 {block name="body"}
-<form class="layui-form page-content">
-	<h3 class="h3-title">编辑知识文章</h3>
+<form class="layui-form p-4">
+	<h3 class="pb-3">编辑知识文章</h3>
     <table class="layui-table">
       <tr>
         <td class="layui-td-gray">文章标题 <span style="color: red">*</span></td>
@@ -75,7 +75,7 @@
         </td>
       </tr>
     </table>
-    <div style="padding: 10px 0">
+    <div class="py-3">
 		<input type="hidden" name="id" value="{$article.id}">
 		<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform">立即提交</button>
 		<button type="reset" class="layui-btn layui-btn-primary">重置</button>
@@ -87,11 +87,16 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
-	function init(layui) {
-		var form = layui.form
-		  , layer = layui.layer
-		  , tagspicker = layui.tagpicker
-		  , upload = layui.upload;
+const moduleInit = ['tool','tagpicker','tinymce'];
+	function gouguInit() {
+		var form = layui.form,tool=layui.tool, tagspicker = layui.tagpicker, upload = layui.upload;
+    //编辑器初始化
+		var editor = layui.tinymce;
+		var edit = editor.render({
+			selector: "#container",
+			images_upload_url: '/api/index/upload/sourse/tinymce',//图片上传接口
+			height: 500
+		});
 
 	var tags = new tagspicker({
 		'url': "/api/index/get_keyword_cate",
@@ -119,27 +124,26 @@
 
     //监听提交
     form.on('submit(webform)', function (data) {
-		$.ajax({
-			url: "/article/index/add",
-			type: 'post',
-			data: data.field,
-			success: function (e) {
-				layer.msg(e.msg);
-				if (e.code == 0) {
-					parent.tableIns.reload();
-					setTimeout(function(){
-						parent.layui.rightpage.close();
-					},1000);
-				}
+      data.field.content = tinyMCE.editors['container'].getContent();
+			if (data.field.content == '') {
+				layer.msg('请先完善公告内容');
+				return false;
 			}
-		})
+      let callback = function (e) {
+			layer.msg(e.msg);
+			if (e.code == 0) {
+				parent.layui.pageTable.reload();
+				setTimeout(function(){
+					parent.layui.tool.close();
+				},1000);
+			}
+		}
+		tool.post("/article/index/add", data.field, callback);
 		return false;
     });
 
   }
 
 </script>
-{include file="../../base/view/common/layui" base='base' extend="['tagpicker']" callback="init" /}
-{include file="../../base/view/common/ueditor" id="container" name="content" width="750" height="360" toolbar="[]" /}
 {/block}
 <!-- /脚本 -->

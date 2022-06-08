@@ -1,14 +1,13 @@
 {extend name="../../base/view/common/base" /}
-<!-- 主体 -->
 {block name="body"}
-<form class="layui-form page-content">
-	<h3 class="h3-title">汇报详情</h3>
+<form class="layui-form p-4">
+	<h3 class="pb-3">汇报详情</h3>
 	<table class="layui-table">
 		<tr>
-			<td class="layui-td-gray">汇报类型</td>
-			<td>{$detail.type_title}</td>
 			<td class="layui-td-gray">汇报人</td>
 			<td>{$detail.person_name}</td>
+			<td class="layui-td-gray">汇报类型</td>
+			<td>{$detail.type_title}</td>
 			<td class="layui-td-gray">汇报时间</td>
 			<td>{$detail.send_time}</td>
 		</tr>
@@ -72,20 +71,3 @@
 </form>
 {/block}
 <!-- /主体 -->
-
-<!-- 脚本 -->
-{block name="script"}
-	<script>
-		function init(layui){
-		//监听返回
-		$('.body-content').on('click','[lay-event="back"]',function () {
-			var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
-			parent.layer.close(index);//关闭弹出的子页面窗口
-			return false;
-		});
-	}
-		
-	</script>
-	{include file="../../base/view/common/layui" base='base' extend="[]" callback="init" /}
-{/block}
-<!-- /脚本 -->

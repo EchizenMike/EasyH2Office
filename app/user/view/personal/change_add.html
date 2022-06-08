@@ -1,14 +1,8 @@
 {extend name="../../base/view/common/base" /}
-<!-- 样式 -->
-{block name="style"}
-  <link rel="stylesheet" href="{__LAYUI__}/plugin/dtree/dtree.css">
-  <link rel="stylesheet" href="{__LAYUI__}/plugin/dtree/font/dtreefont.css">
-{/block}
-<!-- /样式 -->
 <!-- 主体 -->
 {block name="body"}
-<form class="layui-form page-content">
-	<h3 class="h3-title">人事调动</h3>
+<form class="layui-form p-4">
+	<h3 class="pb-3">人事调动</h3>
 	{if condition="$id eq 0"}
 	<table class="layui-table">
 		<tr>
@@ -78,7 +72,7 @@
 		</tr>
 	</table>
 	{/if}
-	<div style="padding: 10px 0">
+	<div class="py-3">
 		<input type="hidden" name="id" value="{$id}" />
 		<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform">立即提交</button>
 		<button type="reset" class="layui-btn layui-btn-primary">重置</button>
@@ -90,27 +84,23 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
-	function init(layui) {
-		var form = layui.form
-			, layer = layui.layer
-			, laydate = layui.laydate
-			,employeepicker = layui.employeepicker;
-
+	const moduleInit = ['tool','employeepicker'];
+	function gouguInit() {
+		var form = layui.form,tool=layui.tool,laydate = layui.laydate,employeepicker = layui.employeepicker;
 		laydate.render({
 			elem: '#move_time',
 			showBottom:false
 		});
 
-		$('.page-content').on('click','[name="from_department"]',function(){
+		$('body').on('click','[name="from_department"]',function(){
 			var val=$(this).val();
 			if(val==''){
 				layer.msg('请先选择需要调动的员工');
 			}			
-		});
-		
+		});		
 		
 		//选择员工弹窗	
-		$('.page-content').on('click','[name="name"]',function () {
+		$('body').on('click','[name="name"]',function () {
 			var ids=$('[name="uid"]').val(),names=$('[name="name"]').val(),dids=$('[name="from_did"]').val(),departments=$('[name="from_department"]').val();
 			employeepicker.init({
 				ids:ids,
@@ -140,25 +130,20 @@
 				layer.msg('要调入的部门和调出的部门不能是同一个部门');
 				return false;
 			}
-			$.ajax({
-				url: "/user/personal/change_add",
-				type: 'post',
-				data: data.field,
-				success: function (e) {
-					layer.msg(e.msg);
-					if(e.code==0){
-						parent.tableIns.reload();
-						setTimeout(function(){
-							parent.layui.rightpage.close();
-						},1000);
-					}
+			let callback = function (e) {
+				layer.msg(e.msg);
+				if (e.code == 0) {
+					parent.layui.pageTable.reload();
+					setTimeout(function(){
+						parent.layui.tool.close();
+					},1000);
 				}
-			})
+			}
+			tool.post("/user/personal/change_add", data.field, callback);
 			return false;
 		});
 	}
 
 </script>
-{include file="../../base/view/common/layui" base='base' extend="['employeepicker']" callback="init" /}
 {/block}
 <!-- /脚本 -->

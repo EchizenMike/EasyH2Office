@@ -1,8 +1,8 @@
 {extend name="../../base/view/common/base" /}
 <!-- 主体 -->
 {block name="body"}
-<div class="body-table">
-	<table class="layui-hide" id="test" lay-filter="test"></table>
+<div class="p-3">
+	<table class="layui-hide" id="conf" lay-filter="conf"></table>
 </div>
 
 <script type="text/html" id="status">
@@ -19,14 +19,11 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
-	var tableIns = null;
-	function init(layui) {
-		var table = layui.table,
-			rightpage = layui.rightpage,
-			form = layui.form;
-
-		tableIns = table.render({
-			elem: '#test',
+	const moduleInit = ['tool'];
+	function gouguInit() {
+		var table = layui.table, tool = layui.tool, form = layui.form;
+		layui.pageTable = table.render({
+			elem: '#conf',
 			title: '配置列表',
 			toolbar: '#toolbarDemo',
 			url: "/home/conf/index",
@@ -38,14 +35,14 @@
 					width: 80,
 					title: 'ID编号',
 					align: 'center'
-				},{
+				}, {
 					field: 'title',
 					width: 200,
 					title: '配置名称'
 				}, {
 					field: 'name',
 					title: '配置标识（新增的模板文件名称需与标识名称一致）'
-				},{
+				}, {
 					field: 'status',
 					width: 80,
 					title: '状态',
@@ -62,16 +59,24 @@
 				}]
 			]
 		});
-		
-		//监听行工具事件
-		table.on('tool(test)', function(obj){
-			var data = obj.data;
-			if(obj.event === 'add'){
-				rightpage.open('/home/conf/add?id='+data.id);
+
+		//表头工具栏事件
+		table.on('toolbar(conf)', function (obj) {
+			if (obj.event === 'add') {
+				tool.side("/home/conf/add");
 				return;
 			}
-			if(obj.event === 'edit'){
-				rightpage.open('/home/conf/edit?id='+data.id);
+		});
+		
+		//监听行工具事件
+		table.on('tool(conf)', function (obj) {
+			var data = obj.data;
+			if (obj.event === 'add') {
+				tool.side('/home/conf/add?id=' + data.id);
+				return;
+			}
+			if (obj.event === 'edit') {
+				tool.side('/home/conf/edit?id=' + data.id);
 				return;
 			}
 			if (obj.event === 'del') {
@@ -79,29 +84,15 @@
 					icon: 3,
 					title: '提示'
 				}, function (index) {
-					$.ajax({
-						url: "/home/conf/delete",
-						type: 'post',
-						data: {
-							id: obj.data.id
-						},
-						success: function (res) {
-							layer.msg(res.msg);
-							if (res.code == 0) {
-								obj.del();
-							}
+					let callback = function (e) {
+						layer.msg(e.msg);
+						if (e.code == 0) {
+							obj.del();
+							layer.close(index);
 						}
-					})
-					layer.close(index);
+					}
+					tool.delete("/home/conf/delete", { id: obj.data.id }, callback);
 				});
-			}
-		});
-		
-		//表头工具栏事件
-		table.on('toolbar(test)', function(obj){
-			if (obj.event === 'add') {
-				rightpage.open("/home/conf/add",'900px');
-				return;
 			}
 		});
 
@@ -109,12 +100,7 @@
 		form.on('submit(webform)', function (data) {
 			if (data.field.keywords) {
 				tableIns.reload({
-					where: {
-						keywords: data.field.keywords
-					},
-					page: {
-						curr: 1
-					}
+					where: { keywords: data.field.keywords }, page: { curr: 1 }
 				});
 			} else {
 				location.reload();
@@ -123,6 +109,5 @@
 		});
 	}
 </script>
-{include file="../../base/view/common/layui" base="base" extend="['rightpage']" callback="init" /}
 {/block}
 <!-- /脚本 -->

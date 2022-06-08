@@ -1,7 +1,5 @@
 {extend name="../../base/view/common/base" /}
 {block name="style"}
-<link rel="stylesheet" href="{__LAYUI__}/plugin/dtree/dtree.css">
-<link rel="stylesheet" href="{__LAYUI__}/plugin/dtree/font/dtreefont.css">
 <style>
 .layui-table-min th{font-size:13px; text-align:center; background-color:#f8f8f8;}
 .layui-table-min td{font-size:13px; padding:6px;text-align:center;}
@@ -11,8 +9,8 @@
 {/block}
 <!-- 主体 -->
 {block name="body"}
-<form class="layui-form page-content">
-	<h3 class="h3-title">申请开票</h3>
+<form class="layui-form p-4">
+	<h3 class="pb-3">申请开票</h3>
 	{if condition="($id == 0)"}
 	<table class="layui-table">
 		<tr>
@@ -50,7 +48,7 @@
 			<td><input type="text" name="invoice_phone" class="layui-input" value="" lay-verify="required"  lay-reqText="请输入电话号码"></td>
 		</tr>
 		<tr class="invoice-type">
-			<td class="layui-td-gray2">纳税人识别号<span style="color: red">*</span></td>
+			<td class="layui-td-gray-2">纳税人识别号<span style="color: red">*</span></td>
 			<td><input type="text" name="invoice_tax" class="layui-input" value=""></td>
 			<td class="layui-td-gray">开户行<span style="color: red">*</span></td>
 			<td><input type="text" name="invoice_bank" class="layui-input" value=""></td>
@@ -58,7 +56,7 @@
 			<td><input type="text" name="invoice_account" class="layui-input" value=""></td>
 		</tr>
 		<tr class="invoice-type">
-			<td class="layui-td-gray2">银行营业网点<span style="color: red">*</span></td>
+			<td class="layui-td-gray-2">银行营业网点<span style="color: red">*</span></td>
 			<td><input type="text" name="invoice_banking" class="layui-input" value=""></td>
 			<td class="layui-td-gray">地址<span style="color: red">*</span></td>
 			<td colspan="3"><input type="text" name="invoice_address" class="layui-input" value=""></td>
@@ -122,7 +120,7 @@
 			<td><input type="text" name="invoice_phone" class="layui-input" value="{$detail.invoice_phone}"></td>
 		</tr>
 		<tr class="invoice-type" {eq name="$detail.type" value="2"}style="display:none"{/eq}>
-			<td class="layui-td-gray2">纳税人识别号<span style="color: red">*</span></td>
+			<td class="layui-td-gray-2">纳税人识别号<span style="color: red">*</span></td>
 			<td><input type="text" name="invoice_tax" class="layui-input" value="{$detail.invoice_tax}"></td>
 			<td class="layui-td-gray">开户行<span style="color: red">*</span></td>
 			<td><input type="text" name="invoice_bank" class="layui-input" value="{$detail.invoice_bank}"></td>
@@ -130,7 +128,7 @@
 			<td><input type="text" name="invoice_account" class="layui-input" value="{$detail.invoice_account}"></td>
 		</tr>
 		<tr class="invoice-type" {eq name="$detail.type" value="2"}style="display:none"{/eq}>
-			<td class="layui-td-gray2">银行营业网点<span style="color: red">*</span></td>
+			<td class="layui-td-gray-2">银行营业网点<span style="color: red">*</span></td>
 			<td><input type="text" name="invoice_banking" class="layui-input" value="{$detail.invoice_banking}"></td>
 			<td class="layui-td-gray">地址<span style="color: red">*</span></td>
 			<td colspan="3"><input type="text" name="invoice_address" class="layui-input" value="{$detail.invoice_address}"></td>
@@ -159,7 +157,7 @@
 	</table>
 	{/if}
 
-	<div class="layui-form-item" style="padding-top:10px;">
+	<div class="py-3">
 		<input name="id" id="id" type="hidden" value="{$id}">
 		<button class="layui-btn" lay-submit="" lay-filter="webform">保存并提交审核</button>
 		<button type="reset" class="layui-btn layui-btn-primary">重置</button>
@@ -170,12 +168,10 @@
 
 <!-- 脚本 -->
 {block name="script"}
-	<script>
-	function init(layui){
-		var form = layui.form
-		  ,layer = layui.layer
-		  ,employeepicker = layui.employeepicker
-		  ,laydate = layui.laydate;
+<script>
+const moduleInit = ['tool','employeepicker'];
+	function gouguInit() {
+		var form = layui.form,tool=layui.tool, table = layui.table, employeepicker = layui.employeepicker,laydate = layui.laydate;
 
 		//选择收件人类型
 		form.on('radio(type)', function (data) {
@@ -187,7 +183,7 @@
 			}
 		});	
 		
-//选择人员		
+		//选择人员		
 		$('.layui-form').on('click','[name="check_admin_name"]',function(){
 			if($('[name="flow_id"]').val()==''){
 				layer.msg('请先选择审批流程');
@@ -259,7 +255,6 @@
 					}
 				})
 			}
-
 		});	
 		
 		
@@ -272,18 +267,16 @@
 				success:function(e){
 					layer.msg(e.msg);
 					if (e.code == 0) {
-						parent.tableIns.reload();
+						parent.layui.pageTable.reload();
 						setTimeout(function(){
-							parent.layui.rightpage.close();
+							parent.layui.tool.close();
 						},1000);
 					}
 				}
 			})
 			return false;
 		});
-	}
-		
+	}		
 	</script>
-{include file="../../base/view/common/layui" base='base' extend="['employeepicker']" callback="init" /}
 {/block}
 <!-- /脚本 -->

@@ -1,14 +1,14 @@
 {extend name="../../base/view/common/base" /}
 <!-- 主体 -->
 {block name="body"}
-<form class="layui-form page-content">
-	<h3 class="h3-title">新增知识文章</h3>
+<form class="layui-form p-4">
+	<h3 class="pb-3">新增知识文章</h3>
     <table class="layui-table">
       <tr>
         <td class="layui-td-gray">文章标题 <span style="color: red">*</span></td>
         <td colspan="3"><input type="text" name="title" lay-verify="required" lay-reqText="请输入文章标题" autocomplete="off" placeholder="请输入文章标题"
             class="layui-input"></td>
-		<td class="layui-td-gray">文章分类<span style="color: red">*</span></td>
+	    	<td class="layui-td-gray">文章分类<span style="color: red">*</span></td>
         <td>
           <select name="article_cate_id" lay-verify="required" lay-reqText="请选择分类">
             <option value="">请选择分类</option>
@@ -70,12 +70,11 @@
       <tr>
         <td class="layui-td-gray" style="vertical-align:top;">文章内容<span style="color: red">*</span></td>
         <td colspan="5">
-          <textarea name="content" placeholder="请输入内容" class="layui-textarea" id="container" lay-verify="required" lay-reqText="请完善文章内容"
-            style="border:0;padding:0"></textarea>
+          <textarea name="content" placeholder="请输入内容" class="layui-textarea" id="container" style="border:0;padding:0"></textarea>
         </td>
       </tr>
     </table>
-    <div style="padding: 10px 0">
+    <div class="py-3">
       <button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform">立即提交</button>
       <button type="reset" class="layui-btn layui-btn-primary">重置</button>
     </div>
@@ -86,19 +85,23 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
-function init(layui) {
-    var form = layui.form
-      , layer = layui.layer
-      , tagspicker = layui.tagpicker
-      , upload = layui.upload;
-
+	const moduleInit = ['tool','tagpicker','tinymce'];
+	function gouguInit() {
+		var form = layui.form,tool=layui.tool, tagspicker = layui.tagpicker, upload = layui.upload;
+    //编辑器初始化
+		var editor = layui.tinymce;
+		var edit = editor.render({
+			selector: "#container",
+			images_upload_url: '/api/index/upload/sourse/tinymce',//图片上传接口
+			height: 500
+		});
     var tags = new tagspicker({
-		'url': "/api/index/get_keyword_cate",
-		'target': 'keyword_name',
-		'tag_ids': 'keyword_id',
-		'tag_tags': 'keyword_name',
-		'height': 500,
-		'isDiy': 1
+      'url': "/api/index/get_keyword_cate",
+      'target': 'keyword_name',
+      'tag_ids': 'keyword_id',
+      'tag_tags': 'keyword_name',
+      'height': 500,
+      'isDiy': 1
     });
 
     //封面上传
@@ -118,27 +121,26 @@ function init(layui) {
 
     //监听提交
     form.on('submit(webform)', function (data) {
-		$.ajax({
-			url: "/article/index/add",
-			type: 'post',
-			data: data.field,
-			success: function (e) {
-				layer.msg(e.msg);
-				if (e.code == 0) {
-					parent.tableIns.reload();
-					setTimeout(function(){
-						parent.layui.rightpage.close();
-					},1000);
-				}
+      data.field.content = tinyMCE.editors['container'].getContent();
+			if (data.field.content == '') {
+				layer.msg('请先完善公告内容');
+				return false;
 			}
-		})
+      let callback = function (e) {
+			layer.msg(e.msg);
+			if (e.code == 0) {
+				parent.layui.pageTable.reload();
+				setTimeout(function(){
+					parent.layui.tool.close();
+				},1000);
+			}
+		}
+		tool.post("/article/index/add", data.field, callback);
 		return false;
     });
 
   }
 
 </script>
-{include file="../../base/view/common/layui" base="base" extend="['tagpicker']" callback="init" /}
-{include file="../../base/view/common/ueditor" id="container" name="content" width="750" height="360" toolbar="[]" /}
 {/block}
 <!-- /脚本 -->

@@ -1,74 +1,67 @@
 {extend name="../../base/view/common/base" /}
-{block name="style"}
-<link rel="stylesheet" href="{__LAYUI__}/plugin/dtree/dtree.css">
-<link rel="stylesheet" href="{__LAYUI__}/plugin/dtree/font/dtreefont.css">
-{/block}
-<!-- 主体 -->
 {block name="body"}
-<form class="layui-form page-content">
-	<h3 class="h3-title">工作汇报</h3>
+<form class="layui-form p-4">
+	<h3 class="pb-3">工作汇报</h3>
 	{if condition="$id eq 0"}
 	<table class="layui-table">
 		<tr>
-			<td class="layui-td-gray2">汇报类型</td>
+			<td class="layui-td-gray">接收人<span style="color: red">*</span></td>
+			<td>
+				<input type="text" name="person_name" value="" lay-verify="required" lay-reqText="请选择接收人" placeholder="请选择接收人" readonly class="layui-input">
+				<input type="hidden" name="uids" value="">
+			</td>
+			<td class="layui-td-gray">汇报类型</td>
 			<td>
 				{eq name="$type" value="1"}日报{/eq}
 				{eq name="$type" value="2"}周报{/eq}
 				{eq name="$type" value="3"}月报{/eq}
 			</td>
 		</tr>
-		<tr>
-			<td class="layui-td-gray2">接收人<span style="color: red">*</span></td>
-			<td>
-				<input type="text" name="person_name" value="" lay-verify="required" lay-reqText="请选择接收人" placeholder="请选择接收人" readonly class="layui-input">
-				<input type="hidden" name="uids" value="">
-			</td>
-		</tr>
 		{if condition="($type == 1)"}
 		<tr>
-			<td class="layui-td-gray2">今日工作<span style="color: red">*</span></td>
-			<td>
+			<td class="layui-td-gray">今日工作<span style="color: red">*</span></td>
+			<td colspan="3">
 				<textarea name="works" placeholder="请输入今日工作内容" class="layui-textarea" style="height: 120px;" lay-verify="required" lay-reqText="请输入今日工作内容"></textarea>
 			</td>
 		</tr>
-		<tr><td class="layui-td-gray2">明日计划</td>
-			<td>
+		<tr><td class="layui-td-gray">明日计划</td>
+			<td colspan="3">
 				<textarea name="plans" placeholder="请输入明日计划" class="layui-textarea" style="height: 120px;"></textarea>
 			</td>
 		</tr>
 		{elseif condition="($type == 2)"}
 		<tr>
-			<td class="layui-td-gray2">本周工作<span style="color: red">*</span></td>
-			<td>
+			<td class="layui-td-gray">本周工作<span style="color: red">*</span></td>
+			<td colspan="3"
 				<textarea name="works" placeholder="请输入本周工作内容" class="layui-textarea" style="height: 120px;" lay-verify="required" lay-reqText="请输入本周工作内容"></textarea>
 			</td>
 		</tr>
-		<tr><td class="layui-td-gray2">下周计划</td>
-			<td>
+		<tr><td class="layui-td-gray">下周计划</td>
+			<td colspan="3">
 				<textarea name="plans" placeholder="请输入下周计划" class="layui-textarea" style="height: 120px;"></textarea>
 			</td>
 		</tr>
 		{elseif condition="($type == 3)"}
 		<tr>
-			<td class="layui-td-gray2">本月工作<span style="color: red">*</span></td>
-			<td>
+			<td class="layui-td-gray">本月工作<span style="color: red">*</span></td>
+			<td colspan="3">
 				<textarea name="works" placeholder="请输入本月工作内容" class="layui-textarea" style="height: 120px;" lay-verify="required" lay-reqText="请输入本月工作内容"></textarea>
 			</td>
 		</tr>
-		<tr><td class="layui-td-gray2">下月计划</td>
-			<td>
+		<tr><td class="layui-td-gray">下月计划</td>
+			<td colspan="3">
 				<textarea name="plans" placeholder="请输入下月计划" class="layui-textarea" style="height: 120px;"></textarea>
 			</td>
 		</tr>
 		{/if}
-		<tr><td class="layui-td-gray2">其它事项</td>
-			<td>
+		<tr><td class="layui-td-gray">其它事项</td>
+			<td colspan="3">
 				<textarea name="remark" placeholder="请输入其它事项" class="layui-textarea" style="height: 120px;"></textarea>
 			</td>
 		</tr>
 		<tr>
-			<td class="layui-td-gray2" style="vertical-align:top">相关附件</td>
-			<td>
+			<td class="layui-td-gray" style="vertical-align:top">相关附件</td>
+			<td colspan="3">
 				<div class="layui-upload" style="max-width: 800px;">
 					<button type="button" class="layui-btn layui-btn-normal layui-btn-sm" id="testList">选择文件并上传</button> <span style="color:#FF5722;margin-left: 10px;">最大只能上传{:get_system_info('upload_max_filesize')}的文件，超过{:get_system_info('upload_max_filesize')}请压缩成多个文件上传。</span>
 					<div class="layui-upload-list" style="display:none;">
@@ -87,7 +80,7 @@
 			</td>
 		</tr>
 	</table>
-	<div style="padding-top:10px;">
+	<div style="padding:10px 0;">
 		<input type="hidden" value="{$id}" name="id">
 		<input type="hidden" value="{$type}" name="type">
 		<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform">立即发送</button>
@@ -95,64 +88,62 @@
 	{else/}
 	<table class="layui-table">
 		<tr>
-			<td class="layui-td-gray2">汇报类型</td>
+			<td class="layui-td-gray">接收人</td>
+			<td>
+				{$detail.person_name}
+			</td>
+			<td class="layui-td-gray">汇报类型</td>
 			<td>
 				{eq name="$detail.type" value="1"}日报{/eq}
 				{eq name="$detail.type" value="2"}周报{/eq}
 				{eq name="$detail.type" value="3"}月报{/eq}
 			</td>
 		</tr>
-		<tr>
-			<td class="layui-td-gray2">接收人</td>
-			<td>
-				{$detail.person_name}
-			</td>
-		</tr>
 		{if condition="($type == 1)"}
 		<tr>
-			<td class="layui-td-gray2">今日工作<span style="color: red">*</span></td>
-			<td>
+			<td class="layui-td-gray">今日工作<span style="color: red">*</span></td>
+			<td colspan="3">
 				<textarea name="works" placeholder="请输入今日工作内容" class="layui-textarea" style="height: 120px;" lay-verify="required" lay-reqText="请输入今日工作内容">{$detail.works}</textarea>
 			</td>
 		</tr>
-		<tr><td class="layui-td-gray2">明日计划</td>
-			<td>
+		<tr><td class="layui-td-gray">明日计划</td>
+			<td colspan="3">
 				<textarea name="plans" placeholder="请输入明日计划" class="layui-textarea" style="height: 120px;">{$detail.plans}</textarea>
 			</td>
 		</tr>
 		{elseif condition="($type == 2)"}
 		<tr>
-			<td class="layui-td-gray2">本周工作<span style="color: red">*</span></td>
-			<td>
+			<td class="layui-td-gray">本周工作<span style="color: red">*</span></td>
+			<td colspan="3">
 				<textarea name="works" placeholder="请输入本周工作内容" class="layui-textarea" style="height: 120px;" lay-verify="required" lay-reqText="请输入本周工作内容">{$detail.works}</textarea>
 			</td>
 		</tr>
-		<tr><td class="layui-td-gray2">下周计划</td>
-			<td>
+		<tr><td class="layui-td-gray">下周计划</td>
+			<td colspan="3">
 				<textarea name="plans" placeholder="请输入下周计划" class="layui-textarea" style="height: 120px;">{$detail.plans}</textarea>
 			</td>
 		</tr>
 		{elseif condition="($type == 3)"}
 		<tr>
-			<td class="layui-td-gray2">本月工作<span style="color: red">*</span></td>
-			<td>
+			<td class="layui-td-gray">本月工作<span style="color: red">*</span></td>
+			<td colspan="3">
 				<textarea name="works" placeholder="请输入本月工作内容" class="layui-textarea" style="height: 120px;" lay-verify="required" lay-reqText="请输入本月工作内容">{$detail.works}</textarea>
 			</td>
 		</tr>
-		<tr><td class="layui-td-gray2">下月计划</td>
-			<td>
+		<tr><td class="layui-td-gray">下月计划</td>
+			<td colspan="3">
 				<textarea name="plans" placeholder="请输入下月计划" class="layui-textarea" style="height: 120px;">{$detail.plans}</textarea>
 			</td>
 		</tr>
 		{/if}
-		<tr><td class="layui-td-gray2">其它事项</td>
-			<td>
+		<tr><td class="layui-td-gray">其它事项</td>
+			<td colspan="3">
 				<textarea name="remark" placeholder="请输入其它事项" class="layui-textarea" style="height: 120px;">{$detail.remark}</textarea>
 			</td>
 		</tr>
 		<tr>
-			<td class="layui-td-gray2" style="vertical-align:top">相关附件</td>
-			<td>
+			<td class="layui-td-gray" style="vertical-align:top">相关附件</td>
+			<td colspan="3">
 				<div class="layui-upload" style="max-width: 800px;">
 					<button type="button" class="layui-btn layui-btn-normal layui-btn-sm" id="testList">选择文件并上传</button> <span style="color:#FF5722;margin-left: 10px;">最大只能上传{:get_system_info('upload_max_filesize')}的文件，超过{:get_system_info('upload_max_filesize')}请压缩成多个文件上传。</span>
 					<div class="layui-upload-list" {empty name="$file_array"}style="display:none;"{/empty}>
@@ -183,7 +174,7 @@
 			</td>
 		</tr>
 	</table>
-	<div style="padding-top:10px;">
+	<div style="padding:10px 0;">
 		<input type="hidden" value="{$id}" name="id">
 		<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform1">提交保存</button>
 	</div>
@@ -195,14 +186,9 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
-	function init(layui){
-		var form = layui.form
-		,layer = layui.layer
-		,table = layui.table
-		,dtree = layui.dtree
-		,upload = layui.upload
-		,employeepicker = layui.employeepicker;
-
+const moduleInit = ['tool','formSelects','employeepicker'];
+	function gouguInit() {
+		var form = layui.form,tool=layui.tool, table = layui.table, employeepicker = layui.employeepicker,dtree = layui.dtree,upload = layui.upload;
 		//监听发送
 		form.on('submit(webform)', function(data){
 			if(data.field.uids==login_user){
@@ -315,9 +301,7 @@
 				}
 			});
 		});
-	}
-		
+	}		
 	</script>
-	{include file="../../base/view/common/layui" base='base' extend="['dtree','employeepicker']" callback="init" /}
 {/block}
 <!-- /脚本 -->

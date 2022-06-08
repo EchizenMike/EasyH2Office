@@ -1,10 +1,7 @@
 <script>
-	function init(layui){
-		var form = layui.form
-		,dropdown = layui.dropdown
-		,employeepicker = layui.employeepicker
-		,layer = layui.layer;
-		
+const moduleInit = ['tool','employeepicker'];
+	function gouguInit() {
+		var form = layui.form,tool=layui.tool, employeepicker = layui.employeepicker,laydate = layui.laydate,dropdown = layui.dropdown;
 		//获取审核信息
 		$.ajax({
 			url: "/api/index/get_flow_nodes",
@@ -214,8 +211,10 @@
 						success: function (e) {
 							layer.msg(e.msg);
 							if (e.code == 0) {	
-								parent.tableIns.reload();
-								location.reload();
+								parent.layui.pageTable.reload();
+								setTimeout(function(){							
+									parent.layui.tool.close();
+								},1000);
 							}
 						}
 					})
@@ -243,8 +242,10 @@
 						success: function (e) {
 							layer.msg(e.msg);
 							if (e.code == 0) {	
-								parent.tableIns.reload();
-								location.reload();
+								parent.layui.pageTable.reload();
+								setTimeout(function(){							
+									parent.layui.tool.close();
+								},1000);
 							}
 						}
 					})

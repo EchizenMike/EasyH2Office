@@ -44,8 +44,8 @@
 {/block}
 <!-- 主体 -->
 {block name="body"}
-<div class="page-content">
-	<h3 class="h3-title">发票信息</h3>
+<form class="layui-form p-4">
+	<h3 class="pb-3">发票信息</h3>
 	<table class="layui-table">
 		<tr>
 			<td class="layui-td-gray">发票金额(元)</td>
@@ -76,7 +76,7 @@
 			<td>{$detail.invoice_phone}</td>
 		</tr>
 		<tr class="invoice-type" {eq name="$detail.type" value="2"}style="display:none"{/eq}>
-			<td class="layui-td-gray2">纳税人识别号</td>
+			<td class="layui-td-gray-2">纳税人识别号</td>
 			<td>{$detail.invoice_tax}</td>
 			<td class="layui-td-gray">开户行</td>
 			<td>{$detail.invoice_bank}</td>
@@ -84,7 +84,7 @@
 			<td>{$detail.invoice_account}</td>
 		</tr>
 		<tr class="invoice-type" {eq name="$detail.type" value="2"}style="display:none"{/eq}>
-			<td class="layui-td-gray2">银行营业网点</td>
+			<td class="layui-td-gray-2">银行营业网点</td>
 			<td>{$detail.invoice_banking}</td>
 			<td class="layui-td-gray">地址</td>
 			<td colspan="3">{$detail.invoice_address}</td>
@@ -118,17 +118,17 @@
 		</tr>
 		{if condition="$detail.open_admin_id > 0"}
 		<tr>
-			<td class="layui-td-gray2">开票人</td>
+			<td class="layui-td-gray">开票人</td>
 			<td>{$detail.open_admin}</td>
-			<td class="layui-td-gray2">开票时间</td>
+			<td class="layui-td-gray">开票时间</td>
 			<td>{$detail.open_time}</td>
-			<td class="layui-td-gray2">发票号码</td>
+			<td class="layui-td-gray">发票号码</td>
 			<td>{$detail.code}</td>
 		</tr>
 		{/if}
 	</table>
 	
-	<h3 class="h3-title2">到账信息</h3>
+	<h3 class="py-3">到账信息</h3>
 	<form class="layui-form">
 		<table class="layui-table">
 			<tr>
@@ -142,7 +142,7 @@
 						<span style="color:#009688">全部到账</span>
 					{/if}
 				</td>
-				<td class="layui-td-gray2">未到账金额(元)</td>
+				<td class="layui-td-gray-2">未到账金额(元)</td>
 				<td style="color:#FF5722">{$detail.not_income}</td>
 				<td class="layui-td-gray2">已到账金额(元)</td>
 				<td style="color:#1E9FFF">{$detail.enter_amount}</td>
@@ -186,8 +186,9 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
-function init(layui) {
-	var dropdown = layui.dropdown;
+const moduleInit = ['tool'];
+	function gouguInit() {
+		var form = layui.form,tool=layui.tool, dropdown = layui.dropdown;
 	//获取审核信息
 	$.ajax({
 		url: "/api/index/get_flow_nodes",
@@ -339,6 +340,5 @@ function init(layui) {
 	})	 
 }
 </script>
-{include file="../../base/view/common/layui" base='base' extend="[]" callback="init" /}
 {/block}
 <!-- /脚本 -->

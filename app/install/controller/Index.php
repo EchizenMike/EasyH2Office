@@ -67,8 +67,8 @@ class Index
     public function step3()
     {
         return view();
-    }
-
+    }		
+		
     public function install()
     {
         $data = get_params();
@@ -78,6 +78,7 @@ class Index
             // 验证失败 输出错误信息
             return to_assign(1, $e->getError());
         }
+        $dbName = $data['DB_NAME'];
         // 连接数据库
         $link = @new mysqli("{$data['DB_HOST']}:{$data['DB_PORT']}", $data['DB_USER'], $data['DB_PWD']);
         // 获取错误信息
@@ -88,15 +89,17 @@ class Index
             return to_assign(1, '数据库链接失败:' . $error);die;
         }
         // 设置字符集
-        $link->query("SET NAMES 'utf8'");
+        $link->query("SET NAMES 'utf8mb4'");
         if ($link->server_info < 5.0) {
             return to_assign(1, '请将您的mysql升级到5.0以上');die;
         }
         // 创建数据库并选中
-        if (!$link->select_db($data['DB_NAME'])) {
-            return to_assign(1, '未找到数据库' . $data['DB_NAME'] . ',请先自行创建数据库');die;
+        if (!$link->select_db($dbName)) {
+            //创建数据库
+            $sql    = "CREATE DATABASE IF NOT EXISTS `{$dbName}` DEFAULT CHARACTER SET utf8mb4";
+            $link->query($sql);
         }
-        $link->select_db($data['DB_NAME']);
+        $link->select_db($dbName);
         // 导入sql数据并创建表
         $oa_sql = file_get_contents(CMS_ROOT . '/app/install/data/gouguoa.sql');
         $sql_array = preg_split("/;[\r\n]+/", str_replace("oa_", $data['DB_PREFIX'], $oa_sql));
@@ -104,6 +107,10 @@ class Index
             if (!empty($v)) {
                 $link->query($v);
             }
+        }
+        $isTable = $link->query('SHOW TABLES LIKE "'.$data['DB_PREFIX'] . 'admin"');
+        if(!$isTable){
+            return to_assign(1, '创建数据库表失败，请检查是否有创建权限！');
         }
 
         //插入管理员信息

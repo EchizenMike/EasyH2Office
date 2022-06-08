@@ -1,8 +1,8 @@
 {extend name="../../base/view/common/base" /}
 <!-- 主体 -->
 {block name="body"}
-<div class="body-table">
-	<form class="layui-form layui-form-bar">
+<div class="p-3">
+	<form class="layui-form gg-form-bar border-t border-x">
 		<div class="layui-input-inline" style="width:300px;">
 			<input type="text" name="keywords" placeholder="昵称/操作数据id/操作描述" class="layui-input" autocomplete="off" />
 		</div>
@@ -16,7 +16,7 @@
 		</div>
 		<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform">提交搜索</button>
 	</form>
-	<table class="layui-hide" id="test" lay-filter="test"></table>
+	<table class="layui-hide" id="log" lay-filter="log"></table>
 </div>
 {/block}
 <!-- /主体 -->
@@ -24,12 +24,10 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
-	function init(layui) {
-		var table = layui.table,
-			form = layui.form;
-
+	function gouguInit() {
+		var table = layui.table, form = layui.form;
 		var tableIns = table.render({
-			elem: '#test',
+			elem: '#log',
 			title: '操作日志列表',
 			toolbar: '#toolbarDemo',
 			url: "/home/log/index", //数据接口	
@@ -64,7 +62,7 @@
 						field: 'ip',
 						title: 'IP地址',
 						align: 'center',
-						width: 150
+						width: 130
 					}, {
 						field: 'create_time',
 						title: '操作时间',
@@ -91,6 +89,5 @@
 		});
 	}
 </script>
-{include file="../../base/view/common/layui" base='base' extend="[]" callback="init" /}
 {/block}
 <!-- /脚本 -->

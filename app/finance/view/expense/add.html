@@ -1,7 +1,5 @@
 {extend name="../../base/view/common/base" /}
 {block name="style"}
-<link rel="stylesheet" href="{__LAYUI__}/plugin/dtree/dtree.css">
-<link rel="stylesheet" href="{__LAYUI__}/plugin/dtree/font/dtreefont.css">
 <style>
 .layui-form-pane .layui-form-label{color:#999; width:80px; padding:8px 3px;}
 .layui-form-item .layui-inline{margin-right:3px; margin-bottom:10px;}
@@ -15,26 +13,26 @@
 {/block}
 <!-- 主体 -->
 {block name="body"}
-<form class="layui-form page-content">
-	<h3 class="h3-title">报销信息</h3>
+<form class="layui-form p-4">
+	<h3 class="pb-3">报销信息</h3>
 	{if condition="($id == 0)"}
 	<table class="layui-table">
 		<tr>
-			<td class="layui-td-gray2">报销人</td>
+			<td class="layui-td-gray">报销人</td>
 			<td>
 				{$user.name}
 			</td>
-			<td class="layui-td-gray2">报销部门</td>
+			<td class="layui-td-gray">报销部门</td>
 			<td colspan="3">
 				{$user.department}			
 			</td>
 		</tr>
 		<tr>
-			<td class="layui-td-gray2">报销凭证编号<span style="color: red">*</span></td>
+			<td class="layui-td-gray-2">报销凭证编号<span style="color: red">*</span></td>
 			<td>
 				<input type="text" name="code" autocomplete="off" lay-verify="required" placeholder="报销凭证编号" lay-reqText="请填写报销凭证编号" class="layui-input" value="">	
 			</td>
-			<td class="layui-td-gray2">原始单据日期<span style="color: red">*</span></td>
+			<td class="layui-td-gray-2">原始单据日期<span style="color: red">*</span></td>
 			<td>
 				<input type="text" class="layui-input" id="expense_time" name="expense_time" lay-verify="required" placeholder="请选择原始单据日期" lay-reqText="请选择原始单据日期" readonly value="">	
 			</td>
@@ -44,7 +42,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td class="layui-td-gray2">报销选项<span style="color: red">*</span></td>
+			<td class="layui-td-gray">报销选项<span style="color: red">*</span></td>
 			<td colspan="5">	
 				<div>
 					<table id="interfix" class="layui-table layui-table-min">
@@ -93,17 +91,17 @@
 	{else/}
 		<table class="layui-table">
 		<tr>
-			<td class="layui-td-gray2">报销人</td>
+			<td class="layui-td-gray">报销人</td>
 			<td>{$expense.create_user}</td>
-			<td class="layui-td-gray2">报销部门</td>
+			<td class="layui-td-gray">报销部门</td>
 			<td  colspan="3">{$expense.department}</td>
 		</tr>
 		<tr>
-			<td class="layui-td-gray2">报销凭证编号<span style="color: red">*</span></td>
+			<td class="layui-td-gray-2">报销凭证编号<span style="color: red">*</span></td>
 			<td>
 				<input type="text" name="code" autocomplete="off" lay-verify="required" placeholder="报销凭证编号" lay-reqText="请填写报销凭证编号" class="layui-input" value="{$expense.code}">	
 			</td>
-			<td class="layui-td-gray2">原始单据日期<span style="color: red">*</span></td>
+			<td class="layui-td-gray-2">原始单据日期<span style="color: red">*</span></td>
 			<td>
 				<input type="text" class="layui-input" id="expense_time" name="expense_time" lay-verify="required" placeholder="请选择原始单据日期" lay-reqText="请选择原始单据日期" readonly value="{$expense.expense_time}">	
 			</td>
@@ -113,7 +111,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td class="layui-td-gray2">报销选项<span style="color: red">*</span></td>
+			<td class="layui-td-gray">报销选项<span style="color: red">*</span></td>
 			<td colspan="5">	
 				<div>
 					<table id="interfix" class="layui-table layui-table-min">
@@ -163,7 +161,7 @@
 	</table>
 	{/if}
 
-	<div class="layui-form-item" style="padding-top:10px;">
+	<div class="py-3">
 		<input name="id" id="id" type="hidden" value="{$id}">
 		<button class="layui-btn" lay-submit="" lay-filter="webform">保存并提交审核</button>
 		<button type="reset" class="layui-btn layui-btn-primary">重置</button>
@@ -183,13 +181,9 @@
 <!-- 脚本 -->
 {block name="script"}
 	<script>
-	function init(layui){
-		var form = layui.form
-		  ,layer = layui.layer
-		  ,table = layui.table
-		  ,employeepicker = layui.employeepicker
-		  ,laydate = layui.laydate;
-
+	const moduleInit = ['tool','employeepicker'];
+	function gouguInit() {
+		var form = layui.form,tool=layui.tool, employeepicker = layui.employeepicker,laydate = layui.laydate;
 		laydate.render({
 			elem: '#income_month',
 			type:'month',
@@ -260,7 +254,7 @@
 			else{
 				$.ajax({
 					url: "/api/index/get_flow_users",
-					type:'post',
+					type:'get',
 					data:{id:data.value},
 					success: function (e) {
 						if (e.code == 0) {
@@ -333,9 +327,8 @@
 				}, function(index) {
 					$.ajax({
 						url: "/api/index/del_expense_interfix",
-						data: {
-							id: _id
-						},
+						type:'post',
+						data: {id: _id},
 						success: function(res) {
 							layer.msg(res.msg);
 							if (res.code == 0) {
@@ -350,10 +343,7 @@
 				that.parents(".more_interfix").remove();
 			}
 		});
-
-	}
-		
+	}		
 	</script>
-{include file="../../base/view/common/layui" base='base' extend="['employeepicker']" callback="init" /}
 {/block}
 <!-- /脚本 -->

@@ -1,7 +1,7 @@
 {extend name="../../base/view/common/base" /}
 <!-- 主体 -->
 {block name="body"}
-<div class="body-table">
+<div class="p-3">
     <table class="layui-hide" id="test" lay-filter="test"></table>
 </div>
 <script type="text/html" id="toolbarDemo">
@@ -15,11 +15,10 @@
 <!-- 脚本 -->
 {block name="script"}
 	<script>
-		function init(layui){
-			var table=layui.table,
-			layer=layui.layer;
-			
-			var tableIns = table.render({
+	const moduleInit = ['tool'];
+	function gouguInit() {
+		var table = layui.table, tool = layui.tool, form = layui.form;
+		layui.pageTable = table.render({
 			elem: '#test'
 			,toolbar: '#toolbarDemo'
 			,title:'车辆类型列表'
@@ -63,39 +62,25 @@
 				}
 				if(obj.event === 'disable'){
 					layer.confirm('确定要禁用该车辆吗?', {icon: 3, title:'提示'}, function(index){
-						$.ajax({
-							url: "/home/cate/car_cate_check",
-							type: 'post',
-							data: {
-								id: obj.data.id,
-								status: 0
-							},
-							success: function(e) {
-								layer.msg(e.msg);
-								if (e.code == 0) {
-									tableIns.reload();
-								}
+						let callback = function (e) {
+							layer.msg(e.msg);
+							if (e.code == 0) {
+								layui.pageTable.reload();
 							}
-						}) 
+						}
+						tool.post("/home/cate/car_cate_check", { id: obj.data.id,status: 0}, callback);
 						layer.close(index);
 					});
 				}
 				if(obj.event === 'open'){
 					layer.confirm('确定要启用该车辆吗?', {icon: 3, title:'提示'}, function(index){
-						$.ajax({
-							url: "/home/cate/car_cate_check",
-							type: 'post',
-							data: {
-								id: obj.data.id,
-								status: 1
-							},
-							success: function(e) {
-								layer.msg(e.msg);
-								if (e.code == 0) {
-									tableIns.reload();
-								}
+						let callback = function (e) {
+							layer.msg(e.msg);
+							if (e.code == 0) {
+								layui.pageTable.reload();
 							}
-						}) 
+						}
+						tool.post("/home/cate/car_cate_check", { id: obj.data.id,status: 1}, callback);
 						layer.close(index);
 					});
 				}
@@ -137,22 +122,18 @@
 						let id = $('#LAY_module').find('[name="id"]').val();
 						let title = $('#LAY_module').find('[name="title"]').val();
 						let name = $('#LAY_module').find('[name="name"]').val();
-						$.ajax({
-								url: "/home/cate/car_cate_add",
-								type: 'post',
-								data: {
-									id: id,
-									title: title,
-									name: name
-								},
-								success: function(e) {
-									layer.msg(e.msg);
-									if (e.code == 0) {
-										layer.close(index);
-										tableIns.reload();
-									}
-								}
-							})
+						let callback = function (e) {
+							layer.msg(e.msg);
+							if (e.code == 0) {
+								layui.pageTable.reload();	
+								layer.close(index);			
+							}
+						}
+						tool.post("/home/cate/car_cate_add", {
+							id: id,
+							title: title,
+							name: name
+						}, callback);						
 					}
 					,btn2: function(){
 						layer.closeAll();
@@ -161,6 +142,5 @@
 			}
 		}
 	</script>
-	{include file="../../base/view/common/layui" base='base' extend="[]" callback="init" /}
 {/block}
 <!-- /脚本 -->

@@ -4,8 +4,8 @@
 {/block}
 <!-- 主体 -->
 {block name="body"}
-<div class="layui-form page-content">
-	<h3 class="h3-title">活动经费审批</h3>
+<form class="layui-form p-4">
+	<h3 class="pb-3">活动经费审批</h3>
 	<table class="layui-table layui-table-form">
 		<tr>
 			<td class="layui-td-gray">活动名称</td>
@@ -33,6 +33,5 @@
 <!-- 脚本 -->
 {block name="script"}
 {include file="/approve/view_script" /}
-{include file="../../base/view/common/layui" base='base' extend="['employeepicker']" callback="init" /}
 {/block}
 <!-- /脚本 -->

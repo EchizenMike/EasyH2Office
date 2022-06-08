@@ -1,6 +1,5 @@
 {extend name="../../base/view/common/base" /}
 {block name="style"}
-<link rel="stylesheet" href="{__LAYUI__}/plugin/formSelects/formSelects-v4.css">
 <style>
 .layui-form-pane .layui-form-label{color:#999; width:80px; padding:8px 3px;}
 .layui-form-item .layui-inline{margin-right:3px; margin-bottom:10px;}
@@ -12,8 +11,8 @@
 {/block}
 <!-- 主体 -->
 {block name="body"}
-<form class="layui-form page-content">
-	<h3 class="h3-title">审批流程</h3>
+<form class="layui-form p-4">
+	<h3 class="pb-3">审批流程</h3>
 	{eq name="$id" value="0"}
 	<table class="layui-table">
 		<tr>
@@ -55,7 +54,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td class="layui-td-gray">审批流类型<font>*</font></td>
+			<td class="layui-td-gray-2">审批流类型<font>*</font></td>
 			<td colspan="5">
 				<input type="radio" name="check_type" lay-filter="checktype" value="1" title="固定审批流" checked>
 				<input type="radio" name="check_type" lay-filter="checktype" value="2" title="授权审批人">
@@ -141,7 +140,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td class="layui-td-gray">审批流类型<font>*</font></td>
+			<td class="layui-td-gray-2">审批流类型<font>*</font></td>
 			<td colspan="5">
 				<input type="radio" name="check_type" lay-filter="checktype" value="1" title="固定审批流" {eq name="$detail.check_type" value="1"}checked{/eq}>
 				<input type="radio" name="check_type" lay-filter="checktype" value="2" title="授权审批人" {eq name="$detail.check_type" value="2"}checked{/eq}>
@@ -189,7 +188,7 @@
 		</tr>
 	</table>
 	{/eq}
-	<div style="padding: 10px 0">
+	<div class="py-3">
 		<input type="hidden" name="id" value="{$id}">
 		<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform">立即提交</button>
 		<button type="reset" class="layui-btn layui-btn-primary">重置</button>
@@ -201,30 +200,25 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
-	function init(layui){
-		var form = layui.form
-		,formSelects = layui.formSelects
-		,layer = layui.layer;
-		  
+	const moduleInit = ['tool','formSelects'];
+	function gouguInit() {
+		var form = layui.form,tool=layui.tool,formSelects = layui.formSelects;		  
 		  
 		form.on('select(type)', function(data){
-			$.ajax({
-				url: "/api/index/get_flow_cate",
-				type:'post',
-				data:{type:data.value},
-				success: function (e) {
-					if (e.code == 0) {
-						if(e.data.length>0){
-							let ops='<option value="">--请选择--</option>';
-							for(var i=0;i<e.data.length;i++){
-								ops+='<option value="'+e.data[i].id+'">'+e.data[i].title+'</option>';
-							}
-							$('[name="flow_cate"]').html(ops);
-							form.render();
+			let callback = function (e) {
+				layer.msg(e.msg);
+				if (e.code == 0) {
+					if(e.data.length>0){
+						let ops='<option value="">--请选择--</option>';
+						for(var i=0;i<e.data.length;i++){
+							ops+='<option value="'+e.data[i].id+'">'+e.data[i].title+'</option>';
 						}
-					}
+						$('[name="flow_cate"]').html(ops);
+						form.render();
+					}				
 				}
-			})
+			}
+			tool.get("/api/index/get_flow_cate", {type:data.value}, callback);
 		})
 		
 		var selcted = $('#department_ids').attr('xm-selected');
@@ -234,22 +228,16 @@
 		});
 		//监听提交
 		form.on('submit(webform)', function(data){
-			console.log(data.field);			
-			//return false;
-			$.ajax({
-				url: "/home/flow/add",
-				type:'post',
-				data:data.field,
-				success: function (e) {
-					layer.msg(e.msg);
-					if (e.code == 0) {	
-						parent.tableIns.reload();
-						setTimeout(function(){							
-							parent.layui.rightpage.close();
-						},1000);
-					}
+			let callback = function (e) {
+				layer.msg(e.msg);
+				if (e.code == 0) {
+					parent.layui.pageTable.reload();
+					setTimeout(function () {
+						parent.layui.tool.close();
+					}, 1000);					
 				}
-			})
+			}
+			tool.post("/home/flow/add", data.field, callback);
 			return false;
 		});
 		
@@ -257,7 +245,7 @@
 		var employee=[];
 		$.ajax({
 			url: "/api/index/get_employee_select",
-			type:'post',
+			type:'get',
 			success: function (e) {
 				if (e.code == 0) {	
 					employee=e.data;
@@ -331,10 +319,8 @@
 					$(this).html('第'+(index+2)+'级');
 				})
 			}
-		});
-		
+		});		
 	}
 </script>
-{include file="../../base/view/common/layui" base='base' extend="['formSelects']" callback="init" /}
 {/block}
 <!-- /脚本 -->

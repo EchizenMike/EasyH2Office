@@ -1,7 +1,5 @@
 {extend name="../../base/view/common/base" /}
 {block name="style"}
-<link rel="stylesheet" href="{__LAYUI__}/plugin/dtree/dtree.css">
-<link rel="stylesheet" href="{__LAYUI__}/plugin/dtree/font/dtreefont.css">
 <style>
 .layui-form-pane .layui-form-label{color:#999; width:80px; padding:8px 3px;}
 .layui-form-item .layui-inline{margin-right:3px; margin-bottom:10px;}
@@ -53,19 +51,19 @@
 {/block}
 <!-- 主体 -->
 {block name="body"}
-<div class="page-content">
-	<h3 class="h3-title">报销详情</h3>
+<form class="layui-form p-4">
+	<h3 class="pb-3">报销详情</h3>
 	<table class="layui-table">
 		<tr>
-			<td class="layui-td-gray2">报销凭证编号</td>
+			<td class="layui-td-gray-2">报销凭证编号</td>
 			<td>{$detail.code}</td>
 			<td class="layui-td-gray">入账月份</td>
 			<td>{$detail.income_month}</td>
-			<td class="layui-td-gray2">原始单据日期</td>
+			<td class="layui-td-gray-2">原始单据日期</td>
 			<td>{$detail.expense_time}</td>
 		</tr>
 		<tr>
-			<td class="layui-td-gray2">报销人</td>
+			<td class="layui-td-gray">报销人</td>
 			<td>{$detail.create_user}</td>
 			<td class="layui-td-gray">报销部门</td>
 			<td>{$detail.department}</td>
@@ -74,14 +72,14 @@
 		</tr>
 		{if condition="$detail.pay_admin_id > 0"}
 		<tr>
-			<td class="layui-td-gray2">打款人</td>
+			<td class="layui-td-gray">打款人</td>
 			<td>{$detail.pay_admin}</td>
 			<td class="layui-td-gray">打款时间</td>
 			<td colspan="3">{$detail.pay_time}</td>
 		</tr>
 		{/if}
 		<tr>
-			<td class="layui-td-gray2">费用金额</td>
+			<td class="layui-td-gray">费用金额</td>
 			<td colspan="5">	
 				<div>
 					<table class="layui-table layui-table-min">
@@ -111,7 +109,7 @@
 				{eq name="$detail.check_status" value="5"}<span style="color:#34a853">已通过</span>{/eq}
 				<span id="showRecord" class="layui-btn layui-btn-xs layui-btn-radius layui-btn-normal" style="margin-left:10px;">查看审批记录</span>
 			</td>
-			<td class="layui-td-gray">当前审核人</td>
+			<td class="layui-td-gray-2">当前审核人</td>
 			<td colspan="3">{$detail.check_user}</td>
 		</tr>
 		<tr>
@@ -184,17 +182,14 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
-function init(layui) {
-
-		var form = layui.form
-		,dropdown = layui.dropdown
-		,employeepicker = layui.employeepicker
-		,layer = layui.layer;
+const moduleInit = ['tool','employeepicker'];
+	function gouguInit() {
+		var form = layui.form,tool=layui.tool, dropdown = layui.dropdown, employeepicker = layui.employeepicker;
 
 		//获取审核信息
 		$.ajax({
 			url: "/api/index/get_flow_nodes",
-			type:'post',
+			type:'get',
 			data:{id:$('[name="id"]').val(),type:2},
 			success: function (e) {
 				if (e.code == 0) {	
@@ -400,7 +395,7 @@ function init(layui) {
 						success: function (e) {
 							layer.msg(e.msg);
 							if (e.code == 0) {	
-								parent.tableIns.reload();
+								parent.layui.pageTable.reload();
 								location.reload();
 							}
 						}
@@ -425,7 +420,7 @@ function init(layui) {
 						success: function (e) {
 							layer.msg(e.msg);
 							if (e.code == 0) {	
-								parent.tableIns.reload();
+								parent.layui.pageTable.reload();
 								location.reload();
 							}
 						}
@@ -437,6 +432,5 @@ function init(layui) {
 		});
 }
 </script>
-{include file="../../base/view/common/layui" base='base' extend="['employeepicker']" callback="init" /}
 {/block}
 <!-- /脚本 -->

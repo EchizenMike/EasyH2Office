@@ -1,7 +1,6 @@
 {extend name="../../base/view/common/base" /}
 {block name="style"}
   <style>
-	html,body{height: calc(100% - 12px);}
 	.layui-tree-entry{font-size:15px; line-height:24px}
 	.layui-tree-set{padding:2px 0}
 	.layui-tree-iconClick .layui-icon{color:#1E9FFF}
@@ -14,13 +13,13 @@
 {/block}
 <!-- 主体 -->
 {block name="body"}
-<div style="height: 100%">
+<div class="p-3" style="height:100%; box-sizing: border-box;">
 	<div class="tree-left">
 		<h3>企业组织架构</h3>
 		<div id="depament"></div>
 	</div>
 	<div class="body-table" style="margin-left:228px;">
-		<form class="layui-form layui-form-bar">
+		<form class="layui-form gg-form-bar border-t border-x">
 			<div class="layui-input-inline" style="width:136px">
 				<select name="status">
 					<option value="">选择员工状态</option>
@@ -62,17 +61,12 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
-	var tableIns = null;
-	function init(layui) {
-		var TAB = parent.layui.tab,
-			tree = layui.tree,
-			table = layui.table,
-			rightpage = layui.rightpage,
-			form = layui.form;
-			
+	const moduleInit = ['tool'];
+	function gouguInit() {
+		var table = layui.table, tool = layui.tool,tree = layui.tree,form = layui.form;			
 			$.ajax({
 				url: "/api/index/get_department_tree",
-				type:'post',
+				type:'get',
 				success:function(res){					
 					//仅节点左侧图标控制收缩
 					tree.render({
@@ -81,7 +75,7 @@
 						onlyIconControl: true,  //是否仅允许节点左侧图标控制展开收缩
 						click: function(obj){
 							//layer.msg(JSON.stringify(obj.data));
-							tableIns.reload({
+							layui.pageTable.reload({
 							   where: {did: obj.data.id}
 							   ,page:{curr:1}
 							});
@@ -92,11 +86,9 @@
 						}
 					});	
 				}
-			})
-			
-			
-			
-		tableIns = table.render({
+			})		
+		
+		layui.pageTable = table.render({
 			elem: '#test',
 			title: '员工列表',
 			toolbar: '#toolbarDemo',
@@ -144,7 +136,7 @@
 					}, {
 						field: 'username',
 						title: '登录账号',
-						width: 136
+						width: 132
 					}, {
 						field: 'thumb',
 						title: '头像',
@@ -200,7 +192,7 @@
 						field: 'last_login_time',
 						title: '最后登录时间',
 						align: 'center',
-						minWidth: 142
+						minWidth: 136
 					},{
 						field: 'right',
 						fixed:'right',
@@ -231,7 +223,7 @@
 			var checkStatus = table.checkStatus(obj.config.id); //获取选中行状态
 			var data = checkStatus.data;
 			if (obj.event === 'add') {
-				rightpage.open("/user/user/add");
+				tool.side("/user/user/add");
 				return;
 			}
 			if(data.length==0){
@@ -257,19 +249,13 @@
 				icon: 3,
 				title: '提示'
 			}, function (index) {
-				$.ajax({
-					url: "/user/user/set",
-					data: {
-						ids: uidArray.join(','),
-						type:type
-					},
-					success: function (e) {
-						layer.msg(e.msg);
-						if(e.code==0){
-							tableIns.reload();
-						}							
+				let callback = function (e) {
+					layer.msg(e.msg);
+					if (e.code == 0) {
+						layui.pageTable.reload();
 					}
-				})
+				}
+				tool.post("/user/user/set", {ids: uidArray.join(','),type:type}, callback);
 				layer.close(index);
 			});
 		});
@@ -279,26 +265,37 @@
 		table.on('tool(test)', function (obj) {
 			var data = obj.data;			
 			if (obj.event === 'view') {
-				//TAB.sonAdd('/home/admin/view?id='+data.id,'员工详情');
-				rightpage.open('/user/user/view?id='+data.id);
+				tool.side('/user/user/view?id='+data.id);
 				return;
 			}
 			if(obj.event === 'edit'){
-				rightpage.open('/user/user/add?id='+data.id);
+				tool.side('/user/user/add?id='+data.id);
 			}
 			else if (obj.event === 'copy') {
 				copyToClip(data.reg_pwd);
 				return;
 			}
 			else if (obj.event === 'psw') {
-				resetPsw(data.id);
+				layer.confirm('确定要重设该用户的密码？', {
+					icon: 3,
+					title: '提示'
+				}, function (index) {
+					let callback = function (e) {
+						layer.msg(e.msg);
+						if (e.code == 0) {
+							layui.pageTable.reload();
+						}
+					}
+					tool.post("/user/user/reset_psw", {id: data.id}, callback);
+					layer.close(index);
+				});
 				return;
 			}
 		});
 
 		//监听搜索提交
 		form.on('submit(webform)', function (data) {
-			tableIns.reload({
+			layui.pageTable.reload({
 				where: {
 					keywords: data.field.keywords,
 					status: data.field.status,
@@ -310,37 +307,14 @@
 			});
 			return false;
 		});
-	}
-	
-	
-	//重设密码
-	function resetPsw(id){
-		layer.confirm('确定要重设该用户的密码？', {
-			icon: 3,
-			title: '提示'
-		}, function (index) {
-			$.ajax({
-				url: "/user/user/reset_psw",
-				data: {
-					id: id
-				},
-				success: function (e) {
-					layer.msg(e.msg);
-					if(e.code==0){
-						tableIns.reload();
-					}							
-				}
-			})
-			layer.close(index);
-		});
-	}
+	}	
 	
 	//拷贝密码
 	function copyToClip(content) {
 		var save = function(e){
-				e.clipboardData.setData('text/plain', content);
-				e.preventDefault();
-			}
+			e.clipboardData.setData('text/plain', content);
+			e.preventDefault();
+		}
 		document.addEventListener('copy', save);
 		document.execCommand('copy');
 		document.removeEventListener('copy',save);
@@ -349,6 +323,5 @@
 		}
 	}
 </script>
-{include file="../../base/view/common/layui" base='base' extend="['rightpage']" callback="init" /}
 {/block}
 <!-- /脚本 -->

@@ -1,8 +1,8 @@
 {extend name="../../base/view/common/base" /}
 <!-- 主体 -->
 {block name="body"}
-<div class="body-table">
-	<table class="layui-hide" id="backup" lay-filter="test"></table>
+<div class="p-3">
+	<table class="layui-hide" id="backup" lay-filter="backup"></table>
 </div>
 <script type="text/html" id="toolbarDemo">
 	<div class="layui-btn-group">
@@ -12,16 +12,11 @@
 </script>
 {/block}
 <!-- /主体 -->
-
-
-<script>
 <!-- 脚本 -->
 {block name="script"}
 <script>
-	function init(layui) {
-		var table = layui.table,
-			form = layui.form;
-
+	function gouguInit() {
+		var table = layui.table, form = layui.form;
 		var tableIns = table.render({
 			elem: '#backup',
 			title: '数据备份',
@@ -30,45 +25,45 @@
 			page: false,
 			cols: [
 				[ //表头
-					{type: 'checkbox'},
+					{ type: 'checkbox' },
 					{
 						field: 'name',
 						title: '数据表',
-						width: 220
+						width: 200
 					},
 					{
 						field: 'status',
 						title: '状态',
-						width: 120,
-						templet:function(d){
-							return '<span id="table_'+d.name+'">-</span>';
+						width: 100,
+						templet: function (d) {
+							return '<span id="table_' + d.name + '">-</span>';
 						}
 					},
 					{
 						field: 'engine',
 						title: '存储引擎',
 						align: 'center',
-						width: 90
+						width: 80
 					}, {
 						field: 'row_format',
 						title: '行格式',
 						align: 'center',
-						width: 90
+						width: 80
 					}, {
 						field: 'rows',
 						title: '行数',
 						align: 'center',
-						width: 100,
+						width: 60,
 					}, {
 						field: 'data_size',
 						title: '字节数',
 						align: 'center',
-						width: 120
+						width: 80
 					}, {
 						field: 'data_length',
 						title: '数据大小',
 						align: 'center',
-						width: 120
+						width: 80
 					}, {
 						field: 'comment',
 						title: '数据表注释'
@@ -80,61 +75,60 @@
 					}
 				]
 			],
-			done:function(res, curr, count){
+			done: function (res, curr, count) {
 				$('#dataTips').html(res.msg);
 			}
 		});
 
-     	//递归备份表
-      	function backup(tab,status,table){
+		//递归备份表
+		function backup(tab, status, table) {
 			layer.closeAll();
-			layer.msg("备份中...，请勿关闭本页面",{time: 200000});
-       		$.get("/home/database/backup", tab, function(data){
-	          	// console.log(data)
-				if(data.code==0){
-	            	showmsg(data.data.tab.table, data.msg);
-	             	if(data.data.tab.start=='ok'){
+			layer.msg("备份中...，请勿关闭本页面", { time: 200000 });
+			$.get("/home/database/backup", tab, function (data) {
+				if (data.code == 0) {
+					showmsg(data.data.tab.table, data.msg);
+					if (data.data.tab.start == 'ok') {
 						layer.msg('备份完成');
-	                    window.onbeforeunload = function(){ return null }
-	                    return;
-	                } 
-	                backup(data.data.tab, tab.id != data.data.tab.id);
-	            } else {
+						window.onbeforeunload = function () { return null }
+						return;
+					}
+					backup(data.data.tab, tab.id != data.data.tab.id);
+				} else {
 					layer.msg('立即备份');
-	            }
-       		}, "json"); 
-      	}
+				}
+			}, "json");
+		}
 
-	    //修改备份状态
-	    function showmsg(table, msg){
+		//修改备份状态
+		function showmsg(table, msg) {
 			console.log(table);
-	    	$("#table_"+table).addClass('span-color-2').html(msg);
-	    }
+			$("#table_" + table).addClass('span-color-2').html(msg);
+		}
 		//监听行工具事件
-		table.on('toolbar(test)', function (obj) {
+		table.on('toolbar(backup)', function (obj) {
 			var checkData = table.checkStatus(obj.config.id).data;
 			var len = checkData.length;
-			var tables=[];
-			if(len==0){
+			var tables = [];
+			if (len == 0) {
 				layer.msg('请先选择表');
 				return false;
 			}
-			for(var i=0;i<len;i++){
-				tables.push(checkData[i].name);		   
+			for (var i = 0; i < len; i++) {
+				tables.push(checkData[i].name);
 			}
 			if (obj.event === 'backup') {
-				layer.confirm('确认要备份选中的'+len+'个数据表吗?', {
+				layer.confirm('确认要备份选中的' + len + '个数据表吗?', {
 					icon: 3,
 					title: '提示'
 				}, function (index) {
 					$.ajax({
 						url: "/home/database/backup",
-						type:'post',
-						data: {'tables':tables},
+						type: 'post',
+						data: { 'tables': tables },
 						success: function (res) {
 							if (res.code == 0) {
-								layer.msg( "开始备份，请不要关闭本页面！");
-               					window.onbeforeunload = function(){ return "正在备份数据库，请不要关闭！" }
+								layer.msg("开始备份，请不要关闭本页面！");
+								window.onbeforeunload = function () { return "正在备份数据库，请不要关闭！" }
 								backup(res.data.tab);
 							}
 							if (res.code == 2) {
@@ -144,53 +138,55 @@
 								}, function (index) {
 									$.ajax({
 										url: "/home/database/del",
-										data: {'lock':1},
+										data: { 'lock': 1 },
 										success: function (res) {
 											layer.msg(res.msg);
 										}
-									})							
+									})
 								})
 							}
-							else{
+							else {
 								layer.msg(res.msg);
 							}
 						}
 					})
 					layer.close(index);
 				});
-			}else if (obj.event === 'optimize') {
-				layer.confirm('确认要优化选中的'+len+'个数据表吗?', {
+			} else if (obj.event === 'optimize') {
+				layer.confirm('确认要优化选中的' + len + '个数据表吗?', {
 					icon: 3,
 					title: '提示'
 				}, function (index) {
 					$.ajax({
 						url: "/home/database/optimize",
-						data: {'tables':tables},
+						type: 'post',
+						data: { 'tables': tables },
 						success: function (res) {
 							layer.msg(res.msg);
 							if (res.code == 0) {
-								setTimeout(function(){
+								setTimeout(function () {
 									location.reload();
-								},2000)								
+								}, 2000)
 							}
 						}
 					})
 					layer.close(index);
 				});
-			}else if (obj.event === 'repair') {
-				layer.confirm('确认要修复选中的'+len+'个数据表吗?', {
+			} else if (obj.event === 'repair') {
+				layer.confirm('确认要修复选中的' + len + '个数据表吗?', {
 					icon: 3,
 					title: '提示'
 				}, function (index) {
 					$.ajax({
 						url: "/home/database/repair",
-						data: {'tables':tables},
+						type: 'post',
+						data: { 'tables': tables },
 						success: function (res) {
 							layer.msg(res.msg);
 							if (res.code == 0) {
-								setTimeout(function(){
+								setTimeout(function () {
 									location.reload();
-								},2000)
+								}, 2000)
 							}
 						}
 					})
@@ -200,6 +196,5 @@
 		});
 	}
 </script>
-{include file="../../base/view/common/layui" base="base" extend="[]" callback="init" /}
 {/block}
 <!-- /脚本 -->

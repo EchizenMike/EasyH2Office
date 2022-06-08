@@ -1,15 +1,13 @@
 {extend name="../../base/view/common/base" /}
 {block name="style"}
-<link rel="stylesheet" href="{__LAYUI__}/plugin/dtree/dtree.css">
-<link rel="stylesheet" href="{__LAYUI__}/plugin/dtree/font/dtreefont.css">
 <style>
 .layui-unselect dl {max-height:188px;}
 </style>
 {/block}
 <!-- 主体 -->
 {block name="body"}
-<div class="body-table">
-	<form class="layui-form layui-form-bar">
+<div class="p-3">
+	<form class="layui-form gg-form-bar border-x border-t">
 		<div id="barDate" class="layui-input-inline">
 			<div class="layui-input-inline" style="width:110px;">
 				<input type="text" class="layui-input" id="start_time" placeholder="选择时间区间" readonly name="start_time">
@@ -43,14 +41,9 @@
 <!-- 脚本 -->
 {block name="script"}
 	<script>
-		function init(layui){
-			var table = layui.table
-			,form = layui.form
-			,dropdown = layui.dropdown
-			,dtree = layui.dtree
-			,employeepicker = layui.employeepicker
-			,laydate = layui.laydate;
-	  
+	const moduleInit = ['tool','employeepicker'];
+	function gouguInit() {
+		var form = layui.form,table = layui.table,tool=layui.tool, employeepicker = layui.employeepicker,laydate = layui.laydate,dropdown = layui.dropdown;	  
 
 		//日期范围
 		laydate.render({
@@ -65,7 +58,7 @@
 		})
 		
 		// 选择员工
-		$('.body-table').on('click','[data-event="select"]',function(){
+		$('body').on('click','[data-event="select"]',function(){
 			var that = $(this);
 			var names = that.val(), ids = $('[name="uid"]').val();
 			employeepicker.init({
@@ -85,11 +78,11 @@
 		//监听搜索提交
 		form.on('submit(webform)', function(data){
 			let f=data.field;
-			tableIns.reload({where:{keywords:f.keywords,start_time:f.start_time,end_time:f.end_time,uid:f.uid},page:{curr:1}});
+			layui.pageTable.reload({where:{keywords:f.keywords,start_time:f.start_time,end_time:f.end_time,uid:f.uid},page:{curr:1}});
 			return false;
 		});
 
-		var tableIns = table.render({
+		layui.pageTable = table.render({
 			elem: '#test'
 			,toolbar: '#toolbarDemo'
 			,title:'日程安排列表'
@@ -142,9 +135,8 @@
 			if(obj.event === 'edit'){
 				$.ajax({
 					url: "/oa/plan/detail",
-					data:{
-						id:data.id
-					},
+					type:'get',
+					data:{id:data.id},
 					success:function(e){
 						if(e.code==0){			
 							var detail={};
@@ -165,9 +157,8 @@
 			else if(obj.event === 'view'){
 				$.ajax({
 					url: "/oa/plan/detail",
-					data:{
-						id:data.id
-					},
+					type:'get',
+					data:{id:data.id},
 					success:function(e){
 						if(e.code==0){								
 							viewEvent(e.data);
@@ -195,19 +186,19 @@
 			var content='<div style="width:770px">\
 							<table class="layui-table" style="margin:12px 15px 0;">\
 								<tr>\
-									<td class="layui-td-gray2">日程时间范围</td>\
+									<td class="layui-td-gray-2">日程时间范围</td>\
 									<td>'+detail.start_time+' 至 '+detail.end_time+'</td>\
 									<td class="layui-td-gray">提醒时间</td>\
 									<td>'+detail.remind_time+'</td>\
 								</tr>\
 								<tr>\
-									<td class="layui-td-gray2">日程安排内容</td>\
+									<td class="layui-td-gray-2">日程安排内容</td>\
 									<td>'+detail.title+'</td>\
 									<td class="layui-td-gray">优先级</td>\
 									<td>'+work_type+'</td>\
 								</tr>\
 								<tr>\
-									<td class="layui-td-gray2">日程内容描述</td>\
+									<td class="layui-td-gray-2">日程内容描述</td>\
 									<td colspan="3">'+detail.remark+'</td>\
 								</tr>\
 							</table>\
@@ -228,7 +219,7 @@
 			})	
 		}
 		  
-		$('.body-table').on('click','.addLoan',function(){
+		$('body').on('click','.addLoan',function(){
 			var detail={};
 			detail['id']=0;
 			detail['title']='';
@@ -283,17 +274,17 @@
 			var content='<form class="layui-form" style="width:828px">\
 							<table class="layui-table" style="margin:15px 15px 0;">\
 								<tr>\
-									<td class="layui-td-gray2">日程时间范围 <span style="color: red">*</span></td>\
+									<td class="layui-td-gray-2">日程时间范围 <span style="color: red">*</span></td>\
 									<td>\
 										<input id="start_time_a" name="start_time_a" style="width:120px; display:inline-block;" autocomplete="off" class="layui-input" value="'+detail.start_time_a+'" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间"><div style="display: inline-block; margin-left:3px; width: 86px;"><select lay-filter="start_time_b" id="start_time_b"></select></div> 至 <input id="end_time_a" name="end_time_a" style="width:120px; display:inline-block;" autocomplete="off" class="layui-input" value="'+detail.end_time_a+'" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间"><div style="display: inline-block; margin-left:3px; width: 86px;"><select lay-filter="end_time_b" id="end_time_b"></select></div>\
 									</td>\
-									<td class="layui-td-gray">日程优先级 <span style="color: red">*</span></td>\
+									<td class="layui-td-gray">优先级 <span style="color: red">*</span></td>\
 									<td>\
 										<div class="layui-input" id="type" style="width:120px; line-height:35px;">'+type+'</div>\
 									</td>\
 								</tr>\
 								<tr>\
-									<td class="layui-td-gray2">日程内容 <span style="color: red">*</span></td>\
+									<td class="layui-td-gray">日程内容 <span style="color: red">*</span></td>\
 									<td><input name="title" class="layui-input" value="'+detail.title+'" lay-verify="required" placeholder="请完成日程内容" lay-reqText="请完成日程内容"></td>\
 									<td class="layui-td-gray">提醒 <span style="color: red">*</span></td>\
 									<td>\
@@ -301,7 +292,7 @@
 									</td>\
 								</tr>\
 								<tr>\
-									<td class="layui-td-gray2">日程详细描述</td>\
+									<td class="layui-td-gray-2">日程详细描述</td>\
 									<td colspan="3">\
 										<textarea name="remark" form-input="remark" class="layui-textarea" style="min-height:120px;">'+detail.remark+'</textarea>\
 									</td>\
@@ -458,17 +449,14 @@
 							layer.msg(e.msg);
 							if(e.code==0){								
 								layer.close(idx);								
-								tableIns.reload();
+								layui.pageTable.reload();
 							}
 						}
 					})			
 				}
 			})	
-		}
-		  
-	}
-		
+		}		  
+	}		
 	</script>
-	{include file="../../base/view/common/layui" base='base' extend="['dtree','employeepicker']" use="[]" callback="init" /}
 {/block}
 <!-- /脚本 -->

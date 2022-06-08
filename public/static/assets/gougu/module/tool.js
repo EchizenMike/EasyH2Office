@@ -1,0 +1,235 @@
+layui.define([], function (exports) {
+	var MOD_NAME = 'tool';
+	var tool = {
+		loading: false,
+		side: function (url, width) {
+			var sideWidth = window.innerWidth > 1280 ? '1200px' : '960px';
+			if (width && width > 0) {
+				sideWidth = width + 'px';
+			}
+			layer.open({
+				type: 2,
+				title: '',
+				offset: ['0', '100%'],
+				skin: 'layui-anim layui-anim-rl layui-layer-admin-right',
+				closeBtn: 0,
+				content: url,
+				area: [sideWidth, '100%'],
+				success: function (obj, index) {
+					console.log(index);
+					if ($('#expressClose').length < 1) {
+						var btn = '<div id="expressClose" class="express-close" title="关闭">关闭</div>';
+						obj.append(btn);
+						$('body').addClass('right-open');
+						$('#expressClose').click(function () {
+							let op_width = $('.layui-anim-rl').outerWidth();
+							$('.layui-anim-rl').animate({ left: '+=' + op_width + 'px' }, 200, 'linear', function () {
+								$('body').removeClass('right-open');
+								$('.layui-anim-rl').remove();
+								$('.layui-layer-shade').remove();
+							})
+						})
+						$(window).resize(function () {
+							width = window.innerWidth > 1280 ? '1200' : '960';
+							$('.layui-anim-rl').width(width);
+						})
+					}
+				}
+			})
+		},
+		open: function (url, width) {
+			let that = this;
+			if (that.loading == true) {
+				return false;
+			}
+			that.loading = true;
+			if (width == 0) {
+				width = window.innerWidth > 1280 ? '1220px' : '1080px';
+			}
+			$.ajax({
+				url: url,
+				type: "GET",
+				timeout: 10000,
+				success: function (res) {
+					if (res['code'] && res['code'] > 0) {
+						layer.msg(res.msg);
+						return false;
+					}
+					var express = '<section id="expressLayer" class="express-box" style="width:' + width + '"><article id="articleLayer">' + res + '</article><div id="expressClose" class="express-close" title="关闭">关闭</div></section><div id="expressMask" class="express-mask"></div>';
+
+					$('body').append(express).addClass('right-open');
+					$('#expressMask').fadeIn(200);
+					$('#expressLayer').animate({ 'right': 0 }, 200, 'linear', function () {
+						openInit();
+					});
+
+					$('#expressClose').click(function () {
+						$('#expressMask').fadeOut(100);
+						$('body').removeClass('right-open');
+						$('#expressLayer').animate({ 'right': '-100%' }, 100, 'linear', function () {
+							$('#expressLayer').remove();
+							$('#expressMask').remove();
+							if (layui.pageTable) {
+								layui.pageTable.resize();
+							}
+						})
+					})
+					$(window).resize(function () {
+						width = window.innerWidth > 1280 ? '1200' : '1000';
+						$('#expressLayer').width(width);
+					})
+				}
+				, error: function (xhr, textstatus, thrown) {
+					console.log('错误');
+				},
+				complete: function () {
+					that.loading = false;
+				}
+			});
+		},
+		load: function (url) {
+			let that = this;
+			if (that.loading == true) {
+				return false;
+			}
+			that.loading = true;
+			$.ajax({
+				url: url,
+				type: "GET",
+				timeout: 10000,
+				success: function (res) {
+					if (res['code'] && res['code'] > 0) {
+						layer.msg(res.msg);
+						return false;
+					}
+					$('#articleLayer').html(res);
+					openInit();
+				}
+				, error: function (xhr, textstatus, thrown) {
+					console.log('错误');
+				},
+				complete: function () {
+					that.loading = false;
+				}
+			});
+		},
+		page: function (url) {
+			let that = this;
+			if (that.loading == true) {
+				return false;
+			}
+			that.loading = true;
+			$.ajax({
+				url: url,
+				type: "GET",
+				timeout: 10000,
+				success: function (res) {
+					if (res['code'] && res['code'] > 0) {
+						layer.msg(res.msg);
+						return false;
+					}
+					$('#pageBox').html(res);
+					pageInit();
+				}
+				, error: function (xhr, textstatus, thrown) {
+					console.log('错误');
+				},
+				complete: function () {
+					that.loading = false;
+				}
+			});
+		},
+		close: function () {
+			$('#expressClose').click();
+		},
+		ajax: function (options, callback) {
+			var format = 'json';
+			if (options.hasOwnProperty('data')) {
+				format = options.data.hasOwnProperty('format') ? options.data.format : 'json';
+			}
+			callback = callback || options.success;
+			callback && delete options.success;
+			var optsetting = { timeout: 10000 };
+			if (format == 'jsonp') {
+				optsetting = { timeout: 10000, dataType: 'jsonp', jsonp: 'callback' }
+			}
+			var opts = $.extend({}, optsetting, {
+				success: function (res) {
+					if (callback && typeof callback === 'function') {
+						callback(res);
+					}
+				}
+			}, options);
+			$.ajax(opts);
+		},
+		get: function (url, data, callback) {
+			this.ajax({
+				url: url,
+				type: "GET",
+				data: data
+			}, callback);
+		},
+		post: function (url, data, callback) {
+			this.ajax({
+				url: url,
+				type: "POST",
+				data: data
+			}, callback);
+		},
+		put: function (url, data, callback) {
+			this.ajax({
+				url: url,
+				type: "PUT",
+				data: data
+			}, callback);
+		},
+		delete: function (url, data, callback) {
+			this.ajax({
+				url: url,
+				type: "DELETE",
+				data: data
+			}, callback);
+		},
+		tabAdd:function(url,title){
+			if(parent.layui.admin){
+				parent.layui.admin.sonAdd(url,title);
+			}
+			else{
+				console.log('父页面没引用admin模块');
+			}			
+		},
+		tabClose:function(){
+			if(parent.layui.admin){
+				parent.layui.admin.sonClose();
+			}
+			else{
+				console.log('父页面没引用admin模块');
+			}
+		},
+		tabRefresh:function(id){
+			if(parent.layui.admin){
+				parent.layui.admin.refresh(id);
+			}
+			else{
+				console.log('父页面没引用admin模块');
+			}
+			
+		}
+	};
+	$('body').on('click', '.tab-a', function () {
+		let url = $(this).data('href');
+		let title = $(this).data('title');
+		if (url && url !== '') {
+			tool.tabAdd(url,title);
+		}
+		return false;
+	});
+	$('body').on('click', '.right-a', function () {
+		let url = $(this).data('href');
+		if (url && url !== '') {
+			tool.side(url);
+		}
+		return false;
+	});
+	exports(MOD_NAME, tool);
+});  

@@ -98,6 +98,7 @@ class Index extends BaseController
     {
         $id = empty(get_params('id')) ? 0 : get_params('id');
         $note = Db::name('Note')->where(['id' => $id])->find();
+        $note['cate_title'] = Db::name('NoteCate')->where(['id' => $note['cate_id']])->value('title');
         View::assign('note', $note);
         return view();
     }

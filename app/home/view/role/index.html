@@ -1,14 +1,14 @@
 {extend name="../../base/view/common/base" /}
 <!-- 主体 -->
 {block name="body"}
-<div class="body-table">
-	<form class="layui-form layui-form-bar">
+<div class="p-3">
+	<form class="layui-form gg-form-bar border-t border-x">
 		<div class="layui-input-inline" style="width:300px;">
 			<input type="text" name="keywords" placeholder="名称/备注" class="layui-input" autocomplete="off" />
 		</div>
 		<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform">提交搜索</button>
 	</form>
-	<table class="layui-hide" id="test" lay-filter="test"></table>
+	<table class="layui-hide" id="role" lay-filter="role"></table>
 </div>
 
 <script type="text/html" id="status">
@@ -25,14 +25,11 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
-	var tableIns = null;
-	function init(layui) {
-		var table = layui.table,
-			rightpage = layui.rightpage,
-			form = layui.form;
-
-		tableIns = table.render({
-			elem: '#test',
+	const moduleInit = ['tool'];
+	function gouguInit() {
+		var table = layui.table, tool = layui.tool, form = layui.form;
+		layui.pageTable = table.render({
+			elem: '#role',
 			toolbar: '#toolbarDemo',
 			url: "/home/role/index", //数据接口
 			page: true, //开启分页
@@ -51,31 +48,32 @@
 		});
 		
 		//表头工具栏事件
-		table.on('toolbar(test)', function(obj){
+		table.on('toolbar(role)', function(obj){
 			if (obj.event === 'add') {
-				rightpage.open("/home/role/add");
+				tool.side("/home/role/add");
 				return;
 			}
 		});
 		//监听行工具事件
-		table.on('tool(test)', function (obj) {
+		table.on('tool(role)', function (obj) {
 			var data = obj.data;
 			if (obj.event === 'edit') {
-				rightpage.open('/home/role/add?id='+obj.data.id);
+				tool.side('/home/role/add?id='+obj.data.id);
 				return;
 			}
 			if (obj.event === 'del') {
 				layer.confirm('确定要删除该权限角色吗？', { icon: 3, title: '提示' }, function (index) {
-					$.ajax({
-						url: "/home/role/delete",
-						data: { id: data.id },
-						success: function (e) {
-							layer.msg(e.msg);
-							if (e.code == 0) {
+					let callback = function (e) {
+						layer.msg(e.msg);
+						if (e.code == 0) {
+							layer.msg(res.msg);
+							if (res.code == 0) {
 								obj.del();
+								layer.close(index);
 							}
 						}
-					})
+					}
+					tool.delete("/home/role/delete", { id: obj.data.id }, callback);
 					layer.close(index);
 				});
 			}
@@ -83,7 +81,7 @@
 
 		//监听搜索提交
 		form.on('submit(webform)', function (data) {
-			tableIns.reload({
+			layui.pageTable.reload({
 				where: { keywords: data.field.keywords },
 				page: { curr: 1 }
 			});
@@ -92,6 +90,5 @@
 	}
 
 </script>
-{include file="../../base/view/common/layui" base="base" extend="['rightpage']" callback="init" /}
 {/block}
 <!-- /脚本 -->

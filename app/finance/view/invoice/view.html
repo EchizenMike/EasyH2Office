@@ -1,7 +1,5 @@
 {extend name="../../base/view/common/base" /}
 {block name="style"}
-<link rel="stylesheet" href="{__LAYUI__}/plugin/dtree/dtree.css">
-<link rel="stylesheet" href="{__LAYUI__}/plugin/dtree/font/dtreefont.css">
 <style>
 .layui-form-pane .layui-form-label{color:#999; width:80px; padding:8px 3px;}
 .layui-form-item .layui-inline{margin-right:3px; margin-bottom:10px;}
@@ -53,8 +51,9 @@
 {/block}
 <!-- 主体 -->
 {block name="body"}
-<div class="page-content">
-	<h3 class="h3-title">发票详情</h3>
+{block name="body"}
+<form class="layui-form p-4">
+	<h3 class="pb-3">发票详情</h3>
 	<table class="layui-table">
 		<tr>
 			<td class="layui-td-gray">开票金额(元)</td>
@@ -85,7 +84,7 @@
 			<td>{$detail.invoice_phone}</td>
 		</tr>
 		<tr class="invoice-type" {eq name="$detail.type" value="2"}style="display:none"{/eq}>
-			<td class="layui-td-gray2">纳税人识别号</td>
+			<td class="layui-td-gray-2">纳税人识别号</td>
 			<td>{$detail.invoice_tax}</td>
 			<td class="layui-td-gray">开户行</td>
 			<td>{$detail.invoice_bank}</td>
@@ -93,7 +92,7 @@
 			<td>{$detail.invoice_account}</td>
 		</tr>
 		<tr class="invoice-type" {eq name="$detail.type" value="2"}style="display:none"{/eq}>
-			<td class="layui-td-gray2">银行营业网点</td>
+			<td class="layui-td-gray-2">银行营业网点</td>
 			<td>{$detail.invoice_banking}</td>
 			<td class="layui-td-gray">地址</td>
 			<td colspan="3">{$detail.invoice_address}</td>
@@ -124,7 +123,7 @@
 				{/if}
 				<span id="showRecord" class="layui-btn layui-btn-xs layui-btn-radius layui-btn-normal" style="margin-left:10px;">查看审批记录</span>
 			</td>
-			<td class="layui-td-gray">当前审核人</td>
+			<td class="layui-td-gray-2">当前审核人</td>
 			<td colspan="3">{$detail.check_user}</td>
 		</tr>
 		<tr>
@@ -172,7 +171,7 @@
 			<td colspan="3">{$detail.open_time}</td>
 		</tr>
 		<tr>
-			<td class="layui-td-gray2">快递单号</td>
+			<td class="layui-td-gray">快递单号</td>
 			<td colspan="5">{$detail.delivery}</td>
 		</tr>
 		{/if}
@@ -202,11 +201,9 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
-function init(layui) {
-	var form = layui.form
-	,dropdown = layui.dropdown
-	,employeepicker = layui.employeepicker
-	,layer = layui.layer;
+const moduleInit = ['tool','employeepicker'];
+	function gouguInit() {
+		var form = layui.form,tool=layui.tool, dropdown = layui.dropdown, employeepicker = layui.employeepicker;
 	//获取审核信息
 	$.ajax({
 		url: "/api/index/get_flow_nodes",
@@ -414,7 +411,7 @@ function init(layui) {
 						success: function (e) {
 							layer.msg(e.msg);
 							if (e.code == 0) {	
-								parent.tableIns.reload();
+								parent.layui.pageTable.reload();
 								location.reload();
 							}
 						}
@@ -439,7 +436,7 @@ function init(layui) {
 						success: function (e) {
 							layer.msg(e.msg);
 							if (e.code == 0) {	
-								parent.tableIns.reload();
+								parent.layui.pageTable.reload();
 								location.reload();
 							}
 						}
@@ -451,6 +448,5 @@ function init(layui) {
 		});
 }
 </script>
-{include file="../../base/view/common/layui" base='base' extend="['employeepicker']" callback="init" /}
 {/block}
 <!-- /脚本 -->

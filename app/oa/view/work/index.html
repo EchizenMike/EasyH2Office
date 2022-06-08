@@ -1,7 +1,8 @@
 {extend name="../../base/view/common/base" /}
 <!-- 主体 -->
 {block name="body"}
-<div class="body-table">
+<div class="p-3">
+	<div class="layui-card">
 	<div class="layui-tab layui-tab-brief" lay-filter="demoTab">
 	  <ul class="layui-tab-title">
 		<li class="layui-this" style="font-size:15px;"><strong>发送的汇报</strong></li>
@@ -9,7 +10,7 @@
 	  </ul>
 	  <div class="layui-tab-content" style="padding:0">
 		<div class="layui-tab-item layui-show">
-			<form class="layui-form layui-form-bar">
+			<form class="layui-form gg-form-bar border-x border-t">
 				<div class="layui-inline" id="date">
 					<div class="layui-input-inline" style="width:112px">
 					  <input type="text" autocomplete="off" id="start_time" name="start_time" class="layui-input" placeholder="接收开始日期">
@@ -39,7 +40,7 @@
 			<table class="layui-hide" id="test" lay-filter="test"></table>
 		</div>
 		<div class="layui-tab-item">
-			<form class="layui-form layui-form-bar">
+			<form class="layui-form gg-form-bar border-x border-t">
 				<div class="layui-inline" id="date1">
 					<div class="layui-input-inline" style="width:112px">
 					  <input type="text" autocomplete="off" id="start_time1" name="start_time" class="layui-input" placeholder="接收开始日期">
@@ -70,7 +71,7 @@
 		</div>
 	  </div>
 	</div>
-	
+</div>
 </div>
 
 <script type="text/html" id="toolbarDemo">
@@ -93,18 +94,9 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
-	function init(layui){
-		var table = layui.table
-			,form = layui.form
-			,element = layui.element
-			,rightpage = layui.rightpage
-			,laydate = layui.laydate;
-	  
-		element.on('tab(demoTab)', function(data){
-			console.log(this); //当前Tab标题所在的原始DOM元素
-			console.log(data.index); //得到当前Tab的所在下标
-			console.log(data.elem); //得到当前的Tab大容器
-		});
+	const moduleInit = ['tool','employeepicker'];
+	function gouguInit() {
+		var form = layui.form,table = layui.table,tool=layui.tool, laydate = layui.laydate;
 	  
 		//日期范围
 		laydate.render({
@@ -112,7 +104,7 @@
 			range: ['#start_time', '#end_time']
 		});
 
-		var tableIns = table.render({
+		layui.pageTable = table.render({
 			elem: '#test',
 			toolbar: '#toolbarDemo',
 			title:'工作汇报列表',
@@ -136,13 +128,14 @@
 		table.on('tool(test)', function(obj){
 			var data = obj.data;
 			if(obj.event === 'edit'){
-				rightpage.open('/oa/work/add?id='+data.id,'900px');
+				tool.side('/oa/work/add?id='+data.id);
 				return;
 			}
 			if(obj.event === 'del'){
 				layer.confirm('确定要删除该汇报吗?', {icon: 3, title:'提示'}, function(index){
 					$.ajax({
 						url: "/oa/work/delete",
+						type:'post',
 						data:{id:data.id},
 						success:function(e){
 							layer.msg(e.msg);
@@ -155,7 +148,7 @@
 				});
 			}
 			if(obj.event === 'view'){
-				rightpage.open('/oa/work/read?id='+data.id,'900px');
+				tool.side('/oa/work/read?id='+data.id);
 				return;
 			}
 		});
@@ -168,10 +161,9 @@
 		//监听搜索提交
 		form.on('submit(webform)', function(data){
 			let f=data.field;
-			tableIns.reload({where:{send:1,start_time:f.start_time,end_time:f.end_time,type:f.type,read:f.read},page:{curr:1}});
+			layui.pageTable.reload({where:{send:1,start_time:f.start_time,end_time:f.end_time,type:f.type,read:f.read},page:{curr:1}});
 			return false;
-		});
-		
+		});		
 		
 		
 		//日期范围
@@ -180,7 +172,7 @@
 			range: ['#start_time1', '#end_time1']
 		});
 
-		var tableIns1 = table.render({
+		layui.pageTable1 = table.render({
 			elem: '#test1',
 			toolbar: '#toolbarDemo',
 			title:'工作汇报列表',
@@ -214,6 +206,7 @@
 				layer.confirm('确定要删除该汇报吗?', {icon: 3, title:'提示'}, function(index){
 					$.ajax({
 						url: "/oa/work/delete",
+						type:'post',
 						data:{id:data.wid},
 						success:function(e){
 							layer.msg(e.msg);
@@ -226,7 +219,7 @@
 				});
 			}
 			if(obj.event === 'view'){
-				rightpage.open('/oa/work/read?id='+data.wid,'900px');
+				tool.side('/oa/work/read?id='+data.wid,'900px');
 				return;
 			}
 		});
@@ -234,7 +227,7 @@
 		//监听搜索提交
 		form.on('submit(webform1)', function(data){
 			let f=data.field;
-			tableIns1.reload({where:{send:0,start_time:f.start_time,end_time:f.end_time,type:f.type,read:f.read},page:{curr:1}});
+			layui.pageTable1.reload({where:{send:0,start_time:f.start_time,end_time:f.end_time,type:f.type,read:f.read},page:{curr:1}});
 			return false;
 		});		
 		
@@ -265,9 +258,8 @@
 				yes: function(idx){
 					var checkStatus = table.checkStatus(tableid.config.id);
 					var data = checkStatus.data;
-					console.log(data);
 					if(data.length>0){
-						rightpage.open('/oa/work/add?type='+data[0].id,'900px');
+						tool.side('/oa/work/add?type='+data[0].id);
 						layer.close(idx);
 					}
 					else{
@@ -279,6 +271,5 @@
 		}
 	}		
 </script>
-{include file="../../base/view/common/layui" base='base' extend="['rightpage']" callback="init" /}
 {/block}
 <!-- /脚本 -->

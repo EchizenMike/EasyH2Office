@@ -7,7 +7,7 @@
 	<meta name="renderer" content="webkit">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-	<link rel="stylesheet" href="{__LAYUI__}/css/layui.css" media="all">
+	<link rel="stylesheet" href="{__GOUGU__}/layui/css/layui.css" media="all">
 	<style>
 		body {
 			width: 100%;
@@ -16,9 +16,7 @@
 			background-size: cover;
 			background: url("{__IMG__}/bg_pattern.png"), #7b4397;
 			background: url("{__IMG__}/bg_pattern.png"), -webkit-linear-gradient(to left, #34a853, #4285f4);
-			/* Chrome 10-25, Safari 5.1-6 */
 			background: url("{__IMG__}/bg_pattern.png"), linear-gradient(to left, #34a853, #4285f4);
-			/* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 		}
 	</style>
 </head>
@@ -65,7 +63,7 @@
 						<label class="layui-form-label">数据库名</label>
 						<div class="layui-input-inline">
 							<input type="text" name="DB_NAME" required lay-verify="required" autocomplete="off"
-								class="layui-input" value="" lay-reqText="请输入数据库名">
+								class="layui-input" value="oa" lay-reqText="请输入数据库名">
 						</div>
 						<div class="layui-form-mid layui-word-aux">系统数据库名,必须包含字母,不能有"-"等特殊符号</div>
 					</div>
@@ -139,7 +137,7 @@
 		</div>
 	</div>
 
-	<script src="{__LAYUI__}/layui.js" charset="utf-8"></script>
+	<script src="{__GOUGU__}/layui/layui.js" charset="utf-8"></script>
 	<script>
 		layui.use(['element', 'jquery', 'layer', 'form'], function () {
 			var $ = layui.jquery,

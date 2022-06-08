@@ -1,84 +1,54 @@
 {extend name="../../base/view/common/base" /}
 {block name="style"}
-<link rel="stylesheet" href="{__STATIC__}/ueditor/third-party/SyntaxHighlighter/prism.css?v=1"/>
-<script src="{__STATIC__}/ueditor/third-party/SyntaxHighlighter/prism.js?v=1"></script>
+<link rel="stylesheet" href="{__GOUGU__}/third_party/prism/prism.css"/>
 <style>
-.detial-content{padding:6px 16px; color:#333; font-size: 16px!important; line-height: 1.68!important; max-width:1000px;}
-.detial-content p{padding: 6px 0;}
-.detial-content img{max-width:98%!important; border: 1px solid #e6e6e6; -webkit-box-shadow: 0 2px 6px rgba(26,26,26,.08); box-shadow: 0 2px 6px rgba(26,26,26,.08); border-radius: 3px;}
-.detial-content .gougu-video{width: 640px!important; height: 410px!important; margin:10px auto!important; border: 12px solid #F7F7F7; border-radius: 6px;}
+.text-detial-ops{line-height: 30px; color:#999; font-size: 12px; padding: 12px 0;}
+.text-detial-ops span{margin-right: 20px;}
+.text-detial-ops a{margin-right:10px;}
+.text-detial-content{padding: 8px 0; color:#333; word-break: break-all; border-top:1px solid #e8e8e8;font-size: 16px!important; line-height: 1.72!important;}
+.text-detial-content p{padding: 8px 0;}
+.text-detial-content img{max-width:98%!important; margin:0 auto; display:block; border: 1px solid #e6e6e6; -webkit-box-shadow: 0 2px 6px rgba(26,26,26,.08); box-shadow: 0 2px 6px rgba(26,26,26,.08); border-radius: 4px;}
+.text-detial-content h1,.text-detial-content h2,.text-detial-content h3,.text-detial-content h4,.text-detial-content h5{margin-top:10px;}
+.text-detial-content a{color:#186AF2; font-style:italic;}
+.text-detial-content a:hover{text-decoration:underline;}
+
+.text-detial-content p code,.blog-detial-content pre{margin:0 3px;font-size: 14px; font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; background: #f6f6f6; padding: 10px; border-radius: 2px;}
+.text-detial-content p code{border: 1px solid #eee;padding: 2px 4px;}
+.text-detial-content table {border-collapse: collapse; border-spacing: 0; display: block; width: 100%; overflow: auto;  word-break: normal;word-break: keep-all; margin-top: 0;margin-bottom: 16px;}
+.text-detial-content table tr {background-color: #fff;border-top: 1px solid #ccc;}
+.text-detial-content table tr:nth-child(2n) {background-color: #f8f8f8;}
+.text-detial-content table td, .blog-detial-content table th { padding: 6px 12px;border: 1px solid #ddd; font-size:14px; }
+.text-detial-content table th {font-weight: 800;}
+.text-detial-content li {list-style: initial;margin-left: 20px;}
+:not(pre)>code[class*=language-], pre[class*=language-]{background:#fff!important;border:1px solid #e8e8e8!important; border-radius:3px;}
 </style>
 {/block}
 <!-- 主体 -->
 {block name="body"}
-<div class="body-content">
-	<h3 class="h3-title">知识文章详情</h3>
-	<table class="layui-table layui-table-form">
-		<tr>
-			<td class="layui-td-gray">文章标题</td>
-			<td colspan="3">{$detail.title}</td>
-			<td class="layui-td-gray">文章分类</td>
-			<td>
-				{volist name=":set_recursion(article_cate())" id="v"}
-					{eq name="$detail.article_cate_id" value="$v.id" }{$v.title}{/eq}
-				{/volist}
-			</td>
-		</tr>
-		<tr>
-			<td class="layui-td-gray">关键字</td>
-			<td colspan="3">{$detail.keyword_names}</td>
-			<td class="layui-td-gray">阅读量</td>
-			<td>{$detail.read}</td>
-		</tr>
-		<tr>
-			<td class="layui-td-gray">发布时间</td>
-			<td>{$detail.create_time | date='Y-m-d H:i:s'}</td>
-			<td class="layui-td-gray">发布人</td>
-			<td>{$detail.user}</td>
-			<td class="layui-td-gray">部门</td>
-			<td>{$detail.department}</td>
-		</tr>
+<div class="p-4">
+	<h1>{$detail.title}</h1>
+	<div class="text-detial-ops">
+		<span>发表于：{$detail.create_time | date='Y-m-d m:i:s'}</span>
+		<span>发布人：{$detail.user}</span>
+		<span>部门：{$detail.department}</span>
+		<span>阅读量：{$detail.read}</span>
+		<span>文章分类：{$detail.cate_title}</span>
+		<span>关键字：{$detail.keyword_names}</span>
 		{notempty name="$detail.origin_url"}
-		<tr>
-			<td class="layui-td-gray">来源链接</td>
-			<td colspan="5">{$detail.origin_url}</td>
-		</tr>
+		<p>
+			<span>来源链接：{$detail.origin_url}</span>
+		</p>
 		{/notempty}
-		<tr>
-			<td class="layui-td-gray" style="vertical-align:top;">文章内容</td>
-			<td colspan="5"><div class="detial-content">{$detail.content|raw}</div></td>
-		</tr>
-	</table>
+	</div>
+	<div class="text-detial-content">
+	{$detail.content|raw}
+	</div>
 </div>
 {/block}
 <!-- /主体 -->
 
 <!-- 脚本 -->
 {block name="script"}
-<script>
-function init(layui) {
-    var $codepre = $("pre[class]");
-	if($codepre.length>0){
-		for(var i = 0;i<$codepre.length;i++){
-			var item = $codepre.eq(i);
-			var language = "";
-			item.attr("class").replace(/brush:([^;]+)/,function(a,b){
-				language = b;
-			});
-			if(language){
-				var codehtml = item.html();
-				var code = $("<code>");
-				code.attr("class","language-"+language+" line-numbers");
-				//codehtml= unhtml(codehtml);
-				code.html(codehtml);
-				item.html(code);
-				Prism.highlightElement(code[0]);
-			}
-		}
-	}
-}
-
-</script>
-{include file="../../base/view/common/layui" base='base' extend="[]" callback="init" /}
+<script src="{__GOUGU__}/third_party/prism/prism.js"></script>
 {/block}
 <!-- /脚本 -->

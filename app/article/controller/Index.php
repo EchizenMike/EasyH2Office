@@ -168,6 +168,7 @@ class Index extends BaseController
     {
         $id = get_params("id");
         $detail = (new ArticleList())->detail($id);
+		$detail['cate_title'] = Db::name('ArticleCate')->where(['id' => $detail['article_cate_id']])->value('title');
         // read 字段加 1
         Db::name('article')->where('id', $id)->inc('read')->update();
         View::assign('detail', $detail);

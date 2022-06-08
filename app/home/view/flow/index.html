@@ -1,7 +1,7 @@
 {extend name="../../base/view/common/base" /}
 <!-- 主体 -->
 {block name="body"}
-<div class="body-table">
+<div class="p-3">
     <table class="layui-hide" id="test" lay-filter="test"></table>
 </div>
 <script type="text/html" id="toolbarDemo">
@@ -15,13 +15,10 @@
 <!-- 脚本 -->
 {block name="script"}
 	<script>
-		var tableIns = null;
-		function init(layui){
-			var table=layui.table,
-			rightpage=layui.rightpage,
-			layer=layui.layer;
-			
-			tableIns = table.render({
+	const moduleInit = ['tool'];
+	function gouguInit() {
+		var table = layui.table, tool = layui.tool, form = layui.form;
+		layui.pageTable = table.render({
 			elem: '#test'
 			,toolbar: '#toolbarDemo'
 			,title:'审批流程列表'
@@ -83,54 +80,39 @@
 			
 			table.on('tool(test)',function (obj) {
 				if(obj.event === 'edit'){		
-					rightpage.open('/home/flow/add?id='+obj.data.id,'900px');
+					tool.side('/home/flow/add?id='+obj.data.id);
 				}
 				if(obj.event === 'disable'){
 					layer.confirm('确定要禁用该模块吗?', {icon: 3, title:'提示'}, function(index){
-						$.ajax({
-							url: "/home/flow/check",
-							type: 'post',
-							data: {
-								id: obj.data.id,
-								status: 0
-							},
-							success: function(e) {
-								layer.msg(e.msg);
-								if (e.code == 0) {
-									tableIns.reload();
-								}
+						let callback = function (e) {
+							layer.msg(e.msg);
+							if (e.code == 0) {
+								layui.pageTable.reload();
 							}
-						}) 
-						layer.close(index);
+						}
+						tool.post("/home/flow/check", { id: obj.data.id,status: 0 }, callback);
+						layer.close(index);						
 					});
 				}
 				if(obj.event === 'open'){
 					layer.confirm('确定要启用该模块吗?', {icon: 3, title:'提示'}, function(index){
-						$.ajax({
-							url: "/home/flow/check",
-							type: 'post',
-							data: {
-								id: obj.data.id,
-								status: 1
-							},
-							success: function(e) {
-								layer.msg(e.msg);
-								if (e.code == 0) {
-									tableIns.reload();
-								}
+						let callback = function (e) {
+							layer.msg(e.msg);
+							if (e.code == 0) {
+								layui.pageTable.reload();
 							}
-						}) 
-						layer.close(index);
+						}
+						tool.post("/home/flow/check", { id: obj.data.id,status: 1 }, callback);
+						layer.close(index);	
 					});
 				}
 			});
 			
-			$('.body-table').on('click','.addNew',function(){
-				rightpage.open('/home/flow/add','900px');	
+			$('body').on('click','.addNew',function(){
+				tool.side("/home/flow/add");
+				return false;
 			});
-
 		}
 	</script>
-	{include file="../../base/view/common/layui" base='base' extend="['rightpage']" callback="init" /}
 {/block}
 <!-- /脚本 -->

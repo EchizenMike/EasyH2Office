@@ -1,16 +1,12 @@
 {extend name="../../base/view/common/base" /}
-{block name="style"}
-<link rel="stylesheet" href="{__LAYUI__}/plugin/dtree/dtree.css">
-<link rel="stylesheet" href="{__LAYUI__}/plugin/dtree/font/dtreefont.css">
-{/block}
 <!-- 主体 -->
 {block name="body"}
-<form class="layui-form page-content">
-	<h3 class="h3-title">发送消息</h3>
+<form class="layui-form p-4">
+	<h3 class="pb-3">发送消息</h3>
 	{if condition="$id eq 0"}
 	<table class="layui-table">
 		<tr>
-			<td class="layui-td-gray2">接收人类型</td>
+			<td class="layui-td-gray-2">接收人类型</td>
 			<td>
 				<input type="radio" name="type"  lay-filter="type" value="1" title="同事" checked>
 				<input type="radio" name="type"  lay-filter="type" value="2" title="部门">
@@ -19,7 +15,7 @@
 			</td>
 		</tr>
 		<tr id ="person">
-			<td class="layui-td-gray2">收件人<span style="color: red">*</span></td>
+			<td class="layui-td-gray">收件人<span style="color: red">*</span></td>
 			<td>
 				<input type="text" name="person_name" value="" lay-verify="required" lay-reqText="请选择收件人" placeholder="请选择收件人" readonly class="layui-input">
 				<input type="hidden" name="uids" value="">
@@ -28,18 +24,18 @@
 			</td>
 		</tr>
 		<tr>
-			<td class="layui-td-gray2">主题<span style="color: red">*</span></td>
+			<td class="layui-td-gray">主题<span style="color: red">*</span></td>
 			<td>
 				<input type="text" name="title" value="" lay-verify="required" lay-reqText="请输入消息主题" placeholder="请输入消息主题" class="layui-input" lay-verify="required">
 			</td>
 		</tr>
-		<tr><td class="layui-td-gray2">发送内容<span style="color: red">*</span></td>
+		<tr><td class="layui-td-gray">发送内容<span style="color: red">*</span></td>
 			<td>
 				<textarea name="content" placeholder="请输入消息内容" class="layui-textarea" style="height: 200px;" lay-verify="required" lay-reqText="请输入消息内容"></textarea>
 			</td>
 		</tr>
 		<tr>
-			<td class="layui-td-gray2" style="vertical-align:top">消息附件</td>
+			<td class="layui-td-gray" style="vertical-align:top">消息附件</td>
 			<td>
 				<div class="layui-upload" style="max-width: 800px;">
 					<button type="button" class="layui-btn layui-btn-normal layui-btn-sm" id="testList">选择文件并上传</button> <span style="color:#FF5722;margin-left: 10px;">最大只能上传{:get_system_info('upload_max_filesize')}的文件，超过{:get_system_info('upload_max_filesize')}请压缩成多个文件上传。</span>
@@ -62,7 +58,7 @@
 	{else/}
 	<table class="layui-table">
 		<tr>
-			<td class="layui-td-gray2">接收人类型</td>
+			<td class="layui-td-gray-2">接收人类型</td>
 			<td>
 				<input type="radio" name="type"  lay-filter="type" value="1" title="同事" {eq name="$detail.type" value="1"}checked{/eq}>
 				<input type="radio" name="type"  lay-filter="type" value="2" title="部门" {eq name="$detail.type" value="2"}checked{/eq}>
@@ -71,7 +67,7 @@
 			</td>
 		</tr>
 		<tr id ="person" {eq name="$detail.type" value="3"}style="display:none;"{/eq}>
-			<td class="layui-td-gray2">收件人<span style="color: red">*</span></td>
+			<td class="layui-td-gray">收件人<span style="color: red">*</span></td>
 			<td>
 				{eq name="$detail.type" value="3"}
 				<input type="text" name="person_name" value="0" lay-verify="required" lay-reqText="请选择收件人" placeholder="请选择收件人" readonly class="layui-input">
@@ -84,12 +80,12 @@
 			</td>
 		</tr>
 		<tr>
-			<td class="layui-td-gray2">主题<span style="color: red">*</span></td>
+			<td class="layui-td-gray">主题<span style="color: red">*</span></td>
 			<td>
 				<input type="text" name="title" value="{$detail.title}" lay-verify="required" lay-reqText="请输入消息主题" placeholder="请输入消息主题" class="layui-input" lay-verify="required">
 			</td>
 		</tr>
-		<tr><td class="layui-td-gray2">发送内容<span style="color: red">*</span></td>
+		<tr><td class="layui-td-gray">发送内容<span style="color: red">*</span></td>
 			<td>
 				<textarea name="content" placeholder="请输入消息内容" class="layui-textarea" style="height: 200px;" lay-verify="required" lay-reqText="请输入消息内容">{$detail.content}</textarea>
 				{if condition="($detail.fid > 0)"}		
@@ -100,7 +96,7 @@
 				</tr>
 				{notempty name="$detail.from_file_array"}
 				<tr>
-					<td class="layui-td-gray2" style="vertical-align:top">引用消息附件</td>
+					<td class="layui-td-gray" style="vertical-align:top">引用消息附件</td>
 					<td>
 						<table class="layui-table" style="max-width: 680px;">
 							<thead>
@@ -126,7 +122,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td class="layui-td-gray2" style="vertical-align:top">消息附件</td>
+			<td class="layui-td-gray" style="vertical-align:top">消息附件</td>
 			<td>
 				<div class="layui-upload" style="max-width: 800px;">
 					<button type="button" class="layui-btn layui-btn-normal layui-btn-sm" id="testList">选择文件并上传</button> <span style="color:#FF5722;margin-left: 10px;">最大只能上传{:get_system_info('upload_max_filesize')}的文件，超过{:get_system_info('upload_max_filesize')}请压缩成多个文件上传。</span>
@@ -159,7 +155,7 @@
 		</tr>
 	</table>
 	{/if}
-	<div class="layui-form-item" style="padding-top:10px;">
+	<div class="py-3">
 		<input type="hidden" value="{$id}" name="id">
 		<input type="hidden" value="{$fid}" name="fid">
 		<button class="layui-btn" lay-submit="" lay-filter="draftform">存为草稿</button>
@@ -172,13 +168,9 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
-	function init(layui){
-		var form = layui.form
-		,layer = layui.layer
-		,table = layui.table
-		,dtree = layui.dtree
-		,upload = layui.upload
-		,employeepicker = layui.employeepicker;
+	const moduleInit = ['tool','employeepicker','dtree'];
+	function gouguInit() {
+		var form = layui.form,tool=layui.tool,table=layui.table,laydate = layui.laydate,employeepicker = layui.employeepicker,dtree = layui.dtree,upload = layui.upload;
 
 		//监听保存到草稿并发送
 		form.on('submit(webform)', function(data){
@@ -190,7 +182,6 @@
 					file_ids.push(item_id);
 				}
 			});
-			console.log(file_ids.join(','));
 			data.field.file_ids = file_ids.join(',');
 			$.ajax({
 				url: "/message/index/save",
@@ -206,9 +197,9 @@
 							success: function (e) {
 								layer.msg(e.msg);
 								if (e.code == 0) {
-									parent.tableIns.reload();
+									parent.layui.pageTable.reload();
 									setTimeout(function(){
-										parent.layui.rightpage.close();
+										parent.layui.tool.close();
 									},1000);
 								}
 							}
@@ -231,7 +222,6 @@
 					file_ids.push(item_id);
 				}
 			});
-			console.log(file_ids.join(','));
 			data.field.file_ids = file_ids.join(',');
 			$.ajax({
 				url: "/message/index/save",
@@ -240,9 +230,9 @@
 				success: function (e) {
 					layer.msg(e.msg);
 					if (e.code == 0) {
-						parent.tableIns.reload();
+						parent.layui.pageTable.reload();
 						setTimeout(function(){
-							parent.layui.rightpage.close();
+							parent.layui.tool.close();
 						},1000);
 					}
 				}
@@ -290,7 +280,7 @@
 			$('[name="person_name"]').val('');
 			$('[name="dids"]').val('');
 			$('[name="uids"]').val('');
-			$('[name="auids"]').val('');
+			$('[name="pids"]').val('');
 			if(data.value==4){
 				$('#person').val('0').hide();
 			}
@@ -343,7 +333,7 @@
 				success:function(){
 					$.ajax({
 						url: "/api/index/get_department_tree",
-						type:'post',
+						type:'get',
 						success:function(res){					
 							dtree.render({
 								elem: "#checkemployeetree",
@@ -414,9 +404,7 @@
 				}
 			})		
 		}
-	}
-		
+	}		
 	</script>
-	{include file="../../base/view/common/layui" base='base' extend="['dtree','employeepicker']" callback="init" /}
 {/block}
 <!-- /脚本 -->

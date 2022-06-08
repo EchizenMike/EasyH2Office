@@ -1,25 +1,15 @@
 {extend name="../../base/view/common/base" /}
 {block name="style"}
-<link rel="stylesheet" href="{__LAYUI__}/plugin/formSelects/formSelects-v4.css">
-<link rel="stylesheet" href="{__LAYUI__}/plugin/dtree/dtree.css">
-<link rel="stylesheet" href="{__LAYUI__}/plugin/dtree/font/dtreefont.css">
-<style>
-.layui-form-pane .layui-form-label{color:#999; width:80px; padding:8px 3px;}
-.layui-form-item .layui-inline{margin-right:3px; margin-bottom:10px;}
-.layui-form-item{margin-bottom:5px;}
-.layui-form-item .layui-btn-danger{display:none; margin-top:-8px}
-.layui-form-item:hover .layui-btn-danger{display:inline-block;}
-.select-1,.select-2{display:none;}
-</style>
+{include file="/approve/add_style" /}
 {/block}
 <!-- 主体 -->
 {block name="body"}
-<form class="layui-form page-content">
-	<h3 class="h3-title">付款申请审批</h3>
+<form class="layui-form p-4">
+	<h3 class="pb-3">付款申请审批</h3>
 	{eq name="$id" value="0"}
 	<table class="layui-table layui-table-form">
 		<tr>
-			<td class="layui-td-gray2">付款金额<font>*</font></td>
+			<td class="layui-td-gray">付款金额<font>*</font></td>
 			<td><input type="text" name="amount" value="" autocomplete="off" placeholder="请输入付款金额" lay-verify="required|number" lay-reqText="请输入付款金额" class="layui-input"></td>
 			<td class="layui-td-gray">付款方式<font>*</font></td>
 			<td>
@@ -40,7 +30,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td class="layui-td-gray2">收款人全称<font>*</font></td>
+			<td class="layui-td-gray-2">收款人全称<font>*</font></td>
 			<td><input type="text" name="name" value="" autocomplete="off" placeholder="请输入收款人全称" lay-verify="required" lay-reqText="请输入收款人全称" class="layui-input"></td>
 			<td class="layui-td-gray">银行账号<font>*</font></td>
 			<td><input type="text" name="bank" value="" autocomplete="off" placeholder="请输入银行账号" lay-verify="required|number" lay-reqText="请输入银行账号" class="layui-input"></td>
@@ -82,7 +72,7 @@
 	{else/}
 	<table class="layui-table layui-table-form">
 		<tr>
-			<td class="layui-td-gray2">付款金额<font>*</font></td>
+			<td class="layui-td-gray">付款金额<font>*</font></td>
 			<td><input type="text" name="amount" value="{$detail.amount}" autocomplete="off" placeholder="请输入费用金额" lay-verify="required|number" lay-reqText="请输入费用金额" class="layui-input"></td>
 			<td class="layui-td-gray">付款方式<font>*</font></td>
 			<td>
@@ -103,7 +93,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td class="layui-td-gray2">收款人全称<font>*</font></td>
+			<td class="layui-td-gray-2">收款人全称<font>*</font></td>
 			<td><input type="text" name="name" value="{$detail.name}" autocomplete="off" placeholder="请输入收款人全称" lay-verify="required" lay-reqText="请输入收款人全称" class="layui-input"></td>
 			<td class="layui-td-gray">银行账号<font>*</font></td>
 			<td><input type="text" name="bank" value="{$detail.bank}" autocomplete="off" placeholder="请输入银行账号" lay-verify="required|number" lay-reqText="请输入银行账号" class="layui-input"></td>
@@ -156,11 +146,9 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
-	function init(layui){
-		var form = layui.form
-		,laydate = layui.laydate
-		,employeepicker = layui.employeepicker
-		,layer = layui.layer;
+const moduleInit = ['tool','employeepicker'];
+	function gouguInit() {
+		var form = layui.form,tool=layui.tool, employeepicker = layui.employeepicker,laydate = layui.laydate;	
 		  
 		//日期时间范围
 		laydate.render({
@@ -198,9 +186,9 @@
 				success: function (e) {
 					layer.msg(e.msg);
 					if (e.code == 0) {	
-						parent.tableIns.reload();
+						parent.layui.pageTable.reload();
 						setTimeout(function(){							
-							parent.layui.rightpage.close();
+							parent.layui.tool.close();
 						},1000);
 					}
 				}
@@ -268,6 +256,5 @@
 		
 	}
 </script>
-{include file="../../base/view/common/layui" base='base' extend="['formSelects','employeepicker']" callback="init" /}
 {/block}
 <!-- /脚本 -->

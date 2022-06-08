@@ -1,8 +1,8 @@
 {extend name="../../base/view/common/base" /}
 <!-- 主体 -->
 {block name="body"}
-<div class="body-table">
-	<form class="layui-form layui-form-bar">
+<div class="p-3">
+	<form class="layui-form gg-form-bar border-t border-x">
 		<div class="layui-inline" style="width:240px">
 			<input type="text" name="keywords" placeholder="关键字" class="layui-input" autocomplete="off"/>
 		</div>
@@ -42,13 +42,10 @@
 
 <!-- 脚本 -->
 {block name="script"}
-	<script>
-		var tableIns = null;
-		function init(layui){
-		  var table = layui.table
-		  ,form = layui.form
-		  ,rightpage = layui.rightpage
-		  ,laydate = layui.laydate;
+<script>
+	const moduleInit = ['tool'];
+	function gouguInit() {
+		var table = layui.table, tool = layui.tool ,form = layui.form,laydate = layui.laydate;	
 	  
 		 //日期范围
 		  laydate.render({
@@ -56,7 +53,7 @@
 			range: ['#start_time', '#end_time']
 		  });
 
-		  tableIns = table.render({
+		  layui.pageTable = table.render({
 			elem: '#test',
 			toolbar: '#toolbarDemo',
 			title:'发件箱',
@@ -80,25 +77,26 @@
 			var data = obj.data;
 			if(obj.event === 'del'){
 				layer.confirm('确定该信息要放入垃圾箱吗?', {icon: 3, title:'提示'}, function(index){
-					$.ajax({
-						url: "/message/index/check",
-						data:{ids:data.id,type:2,source:1},
-						success:function(e){
-							layer.msg(e.msg);
-							if(e.code==0){
-								tableIns.reload();
-							}		
+					let callback = function (e) {
+						layer.msg(e.msg);
+						if(e.code==0){
+							layui.pageTable.reload();
 						}
-					})
+					}
+					tool.delete("/message/index/check", {
+						ids: data.id,
+						type:2,
+						source:1
+					}, callback);
 					layer.close(index);
 				})
 			}
 			if(obj.event === 'view'){
-				rightpage.open('/message/index/read?id='+data.id,'900px');
+				tool.side('/message/index/read?id='+data.id);
 				return;
 			}
 			if(obj.event === 'resend'){
-				rightpage.open('/message/index/reply?id='+data.id+'&type=2','900px');
+				tool.side('/message/index/reply?id='+data.id+'&type=2');
 				return;
 			}
 		  });
@@ -107,7 +105,7 @@
 			var checkStatus = table.checkStatus(obj.config.id); //获取选中行状态
 			var data = checkStatus.data; 
 			if (obj.event === 'add') {
-				rightpage.open("/message/index/add",'900px');
+				tool.side("/message/index/add");
 				return;
 			}
 			if(data.length==0){
@@ -129,20 +127,17 @@
 				icon: 3,
 				title: '提示'
 			}, function (index) {
-				$.ajax({
-					url: "/message/index/check",
-					data: {
-						ids: idArray.join(','),
-						type:type,
-						source:1
-					},
-					success: function (e) {
-						layer.msg(e.msg);
-						if(e.code==0){
-							tableIns.reload();
-						}							
+				let callback = function (e) {
+					layer.msg(e.msg);
+					if(e.code==0){
+						layui.pageTable.reload();
 					}
-				})
+				}
+				tool.delete("/message/index/check", {
+					ids: idArray.join(','),
+					type:type,
+					source:1
+				}, callback);
 				layer.close(index);
 			});
 		});
@@ -150,12 +145,11 @@
 		//监听搜索提交
 		form.on('submit(webform)', function(data){
 			let f=data.field;
-			tableIns.reload({where:{keywords:f.keywords,start_time:f.start_time,end_time:f.end_time},page:{curr:1}});
+			layui.pageTable.reload({where:{keywords:f.keywords,start_time:f.start_time,end_time:f.end_time},page:{curr:1}});
 			return false;
 		});
 	}
 		
 </script>
-{include file="../../base/view/common/layui" base='base' extend="['rightpage']" callback="init" /}
 {/block}
 <!-- /脚本 -->

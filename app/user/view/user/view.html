@@ -7,9 +7,8 @@
 {/block}
 <!-- 主体 -->
 {block name="body"}
-
-<form class="layui-form page-content">
-	<h3 class="h3-title">员工信息</h3>
+<form class="layui-form p-4">
+	<h3 class="pb-3">员工信息</h3>
 	<table class="layui-table layui-table-form">
 		<tr>
 			<td class="layui-td-gray">登录账号</td>
@@ -20,7 +19,7 @@
 			<td>
 				{empty name="$detail.reg_pwd"}
 					密码已重置
-					<span class="layui-btn layui-btn-normal layui-btn-xs" onclick="resetPsw({$detail.id});">重设新密码</span>
+					<span class="layui-btn layui-btn-normal layui-btn-xs reset-psw" data-id="{$detail.id}">重设新密码</span>
 				{else/}
 					{$detail.reg_pwd}
 					<span class="layui-btn layui-btn-normal layui-btn-xs" onclick="copyToClip('{$detail.reg_pwd}');">复制初始密码</span>
@@ -72,15 +71,15 @@
 				{eq name="$detail.type" value="2"}<span style="color:#01AAED">试用员工</span>{/eq}
 				{eq name="$detail.type" value="1"}<span style="color:#393D49">正式员工</span>{/eq}
 			</td>
-			<td class="layui-td-gray2">最后登录时间</td>
+			<td class="layui-td-gray-2">最后登录时间</td>
 			<td>
 				{$detail.last_login_time}
 			</td>
-			<td class="layui-td-gray">最后登录IP</td>
+			<td class="layui-td-gray-2">最后登录IP</td>
 			<td>
 				{$detail.last_login_ip}
 			</td>
-			<td class="layui-td-gray2">累计登录次数</td>
+			<td class="layui-td-gray-2">累计登录次数</td>
 			<td>
 				{$detail.login_num}
 			</td>
@@ -92,7 +91,7 @@
 			</td>
 		</tr>
 	</table>
-	<h3 class="h3-title2">用户权限</h3>
+	<h3 class="py-3">用户权限</h3>
 	<table class="layui-table layui-table-form">
 		{volist name="role_rule" id="vo"}
 		<tr>
@@ -129,39 +128,30 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
-	function init(layui) {
-		var TAB = parent.layui.tab,
-			form = layui.form;
-		//监听返回
-		$('.body-content').on('click', '[lay-event="back"]', function () {
-			//TAB.sonDelete();
-			var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
-			parent.layer.close(index);//关闭弹出的子页面窗口
-			return false;
-		});
-	}
-	
-	//重设密码
-	function resetPsw(id){
-		layer.confirm('确定要重设该用户的密码？', {
-			icon: 3,
-			title: '提示'
-		}, function (index) {
-			$.ajax({
-				url: "/user/admin/reset_psw",
-				data: {
-					id: id
-				},
-				success: function (e) {
+	const moduleInit = ['tool'];
+	function gouguInit() {
+		var tool=layui.tool;	
+		//重设密码
+		$('.reset-psw').on('click',function(){
+			let id=$(this).data('id');
+			layer.confirm('确定要重设该用户的密码？', {
+				icon: 3,
+				title: '提示'
+			}, function (index) {
+				let callback = function (e) {
 					layer.msg(e.msg);
-					if(e.code==0){
-						setTimeout(function(){
-							location.reload();
-						},2000);
-					}							
+					if (e.code == 0) {
+						layer.msg(e.msg);
+						if(e.code==0){
+							setTimeout(function(){
+								location.reload();
+							},2000);
+						}	
+					}
 				}
-			})
-			layer.close(index);
+				tool.post("/user/admin/reset_psw",{id: id}, callback);
+				layer.close(index);
+			})	
 		});
 	}
 	
@@ -185,6 +175,5 @@
 		}
 	}
 </script>
-{include file="../../base/view/common/layui" base='base' extend="[]" callback="init" /}
 {/block}
 <!-- /脚本 -->

@@ -1,8 +1,8 @@
 {extend name="../../base/view/common/base" /}
 <!-- 主体 -->
 {block name="body"}
-<div class="body-table">
-	<form class="layui-form layui-form-bar">
+<div class="p-3">
+	<form class="layui-form gg-form-bar border-x border-t">
 		<div class="layui-input-inline">
 			<select name="article_cate_id">
 				<option value="">请选择知识文章分类</option>
@@ -28,13 +28,10 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
-	function init(layui) {
-		var TAB = parent.layui.tab,
-			table = layui.table,
-			rightpage = layui.rightpage,
-			form = layui.form;
-
-		var tableIns = table.render({
+	const moduleInit = ['tool'];
+	function gouguInit() {
+		var table = layui.table, tool = layui.tool ,form = layui.form;
+		layui.pageTable = table.render({
 			elem: '#test',
 			title: '文章列表',
 			toolbar: '#toolbarDemo',
@@ -91,14 +88,14 @@
 		table.on('tool(test)', function(obj) {
 			var data = obj.data;
 			if(obj.event === 'view'){
-				rightpage.open('/article/index/view?id='+data.id,'900px');
+				tool.side('/article/index/view?id='+data.id);
 				return;
 			}
 		});
 
 		//监听搜索提交
 		form.on('submit(webform)', function(data) {
-			tableIns.reload({
+			layui.pageTable.reload({
 				where: {
 					keywords: data.field.keywords,
 					article_cate_id: data.field.article_cate_id
@@ -111,6 +108,5 @@
 		});
 	}
 </script>
-{include file="../../base/view/common/layui" base="base" extend="['rightpage']" callback="init" /}
 {/block}
 <!-- /脚本 -->

@@ -4,8 +4,8 @@
 {/block}
 <!-- 主体 -->
 {block name="body"}
-<form class="layui-form page-content">
-	<h3 class="h3-title">加班申请审批</h3>
+<form class="layui-form p-4">
+	<h3 class="pb-3">加班申请审批</h3>
 	{eq name="$id" value="0"}
 	<table class="layui-table layui-table-form">
 		<tr>
@@ -331,12 +331,9 @@ function leaveTime() {
 }
 
 
-	function init(layui){
-		var form = layui.form
-		,laydate = layui.laydate
-		,employeepicker = layui.employeepicker
-		,layer = layui.layer;
-		  
+const moduleInit = ['tool','employeepicker'];
+	function gouguInit() {
+		var form = layui.form,tool=layui.tool, employeepicker = layui.employeepicker,laydate = layui.laydate;		  
 		//日期时间范围
 		laydate.render({
 			elem: '#start_time_a',
@@ -412,9 +409,9 @@ function leaveTime() {
 				success: function (e) {
 					layer.msg(e.msg);
 					if (e.code == 0) {	
-						parent.tableIns.reload();
+						parent.layui.pageTable.reload();
 						setTimeout(function(){							
-							parent.layui.rightpage.close();
+							parent.layui.tool.close();
 						},1000);
 					}
 				}
@@ -482,6 +479,5 @@ function leaveTime() {
 		
 	}
 </script>
-{include file="../../base/view/common/layui" base='base' extend="['formSelects','employeepicker']" callback="init" /}
 {/block}
 <!-- /脚本 -->

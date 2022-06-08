@@ -1,19 +1,15 @@
 {extend name="../../base/view/common/base" /}
-{block name="style"}
-<link rel="stylesheet" href="{__LAYUI__}/plugin/dtree/dtree.css">
-<link rel="stylesheet" href="{__LAYUI__}/plugin/dtree/font/dtreefont.css">
-{/block}
 <!-- 主体 -->
 {block name="body"}
-<form class="layui-form page-content">
+<form class="layui-form p-4">
 	{if condition="$type eq 1"}
-	<h3 class="h3-title">回复消息</h3>
+	<h3 class="pb-3">回复消息</h3>
 	{else/}
-	<h3 class="h3-title">转发消息</h3>
+	<h3 class="pb-3">转发消息</h3>
 	{/if}
 	<table class="layui-table">
 		<tr>
-			<td class="layui-td-gray">接收人类型</td>
+			<td class="layui-td-gray-2">接收人类型</td>
 			<td>
 				<input type="radio" name="type"  lay-filter="type" value="1" title="同事" checked>
 				<input type="radio" name="type"  lay-filter="type" value="2" title="部门">
@@ -61,13 +57,13 @@
 				
 				<table class="layui-table" style="margin-top:10px;">
 				<tr>
-					<td class="layui-td-gray">原消息内容</td>
+					<td class="layui-td-gray-2">原消息内容</td>
 					<td>{$detail.content}
 					</td>
 				</tr>
 				{notempty name="$file_array"}
 				<tr>
-					<td class="layui-td-gray" style="vertical-align:top">原消息附件</td>
+					<td class="layui-td-gray-2" style="vertical-align:top">原消息附件</td>
 					<td>
 						<table class="layui-table">
 							<thead>
@@ -112,7 +108,7 @@
 			</td>
 		</tr>
 	</table>
-	<div class="layui-form-item" style="padding-top:10px;">
+	<div class="py-3">
 		<input type="hidden" value="0" name="id">
 		<input type="hidden" value="{$fid}" name="fid">
 		<button class="layui-btn" lay-submit="" lay-filter="draftform">存为草稿</button>
@@ -125,14 +121,9 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
-	function init(layui){
-		var form = layui.form
-		,layer = layui.layer
-		,table = layui.table
-		,dtree = layui.dtree
-		,upload = layui.upload
-		,employeepicker = layui.employeepicker;
-
+	const moduleInit = ['tool','employeepicker','dtree'];
+	function gouguInit() {
+		var form = layui.form,tool=layui.tool,table=layui.table,laydate = layui.laydate,employeepicker = layui.employeepicker,dtree = layui.dtree,upload = layui.upload;
 		//监听保存到草稿并发送
 		form.on('submit(webform)', function(data){
 			var file_ids = [];
@@ -159,9 +150,9 @@
 							success: function (e) {
 								layer.msg(e.msg);
 								if (e.code == 0) {
-									parent.tableIns.reload();
+									parent.layui.pageTable.reload();
 									setTimeout(function(){
-										parent.layui.rightpage.close();
+										parent.layui.tool.close();
 									},1000);
 								}
 							}
@@ -193,9 +184,9 @@
 				success: function (e) {
 					layer.msg(e.msg);
 					if (e.code == 0) {
-						parent.tableIns.reload();
+						parent.layui.pageTable.reload();
 						setTimeout(function(){
-							parent.layui.rightpage.close();
+							parent.layui.tool.close();
 						},1000);
 					}
 				}
@@ -242,7 +233,7 @@
 			$('[name="person_name"]').val('');
 			$('[name="dids"]').val('');
 			$('[name="uids"]').val('');
-			$('[name="auids"]').val('');
+			$('[name="pids"]').val('');
 			if(data.value==4){
 				$('#person').val('0').hide();
 			}
@@ -295,7 +286,7 @@
 				success:function(){
 					$.ajax({
 						url: "/api/index/get_department_tree",
-						type:'post',
+						type:'get',
 						success:function(res){					
 							dtree.render({
 								elem: "#checkemployeetree",
@@ -327,7 +318,7 @@
 			})	
 		}
 
-		//选择角色	
+		//选择岗位	
 		function selectAuditor(){
 			layer.open({
 				title:'选择岗位',
@@ -357,18 +348,16 @@
 							title.push(data[i].name);
 						}
 						$('[name="person_name"]').val(title.join(','));
-						$('[name="auids"]').val(val.join(','));
+						$('[name="pids"]').val(val.join(','));
 						layer.closeAll();
 					}else{
-						layer.msg('请选择角色');
+						layer.msg('请选择岗位');
 						return;
 					}
 				}
 			})		
 		}
-	}
-		
+	}		
 	</script>
-	{include file="../../base/view/common/layui" base='base' extend="['dtree','employeepicker']" callback="init" /}
 {/block}
 <!-- /脚本 -->

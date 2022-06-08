@@ -7,26 +7,26 @@
 {/block}
 <!-- 主体 -->
 {block name="body"}
-<form class="layui-form page-content">
-	<h3 class="h3-title">岗位信息</h3>
+<form class="layui-form p-4">
+	<h3 class="pb-3">岗位信息</h3>
 	<table class="layui-table layui-table-form">
 		<tr>
-			<td class="layui-td-gray2">岗位名称</td>
+			<td class="layui-td-gray">岗位名称</td>
 			<td>
 				{$detail.title}
 			</td>
-			<td class="layui-td-gray2">岗位工时单价</td>
+			<td class="layui-td-gray-2">岗位工时单价</td>
 			<td>
 				{$detail.work_price}
 			</td>
-			<td class="layui-td-gray2">状态</td>
+			<td class="layui-td-gray">状态</td>
 			<td>
 				{eq name="$detail.status" value="1" }正常{/eq}
 				{eq name="$detail.status" value="0" }禁止登录{/eq}
 			</td>
 		</tr>
 		<tr>
-			<td class="layui-td-gray2">用户角色</td>
+			<td class="layui-td-gray">用户角色</td>
 			<td colspan="5">
 				{volist name="$group" id="v"}
 					{eq name="$v.checked" value="1" }{$v.title},{/eq} 
@@ -34,13 +34,13 @@
 			</td>
 		</tr>
 		<tr>
-			<td class="layui-td-gray2">岗位备注</td>
+			<td class="layui-td-gray">岗位备注</td>
 			<td colspan="5">
 				{$detail.remark}
 			</td>
 		</tr>
 	</table>
-	<h3 class="h3-title2">岗位权限</h3>
+	<h3 class="py-3">岗位权限</h3>
 	<table class="layui-table layui-table-form">
 		{volist name="role_rule" id="vo"}
 		<tr>
@@ -73,15 +73,3 @@
 </form>
 {/block}
 <!-- /主体 -->
-
-<!-- 脚本 -->
-{block name="script"}
-<script>
-	function init(layui) {
-		var TAB = parent.layui.tab,
-			form = layui.form;
-	}
-</script>
-{include file="../../base/view/common/layui" base='base' extend="[]" callback="init" /}
-{/block}
-<!-- /脚本 -->
