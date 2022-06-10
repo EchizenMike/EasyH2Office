@@ -314,19 +314,22 @@ class Index extends BaseController
         $user_names=[];
         //已读回执
         $read_user_names = [];
+		
         if($detail['from_uid'] == $this->uid){
             $mails= Db::name('Message')->where(['pid' => $id])->select()->toArray();
             $read_mails= Db::name('Message')->where([['pid','=',$id],['read_time','>',2]])->select()->toArray();
             $read_user_ids = array_column($read_mails, 'to_uid');
             $read_users = Db::name('Admin')->where('status', 1)->where('id', 'in', $read_user_ids)->select()->toArray();
             $read_user_names = array_column($read_users, 'name');
+			
+			$user_ids = array_column($mails, 'to_uid');
+			$users = Db::name('Admin')->where('status', 1)->where('id', 'in', $user_ids)->select()->toArray();
+			$user_names = array_column($users, 'name');
         }
-        else{
-            $mails= Db::name('Message')->where(['pid' => $detail['pid']])->select()->toArray();
-        }
-        $user_ids = array_column($mails, 'to_uid');
-        $users = Db::name('Admin')->where('status', 1)->where('id', 'in', $user_ids)->select()->toArray();
-        $user_names = array_column($users, 'name');
+		else{
+			$users = Db::name('Admin')->where('id', $detail['to_uid'])->value('name');
+			array_push($user_names,$users);
+		}
 
         $detail['users'] = implode(",", $user_names);
         $detail['read_users'] = implode(",", $read_user_names);

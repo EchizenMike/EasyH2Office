@@ -44,7 +44,7 @@
 		<tr>
 			<td class="layui-td-gray">应用部门</td>
 			<td colspan="5">
-				<select name="department_ids" xm-selected="" xm-select="select1" xm-select-skin="default"></select>
+				<select id="department_ids" name="department_ids" xm-selected="" xm-select="select1" xm-select-skin="default"></select>
 				<p style="padding:6px 0 0; font-size:12px; color:#999">不选，默认是全公司</p>
 			</td>
 		</tr>
@@ -94,6 +94,12 @@
 					<p>4、当选择<strong> “指定人员(多人会签)” </strong>时，表示指定人员中所有人都需要审批。</p>
 					<p>5、如果指定用户没有分配查看审批模块的功能权限，系统会通知其审批，但是他无法查看此审批数据信息。</p>
 				</div>
+			</td>
+		</tr>
+		<tr>
+			<td class="layui-td-gray">抄送人</td>
+			<td colspan="5">
+				<select id="copy_uids" name="copy_uids" xm-selected="" xm-select="selectcopy" xm-select-skin="default"></select>
 			</td>
 		</tr>
 	</table>
@@ -188,6 +194,12 @@
 				</div>
 			</td>
 		</tr>
+		<tr>
+			<td class="layui-td-gray">抄送人</td>
+			<td colspan="5">
+				<select id="copy_uids" name="copy_uids" xm-selected="{$detail.copy_uids}" xm-select="selectcopy" xm-select-skin="default"></select>
+			</td>
+		</tr>
 	</table>
 	{/eq}
 	<div class="py-3">
@@ -226,6 +238,12 @@
 		formSelects.data('select1', 'server', {
 			url: '/api/index/get_department_select',
 			keyword: selcted,
+		});
+
+		var copy_uids = $('#copy_uids').attr('xm-selected');
+		formSelects.data('selectcopy', 'server', {
+			url: '/api/index/get_employee_select',
+			keyword: copy_uids,
 		});
 		//监听提交
 		form.on('submit(webform)', function(data){

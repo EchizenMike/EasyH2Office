@@ -5,7 +5,7 @@
 	{if condition="$id eq 0"}
 	<table class="layui-table">
 		<tr>
-			<td class="layui-td-gray">接收人<span style="color: red">*</span></td>
+			<td class="layui-td-gray">接收人<font>*</font></td>
 			<td>
 				<input type="text" name="person_name" value="" lay-verify="required" lay-reqText="请选择接收人" placeholder="请选择接收人" readonly class="layui-input">
 				<input type="hidden" name="uids" value="">
@@ -19,7 +19,7 @@
 		</tr>
 		{if condition="($type == 1)"}
 		<tr>
-			<td class="layui-td-gray">今日工作<span style="color: red">*</span></td>
+			<td class="layui-td-gray">今日工作<font>*</font></td>
 			<td colspan="3">
 				<textarea name="works" placeholder="请输入今日工作内容" class="layui-textarea" style="height: 120px;" lay-verify="required" lay-reqText="请输入今日工作内容"></textarea>
 			</td>
@@ -31,7 +31,7 @@
 		</tr>
 		{elseif condition="($type == 2)"}
 		<tr>
-			<td class="layui-td-gray">本周工作<span style="color: red">*</span></td>
+			<td class="layui-td-gray">本周工作<font>*</font></td>
 			<td colspan="3"
 				<textarea name="works" placeholder="请输入本周工作内容" class="layui-textarea" style="height: 120px;" lay-verify="required" lay-reqText="请输入本周工作内容"></textarea>
 			</td>
@@ -43,7 +43,7 @@
 		</tr>
 		{elseif condition="($type == 3)"}
 		<tr>
-			<td class="layui-td-gray">本月工作<span style="color: red">*</span></td>
+			<td class="layui-td-gray">本月工作<font>*</font></td>
 			<td colspan="3">
 				<textarea name="works" placeholder="请输入本月工作内容" class="layui-textarea" style="height: 120px;" lay-verify="required" lay-reqText="请输入本月工作内容"></textarea>
 			</td>
@@ -101,7 +101,7 @@
 		</tr>
 		{if condition="($type == 1)"}
 		<tr>
-			<td class="layui-td-gray">今日工作<span style="color: red">*</span></td>
+			<td class="layui-td-gray">今日工作<font>*</font></td>
 			<td colspan="3">
 				<textarea name="works" placeholder="请输入今日工作内容" class="layui-textarea" style="height: 120px;" lay-verify="required" lay-reqText="请输入今日工作内容">{$detail.works}</textarea>
 			</td>
@@ -113,7 +113,7 @@
 		</tr>
 		{elseif condition="($type == 2)"}
 		<tr>
-			<td class="layui-td-gray">本周工作<span style="color: red">*</span></td>
+			<td class="layui-td-gray">本周工作<font>*</font></td>
 			<td colspan="3">
 				<textarea name="works" placeholder="请输入本周工作内容" class="layui-textarea" style="height: 120px;" lay-verify="required" lay-reqText="请输入本周工作内容">{$detail.works}</textarea>
 			</td>
@@ -125,7 +125,7 @@
 		</tr>
 		{elseif condition="($type == 3)"}
 		<tr>
-			<td class="layui-td-gray">本月工作<span style="color: red">*</span></td>
+			<td class="layui-td-gray">本月工作<font>*</font></td>
 			<td colspan="3">
 				<textarea name="works" placeholder="请输入本月工作内容" class="layui-textarea" style="height: 120px;" lay-verify="required" lay-reqText="请输入本月工作内容">{$detail.works}</textarea>
 			</td>

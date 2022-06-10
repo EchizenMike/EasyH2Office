@@ -223,11 +223,23 @@ class Expense extends BaseController
 					if (!isset($param['check_admin_ids'])) {
 						if($flow[0]['flow_type'] == 1){
 							//部门负责人
-							$param['check_admin_ids'] = get_department_leader($admin_id);						
+							$leader = get_department_leader($this->uid);
+							if($leader == 0){
+								return to_assign(1,'审批流程设置有问题：当前部门负责人还未设置，请联系HR或者管理员');
+							}
+							else{
+								$param['check_admin_ids'] = $leader;
+							}						
 						}
 						else if($flow[0]['flow_type'] == 2){
 							//上级部门负责人
-							$param['check_admin_ids'] = get_department_leader($admin_id,1);
+							$leader = get_department_leader($this->uid,1);
+							if($leader == 0){
+								return to_assign(1,'审批流程设置有问题：上级部门负责人还未设置，请联系HR或者管理员');
+							}
+							else{
+								$param['check_admin_ids'] = $leader;
+							}
 						}
 						else{
 							$param['check_admin_ids'] = $flow[0]['flow_uids'];
@@ -282,6 +294,13 @@ class Expense extends BaseController
                             }
                         }						
                         add_log('edit', $exid, $param);
+						//发送消息通知
+						$msg=[
+							'from_uid'=>$this->uid,
+							'action_id'=>$param['id']
+						];
+						$users = $param['check_admin_ids'];
+						sendMessage($users,31,$msg);
                         Db::commit();
                         $dbRes = true;
                     } else {
@@ -306,11 +325,23 @@ class Expense extends BaseController
 					if (!isset($param['check_admin_ids'])) {
 						if($flow[0]['flow_type'] == 1){
 							//部门负责人
-							$param['check_admin_ids'] = get_department_leader($admin_id);							
+							$leader = get_department_leader($this->uid);
+							if($leader == 0){
+								return to_assign(1,'审批流程设置有问题：当前部门负责人还未设置，请联系HR或者管理员');
+							}
+							else{
+								$param['check_admin_ids'] = $leader;
+							}						
 						}
 						else if($flow[0]['flow_type'] == 2){
 							//上级部门负责人
-							$param['check_admin_ids'] = get_department_leader($admin_id,1);	
+							$leader = get_department_leader($this->uid,1);
+							if($leader == 0){
+								return to_assign(1,'审批流程设置有问题：上级部门负责人还未设置，请联系HR或者管理员');
+							}
+							else{
+								$param['check_admin_ids'] = $leader;
+							}
 						}
 						else{
 							$param['check_admin_ids'] = $flow[0]['flow_uids'];
@@ -358,6 +389,13 @@ class Expense extends BaseController
                             }
                         }						
                         add_log('add', $exid, $param);
+						//发送消息通知
+						$msg=[
+							'from_uid'=>$this->uid,
+							'action_id'=>$exid
+						];
+						$users = $param['check_admin_ids'];
+						sendMessage($users,31,$msg);
                         Db::commit();
                         $dbRes = true;
                     } else {
@@ -378,6 +416,10 @@ class Expense extends BaseController
             $id = isset($param['id']) ? $param['id'] : 0;
             if ($id > 0) {
                 $expense = $this->detail($id);
+				if($expense['file_ids'] !=''){
+					$fileArray = Db::name('File')->where('id','in',$expense['file_ids'])->select();
+					$expense['fileArray'] = $fileArray;
+				}
                 View::assign('expense', $expense);
             }
 			$department = get_login_admin('did');
@@ -414,6 +456,14 @@ class Expense extends BaseController
 				$check_user = Db::name('Admin')->where('id','in',$flows['flow_uids'])->column('name');
 				$detail['check_user'] = implode(',',$check_user);			
 			}
+		}
+		if($detail['copy_uids'] !=''){
+			$copy_user = Db::name('Admin')->where('id','in',$detail['copy_uids'])->column('name');
+			$detail['copy_user'] = implode(',',$copy_user);
+		}
+		if($detail['file_ids'] !=''){
+			$fileArray = Db::name('File')->where('id','in',$detail['file_ids'])->select();
+			$detail['fileArray'] = $fileArray;
 		}
 		
 		$is_check_admin = 0;
@@ -468,6 +518,10 @@ class Expense extends BaseController
     {
         $param = get_params();
 		$detail = Db::name('Expense')->where(['id' => $param['id']])->find();
+		$check_admin_ids = explode(",", strval($detail['check_admin_ids']));
+		if (!in_array($this->uid, $check_admin_ids)){		
+			return to_assign(1,'您没权限审核该审批');
+		}
 		//当前审核节点详情
 		$step = Db::name('FlowStep')->where(['action_id'=>$detail['id'],'type'=>2,'sort'=>$detail['check_step_sort'],'delete_time'=>0])->find();
 		//审核通过
@@ -489,6 +543,9 @@ class Expense extends BaseController
 						//不存在下一步审核，审核结束
 						$param['check_status'] = 2;
 					}
+				}
+				else{
+					$param['check_status'] = 1;
 				}
 			}
 			else if($step['flow_type'] == 0){
@@ -556,6 +613,20 @@ class Expense extends BaseController
 				);	
 				$aid = Db::name('FlowRecord')->strict(false)->field(true)->insertGetId($checkData);
 				add_log('check', $param['id'], $param);
+				//发送消息通知
+				$msg=[
+					'from_uid'=>$detail['admin_id'],
+					'create_time'=>date('Y-m-d H:i:s',$detail['create_time']),
+					'action_id'=>$detail['id']
+				];
+				if($param['check_status'] == 1){
+					$users = $param['check_admin_ids'];
+					sendMessage($users,31,$msg);
+				}
+				if($param['check_status'] == 2){
+					$users = $detail['admin_id'];
+					sendMessage($users,32,$msg);
+				}
 				return to_assign();
 			}
 			else{
@@ -582,6 +653,13 @@ class Expense extends BaseController
 				);	
 				$aid = Db::name('FlowRecord')->strict(false)->field(true)->insertGetId($checkData);
 				add_log('refue', $param['id'], $param);
+				//发送消息通知
+				$msg=[
+					'create_time'=>date('Y-m-d H:i:s',$detail['create_time']),
+					'action_id'=>$detail['id']
+				];
+				$users = $detail['admin_id'];
+				sendMessage($users,33,$msg);
 				return to_assign();
 			}
 			else{
@@ -628,6 +706,14 @@ class Expense extends BaseController
             $param['pay_time'] = time();
             $res = ExpenseList::where('id', $param['id'])->strict(false)->field(true)->update($param);
             if ($res !== false) {
+				//发送消息通知
+				$detail = Db::name('Expense')->where(['id' => $param['id']])->find();
+				$msg=[
+					'create_time'=>date('Y-m-d H:i:s',$detail['create_time']),
+					'action_id'=>$detail['id']
+				];
+				$users = $detail['admin_id'];
+				sendMessage($users,34,$msg);
                 return to_assign();
             } else {
                 return to_assign(1, "操作失败");

@@ -2,18 +2,7 @@
 <!-- 主体 -->
 {block name="body"}
 <div class="p-3">	
-	<div class="layui-card">
-		<div class="body-table layui-tab layui-tab-brief" lay-filter="tab">
-			<ul class="layui-tab-title">
-				<li class="layui-this">全部</li>
-				<li>待我审批</li>
-				<li>我已审批</li>
-			</ul>
-			<div class="layui-tab-content" style="padding:0">
-				<table class="layui-hide" id="test" lay-filter="test"></table>
-			</div>
-		</div> 
-	</div> 
+	<table class="layui-hide" id="test" lay-filter="test"></table>
 </div>
 <script type="text/html" id="toolbarDemo">
 <h3 class="h3-title" style="height:28px;">审批列表</h3>
@@ -26,18 +15,12 @@
 <script>
 	const moduleInit = ['tool'];
 	function gouguInit() {
-		var table = layui.table, tool = layui.tool ,element=layui.element;
-			
-		element.on('tab(tab)', function(data){
-			layui.pageTable.reload({where:{status:data.index},page:{curr:1}});
-			return false;
-		});			
-			
+		var table = layui.table, tool = layui.tool;			
 		layui.pageTable = table.render({
 			elem: '#test'
 			,toolbar: '#toolbarDemo'
 			,title:'审批列表'
-			,url: "/oa/approve/list"
+			,url: "/oa/approve/copy"
 			,page: true //开启分页
 			,limit: 20
 			,cellMinWidth: 60

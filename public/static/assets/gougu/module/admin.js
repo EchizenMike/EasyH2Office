@@ -195,7 +195,8 @@ layui.define(['element'], function (exports) {
 
 	//左上角清除缓存
 	$('#GouguApp').on('click', '[gg-event="cache"]', function (e) {
-		var that = $(this);
+		let that = $(this);
+		let url = $(this).data('href');
 		if (that.attr('class') === 'clearThis') {
 			layer.tips('正在努力清理中...', this);
 			return false;
@@ -203,7 +204,7 @@ layui.define(['element'], function (exports) {
 		layer.tips('正在清理系统缓存...', this);
 		that.attr('class', 'clearThis');
 		$.ajax({
-			url: "/admin/api/cache_clear",
+			url: url,
 			success: function (res) {
 				if (res.code == 1) {
 					setTimeout(function () {

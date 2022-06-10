@@ -98,6 +98,8 @@ class Index extends BaseController
          $res['filepath'] = $data['filepath'];
          $res['name'] = $data['name'];
          $res['filename'] = $data['filename'];
+         $res['filesize'] = $data['filesize'];
+         $res['fileext'] = $data['fileext'];
          add_log('upload', $data['user_id'], $data);
          if($sourse == 'editormd'){
              //editormd编辑器上传返回
@@ -200,10 +202,22 @@ class Index extends BaseController
     //获取部门所有员工
     public function get_employee_select()
     {
+		$keyword = get_params('keyword');
+		$selected = [];
+		if(!empty($keyword)){
+			$selected = explode(",",$keyword);
+		}
         $employee = Db::name('admin')
             ->field('id as value,name')
             ->where(['status' => 1])
-            ->select();
+            ->select()->toArray();
+			
+		foreach($employee as $k => &$v){	
+			$v['selected'] = '';
+			if(in_array($v['value'],$selected)){
+				$v['selected'] = 'selected';
+			}
+		}
         return to_assign(0, '', $employee);
     }
 
@@ -361,7 +375,9 @@ class Index extends BaseController
 		foreach ($flowData as $key => &$val) {
             $val['user_id_info'] = Db::name('Admin')->field('id,name,thumb')->where('id','in',$val['flow_uids'])->select()->toArray();
         }
-        return to_assign(0, '', $flowData);
+		$data['copy_uids'] = $flow['copy_uids'];
+		$data['flow_data'] = $flowData;
+        return to_assign(0, '', $data);
     }
 	
 	//获取审核流程节点

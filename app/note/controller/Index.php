@@ -77,7 +77,12 @@ class Index extends BaseController
                 if ($sid) {
                     add_log('add', $sid, $param);
 					$users= Db::name('Admin')->field('id as from_uid')->where(['status' => 1])->column('id');
-					sendMessage($users,1,['title'=>$param['title'],'action_id'=>$sid]);
+                    $msg=[
+                        'from_uid'=>$this->uid,
+                        'title' => $param['title'],
+                        'action_id'=>$sid
+                    ];
+					sendMessage($users,1,$msg);
                 }
 
                 return to_assign();

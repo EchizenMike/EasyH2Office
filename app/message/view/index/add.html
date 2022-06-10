@@ -15,7 +15,7 @@
 			</td>
 		</tr>
 		<tr id ="person">
-			<td class="layui-td-gray">收件人<span style="color: red">*</span></td>
+			<td class="layui-td-gray">收件人<font>*</font></td>
 			<td>
 				<input type="text" name="person_name" value="" lay-verify="required" lay-reqText="请选择收件人" placeholder="请选择收件人" readonly class="layui-input">
 				<input type="hidden" name="uids" value="">
@@ -24,12 +24,12 @@
 			</td>
 		</tr>
 		<tr>
-			<td class="layui-td-gray">主题<span style="color: red">*</span></td>
+			<td class="layui-td-gray">主题<font>*</font></td>
 			<td>
 				<input type="text" name="title" value="" lay-verify="required" lay-reqText="请输入消息主题" placeholder="请输入消息主题" class="layui-input" lay-verify="required">
 			</td>
 		</tr>
-		<tr><td class="layui-td-gray">发送内容<span style="color: red">*</span></td>
+		<tr><td class="layui-td-gray">发送内容<font>*</font></td>
 			<td>
 				<textarea name="content" placeholder="请输入消息内容" class="layui-textarea" style="height: 200px;" lay-verify="required" lay-reqText="请输入消息内容"></textarea>
 			</td>
@@ -67,7 +67,7 @@
 			</td>
 		</tr>
 		<tr id ="person" {eq name="$detail.type" value="3"}style="display:none;"{/eq}>
-			<td class="layui-td-gray">收件人<span style="color: red">*</span></td>
+			<td class="layui-td-gray">收件人<font>*</font></td>
 			<td>
 				{eq name="$detail.type" value="3"}
 				<input type="text" name="person_name" value="0" lay-verify="required" lay-reqText="请选择收件人" placeholder="请选择收件人" readonly class="layui-input">
@@ -80,12 +80,12 @@
 			</td>
 		</tr>
 		<tr>
-			<td class="layui-td-gray">主题<span style="color: red">*</span></td>
+			<td class="layui-td-gray">主题<font>*</font></td>
 			<td>
 				<input type="text" name="title" value="{$detail.title}" lay-verify="required" lay-reqText="请输入消息主题" placeholder="请输入消息主题" class="layui-input" lay-verify="required">
 			</td>
 		</tr>
-		<tr><td class="layui-td-gray">发送内容<span style="color: red">*</span></td>
+		<tr><td class="layui-td-gray">发送内容<font>*</font></td>
 			<td>
 				<textarea name="content" placeholder="请输入消息内容" class="layui-textarea" style="height: 200px;" lay-verify="required" lay-reqText="请输入消息内容">{$detail.content}</textarea>
 				{if condition="($detail.fid > 0)"}		

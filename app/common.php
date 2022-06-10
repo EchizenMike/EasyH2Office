@@ -313,6 +313,10 @@ function add_log($type, $param_id = '', $param = [])
     $data['function'] = strtolower(app('request')->action());
     $parameter = $data['module'] . '/' . $data['controller'] . '/' . $data['function'];
     $rule_menu = Db::name('AdminRule')->where(array('src' => $parameter))->find();
+	if($type == 'upload'){
+		$data['title'] = $param['name'];
+		$data['subject'] = '文件';
+	}
 	if($rule_menu){
 		$data['title'] = $rule_menu['title'];
 		$data['subject'] = $rule_menu['name'];
@@ -338,11 +342,14 @@ function add_log($type, $param_id = '', $param = [])
  */
 function sendMessage($user_id, $template, $data=[])
 {
-    $content = get_config('message.template')[$template]['template'];
+    $title = get_config('message.template')[$template]['title'];
+    $content = get_config('message.template')[$template]['content'];
 	foreach ($data as $key => $val) {
+		$title = str_replace('{' . $key . '}', $val, $title);
 		$content = str_replace('{' . $key . '}', $val, $content);
 	}
 	if(isSet($data['from_uid'])){
+		$title = str_replace('{from_user}', get_admin($data['from_uid'])['name'], $title);
 		$content = str_replace('{from_user}', get_admin($data['from_uid'])['name'], $content);
 	}
 	$content = str_replace('{date}', date('Y-m-d'), $content);
@@ -350,7 +357,7 @@ function sendMessage($user_id, $template, $data=[])
     if (!$user_id) return false;
     if (!$content) return false;
     if (!is_array($user_id)) {
-        $users[] = $user_id;
+        $users = explode(",", strval($user_id));
     } else {
         $users = $user_id;
     }
@@ -361,7 +368,7 @@ function sendMessage($user_id, $template, $data=[])
 		$send_data[] = array(
 			'to_uid' => $value,//接收人
 			'action_id' => $data['action_id'],
-			'title' => $data['title'],
+			'title' => $title,
 			'content' => $content,
 			'template' => $template,
 			'module_name' => strtolower(app('http')->getName()),
@@ -373,6 +380,15 @@ function sendMessage($user_id, $template, $data=[])
 	}
 	$res = Db::name('Message')->strict(false)->field(true)->insertAll($send_data);
     return $res;
+}
+
+function getMessageLink($template,$action_id){
+	$content='';
+	if(isset(get_config('message.template')[$template]['link'])){
+		$link = get_config('message.template')[$template]['link'];
+		$content = str_replace('{action_id}', $action_id, $link);
+	}	
+	return $content;
 }
 
 /**

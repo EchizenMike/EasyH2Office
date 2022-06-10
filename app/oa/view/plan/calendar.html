@@ -128,19 +128,19 @@ user-select: none;}
 			var content='<form class="layui-form" style="width:828px">\
 							<table class="layui-table" style="margin:15px 15px 0;">\
 								<tr>\
-									<td class="layui-td-gray-2">日程时间范围 <span style="color: red">*</span></td>\
+									<td class="layui-td-gray-2">日程时间范围<font>*</font></td>\
 									<td>\
 										<input id="start_time_a" name="start_time_a" style="width:120px; display:inline-block;" autocomplete="off" class="layui-input" value="'+detail.start_time_a+'" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间"><div style="display: inline-block; margin-left:3px; width: 86px;"><select lay-filter="start_time_b" id="start_time_b"></select></div> 至 <input id="end_time_a" name="end_time_a" style="width:120px; display:inline-block;" autocomplete="off" class="layui-input" value="" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间"><div style="display: inline-block; margin-left:3px; width: 86px;"><select lay-filter="end_time_b" id="end_time_b"></select></div>\
 									</td>\
-									<td class="layui-td-gray">提醒 <span style="color: red">*</span></td>\
+									<td class="layui-td-gray">提醒<font>*</font></td>\
 									<td>\
 										<div class="layui-input" id="remind_type" style="width:120px; line-height:35px;">'+remind_type+'</div>\
 									</td>\
 								</tr>\
 								<tr>\
-									<td class="layui-td-gray">日程内容 <span style="color: red">*</span></td>\
+									<td class="layui-td-gray">日程内容<font>*</font></td>\
 									<td><input name="title" class="layui-input" value="'+detail.title+'" lay-verify="required" placeholder="请完成日程内容" lay-reqText="请完成日程内容"></td>\
-									<td class="layui-td-gray">优先级 <span style="color: red">*</span></td>\
+									<td class="layui-td-gray">优先级<font>*</font></td>\
 									<td>\
 										<div class="layui-input" id="type" style="width:120px; line-height:35px;">'+type+'</div>\
 									</td>\

@@ -47,6 +47,22 @@
 
 .layui-table-min th{font-size:13px; text-align:center; background-color:#f8f8f8;}
 .layui-table-min td{font-size:13px; padding:6px;text-align:center;}
+
+.file-card {background: #fff;border: 1px solid #f1f1f1;border-radius: 2px; padding:8px 0; margin:4px 8px 4px 0;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+}
+.file-card .file-icon{font-size:36px; color:#646464; margin-right: 4px;}
+.file-card .file-title {font-size: 12px; letter-spacing: 0; margin-right: 8px; line-height: 16px; word-break: break-all; overflow: hidden; text-overflow: ellipsis; display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;width: calc(100% - 80px);
+}
+.file-card .file-tool .layui-icon{font-size:22px; padding:2px; cursor:pointer;}
 </style>
 {/block}
 <!-- 主体 -->
@@ -99,6 +115,26 @@
 				</div>
 			</td>
 		</tr>
+		{notempty name="$detail.file_ids"}
+		<tr>
+			<td class="layui-td-gray">相关附件</td>
+			<td colspan="5">
+				<div class="layui-row">
+					{volist name="$detail.fileArray" id="vo"}
+					<div class="layui-col-md3">
+						<div class="file-card">
+							<i class="file-icon iconfont icon-renwuguanli"></i>
+							<div class="file-title">{$vo.name}</div>
+							<div class="file-tool">
+								<a href="{$vo.filepath}" download="{$vo.name}" target="_blank" title="下载查看"><i class="layui-icon layui-icon-download-circle" style="color: #12bb37;"></i></a>
+							</div>
+						</div>
+					</div>
+					{/volist}
+				</div>
+			</td>
+		</tr>
+		{/notempty}
 		<tr>
 			<td class="layui-td-gray">审核状态</td>
 			<td>{eq name="$detail.check_status" value="0"}<span style="color:#666666">待审批</span>{/eq}
@@ -110,7 +146,9 @@
 				<span id="showRecord" class="layui-btn layui-btn-xs layui-btn-radius layui-btn-normal" style="margin-left:10px;">查看审批记录</span>
 			</td>
 			<td class="layui-td-gray-2">当前审核人</td>
-			<td colspan="3">{$detail.check_user}</td>
+			<td>{$detail.check_user}</td>
+			<td class="layui-td-gray">抄送人</td>
+			<td>{$detail.copy_user}</td>
 		</tr>
 		<tr>
 			<td class="layui-td-gray">审批流程</td>

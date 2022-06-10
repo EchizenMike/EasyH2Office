@@ -10,10 +10,14 @@
 			</td>
 			<td class="layui-td-gray-2">当前审核人</td>
 			<td>{$detail.check_user}</td>
+			<td class="layui-td-gray">抄送人</td>
+			<td>
+				{$detail.copy_user}
+			</td>
 		</tr>
 		<tr>
 			<td class="layui-td-gray">审批流程</td>
-			<td colspan="3">
+			<td colspan="5">
 				<div class="flow-flexbox check-items flow-flex-row" id="flowList">
 					<div class="flow-flexbox check-item flow-flex-row">
 						<i class="layui-icon layui-icon-add-circle" data-ok=""></i>
@@ -28,7 +32,7 @@
 		{eq name="$flows.flow_type" value="0"}
 		<tr>
 			<td class="layui-td-gray">审批节点 <font>*</font></td>
-			<td colspan="3">
+			<td colspan="5">
 				<input type="radio" name="check_node" lay-filter="check_node" value="1" title="审核结束">
 				<input type="radio" name="check_node" lay-filter="check_node" value="2" title="下一审批人">
 				<div class="layui-inline">
@@ -39,7 +43,7 @@
 		{/eq}
 		<tr>
 			<td class="layui-td-gray">审批意见 <font>*</font></td>
-			<td colspan="3">
+			<td colspan="5">
 				<textarea name="content" placeholder="请输入审批意见" class="layui-textarea"></textarea>
 			</td>
 		</tr>

@@ -8,40 +8,59 @@ return [
     // 系统消息模板
     'template'  => [
         1 => [
-			'name'       => '公告',
-            'template' => '您有一个新公告：{title} ，请及时查看。',
+			'title'       => '{from_user}发了一个新『公告』，请及时查看',
+            'content' => '您有一个新公告：{title}。',
+            'link' => '<a class="link-a" data-href="/note/index/view/id/{action_id}">查看详情</a>',
         ],
-        2 => [
-			'type'       => '报销审批',
-            'template' => '{from_user} 提交 {title} 报销审批，请及时处理。',
+        21 => [
+			'title'       => '{from_user}提交了一个『{title}申请』，请及时审批',
+            'content' => '您有一个新的『{title}审批』需要处理。',
+			'link' => '<a class="link-a" data-href="/oa/approve/view/id/{action_id}">去审批</a>',
         ],
-        3 => [
-			'type'       => '报销审批',
-            'template' => '{from_user} 拒绝您的 {title} 报销审批，拒绝理由：{remark}，请及时处理。',
+        22 => [
+			'title'       => '您提交的『{title}申请』已被审批通过',
+            'content' => '您在{create_time}提交的『{title}申请』已于{date}被审批通过。',
+			'link' => '<a class="link-a" data-href="/oa/approve/view/id/{action_id}">查看详情</a>',
         ],
-        4 => [
-			'type'       => '报销审批',
-            'template' => '您的 {title} 报销已经审批通过，请及时查看。',
+        23 => [
+			'title'       => '您提交的『{title}申请』已被驳回拒绝',
+            'content' => '您在{create_time}提交的『{title}申请』已于{date}被驳回拒绝。',
+			'link' => '<a class="link-a" data-href="/oa/approve/view/id/{action_id}">查看详情</a>',
         ],
-        5 => [
-			'type'       => '报销发放',
-            'template' => '您的 {title} 报销已经发放，请查看是否到账。',
+		31 => [
+			'title'       => '{from_user}提交了一个『报销申请』，请及时审批',
+            'content' => '您有一个新的『报销审批』需要处理。',
+			'link' => '<a class="link-a" data-href="/finance/expense/view/id/{action_id}">去审批</a>',
         ],
-        6 => [
-			'type'       => '发票审批',
-            'template' => '{from_user} 提交 {title} 发票审批待您处理，请及时查看。',
+        32 => [
+			'title'       => '您提交的『报销申请』已被审批通过',
+            'content' => '您在{create_time}提交的『报销申请』已于{date}被审批通过。',
+			'link' => '<a class="link-a" data-href="/finance/expense/view/id/{action_id}">查看详情</a>',
         ],
-        7 => [
-			'type'       => '发票审批',
-            'template' => '{from_user} 拒绝您的 {title} 发票审批，请及时处理。',
+        33 => [
+			'title'       => '您提交的『报销申请』已被驳回拒绝',
+            'content' => '您在{create_time}提交的『报销申请』已于{date}被驳回拒绝。',
+			'link' => '<a class="link-a" data-href="/finance/expense/view/id/{action_id}">查看详情</a>',
         ],
-        8 => [
-			'type'       => '发票审批',
-            'template' => '您的 {title} 发票已经审批通过，请及时查看。',
+        34 => [
+			'title'       => '您提交的『报销申请』已发放',
+            'content' => '您在{create_time}提交的『报销申请』已经发放，请查看是否到账。',
+			'link' => '<a class="link-a" data-href="/finance/expense/view/id/{action_id}">查看详情</a>',
         ],
-        9 => [
-			'type'       => '发票审批',
-            'template' => '您的 {title} 发票已经开票成功，请及时查看。',
+        41 => [
+			'title'       => '{from_user}提交了一个『发票申请』，请及时审批',
+            'content' => '您有一个新的『发票申请』需要处理。',
+			'link' => '<a class="link-a" data-href="/oa/approve/view/id/{action_id}">去审批</a>',
         ],
-    ],
+        42 => [
+			'title'       => '您提交的『发票申请』已被审批通过',
+            'content' => '您在{create_time}提交的『发票申请』已于{date}被审批通过。',
+			'link' => '<a class="link-a" data-href="/oa/approve/view/id/{action_id}">查看详情</a>',
+        ],
+        43 => [
+			'title'       => '您提交的『发票申请』已被驳回拒绝',
+            'content' => '您在{create_time}提交的『发票申请』已于{date}被驳回拒绝。',
+			'link' => '<a class="link-a" data-href="/oa/approve/view/id/{action_id}">查看详情</a>',
+        ],
+	]
 ];

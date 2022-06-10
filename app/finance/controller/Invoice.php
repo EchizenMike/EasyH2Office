@@ -201,7 +201,7 @@ class Invoice extends BaseController
                     return to_assign(1, '银行营业网点不能为空');
                 }
                 if (!$param['invoice_address']) {
-                    return to_assign(1, '银地址不能为空');
+                    return to_assign(1, '银行地址不能为空');
                 }
             }
             if (!empty($param['id']) && $param['id'] > 0) {
@@ -263,6 +263,13 @@ class Invoice extends BaseController
                 $res = InvoiceList::where('id', $param['id'])->strict(false)->field(true)->update($param);
                 if ($res !== false) {
                     add_log('edit', $param['id'], $param);
+					//发送消息通知
+					$msg=[
+						'from_uid'=>$this->uid,
+						'action_id'=>$param['id']
+					];
+					$users = $param['check_admin_ids'];
+					sendMessage($users,41,$msg);
                     return to_assign();   
                 } else {
                     return to_assign(1, '操作失败');
@@ -323,11 +330,17 @@ class Invoice extends BaseController
 					);
 					//增加审核流程
 					Db::name('FlowStep')->strict(false)->field(true)->insertGetId($flow_step);
-				}
-				
+				}				
                 
                 if ($exid) {
                     add_log('apply', $exid, $param);
+					//发送消息通知
+					$msg=[
+						'from_uid'=>$this->uid,
+						'action_id'=>$exid
+					];
+					$users = $param['check_admin_ids'];
+					sendMessage($users,41,$msg);
                     return to_assign();   
                 } else {
                      return to_assign(1, '操作失败');
@@ -337,6 +350,10 @@ class Invoice extends BaseController
             $id = isset($param['id']) ? $param['id'] : 0;
             if ($id > 0) {
                 $detail = $this->detail($id);
+				if($detail['file_ids'] !=''){
+					$fileArray = Db::name('File')->where('id','in',$detail['file_ids'])->select();
+					$detail['fileArray'] = $fileArray;
+				}
                 View::assign('detail', $detail);
             }
 			$department = get_login_admin('did');
@@ -373,6 +390,15 @@ class Invoice extends BaseController
 			}
 		}
 		
+		if($detail['copy_uids'] !=''){
+			$copy_user = Db::name('Admin')->where('id','in',$detail['copy_uids'])->column('name');
+			$detail['copy_user'] = implode(',',$copy_user);
+		}
+		if($detail['file_ids'] !=''){
+			$fileArray = Db::name('File')->where('id','in',$detail['file_ids'])->select();
+			$detail['fileArray'] = $fileArray;
+		}
+
 		$is_check_admin = 0;
 		$is_create_admin = 0;
 		if($detail['admin_id'] == $this->uid){
@@ -424,6 +450,10 @@ class Invoice extends BaseController
     {
         $param = get_params();
 		$detail = Db::name('Invoice')->where(['id' => $param['id']])->find();
+		$check_admin_ids = explode(",", strval($detail['check_admin_ids']));
+		if (!in_array($this->uid, $check_admin_ids)){		
+			return to_assign(1,'您没权限审核该审批');
+		}
 		//当前审核节点详情
 		$step = Db::name('FlowStep')->where(['action_id'=>$detail['id'],'type'=>3,'sort'=>$detail['check_step_sort'],'delete_time'=>0])->find();
 		//审核通过
@@ -445,6 +475,9 @@ class Invoice extends BaseController
 						//不存在下一步审核，审核结束
 						$param['check_status'] = 2;
 					}
+				}
+				else{
+					$param['check_status'] = 1;
 				}
 			}
 			else if($step['flow_type'] == 0){
@@ -512,6 +545,20 @@ class Invoice extends BaseController
 				);	
 				$aid = Db::name('FlowRecord')->strict(false)->field(true)->insertGetId($checkData);
 				add_log('check', $param['id'], $param);
+				//发送消息通知
+				$msg=[
+					'from_uid'=>$detail['admin_id'],
+					'create_time'=>date('Y-m-d H:i:s',$detail['create_time']),
+					'action_id'=>$detail['id']
+				];
+				if($param['check_status'] == 1){
+					$users = $param['check_admin_ids'];
+					sendMessage($users,41,$msg);
+				}
+				if($param['check_status'] == 2){
+					$users = $detail['admin_id'];
+					sendMessage($users,42,$msg);
+				}
 				return to_assign();
 			}
 			else{
@@ -538,6 +585,13 @@ class Invoice extends BaseController
 				);	
 				$aid = Db::name('FlowRecord')->strict(false)->field(true)->insertGetId($checkData);
 				add_log('refue', $param['id'], $param);
+				//发送消息通知
+				$msg=[
+					'create_time'=>date('Y-m-d H:i:s',$detail['create_time']),
+					'action_id'=>$detail['id']
+				];
+				$users = $detail['admin_id'];
+				sendMessage($users,43,$msg);
 				return to_assign();
 			}
 			else{

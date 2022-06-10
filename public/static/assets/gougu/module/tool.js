@@ -3,7 +3,7 @@ layui.define([], function (exports) {
 	var tool = {
 		loading: false,
 		side: function (url, width) {
-			var sideWidth = window.innerWidth > 1280 ? '1200px' : '960px';
+			var sideWidth = window.innerWidth > 1280 ? '1200px' : '996px';
 			if (width && width > 0) {
 				sideWidth = width + 'px';
 			}
@@ -30,7 +30,7 @@ layui.define([], function (exports) {
 							})
 						})
 						$(window).resize(function () {
-							width = window.innerWidth > 1280 ? '1200' : '960';
+							width = window.innerWidth > 1280 ? '1200' : '996';
 							$('.layui-anim-rl').width(width);
 						})
 					}
@@ -228,6 +228,13 @@ layui.define([], function (exports) {
 		let url = $(this).data('href');
 		if (url && url !== '') {
 			tool.side(url);
+		}
+		return false;
+	});
+	$('body').on('click', '.link-a', function () {
+		let url = $(this).data('href');
+		if (url && url !== '') {
+			window.location.href=url;
 		}
 		return false;
 	});

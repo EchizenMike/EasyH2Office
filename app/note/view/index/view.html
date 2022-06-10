@@ -28,7 +28,7 @@
 <form class="layui-form p-4">
 	<h1>{$note.title}</h1>
 	<div class="text-detial-ops">
-		<span>发表于：{$note.create_time | date='Y-m-d m:i:s'}</span><span>公告分类：{$note.cate_title}</span>
+		<span>发表于：{$note.create_time | date='Y-m-d H:i:s'}</span><span>公告分类：{$note.cate_title}</span>
 		<span>展示期间：{$note.start_time | date='Y-m-d'} - {$note.end_time | date='Y-m-d'}</span>
 	</div>
 	<div class="text-detial-content">

@@ -19,7 +19,7 @@
 		</tr>
 		{if condition="$type eq 1"}
 		<tr id ="person" {eq name="$detail.type" value="3"}style="display:none;"{/eq}>
-			<td class="layui-td-gray">收件人<span style="color: red">*</span></td>
+			<td class="layui-td-gray">收件人<font>*</font></td>
 			<td>
 				<input type="text" name="person_name" value="{$detail.person_name}" lay-verify="required" lay-reqText="请选择收件人" placeholder="请选择收件人" readonly class="layui-input">
 				<input type="hidden" name="uids" value="{$detail.from_uid}">
@@ -28,14 +28,14 @@
 			</td>
 		</tr>
 		<tr>
-			<td class="layui-td-gray">主题<span style="color: red">*</span></td>
+			<td class="layui-td-gray">主题<font>*</font></td>
 			<td>
 				<input type="text" name="title" value="回复：{$detail.title}" lay-verify="required" lay-reqText="请输入消息主题" placeholder="请输入消息主题" class="layui-input" lay-verify="required">
 			</td>
 		</tr>
 		{else/}
 		<tr id ="person" {eq name="$detail.type" value="3"}style="display:none;"{/eq}>
-			<td class="layui-td-gray">收件人<span style="color: red">*</span></td>
+			<td class="layui-td-gray">收件人<font>*</font></td>
 			<td>
 				<input type="text" name="person_name" value="" lay-verify="required" lay-reqText="请选择收件人" placeholder="请选择收件人" readonly class="layui-input">
 				<input type="hidden" name="uids" value="">
@@ -44,14 +44,14 @@
 			</td>
 		</tr>
 		<tr>
-			<td class="layui-td-gray">主题<span style="color: red">*</span></td>
+			<td class="layui-td-gray">主题<font>*</font></td>
 			<td>
 				<input type="text" name="title" value="转发：{$detail.title}" lay-verify="required" lay-reqText="请输入消息主题" placeholder="请输入消息主题" class="layui-input" lay-verify="required">
 			</td>
 		</tr>
 		{/if}
 		<tr>
-			<td class="layui-td-gray" style="vertical-align:top;">内容<span style="color: red">*</span></td>
+			<td class="layui-td-gray" style="vertical-align:top;">内容<font>*</font></td>
 			<td>
 				<textarea name="content" placeholder="请输入消息内容" class="layui-textarea" style="height: 200px;" lay-verify="required" lay-reqText="请输入消息内容"></textarea>
 				

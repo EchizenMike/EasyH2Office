@@ -24,7 +24,7 @@
 			<td>{$detail.detail_time}</td>
 		</tr>
 		<tr>
-			<td class="layui-td-gray">收款人全称</td>
+			<td class="layui-td-gray-2">收款人全称</td>
 			<td>{$detail.name}</td>
 			<td class="layui-td-gray">银行账号</td>
 			<td>{$detail.bank}</td>
@@ -39,8 +39,27 @@
 			<td class="layui-td-gray">备注</td>
 			<td colspan="5">{$detail.remark}</td>
 		</tr>
-	</table>
-	
+		{notempty name="$detail.file_ids"}
+		<tr>
+			<td class="layui-td-gray">相关附件</td>
+			<td colspan="3">
+				<div class="layui-row">
+					{volist name="$detail.fileArray" id="vo"}
+					<div class="layui-col-md3">
+						<div class="file-card">
+							<i class="file-icon iconfont icon-renwuguanli"></i>
+							<div class="file-title">{$vo.name}</div>
+							<div class="file-tool">
+								<a href="{$vo.filepath}" download="{$vo.name}" target="_blank" title="下载查看"><i class="layui-icon layui-icon-download-circle" style="color: #12bb37;"></i></a>
+							</div>
+						</div>
+					</div>
+					{/volist}
+				</div>
+			</td>
+		</tr>
+		{/notempty}
+	</table>	
 	{include file="/approve/view_step" /}
 </div>
 {/block}

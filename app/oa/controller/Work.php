@@ -190,7 +190,7 @@ class Work extends BaseController
 		}
 		$sender = get_admin($detail['admin_id']);
 		$detail['person_name'] = $sender['name'];
-        $detail['send_time'] = date('Y-m-d h:i:s',$detail['create_time']);    
+        $detail['send_time'] = date('Y-m-d H:i:s',$detail['create_time']);    
         //当前消息的附件
         $file_array = Db::name('WorkFileInterfix')
             ->field('wf.id,wf.wid,wf.file_id,f.name,f.filesize,f.filepath')
@@ -206,7 +206,7 @@ class Work extends BaseController
         $detail['read_users'] = implode(",", $read_user_names);
         $detail['type_title'] = WorkRecord::$Type[$detail['type']];
 		if($detail['update_time']>0){
-			$detail['update_time_str'] = date('Y-m-d h:i:s',$detail['update_time']);  
+			$detail['update_time_str'] = date('Y-m-d H:i:s',$detail['update_time']);  
 		}
         View::assign('detail', $detail);
         return view();

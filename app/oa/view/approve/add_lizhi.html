@@ -11,7 +11,7 @@
 		<tr>
 			<td class="layui-td-gray">员工姓名<font>*</font></td>
 			<td colspan="2"><input type="text" name="name" value="" autocomplete="off" placeholder="请输入员工姓名" lay-verify="required" lay-reqText="请输入员工姓名" class="layui-input"></td>
-			<td class="layui-td-gray">入职日期 <span style="color: red">*</span></td>
+			<td class="layui-td-gray">入职日期<font>*</font></td>
 			<td colspan="2">
 				<input id="detail_time" name="detail_time" autocomplete="off" class="layui-input" value="" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
 			</td>
@@ -51,6 +51,14 @@
 			</td>
 		</tr>
 		<tr>
+			<td class="layui-td-gray"><div class="layui-input-inline">附件</div> <div class="layui-input-inline"><button type="button" class="layui-btn layui-btn-xs" id="upFile"><i class="layui-icon"></i></button></div></td>
+			<td colspan="5">
+				<div class="layui-row" id="fileList">
+					<input type="hidden" name="file_ids" value="">
+				</div>
+			</td>
+		</tr>
+		<tr>
 			<td class="layui-td-gray">审批流程<font>*</font></td>
 			<td colspan="5">
 				<select name="flow_id" lay-verify="required" lay-filter="flowtype" lay-reqText="请选择审批流程">
@@ -67,13 +75,19 @@
 				<input type="hidden" name="check_admin_ids" value="" readonly><input type="text" name="check_admin_name" value="" autocomplete="off" placeholder="请选择审核人" lay-verify="required" lay-reqText="请选择审核人" class="layui-input" readonly>
 			</td>
 		</tr>
+		<tr>
+			<td class="layui-td-gray">抄送人</td>
+			<td colspan="5">
+				<select id="copy_uids" name="copy_uids" xm-selected="" xm-select="selectcopy" xm-select-skin="default"></select>
+			</td>
+		</tr>
 	</table>
 	{else/}
 	<table class="layui-table layui-table-form">
 		<tr>
 			<td class="layui-td-gray">员工姓名<font>*</font></td>
 			<td colspan="2"><input type="text" name="name" value="{$detail.name}" autocomplete="off" placeholder="请输入员工姓名" lay-verify="required" lay-reqText="请输入员工姓名" class="layui-input"></td>
-			<td class="layui-td-gray">入职日期 <span style="color: red">*</span></td>
+			<td class="layui-td-gray">入职日期<font>*</font></td>
 			<td colspan="2">
 				<input id="detail_time" name="detail_time" autocomplete="off" class="layui-input" value="{$detail.detail_time}" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
 			</td>
@@ -113,6 +127,28 @@
 			</td>
 		</tr>
 		<tr>
+			<td class="layui-td-gray"><div class="layui-input-inline">附件</div> <div class="layui-input-inline"><button type="button" class="layui-btn layui-btn-xs" id="upFile"><i class="layui-icon"></i></button></div></td>
+			<td colspan="5">
+				<div class="layui-row" id="fileList">
+					<input type="hidden" name="file_ids" value="{$detail.file_ids}">
+					{notempty name="$detail.file_ids"}
+					{volist name="$detail.fileArray" id="vo"}
+					<div class="layui-col-md3" id="uploadImg{$vo.id}">
+						<div class="file-card">
+							<i class="file-icon iconfont icon-renwuguanli"></i>
+							<div class="file-title">{$vo.name}</div>
+							<div class="file-tool">
+								<a href="{$vo.filepath}" download="{$vo.name}" target="_blank" title="下载查看"><i class="layui-icon layui-icon-download-circle" style="color: #12bb37;"></i></a>
+								<i class="btn-delete layui-icon layui-icon-delete" data-id="{$vo.id}" style="color: #FF5722;" title="删除"></i>
+							</div>
+						</div>
+					</div>
+					{/volist}
+					{/notempty}
+				</div>
+			</td>
+		</tr>
+		<tr>
 			<td class="layui-td-gray">审批流程<font>*</font></td>
 			<td colspan="5">
 				<select name="flow_id" lay-verify="required" lay-filter="flowtype" lay-reqText="请选择审批流程">
@@ -127,6 +163,12 @@
 			<td class="layui-td-gray">审核人<font>*</font></td>
 			<td colspan="5">
 				<input type="hidden" name="check_admin_ids" value="" readonly><input type="text" name="check_admin_name" value="" autocomplete="off" placeholder="请选择审核人" lay-verify="required" lay-reqText="请选择审核人" class="layui-input" readonly>
+			</td>
+		</tr>
+		<tr>
+			<td class="layui-td-gray">抄送人</td>
+			<td colspan="5">
+				<select id="copy_uids" name="copy_uids" xm-selected="" xm-select="selectcopy" xm-select-skin="default"></select>
 			</td>
 		</tr>
 	</table>
@@ -144,9 +186,75 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
-const moduleInit = ['tool','employeepicker'];
+// 查找指定的元素在数组中的位置
+Array.prototype.indexOf = function (val) {
+	for (var i = 0; i < this.length; i++) {
+		if (this[i] == val) {
+			return i;
+		}
+	}
+	return -1;
+};
+// 通过索引删除数组元素
+Array.prototype.remove = function (val) {
+	var index = this.indexOf(val);
+	if (index > -1) {
+		this.splice(index, 1);
+	}
+};
+
+const moduleInit = ['tool','formSelects','employeepicker'];
 	function gouguInit() {
-		var form = layui.form,tool=layui.tool, employeepicker = layui.employeepicker,laydate = layui.laydate;		  
+		var form = layui.form,
+			upload = layui.upload,
+			tool=layui.tool,
+			formSelects = layui.formSelects,
+			employeepicker = layui.employeepicker,
+			laydate = layui.laydate;	
+
+		//多附件上传
+		upload.render({
+			elem: '#upFile'
+			,url: "/api/index/upload"
+			,multiple: true
+			,accept: 'file' //普通文件
+    		,exts: 'png|jpg|gif|jpeg|doc|docx|ppt|pptx|xls|xlsx|pdf|zip|rar|7z' //只允许上传文件格式
+			,done: function(res){
+				//如果上传失败
+				if (res.code == 1) {
+					layer.msg('上传失败')
+					return false;
+				}
+				//上传成功
+				var idsStr = $('#fileList input').val(),idsArray = [];
+				if (idsStr != '') {
+					idsArray = idsStr.split(",");
+				}
+				idsArray.push(res.data.id);
+				$('#fileList input').attr('value', idsArray.join(','));
+				let temp = `<div class="layui-col-md3" id="uploadImg${res.data.id}">
+						<div class="file-card">
+							<i class="file-icon layui-icon layui-icon-file"></i>
+							<div class="file-title">${res.data.name}</div>
+							<div class="file-tool">
+								<a href="${res.data.filepath}" download="${res.data.name}" title="下载查看" target="_blank"><i class="layui-icon layui-icon-download-circle" style="color: #12bb37;"></i></a>
+								<i class="btn-delete layui-icon layui-icon-delete" data-id="${res.data.id}" style="color: #FF5722;" title="删除"></i>
+							</div>
+						</div>
+					</div>`;
+				$('#fileList').append(temp);
+			}
+		});
+		$('#fileList').on('click', '.btn-delete', function () {
+			var _id = $(this).data('id');
+			var idsStr = $('#fileList input').val(),idsArray = [];
+			if (idsStr != '') {
+				idsArray = idsStr.split(",");
+			}
+			idsArray.remove(_id);
+			$('#fileList input').attr('value', idsArray.join(','));
+			$('#uploadImg' + _id).remove();
+		})			  
 		//日期时间
 		laydate.render({
 			elem: '#detail_time,#start_time,#end_time',
@@ -191,11 +299,18 @@ const moduleInit = ['tool','employeepicker'];
 			return false;
 		});
 		
+		//选择抄送人员
+		var copy_uids = $('#copy_uids').attr('xm-selected');
+		formSelects.data('selectcopy', 'server', {
+			url: '/api/index/get_employee_select',
+			keyword: copy_uids,
+		});
+
 		form.on('select(flowtype)', function(data){
 			var check_type = data.elem[data.elem.selectedIndex].title;
 			var formHtml='<td class="layui-td-gray">审核人<font>*</font></td>\
 			<td colspan="5">\
-				<input type="hidden" name="check_admin_ids" value="" readonly><input type="text" name="check_admin_name" value="" autocomplete="off" placeholder="请选择审核人" lay-verify="required" lay-reqText="请选择审核人" class="layui-input" readonly>\
+				<input type="hidden" name="check_admin_ids" value=""><input type="text" name="check_admin_name" value="" autocomplete="off" placeholder="请选择审核人" lay-verify="required" lay-reqText="请选择审核人" class="layui-input">\
 			</td>';
 			if(check_type == 2){
 				$('#flow_tr').html(formHtml);
@@ -209,23 +324,27 @@ const moduleInit = ['tool','employeepicker'];
 					success: function (e) {
 						if (e.code == 0) {
 							var flowLi='';
-							for(var a=0;a<e.data.length;a++){
+							var flow_data = e.data.flow_data;
+							if(e.data.copy_uids && e.data.copy_uids !=''){
+								formSelects.value('selectcopy', e.data.copy_uids.split(',')); 
+							}
+							for(var a=0;a<flow_data.length;a++){
 								var userList='',sign_type = '';
-								if(e.data[a].flow_type==1){
+								if(flow_data[a].flow_type==1){
 									userList+= '<li style="padding:3px 0">当前部门负责人</li>';
 								}
-								else if(e.data[a].flow_type==2){
+								else if(flow_data[a].flow_type==2){
 									userList+= '<li style="padding:3px 0">上级部门负责人</li>';
 								}
 								else{
-									if(e.data[a].flow_type==3){
+									if(flow_data[a].flow_type==3){
 										sign_type= ' <span class="layui-badge layui-bg-blue">或签</span>'
 									}
-									if(e.data[a].flow_type==4){
+									if(flow_data[a].flow_type==4){
 										sign_type= ' <span class="layui-badge layui-bg-blue">会签</span>'
 									}
-									for(var b=0;b<e.data[a].user_id_info.length;b++){
-										userList+= '<li style="padding:3px 0"><img src="'+e.data[a].user_id_info[b].thumb+'" style="width:24px; height:24px; border-radius:50%; margin-right:8px;" />'+e.data[a].user_id_info[b].name+'</li>';
+									for(var b=0;b<flow_data[a].user_id_info.length;b++){
+										userList+= '<li style="padding:3px 0"><img src="'+flow_data[a].user_id_info[b].thumb+'" style="width:24px; height:24px; border-radius:50%; margin-right:8px;" />'+flow_data[a].user_id_info[b].name+'</li>';
 									}
 								}
 								flowLi+='<li class="layui-timeline-item">\
@@ -235,8 +354,7 @@ const moduleInit = ['tool','employeepicker'];
 									  <ul>'+userList+'</ul>\
 									</div>\
 								</li>';
-							}
-							
+							}							
 							formHtml = '<td class="layui-td-gray">审批流程</td>\
 										<td colspan="5">\
 											<ul id="flowList" class="layui-timeline">'+flowLi+'</ul>\
@@ -246,9 +364,7 @@ const moduleInit = ['tool','employeepicker'];
 					}
 				})
 			}
-
-		});	
-		
+		});
 	}
 </script>
 {/block}

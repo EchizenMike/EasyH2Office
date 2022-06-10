@@ -53,8 +53,8 @@
 html {background-color: #F6F8FA; color: #162a48}
 html,body{height:100%;}
 body.right-open{overflow:hidden;}
-a.tab-a,a.open-a,a.open-link,a.right-a{color:#1E9FFF; cursor:pointer;}
-a.tab-a:hover,a:hover,a.open-a:hover,a.open-link:hover,a.right-a:hover{color:#1E9FFF; opacity:0.8}
+a.tab-a,a.open-a,a.link-a,a.right-a{color:#1E9FFF; cursor:pointer;}
+a.tab-a:hover,a:hover,a.open-a:hover,a.link-a:hover,a.right-a:hover{color:#1E9FFF; opacity:0.8}
 .left{float:left;}
 .right{float:right;}
 .h1,h1{font-size:24px; font-weight: 600;}
