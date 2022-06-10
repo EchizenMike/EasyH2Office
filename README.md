@@ -18,10 +18,6 @@
 ### 📋 系统介绍
 勾股OA是一款基于ThinkPHP6 + Layui + MySql打造的简单实用的开源的企业办公系统框架。可以帮助解决企业办公项目60%的重复工作，让开发更多关注业务逻辑。既能快速提高开发效率，帮助公司节省人力成本，同时又不失灵活性。使用勾股OA可以简单快速地开发出企业级的Web应用系统。
 
-[![勾股OA](https://img.shields.io/badge/GouguOA-2.0.9-brightgreen.svg)](https://gitee.com/gougucms/office/)
-[![star](https://gitee.com/gougucms/office/badge/star.svg?theme=dark)](https://gitee.com/gougucms/office/stargazers)
-[![fork](https://gitee.com/gougucms/office/badge/fork.svg?theme=dark)](https://gitee.com/gougucms/office/members)
-
 ### ✳️ 演示地址
 
    勾股OA演示地址：[https://oa.gougucms.com](https://oa.gougucms.com)
@@ -46,7 +42,7 @@ PS：为了给后面的人提供良好的演示体验，体验以查看为主，
 
 **功能矩阵**
 
-系统后台集成了主流的通用功能，如：登录验证、系统配置、操作日志管理、角色权限、职位职称、功能菜单、模块管理、关键字管理、文件上传、数据备份/还原、基础数据、审批流程、员工管理、消息通知、企业公告、知识文章、办公审批、日常办公、财务管理、商业智能、 API接口等。更多的个性化功能可以基于当前系统便捷做二次开发。
+系统后台集成了主流的通用功能，如：登录验证、系统配置、操作日志管理、角色权限、职位职称、功能菜单、模块管理、关键字管理、文件上传、数据备份/还原、基础数据、审批流程、员工管理、消息通知、企业公告、知识文章、办公审批、日常办公、财务管理、商业智能、API接口等。更多的个性化功能可以基于当前系统便捷做二次开发。
 
 ![输入图片说明](https://oa.gougucms.com/storage/image/gouguoa2.0.png)
 
@@ -96,7 +92,11 @@ composer install
     
 第五步：访问 http://www.yoursite.com/install/index 进行安装
 
-**PS：如需要重新安装，请删除目录里面 config/install.lock 的文件，即可重新安装。**
+⚠️⚠️ **注意：安装过程中，系统会自动创建数据库，请确保填写的数据库用户的权限可创建数据库，如果权限不足，请先手动创建空的数据库，然后填写刚创建的数据库名称和用户名也可完成安装。** ⚠️⚠️
+
+🔺🔺 **提醒：安装过程中，如果进度条卡住，一般都是数据库写入权限或者安装环境配置问题，请注意检查。遇到问题请到QQ群：24641076 反馈** 🔺🔺
+
+✅✅ **PS：如需要重新安装，请删除目录里面 config/install.lock 的文件，即可重新安装。** ✅✅
 
 **三、伪静态配置**
 
