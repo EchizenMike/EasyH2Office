@@ -68,7 +68,8 @@ CREATE TABLE `oa_admin_group`  (
 -- Records of cms_admin_group
 -- ----------------------------
 INSERT INTO `oa_admin_group` VALUES (1, '超级员工权限', 1, '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142',  '超级员工权限，拥有系统的最高权限，不可修改', 0, 0);
-INSERT INTO `oa_admin_group` VALUES (2, '人事总监权限', 1, '2,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,3,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,4,78,79,80,81,82,83,84,85,86,87,5,88,89,90,91,6,92,93,94,95,96,7,97,99,100,101,98,8,102,104,105,106,103,107,109,110,111,112,108,113,114,115,116,117,9,118,119,120,122,123,124,125,127,128,129,131,132,133,134', '人力资源部门领导的最高管理权限', 0, 0);
+INSERT INTO `oa_admin_group` VALUES (2, '人事总监权限', 1, '2,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,3,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,4,78,79,80,81,82,83,84,85,86,87,5,88,89,90,91,6,92,93,94,95,96,7,97,100,101,102,98,99,8,103,105,106,107,104,108,110,111,112,113,109,114,115,116,117,118,9,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,10,142', '人力资源部门领导的最高管理权限', 0, 0);
+
 
 -- ----------------------------
 -- Table structure for oa_admin_log
@@ -527,23 +528,23 @@ INSERT INTO `oa_flow_type` VALUES (4, 1, '加班', 'jiaban', 'icon-xueshengcheng
 INSERT INTO `oa_flow_type` VALUES (5, 2, '会议室预定', 'huiyishi', 'icon-kehuguanli', 1, 1641802939, 0);
 INSERT INTO `oa_flow_type` VALUES (6, 2, '公文流转', 'gongwen', 'icon-jiaoxuejihua', 1, 1641802976, 0);
 INSERT INTO `oa_flow_type` VALUES (7, 2, '物品维修', 'weixiu', 'icon-chuangjianxitong', 1, 1641803005, 0);
-INSERT INTO `oa_flow_type` VALUES (8, 2, '用章申请', 'yongzhang', 'icon-shenpishezhi', 1, 1641804126, 0);
-INSERT INTO `oa_flow_type` VALUES (9, 2, '用车申请', 'yongche', 'icon-dongtaiguanli', 1, 1641804283, 0);
+INSERT INTO `oa_flow_type` VALUES (8, 2, '用章', 'yongzhang', 'icon-shenpishezhi', 1, 1641804126, 0);
+INSERT INTO `oa_flow_type` VALUES (9, 2, '用车', 'yongche', 'icon-dongtaiguanli', 1, 1641804283, 0);
 INSERT INTO `oa_flow_type` VALUES (10, 2, '用车归还', 'yongcheguihai', 'icon-kaoheguanli', 1, 1641804411, 0);
-INSERT INTO `oa_flow_type` VALUES (11, 3, '借款申请', 'jiekuan', 'icon-zhangbuguanli', 1, 1641804537, 0);
-INSERT INTO `oa_flow_type` VALUES (12, 3, '付款申请', 'fukuan', 'icon-gongziguanli', 1, 1641804601, 0);
-INSERT INTO `oa_flow_type` VALUES (13, 3, '奖励申请', 'jiangli', 'icon-bulujiesuan', 1, 1641804711, 0);
-INSERT INTO `oa_flow_type` VALUES (14, 3, '采购申请', 'caigou', 'icon-shoufeiguanli', 1, 1641804917, 0);
+INSERT INTO `oa_flow_type` VALUES (11, 3, '借款', 'jiekuan', 'icon-zhangbuguanli', 1, 1641804537, 0);
+INSERT INTO `oa_flow_type` VALUES (12, 3, '付款', 'fukuan', 'icon-gongziguanli', 1, 1641804601, 0);
+INSERT INTO `oa_flow_type` VALUES (13, 3, '奖励', 'jiangli', 'icon-bulujiesuan', 1, 1641804711, 0);
+INSERT INTO `oa_flow_type` VALUES (14, 3, '采购', 'caigou', 'icon-shoufeiguanli', 1, 1641804917, 0);
 INSERT INTO `oa_flow_type` VALUES (15, 3, '活动经费', 'huodong', 'icon-shoufeipeizhi', 1, 1641805110, 0);
-INSERT INTO `oa_flow_type` VALUES (16, 4, '入职申请', 'ruzhi', 'icon-xueshengdaoru', 1, 1641893853, 0);
-INSERT INTO `oa_flow_type` VALUES (17, 4, '转正申请', 'zhuanzheng', 'icon-wodeshenpi', 1, 1641893926, 0);
-INSERT INTO `oa_flow_type` VALUES (18, 4, '离职申请', 'lizhi', 'icon-xuexitongji', 1, 1641894048, 0);
-INSERT INTO `oa_flow_type` VALUES (19, 4, '转岗申请', 'zhuangang', 'icon-xueshengyidong', 1, 1654681664, 0);
+INSERT INTO `oa_flow_type` VALUES (16, 4, '入职', 'ruzhi', 'icon-xueshengdaoru', 1, 1641893853, 0);
+INSERT INTO `oa_flow_type` VALUES (17, 4, '转正', 'zhuanzheng', 'icon-wodeshenpi', 1, 1641893926, 0);
+INSERT INTO `oa_flow_type` VALUES (18, 4, '离职', 'lizhi', 'icon-xuexitongji', 1, 1641894048, 0);
+INSERT INTO `oa_flow_type` VALUES (19, 4, '转岗', 'zhuangang', 'icon-xueshengyidong', 1, 1654681664, 0);
 INSERT INTO `oa_flow_type` VALUES (20, 4, '招聘需求', 'zhaopin', 'icon-xiaoxizhongxin', 1, 1641894080, 0);
 INSERT INTO `oa_flow_type` VALUES (21, 5, '通用审批', 'tongyong', 'icon-zhaoshengzhunbei', 1, 1654685923, 0);
-INSERT INTO `oa_flow_type` VALUES (22, 6, '报销审批', 'baoxiao', 'icon-jizhang', 1, 1641804488, 0);
-INSERT INTO `oa_flow_type` VALUES (23, 7, '发票审批', 'fapiao', 'icon-fuwuliebiao', 1, 1642904833, 0);
-INSERT INTO `oa_flow_type` VALUES (24, 8, '合同审批', 'hetong', 'icon-hetongshezhi', 1, 1654692083, 0);
+INSERT INTO `oa_flow_type` VALUES (22, 6, '报销', 'baoxiao', 'icon-jizhang', 1, 1641804488, 0);
+INSERT INTO `oa_flow_type` VALUES (23, 7, '发票', 'fapiao', 'icon-fuwuliebiao', 1, 1642904833, 0);
+INSERT INTO `oa_flow_type` VALUES (24, 8, '合同', 'hetong', 'icon-hetongshezhi', 1, 1654692083, 0);
 
 -- ----------------------------
 -- Table structure for oa_flow
