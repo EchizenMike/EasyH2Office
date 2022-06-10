@@ -28,6 +28,7 @@ CREATE TABLE `oa_admin`  (
   `salt` varchar(100) NOT NULL DEFAULT '' COMMENT '密码盐',
   `reg_pwd` varchar(100) NOT NULL DEFAULT '' COMMENT '初始密码',
   `name` varchar(255) NOT NULL DEFAULT '' COMMENT '员工姓名',
+  `email` varchar(255) NOT NULL DEFAULT '' COMMENT '电子邮箱',
   `mobile` bigint(11) NOT NULL DEFAULT 0 COMMENT '手机号码',
   `sex` int(255) NOT NULL DEFAULT 0 COMMENT '性别1男,2女',
   `nickname` varchar(255) NOT NULL DEFAULT '' COMMENT '昵称',

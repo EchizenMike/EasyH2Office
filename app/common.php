@@ -334,10 +334,9 @@ function add_log($type, $param_id = '', $param = [])
 
 /**
  * 发送站内信
- * @param  $user_id 接收人user_id
- * @param  $data 操作内容
- * @param  $sysMessage 1为系统消息
+ * @param  $user_id 接收人
  * @param  $template 消息模板
+ * @param  $data 操作内容
  * @return
  */
 function sendMessage($user_id, $template, $data=[])
