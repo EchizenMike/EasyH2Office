@@ -110,5 +110,10 @@
 {block name="script"}
 	<script>
 	const moduleInit = ['tool'];
+	function gouguInit() {
+		if (parent.layui.pageTable) {
+			parent.layui.pageTable.reload();
+		}
+	}
 	</script>
 {/block}

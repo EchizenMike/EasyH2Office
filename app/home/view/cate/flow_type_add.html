@@ -51,7 +51,7 @@
 				  <option value="5" {eq name="$detail.type" value="5"}selected=""{/eq}>其他</option>
 				  <option value="6" {eq name="$detail.type" value="6"}selected=""{/eq}>报销</option>
 				  <option value="7" {eq name="$detail.type" value="7"}selected=""{/eq}>发票</option>
-				  <option value="7" {eq name="$detail.type" value="8"}selected=""{/eq}>合同</option>
+				  <option value="8" {eq name="$detail.type" value="8"}selected=""{/eq}>合同</option>
 				</select>
 			</td>
 			<td class="layui-td-gray">名称<font>*</font></td>
@@ -92,10 +92,7 @@
 			let callback = function (e) {
 				layer.msg(e.msg);
 				if (e.code == 0) {
-					setTimeout(function () {
-						parent.layui.tool.close();
-						parent.layui.pageTable.reload();
-					}, 1000);					
+					parent.layui.tool.close(1000);				
 				}
 			}
 			tool.post("/home/cate/flow_type_add", data.field, callback);

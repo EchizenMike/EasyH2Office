@@ -2,6 +2,7 @@ layui.define([], function (exports) {
 	var MOD_NAME = 'tool';
 	var tool = {
 		loading: false,
+		//右侧iframe的方式打开页面，参考勾股CMS、勾股OA
 		side: function (url, width) {
 			var sideWidth = window.innerWidth > 1280 ? '1200px' : '996px';
 			if (width && width > 0) {
@@ -16,7 +17,6 @@ layui.define([], function (exports) {
 				content: url,
 				area: [sideWidth, '100%'],
 				success: function (obj, index) {
-					console.log(index);
 					if ($('#expressClose').length < 1) {
 						var btn = '<div id="expressClose" class="express-close" title="关闭">关闭</div>';
 						obj.append(btn);
@@ -27,6 +27,9 @@ layui.define([], function (exports) {
 								$('body').removeClass('right-open');
 								$('.layui-anim-rl').remove();
 								$('.layui-layer-shade').remove();
+								if (layui.pageTable) {
+									layui.pageTable.resize();
+								}
 							})
 						})
 						$(window).resize(function () {
@@ -37,6 +40,7 @@ layui.define([], function (exports) {
 				}
 			})
 		},
+		//右侧ajax请求的方式打开页面参考勾股DEV
 		open: function (url, width) {
 			let that = this;
 			if (that.loading == true) {
@@ -44,7 +48,7 @@ layui.define([], function (exports) {
 			}
 			that.loading = true;
 			if (width == 0) {
-				width = window.innerWidth > 1280 ? '1220px' : '1080px';
+				width = window.innerWidth > 1280 ? '1200px' : '996px';
 			}
 			$.ajax({
 				url: url,
@@ -69,13 +73,10 @@ layui.define([], function (exports) {
 						$('#expressLayer').animate({ 'right': '-100%' }, 100, 'linear', function () {
 							$('#expressLayer').remove();
 							$('#expressMask').remove();
-							if (layui.pageTable) {
-								layui.pageTable.resize();
-							}
 						})
 					})
 					$(window).resize(function () {
-						width = window.innerWidth > 1280 ? '1200' : '1000';
+						width = window.innerWidth > 1280 ? '1200' : '996';
 						$('#expressLayer').width(width);
 					})
 				}
@@ -139,8 +140,18 @@ layui.define([], function (exports) {
 				}
 			});
 		},
-		close: function () {
-			$('#expressClose').click();
+		close: function (delay) {
+			//延迟关闭，一般是在编辑完页面数据后需要自动关闭页面用到
+			if(delay && delay>0){
+				setTimeout(function () {
+					$('#expressClose').click();
+				}, delay);
+			}else{
+				$('#expressClose').click();
+			}
+			if (layui.pageTable) {
+				layui.pageTable.reload();
+			}
 		},
 		ajax: function (options, callback) {
 			var format = 'json';

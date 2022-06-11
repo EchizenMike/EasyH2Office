@@ -100,9 +100,7 @@
 			let callback = function (e) {
 				layer.msg(e.msg);
 				if (e.code == 0) {
-					setTimeout(function () {
-						parent.layui.tool.close();
-					}, 1000);
+					parent.layui.tool.close(1000);
 				}
 			}
 			tool.post("/home/conf/edit", data.field, callback);
