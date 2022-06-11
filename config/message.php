@@ -13,18 +13,18 @@ return [
             'link' => '<a class="link-a" data-href="/note/index/view/id/{action_id}">查看详情</a>',
         ],
         21 => [
-			'title'       => '{from_user}提交了一个『{title}』，请及时审批',
+			'title'       => '{from_user}提交了一个『{title}申请』，请及时审批',
             'content' => '您有一个新的『{title}审批』需要处理。',
 			'link' => '<a class="link-a" data-href="/oa/approve/view/id/{action_id}">去审批</a>',
         ],
         22 => [
-			'title'       => '您提交的『{title}』已被审批通过',
-            'content' => '您在{create_time}提交的『{title}』已于{date}被审批通过。',
+			'title'       => '您提交的『{title}申请』已被审批通过',
+            'content' => '您在{create_time}提交的『{title}申请』已于{date}被审批通过。',
 			'link' => '<a class="link-a" data-href="/oa/approve/view/id/{action_id}">查看详情</a>',
         ],
         23 => [
-			'title'       => '您提交的『{title}』已被驳回拒绝',
-            'content' => '您在{create_time}提交的『{title}』已于{date}被驳回拒绝。',
+			'title'       => '您提交的『{title}申请』已被驳回拒绝',
+            'content' => '您在{create_time}提交的『{title}申请』已于{date}被驳回拒绝。',
 			'link' => '<a class="link-a" data-href="/oa/approve/view/id/{action_id}">查看详情</a>',
         ],
 		31 => [
