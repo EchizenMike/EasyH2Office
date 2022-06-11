@@ -441,6 +441,7 @@ class Expense extends BaseController
         $detail = $this->detail($id);
 		$flows = Db::name('FlowStep')->where(['action_id'=>$detail['id'],'type'=>2,'sort'=>$detail['check_step_sort'],'delete_time'=>0])->find();
 		$detail['check_user'] = '-';
+		$detail['copy_user'] = '-';
 		$check_user_ids = [];
 		if($detail['check_status']<2){
 			if($flows['flow_type']==1){
