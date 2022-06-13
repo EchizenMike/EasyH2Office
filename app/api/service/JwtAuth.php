@@ -53,7 +53,7 @@ class JwtAuth
     }
 
     // 私有化构造函数
-    public function __construct()
+    private function __construct()
     {
         // jwt 过期时间
         $this->expTime = get_system_config('token','exptime');
