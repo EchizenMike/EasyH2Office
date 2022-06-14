@@ -24,7 +24,7 @@ class Index extends BaseController
             $invoice_map_check[] = ['', 'exp', Db::raw("FIND_IN_SET('{$admin_id}',check_admin_ids)")];
             $invoice_map_check[] = ['status','=',1];
             $invoice_count_check = Db::name('Invoice')->where($invoice_map_check)->count();
-            $statistics['invoice_html_check'] = '<a data-id="129" data-title="待审核发票" data-src="/finance/invoice/list" class="menu-active"> 您有<font style="color:#FF0000">'.$invoice_count_check.'</font>条发票申请待审核</a>';          
+            $statistics['invoice_html_check'] = '<a data-id="130" class="side-menu-item" data-href="/finance/invoice/list" class="menu-active"> 您有<font style="color:#FF0000">'.$invoice_count_check.'</font>条发票申请待审核</a>';          
             if($invoice_count_check==0){
                 $statistics['invoice_html_check'] = '';
             }
@@ -34,7 +34,7 @@ class Index extends BaseController
             $invoice_map_open[] = ['open_admin_id','=',$admin_id];
             $invoice_map_open[] = ['status','=',1];
             $invoice_count_open = Db::name('Invoice')->where($invoice_map_open)->count();
-            $statistics['invoice_html_open'] = '<a data-id="130" data-title="发票开具" data-src="/finance/invoice/checkedlist" class="menu-active"> 您有<font style="color:#FF0000">'.$invoice_count_open.'</font>条发票待开具</a>';       
+            $statistics['invoice_html_open'] = '<a data-id="131" class="side-menu-item" data-href="/finance/invoice/checkedlist">您有<font style="color:#FF0000">'.$invoice_count_open.'</font>条发票待开具</a>';       
             if($invoice_count_open==0){
                 $statistics['invoice_html_open'] = '';
             }
@@ -44,8 +44,7 @@ class Index extends BaseController
 			$expense_map_check[] = ['', 'exp', Db::raw("FIND_IN_SET('{$admin_id}',check_admin_ids)")];
             $expense_map_check[] = ['status','=',1];
             $expense_count_check =  Db::name('Expense')->where($expense_map_check)->count();
-            $statistics['expense_html_check'] = '<a data-id="120" data-title="待我审批的报销" data-src="/finance/expense/list" class="menu-active"> 您有<font style="color:#FF0000">'.$expense_count_check.'</font>条报销单待审核</a>';
-           // $statistics['expense_count_check'] = $expense_count_check;            
+            $statistics['expense_html_check'] = '<a data-id="121" class="side-menu-item" data-title="待我审批的报销" data-href="/finance/expense/list">您有<font style="color:#FF0000">'.$expense_count_check.'</font>条报销单待审核</a>';      
             if($expense_count_check==0){
                 $statistics['expense_html_check'] = '';
             }
@@ -55,7 +54,7 @@ class Index extends BaseController
             $msg_map[] = ['read_time','=',0];
             $msg_map[] = ['status','=',1];
             $msg_count = Db::name('Message')->where($msg_map)->count();
-            $statistics['msg_html'] = '<a data-id="27" data-title="收件箱" data-src="/message/index/inbox.html" class="menu-active"> 您有<font style="color:#FF0000">'.$msg_count.'</font>条未读消息</a>';
+            $statistics['msg_html'] = '<a data-id="78" class="side-menu-item" data-title="消息中心" data-href="/message/index/inbox" >您有<font style="color:#FF0000">'.$msg_count.'</font>条未读消息</a>';
             $statistics['msg_num'] = $msg_count;            
             if($msg_count==0){
                 $statistics['msg_html'] = '';
