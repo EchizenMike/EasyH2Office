@@ -29,7 +29,7 @@ class Expense extends BaseController
 					$item->income_month = empty($item->income_month) ? '-' : date('Y-m', $item->income_month);
 					$item->expense_time = empty($item->expense_time) ? '-' : date('Y-m-d', $item->expense_time);
 					$item->admin_name = Db::name('Admin')->where(['id' => $item->admin_id])->value('name');
-					$item->department = Db::name('Department')->where(['id' => $item->admin_id])->value('title');
+					$item->department = Db::name('Department')->where(['id' => $item->did])->value('title');
 					$item->pay_name = Db::name('Admin')->where(['id' => $item->pay_admin_id])->value('name');
 					$item->pay_time = empty($item->pay_time) ? '-' : date('Y-m-d H:i', $item->pay_time);
 					$item->amount = Db::name('ExpenseInterfix')->where(['exid' => $item->id])->sum('amount');
@@ -48,7 +48,7 @@ class Expense extends BaseController
                 $item->income_month = empty($item->income_month) ? '-' : date('Y-m', $item->income_month);
                 $item->expense_time = empty($item->expense_time) ? '-' : date('Y-m-d', $item->expense_time);
                 $item->admin_name = Db::name('Admin')->where(['id' => $item->admin_id])->value('name');
-                $item->department = Db::name('Department')->where(['id' => $item->admin_id])->value('title');
+                $item->department = Db::name('Department')->where(['id' => $item->did])->value('title');
                 $item->pay_name = Db::name('Admin')->where(['id' => $item->pay_admin_id])->value('name');
                 $item->pay_time = empty($item->pay_time) ? '-' : date('Y-m-d H:i', $item->pay_time);
                 $item->amount = Db::name('ExpenseInterfix')->where(['exid' => $item->id])->sum('amount');
