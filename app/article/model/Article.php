@@ -36,7 +36,7 @@ class Article extends Model
     }
 
     //插入关键字
-    public function insertKeyword($keywordArray = [], $aid)
+    public function insertKeyword($keywordArray = [],$aid = 0)
     {
         $insert = [];
         $time = time();

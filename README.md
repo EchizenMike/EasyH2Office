@@ -82,7 +82,7 @@ Linux下，勾股OA的安装请使用以下命令进行安装。
 第二步：进入目录  
     cd gouguoa  
     
-第三步：下载PHP依赖包 【php8.0的环境用根目录的composer.php8.json替换覆盖composer.json后再安装】
+第三步：下载PHP依赖包 【PS：如果是php8.0的环境，先用根目录的composer.php8.json替换覆盖composer.json后再安装】
     
 composer install  
     
