@@ -78,7 +78,7 @@ class Index extends BaseController
                 $map[] = ['title', 'like', '%' . $param['keywords'] . '%'];
             }
             if (!empty($param['read'])) {
-				if($param['read']==0){
+				if($param['read']==1){
 					$map[] = ['read_time', '=', 0];
 				}else{
 					$map[] = ['read_time', '>', 0];
