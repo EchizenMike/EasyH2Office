@@ -25,13 +25,11 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
-	var tableIns = null;
-	function init(layui) {
-		var table = layui.table,
-			rightpage = layui.rightpage,
-			form = layui.form;
+	const moduleInit = ['tool'];
+	function gouguInit() {
+		var table = layui.table,form = layui.form;
 
-		tableIns = table.render({
+		layui.pageTable = table.render({
 			elem: '#test',
 			title: '关键字列表',
 			toolbar: '#toolbarDemo',
@@ -75,7 +73,7 @@
 		//监听搜索提交
 		form.on('submit(webform)', function (data) {
 			if (data.field.keywords) {
-				tableIns.reload({
+				layui.pageTable.reload({
 					where: {
 						keywords: data.field.keywords
 					},
@@ -92,7 +90,7 @@
 		//表头工具栏事件
 		table.on('toolbar(test)', function(obj){
 			if (obj.event === 'add') {
-				rightpage.open("/home/keywords/add",'900px');
+				tool.side("/home/keywords/add");
 				return;
 			}
 		});
@@ -100,21 +98,18 @@
 		table.on('tool(test)', function (obj) {
 			var data = obj.data;
 			if (obj.event === 'edit') {
-				rightpage.open('/home/keywords/add?id='+obj.data.id,'900px');
+				tool.side('/home/keywords/add?id='+obj.data.id);
 				return;
 			}
 			if (obj.event === 'del') {
 				layer.confirm('确定要删除吗？', { icon: 3, title: '提示' }, function (index) {
-					$.ajax({
-						url: "/home/keywords/delete",
-						data: { id: data.id },
-						success: function (e) {
-							layer.msg(e.msg);
-							if (e.code == 0) {
-								obj.del();
-							}
+					let callback = function (e) {
+						layer.msg(e.msg);
+						if (e.code == 0) {
+							obj.del();
 						}
-					})
+					}
+					tool.delete("/home/keywords/delete", { id: data.id }, callback);
 					layer.close(index);
 				});
 			}
