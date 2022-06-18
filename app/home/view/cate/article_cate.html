@@ -21,7 +21,7 @@
 	const moduleInit = ['tool', 'treeGrid'];
 	function gouguInit() {
 		var treeGrid = layui.treeGrid,table = layui.table, tool = layui.tool;
-		layui.pageTable = treeGrid.render({
+		var pageTable = treeGrid.render({
 			id:'treeTable'
 			,elem: '#treeTable'
 				,idField:'id'
