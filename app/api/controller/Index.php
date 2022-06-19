@@ -44,13 +44,14 @@ class Index extends BaseController
      $sha1 = $file->hash('sha1');
      $md5 = $file->hash('md5');
      $rule = [
-         'image' => 'jpg,png,jpeg,gif',
-         'doc' => 'doc,docx,ppt,pptx,xls,xlsx,pdf',
-         'file' => 'zip,gz,7z,rar,tar',
-     ];
-     $fileExt = $rule['image'] . ',' . $rule['doc'] . ',' . $rule['file'];
-     //1M=1024*1024=1048576字节
-     $fileSize = 2 * 1024 * 1024;
+            'image' => 'jpg,png,jpeg,gif',
+            'doc' => 'txt,doc,docx,ppt,pptx,xls,xlsx,pdf',
+            'file' => 'zip,gz,7z,rar,tar',
+            'video' => 'mpg,mp4,mpeg,avi,wmv,mov,flv,m4v',
+        ];
+        $fileExt = $rule['image'] . ',' . $rule['doc'] . ',' . $rule['file'] . ',' . $rule['video'];
+        //1M=1024*1024=1048576字节
+        $fileSize = 100 * 1024 * 1024;
      if (isset($param['type']) && $param['type']) {
          $fileExt = $rule[$param['type']];
      }
