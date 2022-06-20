@@ -313,13 +313,13 @@ function add_log($type, $param_id = '', $param = [])
     $data['function'] = strtolower(app('request')->action());
     $parameter = $data['module'] . '/' . $data['controller'] . '/' . $data['function'];
     $rule_menu = Db::name('AdminRule')->where(array('src' => $parameter))->find();
-	if($type == 'upload'){
-		$data['title'] = $param['name'];
-		$data['subject'] = '文件';
-	}
 	if($rule_menu){
 		$data['title'] = $rule_menu['title'];
 		$data['subject'] = $rule_menu['name'];
+	}
+    elseif($type == 'upload'){
+		$data['title'] = $param['name'];
+		$data['subject'] = '文件';
 	}
 	else{
 		$data['title'] = '';
