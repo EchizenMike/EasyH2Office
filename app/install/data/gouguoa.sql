@@ -104,10 +104,11 @@ DROP TABLE IF EXISTS `oa_admin_module`;
 CREATE TABLE `oa_admin_module`  (
   `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `title` varchar(255) NOT NULL DEFAULT '' COMMENT '模块名称',
-  `name` varchar(255) NOT NULL DEFAULT '' COMMENT '模块标识唯一，字母',
+  `name` varchar(255) NOT NULL DEFAULT '' COMMENT '模块目录，唯一，字母',
   `icon` varchar(255) NOT NULL DEFAULT '' COMMENT '图标',
   `status` int(1) NOT NULL DEFAULT 1 COMMENT '状态,0禁用,1正常',
-  `type` int(1) NOT NULL DEFAULT 2 COMMENT '模块类型,2普通模块,1系统模块',
+  `type` int(1) NOT NULL DEFAULT 2 COMMENT '模块类型,1系统模块,2普通模块',
+  `sourse` int(1) NOT NULL DEFAULT 1 COMMENT '来源,1官方平台,2第三方',
   `create_time` int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
   `update_time` int(11) NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
@@ -116,14 +117,14 @@ CREATE TABLE `oa_admin_module`  (
 -- ----------------------------
 -- Records of oa_admin_module
 -- ----------------------------
-INSERT INTO `oa_admin_module` VALUES (1, '系统模块', 'HOME', '', 1, 1, 1639562910, 0);
-INSERT INTO `oa_admin_module` VALUES (2, '用户模块', 'USER', '', 1, 1, 1639562910, 0);
-INSERT INTO `oa_admin_module` VALUES (3, '消息模块', 'MSG', '', 1, 1, 1639562910, 0);
-INSERT INTO `oa_admin_module` VALUES (4, '公告模块', 'NOTE', '', 1, 1, 1639562910, 0);
-INSERT INTO `oa_admin_module` VALUES (5, '知识模块', 'KQ', '', 1, 1, 1639562910, 0);
-INSERT INTO `oa_admin_module` VALUES (6, 'OA模块', 'OA', '', 1, 1, 1639562910, 0);
-INSERT INTO `oa_admin_module` VALUES (7, '财务模块', 'CF', '', 1, 1, 1639562910, 0);
-INSERT INTO `oa_admin_module` VALUES (8, '统计模块', 'BI', '', 1, 1, 1639562910, 0);
+INSERT INTO `oa_admin_module` VALUES (1, '系统模块', 'home', '', 1, 1,1, 1639562910, 0);
+INSERT INTO `oa_admin_module` VALUES (2, '用户模块', 'user', '', 1, 1,1, 1639562910, 0);
+INSERT INTO `oa_admin_module` VALUES (3, '消息模块', 'message', '', 1,1, 1, 1639562910, 0);
+INSERT INTO `oa_admin_module` VALUES (4, '公告模块', 'note', '', 1, 1,1, 1639562910, 0);
+INSERT INTO `oa_admin_module` VALUES (5, '知识模块', 'article', '', 1,1, 1, 1639562910, 0);
+INSERT INTO `oa_admin_module` VALUES (6, 'OA模块', 'oa', '', 1, 1,1, 1639562910, 0);
+INSERT INTO `oa_admin_module` VALUES (7, '财务模块', 'finance', '', 1,1, 1, 1639562910, 0);
+INSERT INTO `oa_admin_module` VALUES (8, '统计模块', 'business', '', 1,1, 1, 1639562910, 0);
 
 
 -- ----------------------------

@@ -5,8 +5,8 @@
 	<table class="layui-hide" id="list" lay-filter="list"></table>
 </div>
 <script type="text/html" id="toolbarDemo">
-  <div class="layui-btn-container">
-  	<button class="layui-btn layui-btn-normal layui-btn-sm addNew" type="button">+ 添加功能模块</button>
+  <div>
+  	<span class="red">模块功能即将推出，该列表目前只是预设数据，不影响开发者基于该版本进行二次开发。</span>
   </div>
 </script>
 {/block}
@@ -51,6 +51,18 @@
 						var html1 = '<span>系统模块</span>';
 						var html2 = '<span style="color:#FF5722">普通模块</span>';
 						if (d.type == 1) {
+							return html1;
+						}
+						else {
+							return html2;
+						}
+					}
+				}
+				, {
+					field: 'sourse', title: '来源', width: 120, align: 'center', templet: function (d) {
+						var html1 = '<span>官方平台</span>';
+						var html2 = '<span style="color:#FF5722">第三方</span>';
+						if (d.sourse == 1) {
 							return html1;
 						}
 						else {
