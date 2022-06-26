@@ -4,6 +4,11 @@ layui.define([], function (exports) {
 		loading: false,
 		//右侧iframe的方式打开页面，参考勾股CMS、勾股OA
 		side: function (url, width) {
+			let that = this;
+			if (that.loading == true) {
+				return false;
+			}
+			that.loading = true;
 			var sideWidth = window.innerWidth > 1280 ? '1200px' : '996px';
 			if (width && width > 0) {
 				sideWidth = width + 'px';
@@ -17,16 +22,17 @@ layui.define([], function (exports) {
 				content: url,
 				area: [sideWidth, '100%'],
 				success: function (obj, index) {
-					if ($('#expressClose').length < 1) {
-						var btn = '<div id="expressClose" class="express-close" title="关闭">关闭</div>';
+						var btn = '<div data-index="'+index+'" class="express-close" title="关闭">关闭</div>';
 						obj.append(btn);
 						$('body').addClass('right-open');
-						$('#expressClose').click(function () {
-							let op_width = $('.layui-anim-rl').outerWidth();
-							$('.layui-anim-rl').animate({ left: '+=' + op_width + 'px' }, 200, 'linear', function () {
+						that.loading = false;
+						obj.on('click','.express-close', function () {
+							let op_width = obj.outerWidth();
+							obj.animate({ left: '+=' + op_width + 'px' }, 200, 'linear', function () {
 								$('body').removeClass('right-open');
-								$('.layui-anim-rl').remove();
-								$('.layui-layer-shade').remove();
+								//$('.layui-anim-rl').remove();
+								//$('.layui-layer-shade').remove();
+								layer.close(index);
 								if (layui.pageTable) {
 									layui.pageTable.resize();
 								}
@@ -34,10 +40,9 @@ layui.define([], function (exports) {
 						})
 						$(window).resize(function () {
 							width = window.innerWidth > 1280 ? '1200' : '996';
-							$('.layui-anim-rl').width(width);
+							obj.width(width);
 						})
 					}
-				}
 			})
 		},
 		//右侧ajax请求的方式打开页面参考勾股DEV
@@ -144,10 +149,10 @@ layui.define([], function (exports) {
 			//延迟关闭，一般是在编辑完页面数据后需要自动关闭页面用到
 			if(delay && delay>0){
 				setTimeout(function () {
-					$('#expressClose').click();
+					$('.express-close').last().click();
 				}, delay);
 			}else{
-				$('#expressClose').click();
+				$('.express-close').last().click();
 			}
 			if (layui.pageTable) {
 				layui.pageTable.reload();

@@ -21,6 +21,7 @@ layui.define([], function (exports) {
 		statusbar: false,
 		convert_urls: false,// 附件路径无需要转换为相对路径。
 		contextmenu_never_use_native: true,
+		paste_data_images: true,
 		menubar: 'file edit insert format table',
 		menu: {
 			file: { title: '文件', items: 'preview fullscreen | wordcount' },

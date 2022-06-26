@@ -4,7 +4,7 @@
 <div class="p-3">
 	<form class="layui-form gg-form-bar border-x border-t">
 		<div class="layui-input-inline">
-			<select name="article_cate_id">
+			<select name="cate_id">
 				<option value="">请选择知识文章分类</option>
 				{volist name=":set_recursion(article_cate())" id="v"}
 				<option value="{$v.id}">{$v.title}</option>
@@ -36,6 +36,7 @@
 			title: '文章列表',
 			toolbar: '#toolbarDemo',
 			url: "/article/index/index", //数据接口
+			cellMinWidth: 360,
 			page: true, //开启分页
 			limit: 20,
 			cols: [
@@ -57,7 +58,8 @@
 						width: 120
 					}, {
 						field: 'title',
-						title: '文章标题'
+						title: '文章标题',
+						templet: '<div><a data-href="/article/index/view/id/{{d.id}}.html" class="layui-table-link right-a" target="_blank">{{d.title}}</a></div>'
 					},{
 						field: 'read',
 						title: '阅读量',
@@ -73,24 +75,9 @@
 						title: '部门',
 						align: 'center',
 						width: 100
-					}, {
-						field: 'right',
-						title: '操作',
-						toolbar: '#barDemo',
-						width: 60,
-						align: 'center'
 					}
 				]
 			]
-		});
-		
-		//监听行工具事件
-		table.on('tool(test)', function(obj) {
-			var data = obj.data;
-			if(obj.event === 'view'){
-				tool.side('/article/index/view?id='+data.id);
-				return;
-			}
 		});
 
 		//监听搜索提交

@@ -1283,6 +1283,29 @@ function advancedDate($type)
  * @param string $format 格式 【d：显示到天 i显示到分钟 s显示到秒】
  * @return string
  */
+function countDays($a, $b = 0)
+{
+    if ($b == 0) {
+        $b = date("Y-m-d");
+    }
+    $date_1 = $a;
+    $date_2 = $b;
+    $d1 = strtotime($date_1);
+    $d2 = strtotime($date_2);
+    $days = round(($d2 - $d1) / 3600 / 24);
+    if ($days > 0) {
+        return $days;
+    } else {
+        return 0;
+    }
+}
+
+/**
+ * 间隔时间段格式化
+ * @param int $time 时间戳
+ * @param string $format 格式 【d：显示到天 i显示到分钟 s显示到秒】
+ * @return string
+ */
 function time_trans($time, $format = 'd')
 {
     $now = time();
@@ -1567,9 +1590,13 @@ function curl_get($url)
     //设置获取的信息以文件流的形式返回，而不是直接输出。
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE); // https请求 不验证证书
-    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE); // https请求 不验证hosts 
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE); // https请求 不验证hosts
+	curl_setopt($ch, CURLINFO_HEADER_OUT, TRUE);//添加这个获取请求头信息
     //执行命令
     $output = curl_exec($ch);
+	$meta = curl_getinfo($ch,CURLINFO_HEADER_OUT);
+	$accept = substr($meta,0,strpos($meta, 'Accept:'));
+	$host = substr($accept,strpos($accept, 'Host:')+5);
     curl_close($ch); //释放curl句柄
     return $output;
 }
@@ -1581,10 +1608,11 @@ function curl_get($url)
  */
 function curl_post($url = '', $post = array())
 {
+	$post['host'] = $_SERVER['HTTP_HOST'];
     $curl = curl_init(); // 启动一个CURL会话
     curl_setopt($curl, CURLOPT_URL, $url); // 要访问的地址
     curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0); // 对认证证书来源的检查
-    curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 1); // 从证书中检查SSL加密算法是否存在
+    curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0); // 从证书中检查SSL加密算法是否存在
     curl_setopt($curl, CURLOPT_USERAGENT, $_SERVER['HTTP_USER_AGENT']); // 模拟用户使用的浏览器
     curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1); // 使用自动跳转
     curl_setopt($curl, CURLOPT_AUTOREFERER, 1); // 自动设置Referer

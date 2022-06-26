@@ -3,7 +3,7 @@
 {block name="style"}
 <style type="text/css">
     .panel-num table {width: 100%;}
-    .panel-num td {text-align: center; padding: 16px 0; width: 20%;border-left: 1px solid #f1f1f1; position: relative;}
+    .panel-num td {text-align: center; padding: 16px 0; border-left: 1px solid #f1f1f1; position: relative;}
     .panel-num td:nth-child(1) { border-left: none}
     .panel-num .num-title { padding-bottom: 10px; color: #999;}
     .panel-num .blue {font-size: 20px; font-weight: 300;}
@@ -27,26 +27,12 @@
 				<div class="layui-card panel-num">
 					<table>
 						<tr>
+						{volist name="$total" id="vo"}
 						  <td>
-							<div class="num-title">员工</div>
-							<div class="blue">{$adminCount}</div>
+							<div class="num-title">{$vo.name}</div>
+							<div class="blue">{$vo.num}</div>
 						  </td>
-						  <td>
-							<div class="num-title">知识</div>
-							<div class="blue">{$articleCount}</div>
-						  </td>
-						  <td>
-							<div class="num-title">审批</div>
-							<div class="blue">{$approveCount}</div>
-						  </td>
-						  <td>
-							<div class="num-title">报销</div>
-							<div class="blue">{$expenseCount}</div>
-						  </td>
-						  <td>
-							<div class="num-title">发票</div>
-							<div class="blue">{$invoiceCount}</div>
-						  </td>
+						{/volist}
 						</tr>
 					</table>
 				</div>
@@ -54,6 +40,12 @@
 					<div class="layui-card-title">企业公告</div>
 					<div style="padding: 12px;">
 						<table id="Note" lay-filter="Note" class="layui-hide" style="margin-top:0"></table>
+					</div>
+				</div>
+				<div class="layui-card">
+					<div class="layui-card-title">项目列表</div>
+					<div style="padding: 12px;">
+						<table id="Project" lay-filter="Project" class="layui-hide" style="margin-top:0"></table>
 					</div>
 				</div>
 				<div class="layui-card">
@@ -169,6 +161,26 @@
 				{ field: 'create_time', title: '发布时间', align: 'center','width': 136}
 			]]
 		});
+		//项目
+		table.render({
+			elem: '#Project'
+			, url: "/api/index/get_project_list" //数据接口
+			, page: false //开启分页
+			, cols: [[ //表头
+				{ field: 'id', title: '项目编号', align: 'center','width': 90, templet: function (d) {
+						return 'P' + d.id;
+					}
+				},
+				{field: 'status', title: '状态', align: 'center', width: 80, templet: function (d) {
+						var html = '<span class="layui-btn layui-btn-xs bg-status-' + d.status + '">' + d.status_name + '</span>';
+						return html;
+					}
+				},
+				{ field: 'title', title: '项目名称',templet: '<div><a data-href="/project/index/view/id/{{d.id}}.html" class="layui-table-link right-a" target="_blank">{{d.name}}</a></div>'},
+				{ field: 'director_name', title: '负责人', align: 'center', width: 80},
+				{ field: 'plan_time', title: '项目周期', align: 'center', width: 190},
+			]]
+		});
 		$('body').on('click','[data-event="pay"]',function(){
 			var src=$(this).attr('src');
 			layer.open({
@@ -186,7 +198,7 @@
 	function get_logs() {
 		$.ajax({
 			url: "/api/index/log_list",
-			type: 'post',
+			type: 'get',
 			data: {
 				page: 1,
 				limit: 20
@@ -221,7 +233,7 @@
 	function get_view_data() {
 		$.ajax({
 			url: "/api/index/get_view_data",
-			type: 'post',
+			type: 'get',
 			data: {},
 			success: function (e) {
 				if (e.code == 0) {

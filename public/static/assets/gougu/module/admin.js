@@ -21,7 +21,7 @@ layui.define(['element'], function (exports) {
 		},
 		//从子页面打开新的Tab页面，防止id重复，使用时间戳作为唯一标识
 		sonAdd: function (url, title) {
-			var id = Date.now();
+			let id = Date.now();
 			this.tabAdd( id, url,title);
 		},
 		//根据传入的id传入到指定的tab项，并滚动定位

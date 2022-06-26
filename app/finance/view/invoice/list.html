@@ -36,7 +36,8 @@
 			elem: '#test',
 			title: '发票列表',
 			toolbar: '#toolbarDemo',
-			url: "/finance/invoice/list", //数据接口		
+			url: "/finance/invoice/list", //数据接口
+			cellMinWidth: 320,			
 			page: true, //开启分页
 			limit: 20,
 			cols: [
@@ -49,7 +50,6 @@
 					}, {
 						field: 'invoice_title',
 						title: '开票抬头',
-						width: 320,
 						templet:function(d){
 							var html='';
 							if(d.type==1){

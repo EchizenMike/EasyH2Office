@@ -209,13 +209,12 @@
 			elem: "#test1",
 			url: "/api/index/upload",
 			done: function (e) {
-				//如果上传失败
-				if (e.code == 1) {
-					return layer.msg('上传失败');
+				layer.msg(res.msg);
+				if (res.code == 0) {
+					//上传成功
+					$('#demo1 input').attr('value', res.data.id);
+					$('#demo1 img').attr('src', res.data.filepath);
 				}
-				//上传成功
-				$('#demo1 input').attr('value', e.data.filepath);
-				$('#demo1 img').attr('src', e.data.filepath);
 			}
 		});
 

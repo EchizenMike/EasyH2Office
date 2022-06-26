@@ -244,17 +244,19 @@
 				layer.msg('上传中...',{time: 3600000});
 			}
 			,done: function(res, index, upload){
-			  layer.msg('上传成功');
-			  var timestamp=new Date().getTime();
-			  var tr = '<tr data-id="'+res.data.id+'" id="tr_'+timestamp+'">\
-					  <td>'+ res.data.name +'</td>\
-					  <td align="center">'+ (res.data.filesize/(1024*1024)).toFixed(2) +'MB</td>\
-					  <td align="center">\
-					  <span class="layui-btn layui-btn-xs layui-btn-danger demo-delete" data-id="'+timestamp+'">删除</span>\
-					  </td>\
-					</tr>';
-			  $('.layui-upload-list').show();
-				$('#demoList').append(tr);
+				layer.msg(res.msg);
+				if(res.code==0){
+					var timestamp=new Date().getTime();
+					var tr = '<tr data-id="'+res.data.id+'" id="tr_'+timestamp+'">\
+							<td>'+ res.data.name +'</td>\
+							<td align="center">'+ (res.data.filesize/(1024*1024)).toFixed(2) +'MB</td>\
+							<td align="center">\
+							<span class="layui-btn layui-btn-xs layui-btn-danger demo-delete" data-id="'+timestamp+'">删除</span>\
+							</td>\
+							</tr>';
+					$('.layui-upload-list').show();
+					$('#demoList').append(tr);
+				}
 			}
 			,error: function(index, upload){
 				layer.msg('上传失败');

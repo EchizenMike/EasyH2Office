@@ -69,6 +69,8 @@ return [
 		'tovoid'     => '作废',
 		'leave'      => '离职',
 		'reset'      => '重新设置',
+		'install'    => '安装',
+		'uninstall'  => '卸载',
     ],
 
 ];

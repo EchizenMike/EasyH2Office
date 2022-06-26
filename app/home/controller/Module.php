@@ -23,73 +23,150 @@ class Module extends BaseController
             $module = Db::name('AdminModule')->select();
             return to_assign(0, '', $module);
         } else {
-            return view();
-        }
-    }
-
-    //添加新增/编辑
-    public function add()
-    {
-        $param = get_params();
-        if (request()->isAjax()) {
-			$param['name'] = preg_replace('# #','',$param['name']);
-            if ($param['id'] > 0) {
-				$module = Db::name('AdminModule')->where('id',$param['id'])->find();
-				if($module['type'] == 1){
-					return to_assign(1,'系统模块不能编辑');
+			$data = curl_post('https://www.gougucms.com/home/get_module/get');
+			//var_dump($data);exit;
+			$module = json_decode($data, true);
+			$oa_module = $module['data'];
+			$sys_module = Db::name('AdminModule')->select()->toArray();
+			foreach ($oa_module as $key => &$val) {
+				$val['is_install'] = 0;
+				$val['is_file'] = 0;
+				if(file_exists(CMS_ROOT . '/app/'.$val["name"].'/config/install.gouguoa')){
+					$val['is_file'] = 1;
 				}
-                try {
-                    validate(ModuleCheck::class)->scene('edit')->check($param);
-                } catch (ValidateException $e) {
-                    // 验证失败 输出错误信息
-                    return to_assign(1, $e->getError());
-                }
-                $param['update_time'] = time();
-                Db::name('AdminModule')->strict(false)->field(true)->update($param);
-                add_log('edit', $param['id'], $param);
-            } else {
-                try {
-                    validate(ModuleCheck::class)->scene('add')->check($param);
-                } catch (ValidateException $e) {
-                    // 验证失败 输出错误信息
-                    return to_assign(1, $e->getError());
-                }
-                $param['create_time'] = time();
-                $mid = Db::name('AdminModule')->strict(false)->field(true)->insertGetId($param);
-                add_log('add', $mid, $param);
-            }
-            return to_assign();
-        } else {
-            $id = isset($param['id']) ? $param['id'] : 0;
-            if($id>0){
-                $detail = Db::name('AdminModule')->where('id',$id)->find();
-                View::assign('detail', $detail);
-            }
-            View::assign('id', $id);
+				foreach ($sys_module as $sk => $sv) {
+					if($val['name'] == $sv['name']){
+						$val['is_install'] = 1;
+					}
+				}
+			}
+			View::assign('module', $oa_module);
+			//var_dump($oa_module);exit;
             return view();
         }
     }
-
-    //禁用/启用
-    public function disable()
+	
+	//安装模块
+    public function install()
     {
-        $param = get_params();
-		$module = Db::name('AdminModule')->where('id',$param['id'])->find();
-		if($module['type'] == 1){
-			return to_assign(1,'系统模块不能禁用');
+		if($this->uid!=1){
+			return to_assign(1,'只有系统超级管理员才有权限安装模块！');
 		}
-		$param['update_time']= time();
-		$res = Db::name('AdminModule')->strict(false)->field('status,update_time')->update($param);
+        $param = get_params();
+		$name = $param['name'];
+		$data = curl_post('https://www.gougucms.com/home/get_module/module',['name'=>$name]);
+		$json_data = json_decode($data, true);
+		if($json_data['code'] == 1){
+			return to_assign(1,$json_data['msg']);
+		}
+		$detail = $json_data['data'];
+		$rule = unserialize($detail['rule']);
+		if(empty($rule)){
+			return to_assign(1,'找不到该模块的信息');
+		}
+		$prefix = get_config('database.connections.mysql.prefix');
+		
+		$insert = [];
+		$insert['title'] = $detail['title'];
+		$insert['name'] = $detail['name'];
+		$insert['type'] = $detail['type'];
+		$insert['sourse'] = $detail['sourse'];
+		$insert['create_time'] = time();
+		try {
+			validate(ModuleCheck::class)->scene('add')->check($insert);
+		} catch (ValidateException $e) {
+			// 验证失败 输出错误信息
+			return to_assign(1, $e->getError());
+		}
+		//sql语句
+		$sql_file = CMS_ROOT . '/app/'.$name.'/config/install.sql';
+		$sql_array = [];
+		if(file_exists($sql_file)){
+			$sql = file_get_contents($sql_file);
+			$sql_array = preg_split("/;[\r\n]+/", str_replace("oa_", $prefix, $sql));
+		}	
+		//var_dump($sql_array);exit;
+		Db::startTrans();
+        try {			
+			// 导入sql数据并创建表
+			if(!empty($sql_array)){
+				foreach ($sql_array as $k => $v) {
+					if (!empty($v)) {
+						Db::execute($v);
+					}
+				}
+			}
+			
+			//如果安装过该模块，删除原来的菜单信息
+			Db::name('AdminRule')->where('module',$name)->delete();
+			$sort = Db::name('AdminRule')->where('pid',0)->max('sort');
+			$this->add_rule($rule,0,$sort+1);			
+			$mid = Db::name('AdminModule')->strict(false)->field(true)->insertGetId($insert);
+			
+			Db::commit();
+		}
+		catch (\Exception $e) {
+			//回滚事务
+			Db::rollback();
+			return to_assign(1,'捕获到异常'.$e->getMessage());
+		}
+		
+		//更新超级管理员的权限节点
+		$rules = Db::name('AdminRule')->column('id');
+		$admin_rules = implode(',',$rules);
+		$res = Db::name('AdminGroup')->strict(false)->where('id',1)->update(['rules'=>$admin_rules,'update_time'=>time()]);		
 		if($res!==false){
-			Db::name('AdminRule')->strict(false)->where('module',$module['name'])->field('status')->update(['status'=>$param['status']]);
 			// 删除后台节点缓存
             clear_cache('adminRules');
-			if($param['status'] == 0){
-				add_log('disable', $param['id'], $param);
+			add_log('install', $mid, $insert);
+			return to_assign();
+		}
+		else{
+			return to_assign(1,'操作失败');
+		}
+    }
+	
+	//递归插入菜单数据
+	protected function add_rule($data, $pid=0,$sort=0)
+	{
+		foreach($data as $k => $v)
+		{
+			$rule=[
+				'title'  => $v['title'],
+				'name'   => $v['name'],
+				'src'    => $v['src'],
+				'module' => $v['module'],
+				'menu'   => $v['menu'],
+				'icon'   => $v['icon'],
+				'pid'    => $pid,
+				'sort'   => $sort,
+				'create_time' => time()
+			];
+			$new_id = Db::name('AdminRule')->strict(false)->field(true)->insertGetId($rule);
+			if(!empty($v['son'] && $new_id)){
+				$this->add_rule($v['son'],$new_id);			
 			}
-			else if($param['status'] == 1){
-				add_log('recovery', $param['id'], $param);
-			}
+		}
+	}
+
+    //卸载
+    public function uninstall()
+    {
+		if($this->uid!=1){
+			return to_assign(1,'只有系统超级管理员才有权限卸载模块！');
+		}
+        $param = get_params();
+		$module = Db::name('AdminModule')->where('name',$param['name'])->find();
+		if($module['type'] == 1){
+			return to_assign(1,'系统模块不能卸载');
+		}
+		$param['update_time']= time();
+		$res = Db::name('AdminModule')->where('name',$param['name'])->delete();
+		if($res!==false){
+			Db::name('AdminRule')->strict(false)->where('module',$module['name'])->delete();
+			// 删除后台节点缓存
+            clear_cache('adminRules');
+			add_log('uninstall', $module['id'], $param);
 			return to_assign();
 		}
 		else{

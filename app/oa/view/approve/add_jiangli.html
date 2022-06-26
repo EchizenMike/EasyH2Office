@@ -176,29 +176,27 @@ const moduleInit = ['tool','formSelects','employeepicker'];
 			,accept: 'file' //普通文件
     		,exts: 'png|jpg|gif|jpeg|doc|docx|ppt|pptx|xls|xlsx|pdf|zip|rar|7z' //只允许上传文件格式
 			,done: function(res){
-				//如果上传失败
-				if (res.code == 1) {
-					layer.msg('上传失败')
-					return false;
-				}
-				//上传成功
-				var idsStr = $('#fileList input').val(),idsArray = [];
-				if (idsStr != '') {
-					idsArray = idsStr.split(",");
-				}
-				idsArray.push(res.data.id);
-				$('#fileList input').attr('value', idsArray.join(','));
-				let temp = `<div class="layui-col-md3" id="uploadImg${res.data.id}">
-						<div class="file-card">
-							<i class="file-icon layui-icon layui-icon-file"></i>
-							<div class="file-title">${res.data.name}</div>
-							<div class="file-tool">
-								<a href="${res.data.filepath}" download="${res.data.name}" title="下载查看" target="_blank"><i class="layui-icon layui-icon-download-circle" style="color: #12bb37;"></i></a>
-								<i class="btn-delete layui-icon layui-icon-delete" data-id="${res.data.id}" style="color: #FF5722;" title="删除"></i>
+				layer.msg(res.msg);
+				if (res.code == 0) {
+					//上传成功
+					var idsStr = $('#fileList input').val(),idsArray = [];
+					if (idsStr != '') {
+						idsArray = idsStr.split(",");
+					}
+					idsArray.push(res.data.id);
+					$('#fileList input').attr('value', idsArray.join(','));
+					let temp = `<div class="layui-col-md3" id="uploadImg${res.data.id}">
+							<div class="file-card">
+								<i class="file-icon layui-icon layui-icon-file"></i>
+								<div class="file-title">${res.data.name}</div>
+								<div class="file-tool">
+									<a href="${res.data.filepath}" download="${res.data.name}" title="下载查看" target="_blank"><i class="layui-icon layui-icon-download-circle" style="color: #12bb37;"></i></a>
+									<i class="btn-delete layui-icon layui-icon-delete" data-id="${res.data.id}" style="color: #FF5722;" title="删除"></i>
+								</div>
 							</div>
-						</div>
-					</div>`;
-				$('#fileList').append(temp);
+						</div>`;
+					$('#fileList').append(temp);
+				}
 			}
 		});
 		$('#fileList').on('click', '.btn-delete', function () {
@@ -271,18 +269,21 @@ const moduleInit = ['tool','formSelects','employeepicker'];
 				$('#flow_tr').html(formHtml);
 				form.render();
 			}
-			else{
-				$.ajax({
-					url: "/api/index/get_flow_users",
-					type:'post',
-					data:{id:data.value},
-					success: function (e) {
-						if (e.code == 0) {
-							var flowLi='';
-							var flow_data = e.data.flow_data;
-							if(e.data.copy_uids && e.data.copy_uids !=''){
-								formSelects.value('selectcopy', e.data.copy_uids.split(',')); 
-							}
+			if(data.value==''){
+				return false;
+			}
+			$.ajax({
+				url: "/api/index/get_flow_users",
+				type:'get',
+				data:{id:data.value},
+				success: function (e) {
+					if (e.code == 0) {
+						var flowLi='';
+						var flow_data = e.data.flow_data;
+						if(e.data.copy_uids && e.data.copy_uids !=''){
+							formSelects.value('selectcopy', e.data.copy_uids.split(',')); 
+						}
+						if(check_type == 1){
 							for(var a=0;a<flow_data.length;a++){
 								var userList='',sign_type = '';
 								if(flow_data[a].flow_type==1){
@@ -317,9 +318,9 @@ const moduleInit = ['tool','formSelects','employeepicker'];
 							$('#flow_tr').html(formHtml);
 						}
 					}
-				})
-			}
-		});	
+				}
+			})
+		});
 	}
 </script>
 {/block}

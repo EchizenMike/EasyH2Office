@@ -35,7 +35,7 @@ class Plan extends BaseController
             } else {
                 $where[] = ['a.admin_id', '=', $this->uid];
             }
-            $where[] = ['a.status', '=', 1];
+            $where[] = ['a.delete_time', '=', 0];
             $rows = empty($param['limit']) ? get_config('app . page_size') : $param['limit'];
             $plan = PlanList::where($where)
                 ->field('a.*,u.name as create_admin')
@@ -67,11 +67,11 @@ class Plan extends BaseController
             $where1 = [];
             $where2 = [];
 
-            $where1[] = ['status', '=', 1];
+            $where1[] = ['delete_time', '=', 1];
             $where1[] = ['admin_id', '=', $uid];
             $where1[] = ['start_time', '>=', strtotime($param['start'])];
 
-            $where2[] = ['status', '=', 1];
+            $where2[] = ['delete_time', '=', 1];
             $where2[] = ['admin_id', '=', $uid];
             $where2[] = ['end_time', '<=', strtotime($param['end'])];
 
@@ -184,9 +184,8 @@ class Plan extends BaseController
     public function delete()
     {
         $id = get_params("id");
-        $data['status'] = '-1';
         $data['id'] = $id;
-        $data['update_time'] = time();
+        $data['delete_time'] = time();
         if (Db::name('Plan')->update($data) !== false) {
             add_log('delete', $data['id'], $data);
             return to_assign(0, "删除成功");

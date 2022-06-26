@@ -174,9 +174,9 @@
 			<td class="layui-td-gray"><div class="layui-input-inline">附件</div> <div class="layui-input-inline"><button type="button" class="layui-btn layui-btn-xs" id="upFile"><i class="layui-icon"></i></button></div></td>
 			<td colspan="5">
 				<div class="layui-row" id="fileList">
-					<input type="hidden" name="file_ids" value="{$detail.file_ids}">
-					{notempty name="$detail.file_ids"}
-					{volist name="$detail.fileArray" id="vo"}
+					<input type="hidden" name="file_ids" value="{$expense.file_ids}">
+					{notempty name="$expense.file_ids"}
+					{volist name="$expense.fileArray" id="vo"}
 					<div class="layui-col-md3" id="uploadImg{$vo.id}">
 						<div class="file-card">
 							<i class="file-icon iconfont icon-renwuguanli"></i>
@@ -272,29 +272,27 @@ const moduleInit = ['tool','formSelects','employeepicker'];
 			,accept: 'file' //普通文件
     		,exts: 'png|jpg|gif|jpeg|doc|docx|ppt|pptx|xls|xlsx|pdf|zip|rar|7z' //只允许上传文件格式
 			,done: function(res){
-				//如果上传失败
-				if (res.code == 1) {
-					layer.msg('上传失败')
-					return false;
-				}
-				//上传成功
-				var idsStr = $('#fileList input').val(),idsArray = [];
-				if (idsStr != '') {
-					idsArray = idsStr.split(",");
-				}
-				idsArray.push(res.data.id);
-				$('#fileList input').attr('value', idsArray.join(','));
-				let temp = `<div class="layui-col-md3" id="uploadImg${res.data.id}">
-						<div class="file-card">
-							<i class="file-icon layui-icon layui-icon-file"></i>
-							<div class="file-title">${res.data.name}</div>
-							<div class="file-tool">
-								<a href="${res.data.filepath}" download="${res.data.name}" title="下载查看" target="_blank"><i class="layui-icon layui-icon-download-circle" style="color: #12bb37;"></i></a>
-								<i class="btn-delete layui-icon layui-icon-delete" data-id="${res.data.id}" style="color: #FF5722;" title="删除"></i>
+				layer.msg(res.msg);
+				if (res.code == 0) {
+					//上传成功
+					var idsStr = $('#fileList input').val(),idsArray = [];
+					if (idsStr != '') {
+						idsArray = idsStr.split(",");
+					}
+					idsArray.push(res.data.id);
+					$('#fileList input').attr('value', idsArray.join(','));
+					let temp = `<div class="layui-col-md3" id="uploadImg${res.data.id}">
+							<div class="file-card">
+								<i class="file-icon layui-icon layui-icon-file"></i>
+								<div class="file-title">${res.data.name}</div>
+								<div class="file-tool">
+									<a href="${res.data.filepath}" download="${res.data.name}" title="下载查看" target="_blank"><i class="layui-icon layui-icon-download-circle" style="color: #12bb37;"></i></a>
+									<i class="btn-delete layui-icon layui-icon-delete" data-id="${res.data.id}" style="color: #FF5722;" title="删除"></i>
+								</div>
 							</div>
-						</div>
-					</div>`;
-				$('#fileList').append(temp);
+						</div>`;
+					$('#fileList').append(temp);
+				}
 			}
 		});
 		$('#fileList').on('click', '.btn-delete', function () {
@@ -382,18 +380,21 @@ const moduleInit = ['tool','formSelects','employeepicker'];
 				$('#flow_tr').html(formHtml);
 				form.render();
 			}
-			else{
-				$.ajax({
-					url: "/api/index/get_flow_users",
-					type:'post',
-					data:{id:data.value},
-					success: function (e) {
-						if (e.code == 0) {
-							var flowLi='';
-							var flow_data = e.data.flow_data;
-							if(e.data.copy_uids && e.data.copy_uids !=''){
-								formSelects.value('selectcopy', e.data.copy_uids.split(',')); 
-							}
+			if(data.value==''){
+				return false;
+			}
+			$.ajax({
+				url: "/api/index/get_flow_users",
+				type:'get',
+				data:{id:data.value},
+				success: function (e) {
+					if (e.code == 0) {
+						var flowLi='';
+						var flow_data = e.data.flow_data;
+						if(e.data.copy_uids && e.data.copy_uids !=''){
+							formSelects.value('selectcopy', e.data.copy_uids.split(',')); 
+						}
+						if(check_type == 1){
 							for(var a=0;a<flow_data.length;a++){
 								var userList='',sign_type = '';
 								if(flow_data[a].flow_type==1){
@@ -428,53 +429,8 @@ const moduleInit = ['tool','formSelects','employeepicker'];
 							$('#flow_tr').html(formHtml);
 						}
 					}
-				})
-			}
-		});
-		
-		//添加报销信息表格
-		$('#addInterfix').on('click',function(){
-			var html = '';
-			var selectTem=$('#selectTem').html();
-			html += '<tr class="more_interfix">\
-							<td><input type="text" name="amount[]" class="layui-input" lay-verify="required|number" lay-reqText="请完善报销金额"></td>\
-							<td style="text-align:left">'+selectTem+'</td>\
-							<td><input type="text" name="remarks[]" class="layui-input"><input type="hidden" name="expense_id[]" class="layui-input" value="0"></td>\
-							<td><a class="layui-btn layui-btn-danger layui-btn-xs" data-id="0" lay-event="del">删除</a></td>\
-						</tr>';
-			$("#interfix").append(html).find('.tr-none').remove();
-			form.render();
-		});
-
-		$('#interfix').on('click', '[lay-event="del"]', function() {
-			if($('.more_interfix').length<2){
-				layer.msg('至少保留一个报销选项');
-				return false;
-			}
-			var that=$(this);
-			var _id = that.data('id');
-			if(_id>0){
-				layer.confirm('确定删除该报销数据项？', {
-					icon: 3,
-					title: '提示'
-				}, function(index) {
-					$.ajax({
-						url: "/api/index/del_expense_interfix",
-						type:'post',
-						data: {id: _id},
-						success: function(res) {
-							layer.msg(res.msg);
-							if (res.code == 0) {
-								that.parents(".more_interfix").remove();
-							}
-						}
-					})
-					layer.close(index);
-				});
-			}
-			else{
-				that.parents(".more_interfix").remove();
-			}
+				}
+			})
 		});
 	}		
 	</script>

@@ -31,7 +31,7 @@ layui.define(['layer'],function(exports){
 			var me 		= this;
 			$.ajax({
 			  url:me.settings.url,
-			  type:'post',
+			  type:'get',
 			  data:me.settings.where,
 			  success:function(e){
 				if(e.code==0){

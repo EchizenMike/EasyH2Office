@@ -1,0 +1,197 @@
+{extend name="../../base/view/common/base" /}
+<!-- 主体 -->
+{block name="style"}
+<style>
+	.layui-unselect dl {
+		max-height: 188px;
+	}
+</style>
+{/block}
+{block name="body"}
+<div id="taskList" class="p-3">
+	<div class="gg-form-bar border-t border-x">
+		<form id="taskForm" class="layui-form">
+			<div class="layui-input-inline" style="width:100px;">
+				<select name="flow_status" lay-filter="status">
+					<option value="">任务状态</option>
+					<option value="1">未开始</option>
+					<option value="2">进行中</option>
+					<option value="3">已完成</option>
+					<option value="4">已拒绝</option>
+					<option value="5">已关闭</option>
+				</select>
+			</div>
+			<div class="layui-input-inline" style="width:100px;">
+				<select name="priority" lay-filter="priority">
+					<option value="">优先级</option>
+					<option value="1">低</option>
+					<option value="2">中</option>
+					<option value="3">高</option>
+					<option value="4">紧急</option>
+				</select>
+			</div>
+			<div class="layui-input-inline" style="width:100px;">
+				<select name="cate" lay-filter="cate">
+					<option value="">工作类型</option>
+					{volist name="cate" id="vo"}
+					<option value="{$vo.id}">{$vo.title}</option>
+					{/volist}
+				</select>
+			</div>
+			<div class="layui-input-inline" style="width:150px;">
+				<select name="project_id" lay-filter="project">
+					<option value="">所属项目</option>
+					{volist name="project" id="vo"}
+					<option value="{$vo.id}">{$vo.name}</option>
+					{/volist}
+				</select>
+			</div>
+			<div class="layui-input-inline" style="width:150px;">
+				<input type="hidden" name="type" />
+				<input name="director_uid" style="display: none;" value="" />
+				<input type="text" name="director" placeholder="负责人，可多选" readonly class="layui-input employeepicker"
+					autocomplete="off" />
+			</div>
+			<div class="layui-input-inline" style="width:160px;">
+				<input type="text" name="keywords" placeholder="主题/描述内容" class="layui-input" autocomplete="off" />
+			</div>
+			<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform">搜索</button>
+			<button type="reset" class="layui-btn-reset" lay-filter="clear">清空</button>
+			<div style="float:right;">
+				<span class="layui-btn add-new">+ 新建任务</span>
+			</div>
+		</form>
+	</div>
+	<table class="layui-hide" id="task" lay-filter="task"></table>
+</div>
+{/block}
+<!-- /主体 -->
+
+<!-- 脚本 -->
+{block name="script"}
+<script>
+	const moduleInit = ['tool','employeepicker'];
+	function gouguInit() {
+		var table = layui.table, form = layui.form, tool = layui.tool, employeepicker = layui.employeepicker;
+
+		layui.taskTable = table.render({
+			elem: '#task',
+			title: '任务列表',
+			cellMinWidth: 200,
+			url: "/project/task/index", //数据接口
+			page: true, //开启分页
+			limit: 20,
+			cols: [[
+				{
+					field: 'id', title: '任务编号', width: 80, align: 'center', fixed: 'left', templet: function (d) {
+						return 'T' + d.id;
+					}
+				}
+				, {
+					field: 'flow_name', title: '状态', align: 'center', width: 80, templet: function (d) {
+						var html = '<span class="layui-badge layui-bg-' + d.flow_status + '">' + d.flow_name + '</span>';
+						return html;
+					}
+				}
+				, {
+					field: 'title', title: '任务主题', rowspan: 2, templet: function (d) {
+						var html = '<span class="layui-badge layui-bg-' + d.priority + '">' + d.priority_name + '</span> <a class="right-a" data-href="/project/task/view/id/' + d.id + '">' + d.title + '</a>';
+						return html;
+					}
+				}
+				, { field: 'director_name', title: '负责人', align: 'center', width: 80 }
+				, { field: 'assist_admin_names', title: '协作人', width: 200 }
+				, { field: 'cate_name', title: '工作类型', width: 90, align: 'center' }
+				, { field: 'plan_hours', title: '预估工时', align: 'center', width: 80 }
+				, {
+					field: 'end_time', title: '预计结束日期', width: 150, templet: function (d) {
+						var html = d.end_time;
+						if (d.delay > 0) {
+							html += '<span class="color-status-0 ml-1" style="font-size:12px;">逾期' + d.delay + '天</span>';
+						}
+						return html;
+					}
+				}
+			]]
+		});
+
+		//选择人弹窗	
+		$('#taskList').on('click', '.employeepicker', function () {
+			let that = $(this);
+			let ids_name = that.attr('name') + '_uid';
+			var ids = $('[name="' + ids_name + '"]').val(), names = that.val(), id_array = [], name_array = [];
+			if (ids.length > 0) {
+				id_array = ids.split(',');
+				name_array = names.split(',');
+			}
+			employeepicker.init({
+				ids: id_array,
+				names: name_array,
+				callback: function (ids, names, dids, departments) {
+					$('[name="' + ids_name + '"]').val(ids);
+					that.val(names);
+					tableReload();
+				}
+			});
+		});
+
+		//新增
+		$('#taskList').on('click', '.add-new', function () {
+			tool.side('/project/task/add');
+		});
+
+		//查看模式
+		$('#taskList').on('click', '[data-event="show"]', function () {
+			layer.msg('开源版只支持列表模式');
+		});
+
+		//任务类型
+		$('#taskTab').on('click', 'li', function () {
+			$(this).addClass('tab-this').siblings().removeClass('tab-this');
+			let type = $(this).data('type');
+			$('#taskForm').find('[name="type"]').val(type);
+			tableReload();
+		});
+
+		form.on('select(status)', function (data) {
+			tableReload();
+		});
+		form.on('select(priority)', function (data) {
+			tableReload();
+		});
+		form.on('select(cate)', function (data) {
+			tableReload();
+		});
+		form.on('select(project)', function (data) {
+			tableReload();
+		});
+		//监听搜索提交
+		form.on('submit(webform)', function (data) {
+			if (data.field.keywords == '') {
+				return false;
+			}
+			tableReload();
+			return false;
+		});
+		$('#taskForm').on('click', '[lay-filter="clear"]', function () {
+			setTimeout(function () {
+				tableReload();
+			}, 10)
+		})
+
+		function tableReload() {
+			let postData = {
+				flow_status: $('#taskForm').find('[name="flow_status"]').val(),
+				priority: $('#taskForm').find('[name="priority"]').val(),
+				cate: $('#taskForm').find('[name="cate"]').val(),
+				delay: $('#taskForm').find('[name="delay"]').val(),
+				director_uid: $('#taskForm').find('[name="director_uid"]').val(),
+				project_id: $('#taskForm').find('[name="project_id"]').val(),
+				keywords: $('#taskForm').find('[name="keywords"]').val()
+			}
+			layui.taskTable.reload({ where: postData });
+		}
+	}		
+</script>
+{/block}
+<!-- /脚本 -->

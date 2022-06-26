@@ -245,7 +245,7 @@ const moduleInit = ['tool','employeepicker'];
 	//获取审核信息
 	$.ajax({
 		url: "/api/index/get_flow_nodes",
-		type:'post',
+		type:'get',
 		data:{id:$('[name="id"]').val(),type:3},
 		success: function (e) {
 			if (e.code == 0) {	

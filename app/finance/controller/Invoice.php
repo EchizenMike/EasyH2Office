@@ -153,6 +153,28 @@ class Invoice extends BaseController
         }
     }
 	
+	public function copy()
+    {
+        if (request()->isAjax()) {
+			$param = get_params();
+			$user_id = $this->uid;
+			//查询条件
+			$map = [];
+			//按时间检索
+            $start_time = !empty($param['start_time']) ? strtotime(urldecode($param['start_time'])) : 0;
+            $end_time = !empty($param['end_time']) ? strtotime(urldecode($param['end_time'])) : 0;
+            if ($start_time > 0 && $end_time > 0) {
+                $where[] = ['expense_time', 'between', [$start_time, $end_time]];
+            }
+			$map[] = ['check_status', '=', 2];			
+			$map[] = ['', 'exp', Db::raw("FIND_IN_SET('{$user_id}',copy_uids)")];	
+			$expense = $this->get_list($map, $param);			
+            return table_assign(0, '', $expense);
+        } else {
+            return view();
+        }
+    }
+	
 	//发票开具
 	public function checkedlist()
     {

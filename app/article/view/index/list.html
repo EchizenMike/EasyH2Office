@@ -4,7 +4,7 @@
 <div class="p-3">
 	<form class="layui-form gg-form-bar border-x border-t">
 		<div class="layui-input-inline">
-			<select name="article_cate_id">
+			<select name="cate_id">
 				<option value="">请选择知识文章分类</option>
 				{volist name=":set_recursion(article_cate())" id="v"}
 				<option value="{$v.id}">{$v.title}</option>
@@ -31,7 +31,7 @@
 </div>
 </script>
 <script type="text/html" id="barDemo">
-<div class="layui-btn-group"><span class="layui-btn layui-btn-normal layui-btn-xs" lay-event="view">查看</span><span class="layui-btn layui-btn-xs" lay-event="edit">编辑</span><span class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</span></div>
+<div class="layui-btn-group"><span class="layui-btn layui-btn-xs" lay-event="edit">编辑</span><span class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</span></div>
 </script>
 {/block}
 <!-- /主体 -->
@@ -47,6 +47,7 @@
 			title: '文章列表',
 			toolbar: '#toolbarDemo',
 			url: "/article/index/list", //数据接口
+			cellMinWidth: 300,
 			page: true, //开启分页
 			limit: 20,
 			cols: [
@@ -68,7 +69,8 @@
 						width: 120
 					}, {
 						field: 'title',
-						title: '文章标题'
+						title: '文章标题',
+						templet: '<div><a data-href="/article/index/view/id/{{d.id}}.html" class="layui-table-link right-a" target="_blank">{{d.title}}</a></div>'
 					},{
 						field: 'read',
 						title: '阅读量',
@@ -90,7 +92,7 @@
 						field: 'right',
 						title: '操作',
 						toolbar: '#barDemo',
-						width: 130,
+						width: 100,
 						align: 'center'
 					}
 				]
@@ -107,10 +109,6 @@
 		//监听行工具事件
 		table.on('tool(test)', function(obj) {
 			var data = obj.data;
-			if(obj.event === 'view'){
-				tool.side('/article/index/view?id='+data.id);
-				return;
-			}
 			if(obj.event === 'edit'){
 				tool.side('/article/index/add?id='+data.id);
 				return;

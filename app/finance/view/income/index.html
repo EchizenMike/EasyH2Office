@@ -50,7 +50,8 @@
 			elem: '#test',
 			title: '到账列表',
 			toolbar: '#toolbarDemo',
-			url: "/finance/income/index", //数据接口		
+			url: "/finance/income/index", //数据接口	
+			cellMinWidth: 320,			
 			page: true, //开启分页
 			limit: 20,
 			cols: [
@@ -88,7 +89,6 @@
 					}, {
 						field: 'invoice_title',
 						title: '发票抬头',
-						minWidth: 300,
 						templet:function(d){
 							var html='';
 							if(d.type==1){

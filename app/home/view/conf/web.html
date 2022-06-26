@@ -124,11 +124,10 @@
 			elem: '#uploadBtn',
 			url: "/api/index/upload",
 			done: function (res) {
-				if (res.code == 1) {
-					layer.msg('上传失败');
-				} else {
-					layer.msg('上传成功');
-					$('#demo1 input').attr('value', res.data.filepath);
+				layer.msg(res.msg);
+				if (res.code == 0) {
+					//上传成功
+					$('#demo1 input').attr('value', res.data.id);
 					$('#demo1 img').attr('src', res.data.filepath);
 				}
 			}

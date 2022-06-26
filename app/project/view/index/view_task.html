@@ -1,0 +1,63 @@
+<div class="gg-form-bar border-x p-3">
+	<button class="layui-btn layui-btn-sm add-new">+ 新建任务</button>
+</div>
+<div class="px-3 pb-3 bg-white">
+	<table class="layui-hide" id="task" lay-filter="task"></table>
+</div>
+<script>
+function task(){
+	if($('#projectTab').find('li').eq(1).data('load') =='true'){
+		return false;
+	}
+	$('#projectTab').find('li').eq(1).data('load','true');
+	let tool = layui.tool, table = layui.table;
+	//项目任务
+	parent.layui.taskTable = table.render({
+		elem: '#task',
+		title: '任务列表',
+		cellMinWidth:200,
+		url: "/project/task/index",
+		where:{'project_id':project_id},
+		page: true, //开启分页
+		limit: 20,
+		cols:  [[
+			{field: 'id', title: '任务编号', width: 80, align: 'center', fixed: 'left', templet: function (d) {
+					return 'T' + d.id;
+				}
+			}
+			,{field:'flow_name',title: '状态',align:'center',width: 80,templet:function(d){
+				var html = '<span class="layui-badge layui-bg-'+d.flow_status+'">'+d.flow_name+'</span>';
+				return html;
+			}}
+			, { field: 'cate_name', title: '工作类型', width: 90, align: 'center' }
+			,{field:'title',title: '任务主题',rowspan: 2,templet:function(d){
+				var html = '<span class="layui-badge layui-bg-'+d.priority+'">'+d.priority_name+'</span> <a class="right-a" lay-event="detail">'+d.title+'</a>';
+				return html;
+			}}
+			,{field:'director_name',title: '负责人', align:'center',width: 80}
+			,{field:'assist_admin_names',title: '协作人',width: 160}
+			,{field:'plan_hours',title: '预估工时', align:'center',width: 80}				
+			,{field:'end_time',title: '预计结束日期', width: 150,templet:function(d){
+				var html = d.end_time;	
+				if(d.delay>0){
+					html+= '<span class="red ml-1" style="font-size:12px;">逾期'+d.delay+'天</span>';	
+				}			
+				return html;
+			}}
+		]]
+	});
+	$('.add-new').on('click',function(){
+		parent.layui.tool.side('/project/task/add?project_id='+project_id);
+	});
+	
+	table.on('tool(task)', function(obj){
+		var data = obj.data; //获得当前行数据
+		var layEvent = obj.event;
+		 
+		if(layEvent === 'detail'){ //查看
+			let url = '/project/task/view/id/'+data.id;
+			parent.layui.tool.side(url);
+		}
+	})
+}
+</script>

@@ -246,22 +246,53 @@ class Index extends BaseController
         $res['data'] = $list;
         return table_assign(0, '', $res);
     }
-
-    //首页文章
+	
+	//首页文章
     public function get_article_list()
     {
-        $list = Db::name('Article')
-            ->field('a.id,a.title,a.create_time,a.read,c.title as cate_title')
-            ->alias('a')
-            ->join('article_cate c', 'a.article_cate_id = c.id')
-            ->where(['a.status' => 1])
-            ->order('a.id desc')
-            ->limit(10)
-            ->select()->toArray();
-        foreach ($list as $key => $val) {
-            $list[$key]['create_time'] = date('Y-m-d :H:i', $val['create_time']);
-        }
-        $res['data'] = $list;
+		$prefix = get_config('database.connections.mysql.prefix');//判断是否安装了文章模块
+		$exist = Db::query('show tables like "'.$prefix.'article"');
+		$res['data'] = [];
+		if($exist){
+			$list = Db::name('Article')
+				->field('a.id,a.title,a.create_time,a.read,c.title as cate_title')
+				->alias('a')
+				->join('article_cate c', 'a.cate_id = c.id')
+				->where(['a.delete_time' => 0])
+				->order('a.id desc')
+				->limit(10)
+				->select()->toArray();
+			foreach ($list as $key => $val) {
+				$list[$key]['create_time'] = date('Y-m-d :H:i', $val['create_time']);
+			}
+			$res['data'] = $list;			
+		}
+		return table_assign(0, '', $res);
+	}
+
+
+    //首页项目
+    public function get_project_list()
+    {
+		$prefix = get_config('database.connections.mysql.prefix');//判断是否安装了项目模块
+		$exist = Db::query('show tables like "'.$prefix.'project"');
+		$res['data'] = [];
+		if($exist){
+			$list = Db::name('Project')
+				->field('a.id,a.name,a.status,a.create_time,a.start_time,a.end_time,u.name as director_name')
+				->alias('a')
+				->join('Admin u', 'a.director_uid = u.id')
+				->where([['a.delete_time','=',0]])
+				->order('a.id desc')
+				->limit(10)
+				->select()->toArray();
+			foreach ($list as $key => $val) {
+				$list[$key]['create_time'] = date('Y-m-d :H:i', $val['create_time']);
+				$list[$key]['plan_time'] = date('Y-m-d', $list[$key]['start_time']) . ' 至 ' . date('Y-m-d', $list[$key]['end_time']);
+				$list[$key]['status_name'] = \app\project\model\Project::$Status[(int) $val['status']];
+			}
+			$res['data'] = $list;
+		}
         return table_assign(0, '', $res);
     }
 
@@ -361,6 +392,12 @@ class Index extends BaseController
         }
     }
 	
+	//获取工作类型列表
+    public function get_work_cate()
+    {
+        $cate = Db::name('WorkCate')->field('id,title')->where([['status', '=', 1]])->select();
+        return to_assign(0, '', $cate);
+    }
 	
 	//获取审核类型
     public function get_flow_cate($type=0)

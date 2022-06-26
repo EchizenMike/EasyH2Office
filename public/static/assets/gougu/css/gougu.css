@@ -8,7 +8,7 @@
 .layui-card-title {font-size: 18px;font-weight: 600;padding: 12px 12px 0;}
 .layui-table, .layui-table-view{margin:0; background-color:#fff;}
 .layui-table td, .layui-table th{padding:8px;}
-.layui-table-cell{padding:0 8px;}
+.layui-table-cell{padding:6px;}
 .layui-table-box{background-color:#fff;}
 .layui-table-page{background-color:#fff;border-bottom:1px solid #f1f1f1;}
 .layui-table-tool{box-shadow: 0 0 0 rgb(0 0 0 / 1%);}
@@ -19,7 +19,7 @@
 .layui-btn-primary{background-color: #f5f5fa;}
 .layui-btn-primary:hover{border-color:#3c9cff;color:#3c9cff}
 .layui-btn-group .layui-btn-primary:hover{color:#3c9cff}
-.layui-btn-reset {height: 38px;background-color: #fff; line-height: 38px; border: 1px solid transparent;padding: 0 12px; white-space: nowrap; color: #767a82;font-size: 14px;cursor: pointer;}
+.layui-btn-reset {height: 38px;background-color: #fff; line-height: 38px; border: 1px solid transparent;padding: 0 12px; white-space: nowrap; color: #767a82;font-size: 14px;cursor: pointer;vertical-align: middle;}
 .layui-laypage .layui-laypage-curr .layui-laypage-em{background-color: #5FB878;}
 
 .layui-tab-brief>.layui-tab-title .layui-this{color:#1E9FFF}
@@ -50,9 +50,13 @@
 .layui-letter-span:hover{color:#4285f4;}
 .layui-tags-all{float: right; font-weight: 200px; background-color:#4285f4; color:#fff; border-radius: 3px; padding: 2px 6px; cursor: pointer; display: none;}
 
-html {background-color: #F6F8FA; color: #162a48}
+.layui-data-none{padding:12px 0; color:#969696; text-align:center; font-size:12px;}
+.gougu-data-none{background:url(../images/data-none.png) no-repeat center center; background-size:auto 80%;}
+
+html {background-color: #FAFAFA; color: #162a48}
 html,body{height:100%;}
 body.right-open{overflow:hidden;}
+.bg-white{background-color:#fff;}
 a.tab-a,a.open-a,a.link-a,a.right-a{color:#1E9FFF; cursor:pointer;}
 a.tab-a:hover,a:hover,a.open-a:hover,a.link-a:hover,a.right-a:hover{color:#1E9FFF; opacity:0.8}
 .left{float:left;}
@@ -173,10 +177,10 @@ a.tab-a:hover,a:hover,a.open-a:hover,a.link-a:hover,a.right-a:hover{color:#1E9FF
 .red-disabled{color:#f7b2b2;}
 .red-light{color:#fef0f0;}
 
-.gray{color:#909399;}
-.gray-dark{color:#767a82;}
-.gray-disabled{color:#c4c6c9;}
-.gray-light{color:#f1f1f2;}
+.gray{color:#969696;}
+.gray-dark{color:#767676;}
+.gray-disabled{color:#c6c6c6;}
+.gray-light{color:#f1f1f1;}
 
 .editormd,.editormd-toolbar,.editormd .CodeMirror,.CodeMirror-gutters{border-color:#eeeeee!important;}
 .editormd{margin-bottom:0!important;}

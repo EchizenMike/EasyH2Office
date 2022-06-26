@@ -92,16 +92,48 @@ class Index extends BaseController
         if (file_exists(CMS_ROOT . 'app/install')) {
             $install = true;
         }
+		$total=[];
         $adminCount = Db::name('Admin')->where('status', '1')->count();
-        $articleCount = Db::name('Article')->where('status', '1')->count();
         $approveCount = Db::name('Approve')->count();
         $expenseCount = Db::name('Expense')->count();
         $invoiceCount = Db::name('Invoice')->count();
-        View::assign('adminCount', $adminCount);
-        View::assign('articleCount', $articleCount);
-        View::assign('approveCount', $approveCount);
-        View::assign('expenseCount', $expenseCount);
-        View::assign('invoiceCount', $invoiceCount);
+		$total[]=array(
+			'name'=>'员工',
+			'num'=>$adminCount,
+		);
+		$total[]=array(
+			'name'=>'审批',
+			'num'=>$approveCount,
+		);
+		$total[]=array(
+			'name'=>'报销',
+			'num'=>$expenseCount,
+		);
+		$total[]=array(
+			'name'=>'发票',
+			'num'=>$invoiceCount,
+		);
+		$module = Db::name('AdminModule')->column('name');
+		if(in_array('project',$module)){
+			$projectCount = Db::name('Project')->where([['delete_time','>',0]])->count();
+			$taskCount = Db::name('ProjectTask')->where([['delete_time','>',0]])->count();
+			$total[]=array(
+				'name'=>'项目',
+				'num'=>$projectCount,
+			);
+			$total[]=array(
+				'name'=>'任务',
+				'num'=>$taskCount,
+			);
+		}
+		if(in_array('article',$module)){
+			$articleCount = Db::name('Article')->where([['delete_time','>',0]])->count();
+			$total[]=array(
+				'name'=>'文章',
+				'num'=>$articleCount,
+			);
+		}
+        View::assign('total', $total);
         View::assign('install', $install);
 		View::assign('TP_VERSION',\think\facade\App::version());
         return View();

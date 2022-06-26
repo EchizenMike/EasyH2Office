@@ -445,18 +445,21 @@ const moduleInit = ['tool','formSelects','employeepicker'];
 				$('#flow_tr').html(formHtml);
 				form.render();
 			}
-			else{
-				$.ajax({
-					url: "/api/index/get_flow_users",
-					type:'post',
-					data:{id:data.value},
-					success: function (e) {
-						if (e.code == 0) {
-							var flowLi='';
-							var flow_data = e.data.flow_data;
-							if(e.data.copy_uids && e.data.copy_uids !=''){
-								formSelects.value('selectcopy', e.data.copy_uids.split(',')); 
-							}
+			if(data.value==''){
+				return false;
+			}
+			$.ajax({
+				url: "/api/index/get_flow_users",
+				type:'get',
+				data:{id:data.value},
+				success: function (e) {
+					if (e.code == 0) {
+						var flowLi='';
+						var flow_data = e.data.flow_data;
+						if(e.data.copy_uids && e.data.copy_uids !=''){
+							formSelects.value('selectcopy', e.data.copy_uids.split(',')); 
+						}
+						if(check_type == 1){
 							for(var a=0;a<flow_data.length;a++){
 								var userList='',sign_type = '';
 								if(flow_data[a].flow_type==1){
@@ -491,9 +494,9 @@ const moduleInit = ['tool','formSelects','employeepicker'];
 							$('#flow_tr').html(formHtml);
 						}
 					}
-				})
-			}
-		});		
+				}
+			})
+		});
 	}
 </script>
 {/block}

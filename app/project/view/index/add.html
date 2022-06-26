@@ -1,0 +1,115 @@
+{extend name="../../base/view/common/base" /}
+<!-- 主体 -->
+{block name="body"}
+<form class="layui-form p-3">
+	<h3 class="pb-3">新建项目</h3>
+	<table class="layui-table layui-table-form">
+		<tr>
+			<td class="layui-td-gray">项目名称<font>*</font></td>
+			<td>
+				<input type="text" name="name" lay-verify="required" lay-reqText="请输入项目名称" placeholder="请输入项目名称" class="layui-input" value="">
+			</td>
+			<td class="layui-td-gray-2">计划完成周期<span style="color: red">*</span></td>
+			<td id="date">
+				<div class="layui-input-inline">
+					<input type="text" id="start_time" name="start_time" readonly lay-verify="required" lay-reqText="请选择开始时间" placeholder="请选择" class="layui-input" value="">
+				</div>
+				-
+				<div class="layui-input-inline">
+					<input type="text" id="end_time" name="end_time" readonly lay-verify="required" lay-reqText="请选择结束时间" placeholder="请选择" class="layui-input" value="">
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td class="layui-td-gray">负责人<font>*</font></td>
+			<td>
+				<input type="hidden" name="director_uid" lay-verify="required" readonly lay-reqText="请选择项目负责人" value="">
+				<input type="text" name="director_name" placeholder="请选择项目负责人" readonly class="layui-input" value="">
+			</td>
+			<td class="layui-td-gray">项目成员<span style="color: red">*</span></td>
+			<td colspan="3">
+				<input type="hidden" id="team_admin_ids" name="team_admin_ids" class="layui-input" value="">
+				<input type="text" id="team_admin_names" name="team_admin_names"  placeholder="请选择项目成员" readonly class="layui-input" value="">
+			</td>
+		</tr>
+		<tr>
+			<td class="layui-td-gray">项目简介<span style="color: red">*</span></td>
+			<td colspan="3">
+				<textarea name="content" class="layui-textarea" lay-verify="required" lay-reqText="请完善项目简介"></textarea>
+			</td>
+		</tr>
+	</table>
+	<div style="padding: 10px 0">
+		<input type="hidden" name="id" value="0" />
+		<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform">立即提交</button>
+		<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+	</div>
+</form>
+{/block}
+<!-- /主体 -->
+
+<!-- 脚本 -->
+{block name="script"}
+<script>
+	const moduleInit = ['tool','employeepicker'];
+	function gouguInit() {
+		var form = layui.form,tool = layui.tool,laydate = layui.laydate,employeepicker = layui.employeepicker;	
+		//日期范围
+		laydate.render({
+			elem: '#date',
+			range: ['#start_time', '#end_time']
+		});
+	
+		//选择产品负责人弹窗	
+		$('body').on('click','[name="director_name"]',function () {
+			var ids=$('[name="director_uid"]').val(),names=$('[name="director_name"]').val();
+			employeepicker.init({
+				ids:ids,
+				names:names,
+				type:0,
+				department_url: "/api/index/get_department_tree",
+				employee_url: "/api/index/get_employee",
+				callback:function(ids,names,dids,departments){
+					$('[name="director_uid"]').val(ids);
+					$('[name="director_name"]').val(names);
+				}
+			});
+		}); 
+	
+	
+		//选择项目成员弹窗	
+		$('body').on('click','#team_admin_names',function () {
+			var ids=$('#team_admin_ids').val(),names=$(this).val(),team_admin_id_array=[],team_admin_name_array=[];
+			if(ids.length>0){
+				team_admin_id_array=ids.split(',');
+				team_admin_name_array=names.split(',');
+			}
+			employeepicker.init({
+				ids:team_admin_id_array,
+				names:team_admin_name_array,
+				type:1,
+				department_url: "/api/index/get_department_tree",
+				employee_url: "/api/index/get_employee",
+				callback:function(ids,names,dids,departments){
+					$('#team_admin_ids').val(ids);
+					$('#team_admin_names').val(names);
+				}
+			});
+		});
+		
+		//监听提交
+		form.on('submit(webform)', function (data) {
+			let callback = function (e) {
+				layer.msg(e.msg);
+				if (e.code == 0) {
+					layer.msg(e.msg);
+					parent.layui.tool.close(1000);
+				}
+			}
+			tool.post("/project/index/add",data.field,callback);
+			return false;
+		});
+	}
+
+</script>
+{/block}

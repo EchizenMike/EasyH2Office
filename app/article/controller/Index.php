@@ -26,16 +26,16 @@ class Index extends BaseController
             if (!empty($param['keywords'])) {
                 $where[] = ['a.id|a.title|a.keywords|a.desc|a.content|c.title', 'like', '%' . $param['keywords'] . '%'];
             }
-            if (!empty($param['article_cate_id'])) {
-                $where[] = ['a.article_cate_id', '=', $param['article_cate_id']];
+            if (!empty($param['cate_id'])) {
+                $where[] = ['a.cate_id', '=', $param['cate_id']];
             }
-            $where[] = ['a.status', '>=', 0];
+            $where[] = ['a.delete_time', '=', 0];
             $where[] = ['a.is_share', '=', 1];
             $rows = empty($param['limit']) ? get_config('app . page_size') : $param['limit'];
             $content = ArticleList::where($where)
-                ->field('a.*,c.id as cate_id,a.id as id,c.title as cate_title,a.title as title,d.title as department,u.name as user')
+                ->field('a.*,a.id as id,c.title as cate_title,a.title as title,d.title as department,u.name as user')
                 ->alias('a')
-                ->join('article_cate c', 'a.article_cate_id = c.id')
+                ->join('article_cate c', 'a.cate_id = c.id')
                 ->join('admin u', 'a.uid = u.id','LEFT')
                 ->join('department d', 'a.did = d.id','LEFT')
                 ->order('a.create_time desc')
@@ -54,16 +54,16 @@ class Index extends BaseController
             if (!empty($param['keywords'])) {
                 $where[] = ['a.id|a.title|a.keywords|a.desc|a.content|c.title', 'like', '%' . $param['keywords'] . '%'];
             }
-            if (!empty($param['article_cate_id'])) {
-                $where[] = ['a.article_cate_id', '=', $param['article_cate_id']];
+            if (!empty($param['cate_id'])) {
+                $where[] = ['a.cate_id', '=', $param['cate_id']];
             }
-            $where[] = ['a.status', '>=', 0];
+            $where[] = ['a.delete_time', '=', 0];
             $where[] = ['a.uid', '=', $this->uid];
             $rows = empty($param['limit']) ? get_config('app . page_size') : $param['limit'];
             $content = ArticleList::where($where)
-                ->field('a.*,c.id as cate_id,a.id as id,c.title as cate_title,a.title as title')
+                ->field('a.*,a.id as id,c.title as cate_title,a.title as title')
                 ->alias('a')
-                ->join('article_cate c', 'a.article_cate_id = c.id')
+                ->join('article_cate c', 'a.cate_id = c.id')
                 ->order('a.create_time desc')
                 ->paginate($rows, false, ['query' => $param]);
             return table_assign(0, '', $content);
@@ -168,7 +168,7 @@ class Index extends BaseController
     {
         $id = get_params("id");
         $detail = (new ArticleList())->detail($id);
-		$detail['cate_title'] = Db::name('ArticleCate')->where(['id' => $detail['article_cate_id']])->value('title');
+		$detail['cate_title'] = Db::name('ArticleCate')->where(['id' => $detail['cate_id']])->value('title');
         // read 字段加 1
         Db::name('article')->where('id', $id)->inc('read')->update();
         View::assign('detail', $detail);
@@ -178,9 +178,8 @@ class Index extends BaseController
     public function delete()
     {
         $id = get_params("id");
-        $data['status'] = '-1';
         $data['id'] = $id;
-        $data['update_time'] = time();
+        $data['delete_time'] = time();
         if (Db::name('Article')->update($data) !== false) {
             add_log('delete', $id);
             return to_assign(0, "删除成功");

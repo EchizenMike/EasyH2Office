@@ -10,7 +10,7 @@
             class="layui-input"></td>
 	    	<td class="layui-td-gray">文章分类<font>*</font></td>
         <td>
-          <select name="article_cate_id" lay-verify="required" lay-reqText="请选择分类">
+          <select name="cate_id" lay-verify="required" lay-reqText="请选择分类">
             <option value="">请选择分类</option>
             {volist name=":set_recursion(article_cate())" id="v"}
             <option value="{$v.id}">{$v.title}</option>
@@ -109,13 +109,12 @@
 		elem: '#test1'
 		, url: "/api/index/upload"
 		, done: function (res) {
-			//如果上传失败
-			if (res.code == 1) {
-			  return layer.msg('上传失败');
+			layer.msg(res.msg);
+			if (res.code == 0) {
+				//上传成功
+				$('#demo1 input').attr('value', res.data.id);
+				$('#demo1 img').attr('src', res.data.filepath);
 			}
-			//上传成功
-			$('#demo1 input').attr('value', res.data.id);
-			$('#demo1 img').attr('src', res.data.filepath);
 		}
     });
 

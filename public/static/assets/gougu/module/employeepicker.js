@@ -58,7 +58,7 @@ layui.define(['layer','dtree'],function(exports){
 						var dataList=[];
 						$.ajax({
 							url:me.settings.department_url,
-							type:'post',
+							type:'get',
 							success:function(res){					
 								dtree.render({
 									elem: "#employeetree",
@@ -71,7 +71,7 @@ layui.define(['layer','dtree'],function(exports){
 									$('#letterBtn').find('span').removeClass('on');
 									$.ajax({
 										url:me.settings.employee_url,
-										type:'post',
+										type:'get',
 										data:{did:obj.param.nodeId},
 										success:function(res){
 											dataList=res.data;
@@ -98,7 +98,7 @@ layui.define(['layer','dtree'],function(exports){
 									$(this).addClass('on').siblings().removeClass('on');
 									$.ajax({
 										url:me.settings.employee_url,
-										type:'post',
+										type:'get',
 										data:{id:1},
 										success:function(res){	
 											dataList=res.data;

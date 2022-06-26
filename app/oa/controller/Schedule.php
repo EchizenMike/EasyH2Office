@@ -27,6 +27,12 @@ class Schedule extends BaseController
             if ($start_time > 0 && $end_time > 0) {
                 $where[] = ['a.start_time', 'between', [$start_time, $end_time]];
             }
+			if (!empty($param['tid']) && $param['tid']>0) {
+                $task_ids = Db::name('ProjectTask')->where(['delete_time' => 0, 'project_id' => $param['tid']])->column('id');
+				if (!empty($task_ids)) {
+					$where[] = ['a.tid', 'in', $task_ids];
+				}
+            }
             if (!empty($param['keywords'])) {
                 $where[] = ['a.title', 'like', '%' . trim($param['keywords']) . '%'];
             }
@@ -35,15 +41,30 @@ class Schedule extends BaseController
             } else {
                 $where[] = ['a.admin_id', '=', $this->uid];
             }
-            $where[] = ['a.status', '=', 1];
+            $where[] = ['a.delete_time', '=', 0];
             $rows = empty($param['limit']) ? get_config('app . page_size') : $param['limit'];
             $schedule = ScheduleList::where($where)
-                ->field('a.*,u.name as create_admin')
-                ->alias('a')
-                ->join('admin u', 'u.id = a.admin_id', 'LEFT')
-                ->order('a.id desc')
+                ->field('a.*,u.name,d.title as department,w.title as cate')
+				->alias('a')
+				->join('Admin u', 'a.admin_id = u.id', 'LEFT')
+				->join('Department d', 'u.did = d.id', 'LEFT')
+				->join('WorkCate w', 'w.id = a.cid', 'LEFT')
+				->order('a.end_time desc')
                 ->paginate($rows, false)
                 ->each(function ($item, $key) {
+					$item->labor_type_string = '案头工作';
+					if($item->labor_type == 2){
+						$item->labor_type_string = '外勤工作';
+					}
+					if($item->tid > 0){
+						$task = Db::name('ProjectTask')->where(['id' => $item->tid])->find();
+						$item->task = $task['title'];
+						$item->project = Db::name('Project')->where(['id' => $task['project_id']])->value('name');
+					}
+					$item->start_time_a = empty($item->start_time) ? '' : date('Y-m-d', $item->start_time);
+					$item->start_time_b = empty($item->start_time) ? '' : date('H:i', $item->start_time);
+					$item->end_time_a = empty($item->end_time) ? '' : date('Y-m-d', $item->end_time);
+					$item->end_time_b = empty($item->end_time) ? '' : date('H:i', $item->end_time);
                     $item->start_time = empty($item->start_time) ? '' : date('Y-m-d H:i', $item->start_time);
                     //$item->end_time = empty($item->end_time) ? '': date('Y-m-d H:i', $item->end_time);
                     $item->end_time = empty($item->end_time) ? '' : date('H:i', $item->end_time);
@@ -67,7 +88,7 @@ class Schedule extends BaseController
             $where[] = ['start_time', '>=', strtotime($param['start'])];
             $where[] = ['end_time', '<=', strtotime($param['end'])];
             $where[] = ['admin_id', '=', $uid];
-            $where[] = ['status', '=', 1];
+            $where[] = ['delete_time', '=', 0];
             $schedule = Db::name('Schedule')->where($where)->field('id,title,labor_time,start_time,end_time')->select()->toArray();
             $events = [];
             $countEvents = [];
@@ -139,16 +160,16 @@ class Schedule extends BaseController
             if ($param['end_time'] <= $param['start_time']) {
                 return to_assign(1, "结束时间需要大于开始时间");
             }
-            $where1[] = ['status', '=', 1];
+            $where1[] = ['delete_time', '=', 0];
             $where1[] = ['admin_id', '=', $admin_id];
             $where1[] = ['start_time', 'between', [$param['start_time'], $param['end_time'] - 1]];
 
-            $where2[] = ['status', '=', 1];
+            $where2[] = ['delete_time', '=', 0];
             $where2[] = ['admin_id', '=', $admin_id];
             $where2[] = ['start_time', '<=', $param['start_time']];
             $where2[] = ['start_time', '>=', $param['end_time']];
 
-            $where3[] = ['status', '=', 1];
+            $where3[] = ['delete_time', '=', 0];
             $where3[] = ['admin_id', '=', $admin_id];
             $where3[] = ['end_time', 'between', [$param['start_time'] + 1, $param['end_time']]];
 
@@ -205,18 +226,18 @@ class Schedule extends BaseController
         if ($param['end_time'] <= $param['start_time']) {
             return to_assign(1, "结束时间需要大于开始时间");
         }
-        $where1[] = ['status', '=', 1];
+        $where1[] = ['delete_time', '=', 0];
         $where1[] = ['id', '<>', $param['id']];
         $where1[] = ['admin_id', '=', $param['admin_id']];
         $where1[] = ['start_time', 'between', [$param['start_time'], $param['end_time'] - 1]];
 
-        $where2[] = ['status', '=', 1];
+        $where2[] = ['delete_time', '=', 0];
         $where2[] = ['id', '<>', $param['id']];
         $where2[] = ['admin_id', '=', $param['admin_id']];
         $where2[] = ['start_time', '<=', $param['start_time']];
         $where2[] = ['start_time', '>=', $param['end_time']];
 
-        $where3[] = ['status', '=', 1];
+        $where3[] = ['delete_time', '=', 0];
         $where3[] = ['id', '<>', $param['id']];
         $where3[] = ['admin_id', '=', $param['admin_id']];
         $where3[] = ['end_time', 'between', [$param['start_time'] + 1, $param['end_time']]];
@@ -249,9 +270,8 @@ class Schedule extends BaseController
     public function delete()
     {
         $id = get_params("id");
-        $data['status'] = '-1';
         $data['id'] = $id;
-        $data['update_time'] = time();
+        $data['delete_time'] = time();
         if (Db::name('schedule')->update($data) !== false) {
             add_log('delete', $data['id'], $data);
             return to_assign(0, "删除成功");
@@ -270,7 +290,18 @@ class Schedule extends BaseController
             $schedule['start_time'] = date('Y-m-d', $schedule['start_time']);
             $schedule['end_time'] = date('Y-m-d', $schedule['end_time']);
             $schedule['create_time'] = date('Y-m-d H:i:s', $schedule['create_time']);
-            $schedule['user'] = Db::name('Admin')->where(['id' => $schedule['admin_id']])->value('name');
+            $schedule['name'] = Db::name('Admin')->where(['id' => $schedule['admin_id']])->value('name');
+			$schedule['labor_type_string'] = '案头工作';
+			if($schedule['labor_type'] == 2){
+				$schedule['labor_type_string'] = '外勤工作';
+			}
+			$schedule['department'] = get_admin($schedule['admin_id'])['department'];
+			$schedule['work_cate'] = Db::name('WorkCate')->where(['id' => $schedule['cid']])->value('title');
+			if($schedule['tid']>0){
+				$task = Db::name('ProjectTask')->where(['id' => $schedule['tid']])->find();
+				$schedule['task'] = $task['title'];
+				$schedule['project'] = Db::name('Project')->where(['id' => $task['project_id']])->value('name');
+			}
         }
         if (request()->isAjax()) {
             return to_assign(0, "", $schedule);
