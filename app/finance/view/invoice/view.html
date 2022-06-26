@@ -143,19 +143,19 @@
 			<td class="layui-td-gray">发票状态</td>
 			<td colspan="3">
 				{if condition="($detail.check_status == 0)"}
-					<span style="color:#009688">待审</span>
+					<span class="green">待审</span>
 				{elseif condition="($detail.check_status == 1)"}
-					<span style="color:#009688">审核中</span>
+					<span class="green">审核中</span>
 				{elseif condition="($detail.check_status == 2)"}
-					<span style="color:#1E9FFF">审核通过,待开具</span>
+					<span class="blue">审核通过,待开具</span>
 				{elseif condition="($detail.check_status == 3)"}
-					<span style="color:#FF5722">审核不通过  【原因：{$detail.check_remark}】</span>
+					<span class="red">审核不通过  【原因：{$detail.check_remark}】</span>
 				{elseif condition="($detail.check_status == 4)"}
-					<span style="color:#FF5722">撤销  【原因：{$detail.check_remark}】</span>
+					<span class="red">撤销  【原因：{$detail.check_remark}】</span>
 				{elseif condition="($detail.check_status == 5)"}
-					<span style="color:#1E9FFF">已开具</span>
+					<span class="blue">已开具</span>
 				{elseif condition="($detail.check_status == 10)"}
-					<span style="color:#FF5722">已作废</span>
+					<span class="yellow">已作废</span>
 				{/if}
 				<span id="showRecord" class="layui-btn layui-btn-xs layui-btn-radius layui-btn-normal" style="margin-left:10px;">查看审批记录</span>
 			</td>

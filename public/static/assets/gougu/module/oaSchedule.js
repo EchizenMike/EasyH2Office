@@ -66,7 +66,7 @@ layui.define(['tool'], function (exports) {
 									<td class="layui-td-gray">所在部门</td>
 									<td>${detail.department}</td>
 									<td class="layui-td-gray">工作类别</td>
-									<td>${detail.work_cate}</td>
+									<td>${detail.cate}</td>
 								</tr>
 								<tr>
 									<td class="layui-td-gray">时间范围</td>

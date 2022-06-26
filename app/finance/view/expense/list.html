@@ -52,7 +52,6 @@
 						field: 'amount',
 						title: '报销总金额(元)',
 						align: 'right',
-						style: 'color:#1E9FFF',
 						width: 120,
 					},{
 						field: 'check_status',
@@ -60,18 +59,18 @@
 						align: 'center',
 						width: 120,
 						templet:function(d){
-							var html='<span style="color:#FF5722">审批不通过</span>';
+							var html='<span class="red">审批不通过</span>';
 							if(d.check_status==1){
-								html='<span style="color:#5FB878">审批中</span>';
+								html='<span class="green">审批中</span>';
 							}
 							else if(d.check_status==2){
-								html='<span style="color:#1E9FFF">审批通过</span>';
+								html='<span class="blue">审批通过</span>';
 							}
 							else if(d.check_status==4){
-								html='<span style="color:#FF5722">撤销</span>';
+								html='<span class="red">撤销</span>';
 							}
 							else if(d.check_status==5){
-								html='<span style="color:#FFB800">已打款</span>';
+								html='<span class="yellow">已打款</span>';
 							}
 							return html;
 						}

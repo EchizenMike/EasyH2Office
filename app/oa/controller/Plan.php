@@ -67,11 +67,11 @@ class Plan extends BaseController
             $where1 = [];
             $where2 = [];
 
-            $where1[] = ['delete_time', '=', 1];
+            $where1[] = ['delete_time', '=', 0];
             $where1[] = ['admin_id', '=', $uid];
             $where1[] = ['start_time', '>=', strtotime($param['start'])];
 
-            $where2[] = ['delete_time', '=', 1];
+            $where2[] = ['delete_time', '=', 0];
             $where2[] = ['admin_id', '=', $uid];
             $where2[] = ['end_time', '<=', strtotime($param['end'])];
 

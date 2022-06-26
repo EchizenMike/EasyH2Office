@@ -31,8 +31,8 @@
 					,{field:'title',title: '车辆名称'}
 					,{field:'name',title: '车牌号码'}
 					,{field:'status', title: '状态',width:80,align:'center',templet: function(d){
-						var html1='<span>正常</span>';
-						var html2='<span style="color:#FF5722">禁用</span>';
+						var html1='<span class="green">正常</span>';
+						var html2='<span class="yellow">禁用</span>';
 						if(d.status==1){
 							return html1;
 						}

@@ -44,7 +44,7 @@
 			toolbar: '#toolbarDemo',
 			url: "/finance/invoice/copy", //数据接口		
 			page: true, //开启分页
-			cellMinWidth: 320,
+			cellMinWidth: 300,
 			limit: 20,
 			cols: [
 				[
@@ -70,7 +70,6 @@
 						field: 'amount',
 						title: '开票金额(元)',
 						align: 'right',
-						style: 'color:#1E9FFF',
 						width: 100,
 					},{
 						field: 'invoice_type',
@@ -93,24 +92,24 @@
 						align: 'center',
 						width: 100,
 						templet:function(d){
-							var html='<span style="color:#FF5722">待审核</span>';
+							var html='<span class="green">待审核</span>';
 							if(d.check_status==1){
-								html='<span style="color:#FFB800">审核中</span>';
+								html='<span class="green">审核中</span>';
 							}
 							else if(d.check_status==2){
-								html='<span style="color:#5FB878">待开具</span>';
+								html='<span class="blue">待开具</span>';
 							}
 							else if(d.check_status==3){
-								html='<span style="color:#FF5722">审核不通过</span>';
+								html='<span class="red">审核不通过</span>';
 							}
 							else if(d.check_status==4){
-								html='<span style="color:#FF5722">撤销</span>';
+								html='<span class="red">撤销</span>';
 							}
 							else if(d.check_status==5){
-								html='<span style="color:#1E9FFF">已开具</span>';
+								html='<span class="blue">已开具</span>';
 							}
 							else if(d.check_status==10){
-								html='<span style="color:#FF5722">已作废</span>';
+								html='<span class="yellow">已作废</span>';
 							}
 							return html;
 						}

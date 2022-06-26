@@ -145,7 +145,7 @@
 			, page: false //开启分页
 			, cols: [[ //表头
 				{ field: 'cate_title', title: '公告分类', align: 'center','width': 90 },
-				{ field: 'title', title: '公告标题',templet: '<div><a data-href="/note/index/view/id/{{d.id}}.html" class="layui-table-link right-a" target="_blank">{{d.title}}</a></div>'},
+				{ field: 'title', title: '公告标题',templet: '<div><a data-href="/note/index/view/id/{{d.id}}.html" class="right-a" target="_blank">{{d.title}}</a></div>'},
 				{ field: 'create_time', title: '发布时间', align: 'center','width': 136}
 			]]
 		});
@@ -156,7 +156,7 @@
 			, page: false //开启分页
 			, cols: [[ //表头
 				{ field: 'cate_title', title: '知识分类', align: 'center','width': 90 },
-				{ field: 'title', title: '知识标题',templet: '<div><a data-href="/article/index/view/id/{{d.id}}.html" class="layui-table-link right-a" target="_blank">{{d.title}}</a></div>'},
+				{ field: 'title', title: '知识标题',templet: '<div><a data-href="/article/index/view/id/{{d.id}}.html" class="right-a" target="_blank">{{d.title}}</a></div>'},
 				{ field: 'read', title: '访问量', align: 'center','width': 80 },
 				{ field: 'create_time', title: '发布时间', align: 'center','width': 136}
 			]]
@@ -176,7 +176,7 @@
 						return html;
 					}
 				},
-				{ field: 'title', title: '项目名称',templet: '<div><a data-href="/project/index/view/id/{{d.id}}.html" class="layui-table-link right-a" target="_blank">{{d.name}}</a></div>'},
+				{ field: 'title', title: '项目名称',templet: '<div><a data-href="/project/index/view/id/{{d.id}}.html" class="right-a" target="_blank">{{d.name}}</a></div>'},
 				{ field: 'director_name', title: '负责人', align: 'center', width: 80},
 				{ field: 'plan_time', title: '项目周期', align: 'center', width: 190},
 			]]
