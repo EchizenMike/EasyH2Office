@@ -15,7 +15,7 @@ class ProjectLog extends Model
 {
     public static $Sourse = [
         'project' => [
-            'status' => ['未开始', '进行中', '已完成', '已关闭'],
+            'status' => ['','未开始', '进行中', '已完成', '已关闭'],
             'field_array' => [
                 'director_uid' => array('icon' => 'icon-xueshengzhuce', 'title' => '负责人'),
                 'start_time' => array('icon' => 'icon-kaoshijihua', 'title' => '预计开始时间'),

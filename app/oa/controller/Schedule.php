@@ -21,26 +21,27 @@ class Schedule extends BaseController
         if (request()->isAjax()) {
             $param = get_params();
             //按时间检索
-            $start_time = isset($param['start_time']) ? strtotime($param['start_time']) : 0;
+                        $start_time = isset($param['start_time']) ? strtotime($param['start_time']) : 0;
             $end_time = isset($param['end_time']) ? strtotime($param['end_time']) : 0;
+            $tid = isset($param['tid']) ? $param['tid'] : 0;
             $where = [];
-            if ($start_time > 0 && $end_time > 0) {
-                $where[] = ['a.start_time', 'between', [$start_time, $end_time]];
-            }
-			if (!empty($param['tid']) && $param['tid']>0) {
+			if ($tid>0) {
                 $task_ids = Db::name('ProjectTask')->where(['delete_time' => 0, 'project_id' => $param['tid']])->column('id');
-				if (!empty($task_ids)) {
-					$where[] = ['a.tid', 'in', $task_ids];
+				$where[] = ['a.tid', 'in', $task_ids];
+            }
+			else{
+				if (!empty($param['uid'])) {
+					$where[] = ['a.admin_id', '=', $param['uid']];
+				} else {
+					$where[] = ['a.admin_id', '=', $this->uid];
 				}
-            }
-            if (!empty($param['keywords'])) {
-                $where[] = ['a.title', 'like', '%' . trim($param['keywords']) . '%'];
-            }
-            if (!empty($param['uid'])) {
-                $where[] = ['a.admin_id', '=', $param['uid']];
-            } else {
-                $where[] = ['a.admin_id', '=', $this->uid];
-            }
+				if (!empty($param['keywords'])) {
+					$where[] = ['a.title', 'like', '%' . trim($param['keywords']) . '%'];
+				}
+				if ($start_time > 0 && $end_time > 0) {
+					$where[] = ['a.start_time', 'between', [$start_time, $end_time]];
+				}
+			}
             $where[] = ['a.delete_time', '=', 0];
             $rows = empty($param['limit']) ? get_config('app . page_size') : $param['limit'];
             $schedule = ScheduleList::where($where)
