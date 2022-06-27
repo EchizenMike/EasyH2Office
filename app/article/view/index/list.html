@@ -70,7 +70,7 @@
 					}, {
 						field: 'title',
 						title: '文章标题',
-						templet: '<div><a data-href="/article/index/view/id/{{d.id}}.html" class="right-a" target="_blank">{{d.title}}</a></div>'
+						templet: '<div><a data-href="/article/index/view/id/{{d.id}}.html" class="right-a">{{d.title}}</a></div>'
 					},{
 						field: 'read',
 						title: '阅读量',
@@ -135,7 +135,7 @@
 			layui.pageTable.reload({
 				where: {
 					keywords: data.field.keywords,
-					article_cate_id: data.field.article_cate_id
+					cate_id: data.field.cate_id
 				},
 				page: {
 					curr: 1
