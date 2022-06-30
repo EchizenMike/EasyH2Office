@@ -125,7 +125,7 @@
 					success: function (res) {
 						$('#res').html(JSON.stringify(res));
 						layer.msg(res.msg);
-						if (res.code == 1) {
+						if (res.code == 0) {
 							token = res.data.token;
 							layer.close(idx);
 						}
@@ -169,7 +169,7 @@
 					success: function (res) {
 						$('#res').html(JSON.stringify(res));
 						layer.msg(res.msg);
-						if (res.code == 1) {
+						if (res.code == 0) {
 							token = res.data.token;
 							layer.close(idx);
 						}
