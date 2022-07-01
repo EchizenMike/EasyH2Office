@@ -15,10 +15,10 @@ if (empty(file_exists(__DIR__ . '/../vendor/autoload.php'))) {
 require __DIR__ . '/../vendor/autoload.php';
 
 // 定义当前版本号
-define('CMS_VERSION','3.6.27');
+define('CMS_VERSION','3.7.01');
 
 // 定义Layui版本号
-define('LAYUI_VERSION','2.7.1');
+define('LAYUI_VERSION','2.7.2');
 
 // 定义项目目录
 define('CMS_ROOT', __DIR__ . '/../');

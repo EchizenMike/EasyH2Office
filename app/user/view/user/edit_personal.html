@@ -72,11 +72,11 @@
 		var uploadInst = upload.render({
 			elem: '#test1',
 			url: "/api/index/upload",
-			done: function (e) {
+			done: function (res) {
 				layer.msg(res.msg);
 				if (res.code == 0) {
 					//上传成功
-					$('#demo1 input').attr('value', res.data.id);
+					$('#demo1 input').attr('value', res.data.filepath);
 					$('#demo1 img').attr('src', res.data.filepath);
 				}
 			}
@@ -91,7 +91,7 @@
 				success: function (e) {
 					if (e.code == 0) {
 						layer.confirm('保存成功,关闭本页面吗?', { icon: 3, title: '提示' }, function (index) {
-							parent.layui.tool.close();
+							parent.layui.tool.tabClose();
 							layer.close(index);
 						});
 					} else {

@@ -173,4 +173,32 @@ class Module extends BaseController
 			return to_assign(1,'操作失败');
 		}
     }
+	
+	
+	//数据权限列表
+    public function data_auth()
+    {
+        if (request()->isAjax()) {
+            $auth = Db::name('DataAuth')->select();
+            return to_assign(0, '', $auth);
+        } else {
+            return view();
+        }
+    }
+	
+	//数据权限详情
+    public function data_auth_detail()
+    {
+		$param = get_params();
+        if (request()->isPost()) {
+			$param['update_time'] = time();
+            $res = Db::name('DataAuth')->strict(false)->field(true)->update($param);
+            return to_assign();
+        } else {
+			$detail = Db::name('DataAuth')->where('name',$param['name'])->find();
+			View::assign('detail', $detail);
+            return view();
+        }
+    }
+	
 }

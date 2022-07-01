@@ -77,6 +77,19 @@ function isTemplate($url='')
     return $isTemplate;
 }
 
+//是否是某数据权限,count>1即有权限
+function isAuth($uid,$name)
+{
+	if($uid == 1){
+		return 1;
+	}
+	$map = [];
+	$map[] = ['name', '=', $name];
+	$map[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',uids)")];
+    $count = Db::name('DataAuth')->where($map)->count();
+    return $count;
+}
+
 //获取服务器信息
 function get_system_info($key)
 {

@@ -208,7 +208,7 @@
 		var uploadInst = upload.render({
 			elem: "#test1",
 			url: "/api/index/upload",
-			done: function (e) {
+			done: function (res) {
 				layer.msg(res.msg);
 				if (res.code == 0) {
 					//上传成功
