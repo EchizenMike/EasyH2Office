@@ -105,7 +105,9 @@ class Task extends BaseController
         $id = isset($param['id']) ? $param['id'] : 0;
         $detail = (new TaskList())->detail($id);
         if (empty($detail)) {
-            return to_assign(1, '任务不存在');
+			if (empty($detail)) {
+				echo '<div style="text-align:center;color:red;margin-top:20%;">该任务不存在</div>';exit;
+			}
         } else {
             $role_uid = [$detail['admin_id'], $detail['director_uid']];
             $role_edit = 'view';
@@ -130,7 +132,7 @@ class Task extends BaseController
                 return view();
             }
             else{
-                return to_assign(1, '您没权限查看该任务');
+				echo '<div style="text-align:center;color:red;margin-top:20%;">您没权限查看该任务</div>';exit;
             }
         }
     }

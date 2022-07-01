@@ -17,21 +17,20 @@ class Article extends Model
     public function detail($id)
     {
         $article = Db::name('Article')->where(['id' => $id])->find();
-        if (empty($article)) {
-            return $this->error('文章知识不存在');
-        }
-        $keywrod_array = Db::name('ArticleKeywords')
-            ->field('i.aid,i.keywords_id,k.title')
-            ->alias('i')
-            ->join('Keywords k', 'k.id = i.keywords_id', 'LEFT')
-            ->order('i.create_time asc')
-            ->where(array('i.aid' => $id, 'k.status' => 1))
-            ->select()->toArray();
+        if (!empty($article)) {
+			$keywrod_array = Db::name('ArticleKeywords')
+				->field('i.aid,i.keywords_id,k.title')
+				->alias('i')
+				->join('Keywords k', 'k.id = i.keywords_id', 'LEFT')
+				->order('i.create_time asc')
+				->where(array('i.aid' => $id, 'k.status' => 1))
+				->select()->toArray();
 
-        $article['keyword_ids'] = implode(",", array_column($keywrod_array, 'keywords_id'));
-        $article['keyword_names'] = implode(',', array_column($keywrod_array, 'title'));
-        $article['user'] = Db::name('Admin')->where(['id' => $article['uid']])->value('name');
-        $article['department'] = Db::name('Department')->where(['id' => $article['did']])->value('title');
+			$article['keyword_ids'] = implode(",", array_column($keywrod_array, 'keywords_id'));
+			$article['keyword_names'] = implode(',', array_column($keywrod_array, 'title'));
+			$article['user'] = Db::name('Admin')->where(['id' => $article['uid']])->value('name');
+			$article['department'] = Db::name('Department')->where(['id' => $article['did']])->value('title');
+		}
         return $article;
     }
 

@@ -190,7 +190,7 @@ class Index extends BaseController
         if ($id > 0) {
             $detail = Db::name('Message')->where(['id' => $id, 'from_uid' => $this->uid])->find();
             if (empty($detail)) {
-                $this->error('该信息不存在');
+				echo '<div style="text-align:center;color:red;margin-top:20%;">该信息不存在</div>';exit;
             }
             $fid = $detail['fid'];
             $person_name = [];
@@ -244,10 +244,10 @@ class Index extends BaseController
         $type = empty(get_params('type')) ? 0 : get_params('type');
         $detail = Db::name('Message')->where(['id' => $id, 'template' => 0])->find();
         if (empty($detail)) {
-            $this->error('该信息不存在');
+            echo '<div style="text-align:center;color:red;margin-top:20%;">该信息不存在</div>';exit;
         }
         if ($detail['to_uid'] != $this->uid && $detail['from_uid'] != $this->uid) {
-            $this->error('该信息不存在');
+            echo '<div style="text-align:center;color:red;margin-top:20%;">该信息不存在</div>';exit;
         }
         $sender = get_admin($detail['from_uid']);
         $detail['person_name'] = $sender['name'];
@@ -274,10 +274,10 @@ class Index extends BaseController
         $id = $param['id'];
         $detail = Db::name('Message')->where(['id' => $id])->find();
         if (empty($detail)) {
-            $this->error('该信息不存在');
+            echo '<div style="text-align:center;color:red;margin-top:20%;">该信息不存在</div>';exit;
         }
         if ($detail['to_uid'] != $this->uid && $detail['from_uid'] != $this->uid) {
-            $this->error('该信息不存在');
+            echo '<div style="text-align:center;color:red;margin-top:20%;">该信息不存在</div>';exit;
         }
         Db::name('Message')->where(['id' => $id])->update(['read_time' => time()]);
         if($detail['from_uid']==0){

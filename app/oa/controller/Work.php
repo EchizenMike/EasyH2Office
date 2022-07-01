@@ -141,7 +141,7 @@ class Work extends BaseController
 			if ($id > 0) {
 				$detail = Db::name('Work')->where(['id' => $id,'admin_id' => $this->uid])->find();
 				if (empty($detail)) {
-					$this->error('该汇报不存在');
+					echo '<div style="text-align:center;color:red;margin-top:20%;">该汇报不存在</div>';exit;
 				}
 				$person_name = Db::name('Admin')->where('status', 1)->where('id', 'in', $detail['type_user'])->column('name');
 				$detail['person_name'] = implode(",", $person_name);
@@ -171,14 +171,14 @@ class Work extends BaseController
         $id = $param['id'];
 		$detail = Db::name('Work')->where(['id' => $id,'status' => 1])->find();
 		if (empty($detail)) {
-			$this->error('该汇报不存在');
+			echo '<div style="text-align:center;color:red;margin-top:20%;">该汇报不存在</div>';exit;
 		}
 		//已读人查询
 		$read_user_names = [];
 		if($detail['admin_id'] !=$this->uid){
 			$record = Db::name('WorkRecord')->where(['wid' => $detail['id'],'to_uid' => $this->uid,'status' => 1])->count();
 			if ($record == 0) {
-				$this->error('该汇报不存在');
+				echo '<div style="text-align:center;color:red;margin-top:20%;">该汇报不存在</div>';exit;
 			}
 			else{
 				Db::name('WorkRecord')->where(['wid' => $detail['id'],'to_uid' => $this->uid,'status' => 1])->update(['read_time' => time()]);
@@ -220,7 +220,7 @@ class Work extends BaseController
         $id = $param['id'];
 		$detail = Db::name('Work')->where(['id' => $id,'status' => 1])->find();
 		if (empty($detail)) {
-			$this->error('该汇报不存在');
+			echo '<div style="text-align:center;color:red;margin-top:20%;">该汇报不存在</div>';exit;
 		}
 		if($detail['admin_id'] !=$this->uid){
 			$res = Db::name('WorkRecord')->where(['wid' => $detail['id'],'to_uid' => $this->uid,'status' => 1])->update(['status' => -1]);

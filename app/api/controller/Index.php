@@ -278,11 +278,12 @@ class Index extends BaseController
 		$exist = Db::query('show tables like "'.$prefix.'project"');
 		$res['data'] = [];
 		if($exist){
+			$project_ids = Db::name('ProjectUser')->where(['uid' => $this->uid, 'delete_time' => 0])->column('project_id');
 			$list = Db::name('Project')
 				->field('a.id,a.name,a.status,a.create_time,a.start_time,a.end_time,u.name as director_name')
 				->alias('a')
 				->join('Admin u', 'a.director_uid = u.id')
-				->where([['a.delete_time','=',0]])
+				->where([['a.delete_time', '=', 0], ['a.id', 'in', $project_ids]])
 				->order('a.id desc')
 				->limit(10)
 				->select()->toArray();
