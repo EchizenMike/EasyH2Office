@@ -127,6 +127,8 @@
 			employeepicker.init({
 				ids: id_array,
 				names: name_array,
+				department_url: "/api/index/get_department_tree",
+				employee_url: "/api/index/get_employee",
 				callback: function (ids, names, dids, departments) {
 					$('[name="' + ids_name + '"]').val(ids);
 					that.val(names);

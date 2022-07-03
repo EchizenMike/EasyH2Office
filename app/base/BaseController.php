@@ -59,6 +59,7 @@ abstract class BaseController
         $this->controller = strtolower($this->request->controller());
         $this->action = strtolower($this->request->action());
         $this->uid = 0;
+        $this->did = 0;
         // 控制器初始化
         $this->initialize();
     }
@@ -86,6 +87,7 @@ abstract class BaseController
                 }
             } else {
                 $this->uid = Session::get($session_admin)['id'];
+                $this->did = Session::get($session_admin)['did'];
                 View::assign('login_user', $this->uid);
                 // 验证用户访问权限
                 if (($this->module == 'api') || ($this->module == 'home' && $this->controller == 'index')) {
