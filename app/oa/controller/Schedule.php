@@ -45,7 +45,7 @@ class Schedule extends BaseController
             $where[] = ['a.delete_time', '=', 0];
             $rows = empty($param['limit']) ? get_config('app . page_size') : $param['limit'];
             $schedule = ScheduleList::where($where)
-                ->field('a.*,u.name,d.title as department,w.title as cate')
+                ->field('a.*,u.name,d.title as department,w.title as work_cate')
 				->alias('a')
 				->join('Admin u', 'a.admin_id = u.id', 'LEFT')
 				->join('Department d', 'u.did = d.id', 'LEFT')

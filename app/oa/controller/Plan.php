@@ -85,7 +85,7 @@ class Plan extends BaseController
             ->field('id,title,type,remind_type,start_time,end_time')
             ->select()->toArray();
             $events = [];
-            $color_array=['#393D49','#FF5722','#FFB800','#1E9FFF','#12bb37'];
+            $color_array=['#393D49','#FF5722','#FFB800','#1E9FFF','#12bb37','#696969'];
             foreach ($schedule as $k => $v) {
                 $v['backgroundColor'] = $color_array[$v['type']];
                 $v['borderColor'] = $color_array[$v['type']];
@@ -134,9 +134,11 @@ class Plan extends BaseController
         if ($param['end_time'] <= $param['start_time']) {
             return to_assign(1, "结束时间需要大于开始时间");
         }
+		/*
 		if ($param['start_time'] <= time()) {
             return to_assign(1, "开始时间需要大于当前时间");
         }
+		*/
 		if (isset($param['remind_type'])) {
 			if($param['remind_type']==1){
 				$param['remind_time'] = $param['start_time']-5*60;

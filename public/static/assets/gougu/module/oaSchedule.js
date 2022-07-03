@@ -66,7 +66,7 @@ layui.define(['tool'], function (exports) {
 									<td class="layui-td-gray">所在部门</td>
 									<td>${detail.department}</td>
 									<td class="layui-td-gray">工作类别</td>
-									<td>${detail.cate}</td>
+									<td>${detail.work_cate}</td>
 								</tr>
 								<tr>
 									<td class="layui-td-gray">时间范围</td>
@@ -156,7 +156,7 @@ layui.define(['tool'], function (exports) {
 									</td>
 									<td class="layui-td-gray">工作类别<font>*</font></td>
 									<td>
-										<select name="cid" lay-filter="work_cate" id="cid"></select>
+										<select name="cid" lay-filter="work_cate" id="work_cate"></select>
 									</td>
 								</tr>
 								<tr>
