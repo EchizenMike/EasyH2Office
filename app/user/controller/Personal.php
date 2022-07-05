@@ -23,10 +23,11 @@ class Personal extends BaseController
     {
         if (request()->isAjax()) {
             $param = get_params();
+			$where = [];
             if (!empty($param['keywords'])) {
-                $where['u.name|p.remark|a.title|b.title'] = ['like', '%' . $param['keywords'] . '%'];
+                $where[] = ['u.name|p.remark|a.title|b.title','like', '%' . $param['keywords'] . '%'];
             }
-            $where['p.status'] = array('eq', 1);
+            $where[] = ['p.status','=', 1];
             $rows = empty($param['limit']) ? get_config('app . page_size') : $param['limit'];
             $list = DepartmentChange::where($where)
                 ->field('p.*,u.name as name,ad.name as admin,a.title as adepartment,b.title as bdepartment')
