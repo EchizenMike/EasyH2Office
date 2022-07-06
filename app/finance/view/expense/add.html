@@ -317,6 +317,53 @@ const moduleInit = ['tool','formSelects','employeepicker'];
 			max:0,
 			showBottom: false
 		});
+		
+		//添加报销信息表格
+		$('#addInterfix').on('click',function(){
+			var html = '';
+			var selectTem=$('#selectTem').html();
+			html += '<tr class="more_interfix">\
+							<td><input type="text" name="amount[]" class="layui-input" lay-verify="required|number" lay-reqText="请完善报销金额"></td>\
+							<td style="text-align:left">'+selectTem+'</td>\
+							<td><input type="text" name="remarks[]" class="layui-input"><input type="hidden" name="expense_id[]" class="layui-input" value="0"></td>\
+							<td><a class="layui-btn layui-btn-danger layui-btn-xs" data-id="0" lay-event="del">删除</a></td>\
+						</tr>';
+			$("#interfix").append(html).find('.tr-none').remove();
+			form.render();
+		});
+
+		$('#interfix').on('click', '[lay-event="del"]', function() {
+			if($('.more_interfix').length<2){
+				layer.msg('至少保留一个报销选项');
+				return false;
+			}
+			var that=$(this);
+			var _id = that.data('id');
+			if(_id>0){
+				layer.confirm('确定删除该报销数据项？', {
+					icon: 3,
+					title: '提示'
+				}, function(index) {
+					$.ajax({
+						url: "/api/index/del_expense_interfix",
+						type:'post',
+						data: {id: _id},
+						success: function(res) {
+							layer.msg(res.msg);
+							if (res.code == 0) {
+								that.parents(".more_interfix").remove();
+							}
+						}
+					})
+					layer.close(index);
+				});
+			}
+			else{
+				that.parents(".more_interfix").remove();
+			}
+		});
+		
+		
 		//监听提交
 		form.on('submit(webform)', function(data){
 		  	var interfix = $('.more_interfix');
