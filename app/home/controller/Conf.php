@@ -116,7 +116,7 @@ class Conf extends BaseController
             if(isTemplate($template)){
                 return view($conf['name']);
             }else{                
-                return view('Base@common/errortemplate',['file' =>$template]);
+                return view('../../base/view/common/errortemplate',['file' =>$template]);
             }
         }
     }

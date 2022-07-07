@@ -37,7 +37,7 @@ function contract_subject()
     return $subject;
 }
 
-//读取签约主体
+//写入日志
 function to_log($uid,$new,$old)
 {
 	$log_data = [];

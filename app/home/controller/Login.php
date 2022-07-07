@@ -21,11 +21,6 @@ class Login
     {
         return View();
     }
-    //错误页面
-    public function errorshow()
-    {
-        return View();
-    }
     //提交登录
     public function login_submit()
     {

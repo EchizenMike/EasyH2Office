@@ -138,10 +138,4 @@ class Index extends BaseController
 		View::assign('TP_VERSION',\think\facade\App::version());
         return View();
     }
-
-    public function errorShow()
-    {
-        echo '错误';
-    }
-
 }
