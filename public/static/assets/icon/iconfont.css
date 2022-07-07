@@ -1,8 +1,9 @@
 @font-face {
   font-family: "iconfont"; /* Project id 2936988 */
-  src: url('iconfont.woff2?t=1649895541116') format('woff2'),
-       url('iconfont.woff?t=1649895541116') format('woff'),
-       url('iconfont.ttf?t=1649895541116') format('truetype');
+  src: url('iconfont.woff2?t=1657183085628') format('woff2'),
+       url('iconfont.woff?t=1657183085628') format('woff'),
+       url('iconfont.ttf?t=1657183085628') format('truetype'),
+       url('iconfont.svg?t=1657183085628#iconfont') format('svg');
 }
 
 .iconfont {
@@ -11,6 +12,14 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-quanxian:before {
+  content: "\e610";
+}
+
+.icon-cuowu:before {
+  content: "\e642";
 }
 
 .icon-charulianjie-:before {
