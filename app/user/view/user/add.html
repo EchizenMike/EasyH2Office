@@ -212,7 +212,7 @@
 				layer.msg(res.msg);
 				if (res.code == 0) {
 					//上传成功
-					$('#demo1 input').attr('value', res.data.id);
+					$('#demo1 input').attr('value', res.data.filepath);
 					$('#demo1 img').attr('src', res.data.filepath);
 				}
 			}
