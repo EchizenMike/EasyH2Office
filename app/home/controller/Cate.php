@@ -15,7 +15,8 @@ use app\home\validate\ExpenseCateCheck;
 use app\home\validate\CostCateCheck;
 use app\home\validate\SealCateCheck;
 use app\home\validate\CarCateCheck;
-use app\home\validate\NoteCateCheck;
+use app\home\validate\IndustryCheck;
+use app\home\validate\ServicesCheck;
 use app\home\validate\WorkCateCheck;
 use app\home\validate\KeyworksCheck;
 use app\home\validate\InvoiceSubjectCheck;
@@ -420,89 +421,133 @@ class Cate extends BaseController
 		}
     }
 
-	//公告类别
-    public function note_cate()
+	//行业类型
+    public function industry_cate()
     {
         if (request()->isAjax()) {
-            $cate = Db::name('NoteCate')->order('create_time asc')->select();
+            $cate = Db::name('Industry')->order('create_time asc')->select();
             return to_assign(0, '', $cate);
         } else {
             return view();
         }
     }
-
-    //公告类别添加
-    public function note_cate_add()
+    //行业类型添加
+    public function industry_cate_add()
     {
-        $param = get_params();
         if (request()->isAjax()) {
+            $param = get_params();
             if (!empty($param['id']) && $param['id'] > 0) {
                 try {
-                    validate(NoteCateCheck::class)->scene('edit')->check($param);
+                    validate(IndustryCheck::class)->scene('edit')->check($param);
                 } catch (ValidateException $e) {
                     // 验证失败 输出错误信息
                     return to_assign(1, $e->getError());
                 }
-                $note_array = admin_note_cate_son($param['id']);
-                if (in_array($param['pid'], $note_array)) {
-                    return to_assign(1, '父级分类不能是该分类本身或其子分类');
-                } else {
-                    $param['update_time'] = time();
-                    $res = Db::name('NoteCate')->strict(false)->field(true)->update($param);
-                    if ($res) {
-                        add_log('edit', $param['id'], $param);
-                    }
-                    return to_assign();
+                $data['update_time'] = time();
+                $res = Db::name('Industry')->strict(false)->field(true)->update($param);
+                if ($res) {
+                    add_log('edit', $param['id'], $param);
                 }
+                return to_assign();
             } else {
                 try {
-                    validate(NoteCateCheck::class)->scene('add')->check($param);
+                    validate(IndustryCheck::class)->scene('add')->check($param);
                 } catch (ValidateException $e) {
                     // 验证失败 输出错误信息
                     return to_assign(1, $e->getError());
                 }
                 $param['create_time'] = time();
-                $insertId = Db::name('NoteCate')->strict(false)->field(true)->insertGetId($param);
+                $insertId = Db::name('Industry')->strict(false)->field(true)->insertGetId($param);
                 if ($insertId) {
                     add_log('add', $insertId, $param);
                 }
                 return to_assign();
             }
+        }
+    }
+	
+    //行业类型设置
+    public function industry_cate_check()
+    {
+		$param = get_params();
+        $res = Db::name('Industry')->strict(false)->field('id,status')->update($param);
+		if ($res) {
+			if($param['status'] == 0){
+				add_log('disable', $param['id'], $param);
+			}
+			else if($param['status'] == 1){
+				add_log('recovery', $param['id'], $param);
+			}
+			return to_assign();
+		}
+		else{
+			return to_assign(0, '操作失败');
+		}
+    }  
+	
+	//服务类型
+    public function services_cate()
+    {
+        if (request()->isAjax()) {
+            $cate = Db::name('Services')->order('create_time asc')->select();
+            return to_assign(0, '', $cate);
         } else {
-            $id = isset($param['id']) ? $param['id'] : 0;
-            $pid = isset($param['pid']) ? $param['pid'] : 0;
-			$cate = $cate = Db::name('NoteCate')->order('id desc')->select()->toArray();
-			$cates = set_recursion($cate);
-            if ($id > 0) {
-                $detail = Db::name('NoteCate')->where(['id' => $id])->find();
-                View::assign('detail', $detail);
-            }
-            View::assign('id', $id);
-            View::assign('pid', $pid);
-            View::assign('cates', $cates);
             return view();
         }
     }
-
-    //公告类别删除
-    public function note_cate_delete()
+    //服务类型添加
+    public function services_cate_add()
     {
-        $id = get_params("id");
-        $cate_count = Db::name('NoteCate')->where(["pid" => $id])->count();
-        if ($cate_count > 0) {
-            return to_assign(1, "该分类下还有子分类，无法删除");
-        }
-        $content_count = Db::name('Article')->where(["article_cate_id" => $id])->count();
-        if ($content_count > 0) {
-            return to_assign(1, "该分类下还有文章，无法删除");
-        }
-        if (Db::name('NoteCate')->delete($id) !== false) {
-            add_log('delete', $id);
-            return to_assign(0, "删除分类成功");
-        } else {
-            return to_assign(1, "删除失败");
+        if (request()->isAjax()) {
+            $param = get_params();
+            if (!empty($param['id']) && $param['id'] > 0) {
+                try {
+                    validate(ServicesCheck::class)->scene('edit')->check($param);
+                } catch (ValidateException $e) {
+                    // 验证失败 输出错误信息
+                    return to_assign(1, $e->getError());
+                }
+                $data['update_time'] = time();
+                $res = Db::name('Services')->strict(false)->field(true)->update($param);
+                if ($res) {
+                    add_log('edit', $param['id'], $param);
+                }
+                return to_assign();
+            } else {
+                try {
+                    validate(ServicesCheck::class)->scene('add')->check($param);
+                } catch (ValidateException $e) {
+                    // 验证失败 输出错误信息
+                    return to_assign(1, $e->getError());
+                }
+                $param['create_time'] = time();
+                $insertId = Db::name('Services')->strict(false)->field(true)->insertGetId($param);
+                if ($insertId) {
+                    add_log('add', $insertId, $param);
+                }
+                return to_assign();
+            }
         }
     }
+	
+    //服务类型设置
+    public function services_cate_check()
+    {
+		$param = get_params();
+        $res = Db::name('Services')->strict(false)->field('id,status')->update($param);
+		if ($res) {
+			if($param['status'] == 0){
+				add_log('disable', $param['id'], $param);
+			}
+			else if($param['status'] == 1){
+				add_log('recovery', $param['id'], $param);
+			}
+			return to_assign();
+		}
+		else{
+			return to_assign(0, '操作失败');
+		}
+    }  
 	
 	
 	//工作类别

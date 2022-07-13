@@ -132,7 +132,7 @@ class Index extends BaseController
         }
     }
 
-    //文章添加&&编辑
+    //添加&&编辑
     public function add()
     {
         $param = get_params();

@@ -25,7 +25,7 @@
 			id:'treeTable'
 			,elem: '#treeTable'
 			,idField:'id'
-			,url: "/home/cate/note_cate"
+			,url: "/note/index/note_cate"
 			,cellMinWidth: 100
 			,treeId:'id'//树形id字段名称
 			,treeUpId:'pid'//树形父id字段名称
@@ -49,18 +49,18 @@
 			
 		//表头工具栏事件
 		$('.add-menu').on('click', function(){
-			tool.side("/home/cate/note_cate_add");
+			tool.side("/note/index/note_cate_add");
 			return;
 		});
 		
 		//操作按钮
 		treeGrid.on('tool(treeTable)', function (obj) {
 			if (obj.event === 'add') {
-				tool.side('/home/cate/note_cate_add?pid='+obj.data.id);
+				tool.side('/note/index/note_cate_add?pid='+obj.data.id);
 				return;
 			}
 			if (obj.event === 'edit') {
-				tool.side('/home/cate/note_cate_add?id='+obj.data.id);
+				tool.side('/note/index/note_cate_add?id='+obj.data.id);
 				return;
 			}
 			if (obj.event === 'del') {
@@ -71,7 +71,7 @@
 							obj.del();
 						}
 					}
-					tool.delete("/home/cate/note_cate_delete", { id: obj.data.id }, callback);
+					tool.delete("/note/index/note_cate_delete", { id: obj.data.id }, callback);
 					layer.close(index);
 				});
 			}

@@ -231,6 +231,20 @@ function get_position()
     return $position;
 }
 
+//读取行业
+function get_industry()
+{
+    $industry = Db::name('Industry')->where(['status' => 1])->select()->toArray();
+    return $industry;
+}
+
+//读取服务
+function get_services()
+{
+    $services = Db::name('Services')->where(['status' => 1])->select()->toArray();
+    return $services;
+}
+
 //根据流程模块读取某部门某模块的审核流程
 function get_flows($type=1,$department=0)
 {

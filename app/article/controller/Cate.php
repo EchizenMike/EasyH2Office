@@ -89,7 +89,7 @@ class Cate extends BaseController
         if ($cate_count > 0) {
             return to_assign(1, "该分类下还有子分类，无法删除");
         }
-        $content_count = Db::name('Article')->where(["article_cate_id" => $id])->count();
+        $content_count = Db::name('Article')->where(["cate_id" => $id])->count();
         if ($content_count > 0) {
             return to_assign(1, "该分类下还有文章，无法删除");
         }

@@ -12,7 +12,7 @@ layui.define(['element'], function (exports) {
 				title: '<span class="gg-tab-active"></span>' + title,
 				content: '<iframe id="' + id + '" data-frameid="' + id + '" src="' + url + '" frameborder="0" align="left" width="100%" height="100%" scrolling="yes"></iframe>',
 			});
-			$('#GouguAppBody').append('<div class="gg-tab-page" id="tabItem' + id + '"><iframe id="' + id + '" data-frameid="' + id + '" src="' + url + '" frameborder="0" align="left" width="100%" height="100%" scrolling="yes"></iframe></div>');
+			$('#GouguAppBody').append('<div class="gg-tab-page" title="'+title+'" id="tabItem' + id + '"><iframe id="' + id + '" data-frameid="' + id + '" src="' + url + '" frameborder="0" align="left" width="100%" height="100%" scrolling="yes"></iframe></div>');
 			this.tabChange(id);
 			var thetabs = $('#pageTabs .layui-tab-title').find('li');
 			if (thetabs.length > 12) {

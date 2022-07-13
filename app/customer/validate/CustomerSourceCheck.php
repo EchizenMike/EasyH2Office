@@ -5,14 +5,14 @@
  * @link https://www.gougucms.com
  */
 
-namespace app\home\validate;
+namespace app\customer\validate;
 
 use think\Validate;
 
-class NoteCateCheck extends Validate
+class CustomerSourceCheck extends Validate
 {
     protected $rule = [
-        'title' => 'require|unique:note_cate',
+        'title' => 'require|unique:customer_source',
         'id' => 'require',
     ];
 

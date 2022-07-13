@@ -120,4 +120,5 @@ CREATE TABLE `oa_data_auth`  (
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COMMENT = '数据权限表';
 
-INSERT INTO `oa_data_auth` VALUES ((SELECT MAX(id) +1  FROM `oa_data_auth` a), '合同管理员','contract_admin','拥有该权限的员工可以查看、编辑、审核、作废、中止所有合同。', 'contract', '', 1656143065, 0);
+
+INSERT INTO `oa_data_auth` VALUES ((SELECT MAX(id) +1  FROM `oa_data_auth` a), '合同管理员','contract_admin','拥有该权限的员工可以查看、编辑、审核、作废、中止所有合同。', 'contract', '',0,0,0, 1656143065, 0);

@@ -32,7 +32,7 @@
 .layui-side-menu .layui-nav .layui-nav-item .layui-icon{position: absolute; top: 50%;left: 16px; margin-top: -20px}
 .layui-side-menu .layui-nav .layui-nav-item .bi,
 .layui-side-menu .layui-nav .layui-nav-item .iconfont{font-size:18px;}
-.layui-side-menu .layui-nav .layui-nav-item .layui-nav-more {margin-top: -24px}
+.layui-side-menu .layui-nav .layui-nav-item .layui-nav-more {margin-top: -24px; color:#677C91}
 
 .layui-side-menu .layui-nav .layui-nav-child .layui-nav-child { background: 0 0 !important}
 .layui-side-menu .layui-nav .layui-nav-child .layui-nav-child a {padding-left: 55px}
