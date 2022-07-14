@@ -101,9 +101,9 @@ abstract class BaseController
 					}
                     if (!$this->checkAuth()) {
                         if ($this->request->isAjax()) {
-                            return to_assign(202, '你没有权限,请联系管理员或者人事部');
+                            return to_assign(405, '你没有权限,请联系管理员或者人事部');
                         } else {
-                            echo '<div style="text-align:center;color:red;margin-top:20%;">你没有权限,请联系管理员或者人事部</div>';exit;
+                            echo '<div style="text-align:center;color:red;margin-top:20%;">你没有权限访问，请联系管理员或者人事部</div>';exit;
                         }
                     }
                 }
