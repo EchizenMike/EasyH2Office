@@ -266,7 +266,7 @@ class Approve extends BaseController
 				sendMessage($users,21,$msg);
             } else {
                 $param['create_admin_id'] = $this->uid;
-                $param['department_id'] = get_login_admin('did');
+                $param['department_id'] = $this->did;
 				$param['create_time'] = time();
 				
 				if (!isset($param['check_admin_ids'])) {
@@ -341,7 +341,7 @@ class Approve extends BaseController
 				}
                 View::assign('detail', $detail);
             }
-			$department = get_login_admin('did');
+			$department = $this->did;
 			//获取审批流程
 			$flows = get_flows($type,$department);
 			$moban=Db::name('FlowType')->where('id',$type)->value('name');
@@ -528,7 +528,7 @@ class Approve extends BaseController
 			//审核通过数据操作
 			$param['last_admin_id'] = $this->uid;
 			$param['flow_admin_ids'] = $detail['flow_admin_ids'].$this->uid.',';
-			$res = Db::name('Approve')->strict(false)->field('check_step_sort,check_step_sort,check_status,last_admin_id,flow_admin_ids,check_admin_ids')->update($param);
+			$res = Db::name('Approve')->strict(false)->field('check_step_sort,check_status,last_admin_id,flow_admin_ids,check_admin_ids')->update($param);
 			if($res!==false){
 				$checkData=array(
 					'action_id' => $detail['id'],
@@ -569,7 +569,7 @@ class Approve extends BaseController
 			$param['last_admin_id'] = $this->uid;
 			$param['flow_admin_ids'] = $detail['flow_admin_ids'].$this->uid.',';
 			$param['check_admin_ids'] ='';
-			$res = Db::name('Approve')->strict(false)->field('check_step_sort,check_step_sort,check_status,last_admin_id,flow_admin_ids,check_admin_ids')->update($param);
+			$res = Db::name('Approve')->strict(false)->field('check_step_sort,check_status,last_admin_id,flow_admin_ids,check_admin_ids')->update($param);
 			if($res!==false){
 				$checkData=array(
 					'action_id' => $detail['id'],
@@ -603,7 +603,7 @@ class Approve extends BaseController
 			//撤销审核，数据操作
 			$param['check_status'] = 4;
 			$param['check_admin_ids'] ='';
-			$res = Db::name('Approve')->strict(false)->field('check_step_sort,check_step_sort,check_status,last_admin_id,flow_admin_ids,check_admin_ids')->update($param);
+			$res = Db::name('Approve')->strict(false)->field('check_step_sort,check_status,last_admin_id,flow_admin_ids,check_admin_ids')->update($param);
 			if($res!==false){
 				$checkData=array(
 					'action_id' => $detail['id'],

@@ -341,7 +341,7 @@ class Expense extends BaseController
                 }
                 $param['create_time'] = time();
                 $param['admin_id'] = $admin_id;
-                $param['did'] = get_login_admin('did');
+                $param['did'] = $this->did;
                 Db::startTrans();
                 try {
 					if (!isset($param['check_admin_ids'])) {
@@ -444,7 +444,7 @@ class Expense extends BaseController
 				}
                 View::assign('expense', $expense);
             }
-			$department = get_login_admin('did');
+			$department = $this->did;
 			//获取报销审批流程
 			$flows = get_type_flows(6,$department);
             $expense_cate = Db::name('ExpenseCate')->where(['status' => 1])->select()->toArray();
@@ -622,7 +622,7 @@ class Expense extends BaseController
 			//审核通过数据操作
 			$param['last_admin_id'] = $this->uid;
 			$param['flow_admin_ids'] = $detail['flow_admin_ids'].$this->uid.',';
-			$res = Db::name('Expense')->strict(false)->field('check_step_sort,check_step_sort,check_status,last_admin_id,flow_admin_ids,check_admin_ids')->update($param);
+			$res = Db::name('Expense')->strict(false)->field('check_step_sort,check_status,last_admin_id,flow_admin_ids,check_admin_ids')->update($param);
 			if($res!==false){
 				$checkData=array(
 					'action_id' => $detail['id'],
@@ -662,7 +662,7 @@ class Expense extends BaseController
 			$param['last_admin_id'] = $this->uid;
 			$param['flow_admin_ids'] = $detail['flow_admin_ids'].$this->uid.',';
 			$param['check_admin_ids'] ='';
-			$res = Db::name('Expense')->strict(false)->field('check_step_sort,check_step_sort,check_status,last_admin_id,flow_admin_ids,check_admin_ids')->update($param);
+			$res = Db::name('Expense')->strict(false)->field('check_step_sort,check_status,last_admin_id,flow_admin_ids,check_admin_ids')->update($param);
 			if($res!==false){
 				$checkData=array(
 					'action_id' => $detail['id'],
@@ -697,7 +697,7 @@ class Expense extends BaseController
 			$param['check_status'] = 4;
 			$param['check_admin_ids'] ='';
 			$param['check_step_sort'] =0;
-			$res = Db::name('Expense')->strict(false)->field('check_step_sort,check_step_sort,check_status,last_admin_id,flow_admin_ids,check_admin_ids')->update($param);
+			$res = Db::name('Expense')->strict(false)->field('check_step_sort,check_status,last_admin_id,flow_admin_ids,check_admin_ids')->update($param);
 			if($res!==false){
 				$checkData=array(
 					'action_id' => $detail['id'],

@@ -22,10 +22,10 @@ class Log extends BaseController
             $param = get_params();
             $where = array();
             if (!empty($param['keywords'])) {
-                $where[] = ['name|rule_menu|param_id', 'like', '%' . $param['keywords'] . '%'];
+                $where[] = ['name|content|param_id', 'like', '%' . $param['keywords'] . '%'];
             }
             if (!empty($param['action'])) {
-                $where[] = ['title','=',$param['action']];
+                $where[] = ['action','=',$param['action']];
             }
             $rows = empty($param['limit']) ? get_config('app . page_size') : $param['limit'];
             $content = DB::name('AdminLog')

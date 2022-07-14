@@ -119,7 +119,7 @@ class Index extends BaseController
                 }
                 $param['create_time'] = time();
                 $param['uid'] = $this->uid;
-                $param['did'] = get_login_admin('did');
+                $param['did'] = $this->did;
                 Db::startTrans();
                 try {
                     if (empty($param['desc'])) {

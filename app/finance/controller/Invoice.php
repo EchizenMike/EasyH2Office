@@ -378,7 +378,7 @@ class Invoice extends BaseController
 				}
                 View::assign('detail', $detail);
             }
-			$department = get_login_admin('did');
+			$department = $this->did;
 			//获取发票审批流程
 			$flows = get_type_flows(7,$department);
             View::assign('user', get_admin($this->uid));
@@ -430,9 +430,9 @@ class Invoice extends BaseController
 		if(in_array($this->uid,$check_user_ids)){
 			$is_check_admin = 1;
 			//当前审核节点详情
-			$step = Db::name('FlowStep')->where(['action_id'=>$detail['id'],'type'=>3,'sort'=>$detail['check_step_sort'],'delete_time'=>0])->find();
-			if($step['flow_type'] == 4){
-				$check_count = Db::name('FlowRecord')->where(['action_id'=>$detail['id'],'type'=>3,'step_id'=>$step['id'],'check_user_id'=>$this->uid])->count();
+			//$step = Db::name('FlowStep')->where(['action_id'=>$detail['id'],'type'=>3,'sort'=>$detail['check_step_sort'],'delete_time'=>0])->find();
+			if($flows['flow_type'] == 4){
+				$check_count = Db::name('FlowRecord')->where(['action_id'=>$detail['id'],'type'=>3,'step_id'=>$flows['id'],'check_user_id'=>$this->uid])->count();
 				if($check_count>0){
 					$is_check_admin = 0;
 				}
@@ -554,7 +554,7 @@ class Invoice extends BaseController
 			//审核通过数据操作
 			$param['last_admin_id'] = $this->uid;
 			$param['flow_admin_ids'] = $detail['flow_admin_ids'].$this->uid.',';
-			$res = Db::name('Invoice')->strict(false)->field('check_step_sort,check_step_sort,check_status,last_admin_id,flow_admin_ids,check_admin_ids')->update($param);
+			$res = Db::name('Invoice')->strict(false)->field('check_step_sort,check_status,last_admin_id,flow_admin_ids,check_admin_ids')->update($param);
 			if($res!==false){
 				$checkData=array(
 					'action_id' => $detail['id'],
@@ -594,7 +594,7 @@ class Invoice extends BaseController
 			$param['last_admin_id'] = $this->uid;
 			$param['flow_admin_ids'] = $detail['flow_admin_ids'].$this->uid.',';
 			$param['check_admin_ids'] ='';
-			$res = Db::name('Invoice')->strict(false)->field('check_step_sort,check_step_sort,check_status,last_admin_id,flow_admin_ids,check_admin_ids')->update($param);
+			$res = Db::name('Invoice')->strict(false)->field('check_step_sort,check_status,last_admin_id,flow_admin_ids,check_admin_ids')->update($param);
 			if($res!==false){
 				$checkData=array(
 					'action_id' => $detail['id'],
@@ -629,7 +629,7 @@ class Invoice extends BaseController
 			$param['check_status'] = 4;
 			$param['check_admin_ids'] ='';
 			$param['check_step_sort'] =0;
-			$res = Db::name('Invoice')->strict(false)->field('check_step_sort,check_step_sort,check_status,last_admin_id,flow_admin_ids,check_admin_ids')->update($param);
+			$res = Db::name('Invoice')->strict(false)->field('check_step_sort,check_status,last_admin_id,flow_admin_ids,check_admin_ids')->update($param);
 			if($res!==false){
 				$checkData=array(
 					'action_id' => $detail['id'],
