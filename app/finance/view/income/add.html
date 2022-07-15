@@ -207,7 +207,7 @@
 <script>
 	const moduleInit = ['tool'];
 	function gouguInit() {
-		var form = layui.form,tool=layui.tool, dropdown = layui.dropdown;
+		var form = layui.form,tool=layui.tool,laydate = layui.laydate, dropdown = layui.dropdown;
 	
 //获取审核信息
 	$.ajax({
@@ -435,7 +435,7 @@
 		return false;
 	});
 	
-	$('.page-content').on('click', '[lay-event="refue"]', function () {
+	$('.layui-form').on('click', '[lay-event="refue"]', function () {
 		var inid=$('#inid').val();
 		layer.confirm('确定要全部反到账?', {icon: 3, title:'提示'}, function(index){
 			$.ajax({
@@ -455,7 +455,7 @@
 		})
 		return false;
 	})
-	$('.page-content').on('click', '[lay-event="all"]', function () {
+	$('.layui-form').on('click', '[lay-event="all"]', function () {
 		var inid=$('#inid').val();
 		layer.confirm('确定已经全部到账?', {icon: 3, title:'提示'}, function(idx){
 			layer.prompt({title: '选择到账日期', formType: 3,value :'',success: function(layero, index){
