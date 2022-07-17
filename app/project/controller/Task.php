@@ -157,7 +157,7 @@ class Task extends BaseController
                     'new_content' => $detail['title'],
                     'create_time' => time(),
                 );
-                Db::name('Log')->strict(false)->field(true)->insert($log_data);
+                Db::name('ProjectLog')->strict(false)->field(true)->insert($log_data);
                 return to_assign(0, "删除成功");
             } else {
                 return to_assign(0, "删除失败");
