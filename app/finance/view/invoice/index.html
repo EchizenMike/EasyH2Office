@@ -91,14 +91,17 @@
 						field: 'invoice_type',
 						title: '开票类型',
 						align: 'center',
-						width: 90,
+						width: 120,
 						templet:function(d){
 							var html='-';
 							if(d.invoice_type==1){
-								html='<span style="color:#1E9FFF">专票</span>';
+								html='<span class="green">增值税专用发票</span>';
 							}
 							else if(d.invoice_type==2){
-								html='<span style="color:#5FB878">普票</span>';
+								html='<span class="blue">普通发票</span>';
+							}
+							else if(d.invoice_type==3){
+								html='<span class="red">专业发票</span>';
 							}
 							return html;
 						}
@@ -133,7 +136,7 @@
 						field: 'name',
 						title: '申请人',
 						align: 'center',
-						width: 100
+						width: 90
 					},{
 						field: 'department_name',
 						title: '所属部门',
@@ -162,7 +165,7 @@
 						field: 'code',
 						title: '发票号码',
 						align: 'center',
-						width: 132
+						width: 120
 					}, {
 						field: 'right',
 						fixed: 'right',

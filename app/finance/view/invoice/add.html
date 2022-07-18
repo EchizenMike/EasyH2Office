@@ -38,7 +38,8 @@
 			<select name="invoice_type" lay-verify="required" lay-reqText="请选择开票类型">
 				<option value="">请选择开票类型</option>
 				<option value="1">增值税专用发票</option>
-				<option value="2">增值税普通发票</option>
+				<option value="2">普通发票</option>
+				<option value="3">专业发票</option>
 			  </select>
 			</td>
 			<td class="layui-td-gray">开票主体<font>*</font></td>
@@ -124,7 +125,8 @@
 			<select name="invoice_type" lay-verify="required" lay-reqText="请选择开票类型">
 				<option value="">请选择开票类型</option>
 				<option value="1" {eq name="$detail.invoice_type" value="1"}selected{/eq}>增值税专用发票</option>
-				<option value="2" {eq name="$detail.invoice_type" value="2"}selected{/eq}>增值税普通发票</option>
+				<option value="2" {eq name="$detail.invoice_type" value="2"}selected{/eq}>普通发票</option>
+				<option value="3" {eq name="$detail.invoice_type" value="3"}selected{/eq}>专业发票</option>
 			  </select>
 			</td>
 			<td class="layui-td-gray">开票主体<font>*</font></td>
