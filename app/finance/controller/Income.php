@@ -28,6 +28,7 @@ class Income extends BaseController
                 $item->department = Db::name('Department')->where(['id' => $item->did])->value('title');
                 $item->check_name = Db::name('Admin')->where(['id' => $item->check_admin_id])->value('name');
                 $item->check_time = empty($item->check_time) ? '-' : date('Y-m-d H:i', $item->check_time);
+                $item->enter_time = empty($item->enter_time) ? '-' : date('Y-m-d H:i', $item->enter_time);
                 $item->open_name = Db::name('Admin')->where(['id' => $item->open_admin_id])->value('name');
                 $item->open_time = empty($item->open_time) ? '-' : date('Y-m-d H:i', $item->open_time);
             });
