@@ -60,21 +60,21 @@
 			</td>
 			<td class="layui-td-gray">开票抬头<font>*</font></td>
 			<td><input type="text" name="invoice_title" class="layui-input" value="" lay-verify="required"  lay-reqText="请输入开票抬头"></td>
-			<td class="layui-td-gray">电话号码<font>*</font></td>
-			<td><input type="text" name="invoice_phone" class="layui-input" value="" lay-verify="required"  lay-reqText="请输入电话号码"></td>
+			<td class="layui-td-gray">电话号码</td>
+			<td><input type="text" name="invoice_phone" class="layui-input" value=""></td>
 		</tr>
 		<tr class="invoice-type">
-			<td class="layui-td-gray-2">纳税人识别号<font>*</font></td>
+			<td class="layui-td-gray-2">纳税人识别号</td>
 			<td><input type="text" name="invoice_tax" class="layui-input" value=""></td>
-			<td class="layui-td-gray">开户行<font>*</font></td>
+			<td class="layui-td-gray">开户行</td>
 			<td><input type="text" name="invoice_bank" class="layui-input" value=""></td>
-			<td class="layui-td-gray">银行账号<font>*</font></td>
+			<td class="layui-td-gray">银行账号</td>
 			<td><input type="text" name="invoice_account" class="layui-input" value=""></td>
 		</tr>
 		<tr class="invoice-type">
-			<td class="layui-td-gray-2">银行营业网点<font>*</font></td>
+			<td class="layui-td-gray-2">银行营业网点</td>
 			<td><input type="text" name="invoice_banking" class="layui-input" value=""></td>
-			<td class="layui-td-gray">地址<font>*</font></td>
+			<td class="layui-td-gray">地址</td>
 			<td colspan="3"><input type="text" name="invoice_address" class="layui-input" value=""></td>
 		</tr>
 		<tr>
@@ -147,21 +147,21 @@
 			</td>
 			<td class="layui-td-gray">开票抬头<font>*</font></td>
 			<td><input type="text" name="invoice_title" class="layui-input" value="{$detail.invoice_title}"></td>
-			<td class="layui-td-gray">电话号码<font>*</font></td>
+			<td class="layui-td-gray">电话号码</td>
 			<td><input type="text" name="invoice_phone" class="layui-input" value="{$detail.invoice_phone}"></td>
 		</tr>
 		<tr class="invoice-type" {eq name="$detail.type" value="2"}style="display:none"{/eq}>
-			<td class="layui-td-gray-2">纳税人识别号<font>*</font></td>
+			<td class="layui-td-gray-2">纳税人识别号</td>
 			<td><input type="text" name="invoice_tax" class="layui-input" value="{$detail.invoice_tax}"></td>
-			<td class="layui-td-gray">开户行<font>*</font></td>
+			<td class="layui-td-gray">开户行</td>
 			<td><input type="text" name="invoice_bank" class="layui-input" value="{$detail.invoice_bank}"></td>
-			<td class="layui-td-gray">银行账号<font>*</font></td>
+			<td class="layui-td-gray">银行账号</td>
 			<td><input type="text" name="invoice_account" class="layui-input" value="{$detail.invoice_account}"></td>
 		</tr>
 		<tr class="invoice-type" {eq name="$detail.type" value="2"}style="display:none"{/eq}>
-			<td class="layui-td-gray-2">银行营业网点<font>*</font></td>
+			<td class="layui-td-gray-2">银行营业网点</td>
 			<td><input type="text" name="invoice_banking" class="layui-input" value="{$detail.invoice_banking}"></td>
-			<td class="layui-td-gray">地址<font>*</font></td>
+			<td class="layui-td-gray">地址</td>
 			<td colspan="3"><input type="text" name="invoice_address" class="layui-input" value="{$detail.invoice_address}"></td>
 		</tr>
 		<tr>

@@ -118,6 +118,7 @@ class Invoice extends BaseController
                 $where[] = ['i.create_time', 'between', [$start_time, $end_time]];
             }			
 			$where[] = ['i.admin_id','=',$this->uid];
+			$where[] = ['i.status','=',1];
 			$list = $this->get_list($where,$param);
             return table_assign(0, '', $list);
         } else {
@@ -136,7 +137,9 @@ class Invoice extends BaseController
 			$map1 = [];
 			$map2 = [];
 			$map1[] = ['', 'exp', Db::raw("FIND_IN_SET('{$user_id}',i.check_admin_ids)")];
+			$map1[] = ['i.status','=',1];
 			$map2[] = ['', 'exp', Db::raw("FIND_IN_SET('{$user_id}',i.flow_admin_ids)")];
+			$map2[] = ['i.status','=',1];
 			
 			if($status == 0){
 				$list = $this->get_list([$map1,$map2],$param,'or');
@@ -164,10 +167,11 @@ class Invoice extends BaseController
             $start_time = !empty($param['start_time']) ? strtotime(urldecode($param['start_time'])) : 0;
             $end_time = !empty($param['end_time']) ? strtotime(urldecode($param['end_time'])) : 0;
             if ($start_time > 0 && $end_time > 0) {
-                $where[] = ['expense_time', 'between', [$start_time, $end_time]];
+                $where[] = ['i.expense_time', 'between', [$start_time, $end_time]];
             }
-			$map[] = ['check_status', '=', 2];			
-			$map[] = ['', 'exp', Db::raw("FIND_IN_SET('{$user_id}',copy_uids)")];	
+			$map[] = ['i.status','=',1];
+			$map[] = ['i.check_status', '=', 2];			
+			$map[] = ['', 'exp', Db::raw("FIND_IN_SET('{$user_id}',i.copy_uids)")];	
 			$expense = $this->get_list($map, $param);			
             return table_assign(0, '', $expense);
         } else {
@@ -193,6 +197,7 @@ class Invoice extends BaseController
             if ($start_time > 0 && $end_time > 0) {
                 $where[] = ['i.create_time', 'between', [$start_time, $end_time]];
             }			
+			$where[] = ['i.status','=',1];
 			$list = $this->get_list($where,$param);
             return table_assign(0, '', $list);
         } else {
@@ -598,7 +603,7 @@ class Invoice extends BaseController
 			$param['last_admin_id'] = $this->uid;
 			$param['flow_admin_ids'] = $detail['flow_admin_ids'].$this->uid.',';
 			$param['check_admin_ids'] ='';
-			$res = Db::name('Invoice')->strict(false)->field('check_step_sort,check_status,last_admin_id,flow_admin_ids,check_admin_ids')->update($param);
+			$res = Db::name('Invoice')->strict(false)->field('check_step_sort,check_status,last_admin_id,flow_admin_ids,check_admin_ids,check_remark')->update($param);
 			if($res!==false){
 				$checkData=array(
 					'action_id' => $detail['id'],
@@ -633,7 +638,7 @@ class Invoice extends BaseController
 			$param['check_status'] = 4;
 			$param['check_admin_ids'] ='';
 			$param['check_step_sort'] =0;
-			$res = Db::name('Invoice')->strict(false)->field('check_step_sort,check_status,last_admin_id,flow_admin_ids,check_admin_ids')->update($param);
+			$res = Db::name('Invoice')->strict(false)->field('check_step_sort,check_status,last_admin_id,flow_admin_ids,check_admin_ids,check_remark')->update($param);
 			if($res!==false){
 				$checkData=array(
 					'action_id' => $detail['id'],
@@ -642,7 +647,7 @@ class Invoice extends BaseController
 					'type' => 3,
 					'check_time' => time(),
 					'status' => $param['status'],
-					'content' => $param['content'],
+					'content' => $param['check_remark'],
 					'create_time' => time()
 				);	
 				$aid = Db::name('FlowRecord')->strict(false)->field(true)->insertGetId($checkData);
