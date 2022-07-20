@@ -70,7 +70,8 @@
 		</tr>
 		<tr>
 			<td class="layui-td-gray">邮件模板</td>
-			<td><textarea name="template" placeholder="" class="layui-textarea" id="container">{notempty name="$config.template"}{$config.template}{/notempty}</textarea>
+			<td><textarea name="template" placeholder="" class="layui-textarea"
+					id="container">{notempty name="$config.template"}{$config.template}{/notempty}</textarea>
 			</td>
 		</tr>
 	</table>
@@ -86,13 +87,13 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
-	const moduleInit = ['tool','tinymce'];
+	const moduleInit = ['tool', 'tinymce'];
 	function gouguInit() {
 		var form = layui.form, tool = layui.tool, tinymce = layui.tinymce;
-		
+
 		var edit = tinymce.render({
 			selector: "#container",
-			height: 300
+			height: 320
 		});
 		//监听提交
 		form.on('submit(webform)', function (data) {
@@ -120,7 +121,7 @@
 					return false;
 				}
 				$.ajax({
-					url: "/home/api/email_test",
+					url: "/api/index/email_test",
 					data: { email: value },
 					type: "post",
 					beforeSend: function () {

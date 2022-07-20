@@ -11,7 +11,7 @@ use think\Validate;
 
 class AdminCheck extends Validate
 {
-	protected $regex = [ 'checkUser' => '/^[A-Za-z]{1}[A-Za-z0-9_-]{4,19}$/'];
+	protected $regex = [ 'checkUser' => '/^[A-Za-z]{1}[A-Za-z0-9_-]{3,19}$/'];
 	
     protected $rule = [
         'name' => 'require|chs',
@@ -32,7 +32,7 @@ class AdminCheck extends Validate
 	    'name.require' => '员工姓名不能为空',
         'name.chs' => '员工姓名只能是汉字',
         'username.require' => '登录账号不能为空',
-        'username.regex' => '登录账号必须是以字母开头，只能包含字母数字下划线和减号，5到20位',
+        'username.regex' => '登录账号必须是以字母开头，只能包含字母数字下划线和减号，4到20位',
         'username.unique' => '同样的登录账号已经存在，建议增加数字，如：xxx123',
 		'mobile.require' => '手机不能为空',
         'mobile.mobile' => '手机格式错误',

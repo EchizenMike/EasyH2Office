@@ -21,7 +21,7 @@ class Schedule extends BaseController
         if (request()->isAjax()) {
             $param = get_params();
             //按时间检索
-                        $start_time = isset($param['start_time']) ? strtotime($param['start_time']) : 0;
+            $start_time = isset($param['start_time']) ? strtotime($param['start_time']) : 0;
             $end_time = isset($param['end_time']) ? strtotime($param['end_time']) : 0;
             $tid = isset($param['tid']) ? $param['tid'] : 0;
             $where = [];

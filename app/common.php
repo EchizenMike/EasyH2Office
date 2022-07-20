@@ -315,7 +315,7 @@ function get_file($id)
  * @param int    $param_id 操作类型
  * @param array  $param 提交的参数
  */
-function add_log($type, $param_id = '', $param = [])
+function add_log($type, $param_id = '', $param = [],$subject='')
 {
 	$action = '未知操作';
 	$type_action = get_config('log.type_action');
@@ -350,7 +350,12 @@ function add_log($type, $param_id = '', $param = [])
 	}
 	else{
 		$data['title'] = '';
-		$data['subject'] ='系统';
+		if($subject!=''){
+			$data['subject'] =$subject;
+		}
+		else{
+			$data['subject'] ='系统';
+		}		
 	}
     $content = $login_admin['name'] . '在' . date('Y-m-d H:i:s') . $data['action'] . '了' . $data['subject'];
     $data['content'] = $content;
@@ -1498,60 +1503,6 @@ function getAddress($ip)
     } else {
         return '';
     }
-}
-
-/**
- * 下载服务器文件
- *
- * @param string $file 文件路径
- * @param string $name 下载名称
- * @param boolean $del 下载后删除
- * @return void
- */
-function download($file, $name = '', $del = false)
-{
-    if (!file_exists($file)) {
-        return resultArray([
-            'error' => '文件不存在',
-        ]);
-    }
-    // 仅允许下载 public 目录下文件
-    $res = strpos(realpath($file), realpath('./public'));
-    if ($res !== 0) {
-        return resultArray([
-            'error' => '文件路径错误',
-        ]);
-    }
-
-    $fp = fopen($file, 'r');
-    $size = filesize($file);
-
-    //下载文件需要的头
-    header("Content-type: application/octet-stream");
-    header("Accept-Ranges: bytes");
-    header('ResponseType: blob');
-    header("Accept-Length: $size");
-    $file_name = $name != '' ? $name : pathinfo($file, PATHINFO_BASENAME);
-    // urlencode 处理中文乱码
-    header("Content-Disposition:attachment; filename=" . urlencode($file_name));
-
-    // 导出数据时  csv office Excel 需要添加bom头
-    if (pathinfo($file, PATHINFO_EXTENSION) == 'csv') {
-        echo "\xEF\xBB\xBF";    // UTF-8 BOM
-    }
-
-    $fileCount = 0;
-    $fileUnit = 1024;
-    while (!feof($fp) && $size - $fileCount > 0) {
-        $fileContent = fread($fp, $fileUnit);
-        echo $fileContent;
-        $fileCount += $fileUnit;
-    }
-    fclose($fp);
-
-    // 删除
-    if ($del) @unlink($file);
-    die();
 }
 
 /**

@@ -146,14 +146,14 @@ class Index extends BaseController
         $content = $config['template'];
         //所有项目必须填写
         if (empty($config['smtp']) || empty($config['smtp_port']) || empty($config['smtp_user']) || empty($config['smtp_pwd'])) {
-            return to_assign(1, '请完善邮件配置信息！');
+            return to_assign(1, '请完善邮件配置信息');
         }
 
         $send = send_email($sender, '测试邮件', $content);
         if ($send) {
-            return to_assign(0, '邮件发送成功！');
+            return to_assign(0, '邮件发送成功');
         } else {
-            return to_assign(1, '邮件发送失败！');
+            return to_assign(1, '邮件发送失败');
         }
     }
 
@@ -429,8 +429,9 @@ class Index extends BaseController
 				$v['check_time'] = 0;
 				$v['content'] = '';
 				$v['status'] = 0;			
-				$checked = Db::name('FlowRecord')->where(['check_user_id' => $v['id'],'step_id' => $val['id']])->find();
-				if($checked){
+				$check_array = Db::name('FlowRecord')->where(['check_user_id' => $v['id'],'step_id' => $val['id']])->order('check_time desc')->select()->toArray();
+				if(!empty($check_array)){
+					$checked = $check_array[0];
 					$v['check_time'] = date('Y-m-d :H:i', $checked['check_time']);
 					$v['content'] = $checked['content'];
 					$v['status'] = $checked['status'];	
@@ -450,6 +451,22 @@ class Index extends BaseController
 			$val['check_list'] = $check_list;
         }
         return to_assign(0, '', $flows);
+    }
+	
+	//获取审核流程节点
+    public function get_flow_record($id=0,$type=1)
+    {			
+		$check_list = Db::name('FlowRecord')
+					->field('f.*,a.name,a.thumb')
+					->alias('f')
+					->join('Admin a', 'a.id = f.check_user_id', 'left')
+					->where(['f.action_id'=>$id,'f.type'=>$type])
+					->order('check_time asc')
+					->select()->toArray();
+		foreach ($check_list as $kk => &$vv) {		
+			$vv['check_time_str'] = date('Y-m-d :H:i', $vv['check_time']);
+		}
+        return to_assign(0, '', $check_list);
     }
 
 

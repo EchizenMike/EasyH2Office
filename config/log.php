@@ -70,6 +70,7 @@ return [
 		'leave'      => '离职',
 		'get'        => '获取',
 		'allot'      => '分配',
+		'remove'     => '移除',
 		'tosea'      => '公海移入',
 		'reset'      => '重新设置',
 		'install'    => '安装',

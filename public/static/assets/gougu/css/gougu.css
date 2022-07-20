@@ -63,7 +63,8 @@ a.tab-a:hover,a:hover,a.open-a:hover,a.link-a:hover,a.right-a:hover{color:#187FD
 .right{float:right;}
 .h1,h1{font-size:24px; font-weight: 600;}
 .h2,h2{font-size:20px; font-weight: 600;}
-.h3,h3{font-size:16px; font-weight: 600;}
+.h3,h3{font-size:18px; font-weight: 600;}
+.h4,h4{font-size:16px; font-weight: 600;}
 
 .m-0{margin:0}
 .m-1{margin:4px}
@@ -187,10 +188,10 @@ a.tab-a:hover,a:hover,a.open-a:hover,a.link-a:hover,a.right-a:hover{color:#187FD
 .CodeMirror-gutters{background-color:#fafafa!important;}
 /* 滚动条 */
 ::-webkit-scrollbar {
-width: 8px;
+	width: 8px;
 }
 ::-webkit-scrollbar-thumb {
-background-color:rgba(0,0,0,.15);background-clip:content-box;border:1px solid transparent;border-radius:8px
+	background-color:rgba(0,0,0,.15);background-clip:content-box;border:1px solid transparent;border-radius:8px
 }
 
 ::-webkit-scrollbar-track{background-color:transparent}
@@ -199,12 +200,12 @@ background-color:rgba(0,0,0,.15);background-clip:content-box;border:1px solid tr
 ::-webkit-scrollbar-thumb:active{background-color:rgba(0,0,0,.65)}
 
 ::-moz-scrollbar {
-width: 8px;
-background-color: transparent;
+	width: 8px;
+	background-color: transparent;
 }
 ::-moz-scrollbar-thumb {
-background-color: #c1c1c1;
-border-radius: 8px;
+	background-color: #c1c1c1;
+	border-radius: 8px;
 }
 body.right-open{overflow-y:clip;}
 div.layui-table-main::-webkit-scrollbar{width:12px;height:12px}

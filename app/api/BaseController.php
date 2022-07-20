@@ -13,8 +13,8 @@ use think\App;
 use think\exception\HttpResponseException;
 use think\facade\Request;
 use think\facade\Session;
-use think\Response;
 use think\facade\View;
+use think\Response;
 
 /**
  * 控制器基础类
@@ -52,6 +52,17 @@ abstract class BaseController
     protected $pageSize = '';
 
     /**
+     * jwt配置
+     * @var string
+     */
+    protected $jwt_conf = [
+        'secrect' => 'gouguoa',
+        'iss' => 'www.gougucms.com', //签发者 可选
+        'aud' => 'gouguoa', //接收该JWT的一方，可选
+        'exptime' => 7200, //过期时间,这里设置2个小时
+    ];
+
+    /**
      * 构造方法
      * @access public
      * @param  App $app 应用对象
@@ -64,7 +75,7 @@ abstract class BaseController
         $this->controller = strtolower($this->request->controller());
         $this->action = strtolower($this->request->action());
         $this->uid = 0;
-
+        $this->jwt_conf = get_system_config('token');
         // 控制器初始化
         $this->initialize();
     }
@@ -83,14 +94,13 @@ abstract class BaseController
      */
     protected function checkLogin()
     {
-		$session_admin = get_config('app.session_admin');
-		if (!Session::has($session_admin)) {
-			$this->apiError('请先登录');
-		}
-		else{
-			$this->uid = Session::get($session_admin)['id'];
+        $session_admin = get_config('app.session_admin');
+        if (!Session::has($session_admin)) {
+            $this->apiError('请先登录');
+        } else {
+            $this->uid = Session::get($session_admin)['id'];
             View::assign('login_user', $this->uid);
-		}
+        }
     }
     /**
      * Api处理成功结果返回方法
@@ -100,9 +110,9 @@ abstract class BaseController
      * @return mixed
      * @throws ReturnException
      */
-    protected function apiSuccess($msg = 'success',$data=[])
+    protected function apiSuccess($msg = 'success', $data = [])
     {
-		return $this->apiReturn($data, 0, $msg);
+        return $this->apiReturn($data, 0, $msg);
     }
 
     /**
@@ -114,7 +124,7 @@ abstract class BaseController
      * @return mixed
      * @throws ReturnException
      */
-    protected function apiError($msg = 'fail',$data=[], $code = 1)
+    protected function apiError($msg = 'fail', $data = [], $code = 1)
     {
         return $this->apiReturn($data, $code, $msg);
     }
