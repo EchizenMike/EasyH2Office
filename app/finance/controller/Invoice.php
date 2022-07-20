@@ -473,14 +473,14 @@ class Invoice extends BaseController
     {
         $param = get_params();
 		$detail = Db::name('Invoice')->where(['id' => $param['id']])->find();
-		$check_admin_ids = explode(",", strval($detail['check_admin_ids']));
-		if (!in_array($this->uid, $check_admin_ids)){		
-			return to_assign(1,'您没权限审核该审批');
-		}
 		//当前审核节点详情
 		$step = Db::name('FlowStep')->where(['action_id'=>$detail['id'],'type'=>3,'sort'=>$detail['check_step_sort'],'delete_time'=>0])->find();
 		//审核通过
 		if($param['status'] == 1){
+			$check_admin_ids = explode(",", strval($detail['check_admin_ids']));
+			if (!in_array($this->uid, $check_admin_ids)){		
+				return to_assign(1,'您没权限审核该审批');
+			}
 			//多人会签审批
 			if($step['flow_type'] == 4){
 				//查询当前会签记录数
@@ -589,6 +589,10 @@ class Invoice extends BaseController
 			}
 		}
 		else if($param['status'] == 2){
+			$check_admin_ids = explode(",", strval($detail['check_admin_ids']));
+			if (!in_array($this->uid, $check_admin_ids)){		
+				return to_assign(1,'您没权限审核该审批');
+			}
 			//拒绝审核，数据操作
 			$param['check_status'] = 3;
 			$param['last_admin_id'] = $this->uid;
