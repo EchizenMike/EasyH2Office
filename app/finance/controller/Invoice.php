@@ -451,10 +451,10 @@ class Invoice extends BaseController
     {
         $id = get_params("id");
         $detail = $this->detail($id);
-        if ($detail['invoice_status'] == 2) {
+        if ($detail['status'] == 2) {
             return to_assign(1, "已审核的发票不能删除");
         }
-        if ($detail['invoice_status'] == 3) {
+        if ($detail['status'] == 3) {
             return to_assign(1, "已开具的发票不能删除");
         }
         $data['status'] = '-1';
