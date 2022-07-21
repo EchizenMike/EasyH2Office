@@ -21,11 +21,11 @@ class Rule extends BaseController
     {
         if (request()->isAjax()) {
             $rule = Db::name('adminRule')
-			->field('a.*,m.title as module_title')
-			->alias('a')
-			->leftJoin('adminModule m','a.module = m.name')
-			->order('a.sort asc,a.id asc')
-			->select();
+                ->field('a.*,m.title as module_title')
+                ->alias('a')
+                ->leftJoin('adminModule m', 'a.module = m.name')
+                ->order('a.sort asc,a.id asc')
+                ->select();
             return to_assign(0, '', $rule);
         } else {
             return view();
@@ -37,7 +37,7 @@ class Rule extends BaseController
     {
         $param = get_params();
         if (request()->isAjax()) {
-			$param['src'] = preg_replace('# #','',$param['src']);
+            $param['src'] = preg_replace('# #', '', $param['src']);
             if ($param['id'] > 0) {
                 try {
                     validate(RuleCheck::class)->scene('edit')->check($param);
@@ -71,8 +71,8 @@ class Rule extends BaseController
         } else {
             $id = isset($param['id']) ? $param['id'] : 0;
             $pid = isset($param['pid']) ? $param['pid'] : 0;
-            if($id>0){
-                $detail = Db::name('AdminRule')->where('id',$id)->find();
+            if ($id > 0) {
+                $detail = Db::name('AdminRule')->where('id', $id)->find();
                 View::assign('detail', $detail);
             }
             View::assign('id', $id);
@@ -83,17 +83,21 @@ class Rule extends BaseController
     //删除
     public function delete()
     {
-        $id = get_params("id");
-        $count = Db::name('AdminRule')->where(["pid" => $id])->count();
-        if ($count > 0) {
-            return to_assign(1, "该节点下还有子节点，无法删除");
-        }
-        if (Db::name('AdminRule')->delete($id) !== false) {
-            clear_cache('adminRules');
-            add_log('delete', $id, []);
-            return to_assign(0, "删除节点成功");
+        if (request()->isDelete()) {
+            $id = get_params("id");
+            $count = Db::name('AdminRule')->where(["pid" => $id])->count();
+            if ($count > 0) {
+                return to_assign(1, "该节点下还有子节点，无法删除");
+            }
+            if (Db::name('AdminRule')->delete($id) !== false) {
+                clear_cache('adminRules');
+                add_log('delete', $id, []);
+                return to_assign(0, "删除节点成功");
+            } else {
+                return to_assign(1, "删除失败");
+            }
         } else {
-            return to_assign(1, "删除失败");
+            return to_assign(1, "错误的请求");
         }
     }
 }

@@ -89,15 +89,23 @@ class Role extends BaseController
     //删除
     public function delete()
     {
-        $id = get_params("id");
-        if ($id == 1) {
-            return to_assign(1, "该组是系统所有者，无法删除");
-        }
-        if (Db::name('AdminGroup')->delete($id) !== false) {
-            add_log('delete', $id, []);
-            return to_assign(0, "删除角色成功");
+        if (request()->isDelete()) {
+            $id = get_params("id");
+            if ($id == 1) {
+                return to_assign(1, "该组是系统所有者，无法删除");
+            }
+            $count = Db::name('PositionGroup')->where(["group_id" => $id])->count();
+            if ($count > 0) {
+                return to_assign(1, "该权限组还在使用，请去除使用者关联再删除");
+            }
+            if (Db::name('AdminGroup')->delete($id) !== false) {
+                add_log('delete', $id, []);
+                return to_assign(0, "删除权限组成功");
+            } else {
+                return to_assign(1, "删除失败");
+            }
         } else {
-            return to_assign(1, "删除失败");
+            return to_assign(1, "错误的请求");
         }
     }
 }

@@ -106,17 +106,17 @@ class Conf extends BaseController
             $module = strtolower(app('http')->getName());
             $class = strtolower(app('request')->controller());
             $action = strtolower(app('request')->action());
-            $template = $module . '/view/'. $class .'/'.$conf['name'].'.html';
+            $template = $module . '/view/' . $class . '/' . $conf['name'] . '.html';
             $config = [];
             if ($conf['content']) {
                 $config = unserialize($conf['content']);
             }
             View::assign('id', $id);
             View::assign('config', $config);
-            if(isTemplate($template)){
+            if (isTemplate($template)) {
                 return view($conf['name']);
-            }else{                
-                return view('../../base/view/common/errortemplate',['file' =>$template]);
+            } else {
+                return view('../../base/view/common/errortemplate', ['file' => $template]);
             }
         }
     }

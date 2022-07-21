@@ -22,7 +22,7 @@ class Log extends BaseController
             $param = get_params();
             $where = array();
             if (!empty($param['keywords'])) {
-                $where[] = ['name|content|param_id', 'like', '%' . $param['keywords'] . '%'];
+                $where[] = ['name|content|param_id|uid', 'like', '%' . $param['keywords'] . '%'];
             }
             if (!empty($param['action'])) {
                 $where[] = ['action','=',$param['action']];
