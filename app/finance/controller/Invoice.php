@@ -568,7 +568,7 @@ class Invoice extends BaseController
 					'type' => 3,
 					'check_time' => time(),
 					'status' => $param['status'],
-					'content' => $param['content'],
+					'content' => $param['check_remark'],
 					'create_time' => time()
 				);	
 				$aid = Db::name('FlowRecord')->strict(false)->field(true)->insertGetId($checkData);
@@ -612,7 +612,7 @@ class Invoice extends BaseController
 					'type' => 3,
 					'check_time' => time(),
 					'status' => $param['status'],
-					'content' => $param['content'],
+					'content' => $param['check_remark'],
 					'create_time' => time()
 				);	
 				$aid = Db::name('FlowRecord')->strict(false)->field(true)->insertGetId($checkData);
