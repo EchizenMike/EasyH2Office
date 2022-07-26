@@ -278,10 +278,12 @@
 			$('[name="uids"]').val('');
 			$('[name="pids"]').val('');
 			if(data.value==4){
-				$('#person').val('0').hide();
+				$('#person').hide();
+				$('[name="person_name"]').val('0');
 			}
 			else{
-				$('#person').val('').show();
+				$('#person').show();
+				$('[name="person_name"]').val('');
 			}
 		});	
 

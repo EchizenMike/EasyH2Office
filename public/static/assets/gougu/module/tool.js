@@ -206,6 +206,14 @@ layui.define([], function (exports) {
 				data: data
 			}, callback);
 		},
+		sideClose(delay){
+			if(parent.layui.tool){
+				parent.layui.tool.close(delay);
+			}
+			else{
+				console.log('父页面没引用tool模块');
+			}		
+		},
 		tabAdd:function(url,title){
 			if(parent.layui.admin){
 				parent.layui.admin.sonAdd(url,title);
@@ -222,14 +230,29 @@ layui.define([], function (exports) {
 				console.log('父页面没引用admin模块');
 			}
 		},
+		tabDelete:function(id){
+			if(parent.layui.admin){
+				parent.layui.admin.tabDelete(id);
+			}
+			else{
+				console.log('父页面没引用admin模块');
+			}
+		},
+		tabChange:function(id){
+			if(parent.layui.admin){
+				parent.layui.admin.tabChange(id);
+			}
+			else{
+				console.log('父页面没引用admin模块');
+			}
+		},
 		tabRefresh:function(id){
 			if(parent.layui.admin){
 				parent.layui.admin.refresh(id);
 			}
 			else{
 				console.log('父页面没引用admin模块');
-			}
-			
+			}			
 		}
 	};
 	$('body').on('click', '.tab-a', function () {
