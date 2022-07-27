@@ -13,13 +13,13 @@ class CustomerContactCheck extends Validate
 {
     protected $rule = [
         'name' => 'require',
-        'mobile' => 'require|unique:customer_contact',
+        'mobile' => 'require',
         'id' => 'require',
     ];
 
     protected $message = [
         'name.require' => '联系人姓名不能为空',
-        'mobile.unique' => '同样的手机号码已经存在',
+        'mobile' => '手机号码不能为空',
         'id.require' => '缺少更新条件',
     ];
 
