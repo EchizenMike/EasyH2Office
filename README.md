@@ -8,7 +8,7 @@
 - 项目会不定时进行更新，建议⭐star⭐和👁️watch👁️一份。
 
 ### ⭕ 开源项目
-1. [开源项目系列：勾股OA —— OA协同办公系统框架](https://gitee.com/gougucms/office)
+1. [开源项目系列：勾股OA —— OA协同办公系统](https://gitee.com/gougucms/office)
 2. [开源项目系列：勾股CMS —— CMS内容管理系统框架](https://gitee.com/gougucms/gougucms)
 3. [开源项目系列：勾股BLOG —— 个人&工作室博客系统](https://gitee.com/gougucms/blog)
 4. [开源项目系列：勾股DEV —— 项目研发管理系统](https://gitee.com/gougucms/dev)
@@ -82,11 +82,11 @@ Linux下，勾股OA的安装请使用以下命令进行安装。
 第二步：进入目录  
     cd gouguoa  
     
-第三步：下载PHP依赖包 【PS：如果是php8.0的环境，先用根目录的composer.php8.json替换覆盖composer.json后再安装】
+第三步：下载PHP依赖包
     
 composer install  
     
-第四步：添加虚拟主机并绑定到项目的public目录  
+第四步：添加虚拟主机并绑定到项目的public目录 ，实际部署中，确保绑定域名访问到的是public目录。
     
 第五步：访问 http://www.yoursite.com/install/index 进行安装
 
