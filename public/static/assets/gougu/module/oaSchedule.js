@@ -128,7 +128,7 @@ layui.define(['tool'], function (exports) {
 			} else {
 				detail['id'] = schedule['id'];
 				detail['tid'] = tid;
-				detail['cid'] = 0;
+				detail['cid'] = 1;
 				detail['title'] = '';
 				detail['labor_type'] = 0;
 				detail['start_time_a'] = schedule['start_time_a']?schedule['start_time_a']:'';
