@@ -318,53 +318,55 @@ INSERT INTO `oa_admin_rule` VALUES (149, 135, 'customer/index/sea', '公海客�
 INSERT INTO `oa_admin_rule` VALUES (150, 149, 'customer/index/distribute', '分配客户', '客户', 'customer', '', 2, 0, 1, 1556143065, 0);
 INSERT INTO `oa_admin_rule` VALUES (151, 149, 'customer/index/to_trash', '转入废弃池', '客户', 'customer', '', 2, 0, 1, 1556143065, 0);
 INSERT INTO `oa_admin_rule` VALUES (152, 135, 'customer/index/trash', '废弃客户', '客户', 'customer', '', 1, 0, 1, 1556143065, 0);
-INSERT INTO `oa_admin_rule` VALUES (153, 135, 'customer/contact/index', '客户联系人', '联系人', 'customer', '', 1, 0, 1, 1656143065, 0);
-INSERT INTO `oa_admin_rule` VALUES (154, 153, 'customer/contact/contact_add', '新建/编辑', '联系人', 'customer', '', 2, 0, 1, 1656143065, 0);
-INSERT INTO `oa_admin_rule` VALUES (155, 153, 'customer/contact/contact_del', '删除', '联系人', 'customer', '', 2, 0, 1, 1656143065, 0);
+INSERT INTO `oa_admin_rule` VALUES (153, 152, 'customer/index/delete', '删除', '客户', 'customer', '', 2, 0, 1, 1556143065, 0);
+INSERT INTO `oa_admin_rule` VALUES (154, 152, 'customer/index/revert', '还原', '客户', 'customer', '', 2, 0, 1, 1556143065, 0);
+INSERT INTO `oa_admin_rule` VALUES (155, 135, 'customer/contact/index', '客户联系人', '联系人', 'customer', '', 1, 0, 1, 1656143065, 0);
+INSERT INTO `oa_admin_rule` VALUES (156, 155, 'customer/contact/contact_add', '新建/编辑', '联系人', 'customer', '', 2, 0, 1, 1656143065, 0);
+INSERT INTO `oa_admin_rule` VALUES (157, 155, 'customer/contact/contact_del', '删除', '联系人', 'customer', '', 2, 0, 1, 1656143065, 0);
 
-INSERT INTO `oa_admin_rule` VALUES (156, 0, '', '合同协议', '合同协议', 'contract', 'icon-hetongyidong', 1, 10, 1, 1656143065, 0);
-INSERT INTO `oa_admin_rule` VALUES (157, 156, 'contract/cate/conf', '权限配置', '合同权限配置', 'contract', '', 1, 0, 1, 0, 0);
-INSERT INTO `oa_admin_rule` VALUES (158, 156, 'contract/cate/cate', '合同类别', '合同类别', 'contract', '', 1, 0, 1, 0, 0);
-INSERT INTO `oa_admin_rule` VALUES (159, 158, 'contract/cate/cate_add', '新建/编辑', '合同类别', 'contract', '', 2, 0, 1, 0, 0);
-INSERT INTO `oa_admin_rule` VALUES (160, 158, 'contract/cate/cate_check', '设置', '合同类别', 'contract', '', 2,0, 1, 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (158, 0, '', '合同协议', '合同协议', 'contract', 'icon-hetongyidong', 1, 10, 1, 1656143065, 0);
+INSERT INTO `oa_admin_rule` VALUES (159, 158, 'contract/cate/conf', '权限配置', '合同权限配置', 'contract', '', 1, 0, 1, 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (160, 158, 'contract/cate/cate', '合同类别', '合同类别', 'contract', '', 1, 0, 1, 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (161, 160, 'contract/cate/cate_add', '新建/编辑', '合同类别', 'contract', '', 2, 0, 1, 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (162, 160, 'contract/cate/cate_check', '设置', '合同类别', 'contract', '', 2,0, 1, 0, 0);
 
-INSERT INTO `oa_admin_rule` VALUES (161, 156, 'contract/index/index', '合同列表', '合同列表', 'contract', '', 1, 0, 1, 1656143065, 0);
-INSERT INTO `oa_admin_rule` VALUES (162, 161, 'contract/index/add', '新建/编辑', '合同', 'contract', '', 2, 0, 1, 1656143065, 0);
-INSERT INTO `oa_admin_rule` VALUES (163, 161, 'contract/index/view', '查看', '合同', 'contract', '', 2, 0, 1, 1656143065, 0);
-INSERT INTO `oa_admin_rule` VALUES (164, 161, 'contract/index/delete', '删除', '合同', 'contract', '', 2, 0, 1, 1656143065, 0);
-INSERT INTO `oa_admin_rule` VALUES (165, 156, 'contract/index/archive', '合同归档', '合同归档', 'contract', '', 1, 0, 1, 1656143065, 0);
+INSERT INTO `oa_admin_rule` VALUES (163, 158, 'contract/index/index', '合同列表', '合同列表', 'contract', '', 1, 0, 1, 1656143065, 0);
+INSERT INTO `oa_admin_rule` VALUES (164, 163, 'contract/index/add', '新建/编辑', '合同', 'contract', '', 2, 0, 1, 1656143065, 0);
+INSERT INTO `oa_admin_rule` VALUES (165, 163, 'contract/index/view', '查看', '合同', 'contract', '', 2, 0, 1, 1656143065, 0);
+INSERT INTO `oa_admin_rule` VALUES (166, 163, 'contract/index/delete', '删除', '合同', 'contract', '', 2, 0, 1, 1656143065, 0);
+INSERT INTO `oa_admin_rule` VALUES (167, 158, 'contract/index/archive', '合同归档', '合同归档', 'contract', '', 1, 0, 1, 1656143065, 0);
 
-INSERT INTO `oa_admin_rule` VALUES (166, 0, '', '项目管理', '项目管理', 'project', 'icon-xiangmuguanli', 1, 11, 1, 1656142368, 0);
-INSERT INTO `oa_admin_rule` VALUES (167, 166, 'project/index/conf', '权限配置', '项目权限配置', 'project', '', 1, 0, 1, 0, 0);
-INSERT INTO `oa_admin_rule` VALUES (168, 166, 'project/index/index', '项目列表', '项目', 'project', '', 1, 0, 1, 1656142368, 0);
-INSERT INTO `oa_admin_rule` VALUES (169, 168, 'project/index/add', '新建', '项目', 'project', '', 2, 0, 1, 1656142368, 0);
-INSERT INTO `oa_admin_rule` VALUES (170, 168, 'project/index/edit', '编辑', '项目', 'project', '', 2, 0, 1, 1656142368, 0);
-INSERT INTO `oa_admin_rule` VALUES (171, 168, 'project/index/view', '查看', '项目', 'project', '', 2, 0, 1, 1656142368, 0);
-INSERT INTO `oa_admin_rule` VALUES (172, 168, 'project/index/delete', '删除', '项目', 'project', '', 2, 0, 1, 1656142368, 0);
+INSERT INTO `oa_admin_rule` VALUES (168, 0, '', '项目管理', '项目管理', 'project', 'icon-xiangmuguanli', 1, 11, 1, 1656142368, 0);
+INSERT INTO `oa_admin_rule` VALUES (169, 168, 'project/index/conf', '权限配置', '项目权限配置', 'project', '', 1, 0, 1, 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (170, 168, 'project/index/index', '项目列表', '项目', 'project', '', 1, 0, 1, 1656142368, 0);
+INSERT INTO `oa_admin_rule` VALUES (171, 170, 'project/index/add', '新建', '项目', 'project', '', 2, 0, 1, 1656142368, 0);
+INSERT INTO `oa_admin_rule` VALUES (172, 170, 'project/index/edit', '编辑', '项目', 'project', '', 2, 0, 1, 1656142368, 0);
+INSERT INTO `oa_admin_rule` VALUES (173, 170, 'project/index/view', '查看', '项目', 'project', '', 2, 0, 1, 1656142368, 0);
+INSERT INTO `oa_admin_rule` VALUES (174, 170, 'project/index/delete', '删除', '项目', 'project', '', 2, 0, 1, 1656142368, 0);
 
-INSERT INTO `oa_admin_rule` VALUES (173, 166, 'project/task/index', '任务列表', '任务', 'project', '', 1, 0, 1, 1656142368, 0);
-INSERT INTO `oa_admin_rule` VALUES (174, 173, 'project/task/add', '新建', '任务', 'project', '', 2, 0, 1, 1656142368, 0);
-INSERT INTO `oa_admin_rule` VALUES (175, 173, 'project/task/edit', '编辑', '任务', 'project', '', 2, 0, 1, 1656142368, 0);
-INSERT INTO `oa_admin_rule` VALUES (176, 173, 'project/task/view', '查看', '任务', 'project', '', 2, 0, 1, 1656142368, 0);
-INSERT INTO `oa_admin_rule` VALUES (177, 173, 'project/task/delete', '删除', '任务', 'project', '', 2, 0, 1, 1656142368, 0);
+INSERT INTO `oa_admin_rule` VALUES (175, 168, 'project/task/index', '任务列表', '任务', 'project', '', 1, 0, 1, 1656142368, 0);
+INSERT INTO `oa_admin_rule` VALUES (176, 175, 'project/task/add', '新建', '任务', 'project', '', 2, 0, 1, 1656142368, 0);
+INSERT INTO `oa_admin_rule` VALUES (177, 175, 'project/task/edit', '编辑', '任务', 'project', '', 2, 0, 1, 1656142368, 0);
+INSERT INTO `oa_admin_rule` VALUES (178, 175, 'project/task/view', '查看', '任务', 'project', '', 2, 0, 1, 1656142368, 0);
+INSERT INTO `oa_admin_rule` VALUES (179, 175, 'project/task/delete', '删除', '任务', 'project', '', 2, 0, 1, 1656142368, 0);
 
-INSERT INTO `oa_admin_rule` VALUES (178, 166, 'project/task/task_time', '任务工时', '工时', 'project', '', 1, 0, 1, 1656142368, 0);
+INSERT INTO `oa_admin_rule` VALUES (180, 168, 'project/task/task_time', '任务工时', '工时', 'project', '', 1, 0, 1, 1656142368, 0);
 
-INSERT INTO `oa_admin_rule` VALUES (179, 166, 'project/document/index', '文档列表', '文档', 'project', '', 1, 0, 1, 1656142368, 0);
-INSERT INTO `oa_admin_rule` VALUES (180, 179, 'project/document/add', '新建/编辑', '文档', 'project', '', 2, 0, 1, 1656142368, 0);
-INSERT INTO `oa_admin_rule` VALUES (181, 179, 'project/document/view', '查看', '文档', 'project', '', 2, 0, 1, 1656142368, 0);
-INSERT INTO `oa_admin_rule` VALUES (182, 179, 'project/document/delete', '删除', '文档', 'project', '', 2, 0, 1, 1656142368, 0);
+INSERT INTO `oa_admin_rule` VALUES (181, 168, 'project/document/index', '文档列表', '文档', 'project', '', 1, 0, 1, 1656142368, 0);
+INSERT INTO `oa_admin_rule` VALUES (182, 181, 'project/document/add', '新建/编辑', '文档', 'project', '', 2, 0, 1, 1656142368, 0);
+INSERT INTO `oa_admin_rule` VALUES (183, 181, 'project/document/view', '查看', '文档', 'project', '', 2, 0, 1, 1656142368, 0);
+INSERT INTO `oa_admin_rule` VALUES (184, 181, 'project/document/delete', '删除', '文档', 'project', '', 2, 0, 1, 1656142368, 0);
 
-INSERT INTO `oa_admin_rule` VALUES (183, 0, '', '知识文章', '知识文章', 'article', 'icon-kecheng', 1, 12, 1, 1656143065, 0);
-INSERT INTO `oa_admin_rule` VALUES (184, 183, 'article/cate/cate', '知识类型', '知识类型', 'article', '', 1, 0, 1, 1656143065, 0);
-INSERT INTO `oa_admin_rule` VALUES (185, 184, 'article/cate/cate_add', '新建/编辑', '知识类型', 'article', '', 2, 0, 1, 1656143065, 0);
-INSERT INTO `oa_admin_rule` VALUES (186, 184, 'article/cate/cate_delete', '删除', '知识类型', 'article', '', 2, 0, 1, 1656143065, 0);
+INSERT INTO `oa_admin_rule` VALUES (185, 0, '', '知识文章', '知识文章', 'article', 'icon-kecheng', 1, 12, 1, 1656143065, 0);
+INSERT INTO `oa_admin_rule` VALUES (186, 185, 'article/cate/cate', '知识类型', '知识类型', 'article', '', 1, 0, 1, 1656143065, 0);
+INSERT INTO `oa_admin_rule` VALUES (187, 186, 'article/cate/cate_add', '新建/编辑', '知识类型', 'article', '', 2, 0, 1, 1656143065, 0);
+INSERT INTO `oa_admin_rule` VALUES (188, 186, 'article/cate/cate_delete', '删除', '知识类型', 'article', '', 2, 0, 1, 1656143065, 0);
 
-INSERT INTO `oa_admin_rule` VALUES (187, 183, 'article/index/index', '共享知识', '知识文章', 'article', '', 1, 0, 1, 1656143065, 0);
-INSERT INTO `oa_admin_rule` VALUES (188, 183, 'article/index/list', '个人知识', '知识文章', 'article', '', 1, 0, 1, 1656143065, 0);
-INSERT INTO `oa_admin_rule` VALUES (189, 188, 'article/index/add', '新建/编辑', '知识文章', 'article', '', 2, 0, 1, 1656143065, 0);
-INSERT INTO `oa_admin_rule` VALUES (190, 188, 'article/index/view', '查看', '知识文章', 'article', '', 2, 0, 1, 1656143065, 0);
-INSERT INTO `oa_admin_rule` VALUES (191, 188, 'article/index/delete', '删除', '知识文章', 'article', '', 2, 0, 1, 1656143065, 0);
+INSERT INTO `oa_admin_rule` VALUES (189, 185, 'article/index/index', '共享知识', '知识文章', 'article', '', 1, 0, 1, 1656143065, 0);
+INSERT INTO `oa_admin_rule` VALUES (190, 185, 'article/index/list', '个人知识', '知识文章', 'article', '', 1, 0, 1, 1656143065, 0);
+INSERT INTO `oa_admin_rule` VALUES (191, 190, 'article/index/add', '新建/编辑', '知识文章', 'article', '', 2, 0, 1, 1656143065, 0);
+INSERT INTO `oa_admin_rule` VALUES (192, 190, 'article/index/view', '查看', '知识文章', 'article', '', 2, 0, 1, 1656143065, 0);
+INSERT INTO `oa_admin_rule` VALUES (193, 190, 'article/index/delete', '删除', '知识文章', 'article', '', 2, 0, 1, 1656143065, 0);
 
 -- ----------------------------
 -- Table structure for oa_admin_group
@@ -385,9 +387,9 @@ CREATE TABLE `oa_admin_group`  (
 -- ----------------------------
 -- Records of cms_admin_group
 -- ----------------------------
-INSERT INTO `oa_admin_group` VALUES (1, '超级员工权限', 1, '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170,,171,172,173,174,175,176,177,178,179,180,181,182,183,184,185,186,187,188,189,,190,191', '超级员工权限，拥有系统的最高权限，不可修改。', 0, 0);
-INSERT INTO `oa_admin_group` VALUES (2, '总经理权限', 1, '2,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,3,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,4,77,78,79,80,81,82,83,84,85,5,86,87,88,89,90,91,92,6,93,96,97,7,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,8,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,176,177,178,179,180,181,182,183,184,185,186,187,188,189,190,191', '总经理的管理权限，可根据公司的具体需求调整。', 0, 0);
-INSERT INTO `oa_admin_group` VALUES (3, '普通员工权限', 1, '5,89,90,91,92,6,93,96,97,7,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,8,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,149,150,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,176,177,178,179,180,181,182,183,184,185,186,187,188,189,190,191', '普通员工管理权限，可根据公司的具体需求调整。', 0, 0);
+INSERT INTO `oa_admin_group` VALUES (1, '超级员工权限', 1, '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170,,171,172,173,174,175,176,177,178,179,180,181,182,183,184,185,186,187,188,189,190,191,192,193', '超级员工权限，拥有系统的最高权限，不可修改。', 0, 0);
+INSERT INTO `oa_admin_group` VALUES (2, '总经理权限', 1, '2,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,3,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,4,77,78,79,80,81,82,83,84,85,5,86,87,88,89,90,91,92,6,93,96,97,7,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,8,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,176,177,178,179,180,181,182,183,184,185,186,187,188,189,190,191,192,193', '总经理的管理权限，可根据公司的具体需求调整。', 0, 0);
+INSERT INTO `oa_admin_group` VALUES (3, '普通员工权限', 1, '5,89,90,91,92,6,93,96,97,7,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,8,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,137,138,139,140,141,142,143,144,145,146,147,149,150,151,152,153,154,155,156,157,158,160,161,162,163,164,165,166,167,168,170,171,172,173,174,175,176,177,178,179,180,181,182,183,184,185,189,190,191,192,193', '普通员工管理权限，可根据公司的具体需求调整。', 0, 0);
 
 -- ----------------------------
 -- Table structure for oa_data_auth
