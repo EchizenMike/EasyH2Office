@@ -3,7 +3,7 @@
 {block name="body"}
 <div class="p-3">
 	<div class="gg-form-bar border-t border-x">
-		<button class="layui-btn layui-btn-normal layui-btn-sm add-menu">+ 添加部门</button>
+		<button class="layui-btn layui-btn-sm add-menu">+ 添加部门</button>
 	</div>
 	<div>
 		<table class="layui-hide" id="treeTable" lay-filter="treeTable"></table>
@@ -36,7 +36,7 @@
 				, { field: 'leader', title: '部门负责人',width: 120, align: 'center'}
 				, { field: 'phone', title: '部门电话',width: 160,}
 				, { width:180, title: '操作', align: 'center', templet: function (d) {
-						var html = '<span class="layui-btn-group"><button class="layui-btn layui-btn-normal layui-btn-xs" lay-event="add">添加下级部门</button><button class="layui-btn layui-btn-xs" lay-event="edit">编辑</button><button class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</button></span>';
+						var html = '<span class="layui-btn-group"><button class="layui-btn layui-btn-xs" lay-event="add">添加下级部门</button><button class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit">编辑</button><button class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</button></span>';
 						return html;
 					}
 				}

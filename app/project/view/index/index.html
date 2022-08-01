@@ -2,11 +2,13 @@
 <!-- 主体 -->
 {block name="body"}
 <div class="p-3">
-	<div class="gg-form-bar border-t border-x">
-		<button class="layui-btn layui-btn-sm add-project">+ 新建项目</button>
-	</div>
 	<table class="layui-hide" id="projectList" lay-filter="project"></table>
 </div>
+<script type="text/html" id="toolbarDemo">
+  <div class="layui-btn-container">
+  	<button class="layui-btn layui-btn-sm" lay-event="add">+ 新建项目</button>
+  </div>
+</script>
 {/block}
 <!-- /主体 -->
 
@@ -18,8 +20,9 @@
 		var table = layui.table, form = layui.form, tool = layui.tool;
 		layui.pageTable = table.render({
 			elem: '#projectList',
+			toolbar: '#toolbarDemo',
 			title: '项目列表',
-			cellMinWidth: 300,
+			cellMinWidth: 220,
 			page: true, //开启分页
 			limit: 20,
 			url: "/project/index/index", //数据接口
@@ -41,9 +44,10 @@
 						return html;
 					}
 				}
-				, { field: 'director_name', title: '负责人', align: 'center', width: 80, rowspan: 2 }
 				, { field: 'plan_time', title: '项目周期', align: 'center', width: 190, rowspan: 2 }
+				,{field: 'step',title: '当前阶段及负责人',align: 'center',width: 140,rowspan: 2 }
 				, { align: 'center', title: '关联任务', colspan: 3 }
+				, { field: 'director_name', fixed: 'right', title: '负责人', align: 'center', width: 80, rowspan: 2 }
 			], [
 				{ field: 'tasks_unfinish', align: 'center', style: 'color: #91CC75;', width: 72, 'title': '进行中' }
 				, { field: 'tasks_finish', align: 'center', style: 'color: #FAC858;', width: 70, 'title': '已完成' }
@@ -51,8 +55,15 @@
 			]]
 		});
 
-		$('.gg-form-bar').on('click','.add-project', function () {
-			tool.side('/project/index/add');
+
+		//触发事件
+		table.on('toolbar(project)', function(obj){
+		  var checkStatus = table.checkStatus(obj.config.id);
+		  switch(obj.event){
+			case 'add':
+			  tool.side('/project/index/add');
+			break;
+		  };
 		});
 	}		
 </script>

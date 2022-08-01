@@ -15,7 +15,7 @@
 </script>
 <script type="text/html" id="toolbarDemo">
   <div class="layui-btn-container">
-  	<button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="add">+ 添加关键字</button>
+  	<button class="layui-btn layui-btn-sm" lay-event="add">+ 添加关键字</button>
   </div>
 </script>
 {/block}
@@ -61,7 +61,7 @@
 					title: '操作',
 					align: 'center',
 					templet: function (d) {
-						var html = '<div class="layui-btn-group"><button class="layui-btn layui-btn-xs" lay-event="edit">编辑</button><button class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</button></div>';
+						var html = '<div class="layui-btn-group"><button class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit">编辑</button><button class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</button></div>';
 						return html;
 					}
 				}]

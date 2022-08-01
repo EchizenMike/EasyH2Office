@@ -11,6 +11,7 @@ namespace app\project\controller;
 
 use app\base\BaseController;
 use app\project\model\ProjectTask as TaskList;
+use app\oa\model\Schedule as ScheduleList;
 use app\project\validate\TaskCheck;
 use think\exception\ValidateException;
 use think\facade\Db;
@@ -164,6 +165,65 @@ class Task extends BaseController
             }
         } else {
             return to_assign(1, "错误的请求");
+        }
+    }
+	
+	public function task_time() {
+        if (request()->isAjax()) {
+            $param = get_params();
+            //按时间检索
+            $start_time = isset($param['start_time']) ? strtotime($param['start_time']) : 0;
+            $end_time = isset($param['end_time']) ? strtotime($param['end_time']) : 0;
+            $tid = isset($param['tid']) ? $param['tid'] : 0;
+            $where = [];
+			if ($tid>0) {
+                $task_ids = Db::name('ProjectTask')->where(['delete_time' => 0, 'project_id' => $param['tid']])->column('id');
+				$where[] = ['a.tid', 'in', $task_ids];
+            }
+			else{
+				if (!empty($param['uid'])) {
+					$where[] = ['a.admin_id', '=', $param['uid']];
+				} else {
+					$where[] = ['a.admin_id', '=', $this->uid];
+				}
+				if (!empty($param['keywords'])) {
+					$where[] = ['a.title', 'like', '%' . trim($param['keywords']) . '%'];
+				}
+				if ($start_time > 0 && $end_time > 0) {
+					$where[] = ['a.start_time', 'between', [$start_time, $end_time]];
+				}
+			}
+            $where[] = ['a.delete_time', '=', 0];
+            $rows = empty($param['limit']) ? get_config('app . page_size') : $param['limit'];
+            $schedule = ScheduleList::where($where)
+                ->field('a.*,u.name,d.title as department,w.title as work_cate')
+				->alias('a')
+				->join('Admin u', 'a.admin_id = u.id', 'LEFT')
+				->join('Department d', 'u.did = d.id', 'LEFT')
+				->join('WorkCate w', 'w.id = a.cid', 'LEFT')
+				->order('a.end_time desc')
+                ->paginate($rows, false)
+                ->each(function ($item, $key) {
+					$item->labor_type_string = '案头工作';
+					if($item->labor_type == 2){
+						$item->labor_type_string = '外勤工作';
+					}
+					if($item->tid > 0){
+						$task = Db::name('ProjectTask')->where(['id' => $item->tid])->find();
+						$item->task = $task['title'];
+						$item->project = Db::name('Project')->where(['id' => $task['project_id']])->value('name');
+					}
+					$item->start_time_a = empty($item->start_time) ? '' : date('Y-m-d', $item->start_time);
+					$item->start_time_b = empty($item->start_time) ? '' : date('H:i', $item->start_time);
+					$item->end_time_a = empty($item->end_time) ? '' : date('Y-m-d', $item->end_time);
+					$item->end_time_b = empty($item->end_time) ? '' : date('H:i', $item->end_time);
+                    $item->start_time = empty($item->start_time) ? '' : date('Y-m-d H:i', $item->start_time);
+                    //$item->end_time = empty($item->end_time) ? '': date('Y-m-d H:i', $item->end_time);
+                    $item->end_time = empty($item->end_time) ? '' : date('H:i', $item->end_time);
+                });
+            return table_assign(0, '', $schedule);
+        } else {
+            return view();
         }
     }
 }

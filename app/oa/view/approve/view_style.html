@@ -5,41 +5,7 @@
 .layui-form-item .layui-btn-danger{display:none; margin-top:-8px}
 .layui-form-item:hover .layui-btn-danger{display:inline-block;}
 .select-1,.select-2{display:none;}
-.check-items{overflow-x: auto; padding: 10px 0;}
-.flow-flex-row {box-direction: row;
-	box-orient: horizontal;
-    -webkit-box-orient: horizontal;
-    -ms-flex-direction: row;
-    flex-direction: row;
-}
-.flow-flexbox { width: 100%;text-align: left;
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    display: -webkit-flex;
-    box-align: center;
-    -webkit-box-align: center;
-    -ms-flex-align: center;
-    align-items: center;
-}
-.check-item{width: auto; -ms-flex-negative: 0; flex-shrink: 0;}
-.check-item i{font-size:20px; margin-right:3px; color:#4285f4;}
-.check-item span{color:#999;margin:0 3px;}
-.layui-icon[data-ok]{color:#34a853}
-.layui-icon[data-no]{color:#FF5722;}
-.check-item-status{color:#999; font-size:12px; margin-left:3px;}
 
-.flow-tips{padding:6px 10px;}
-.flow-tips li{padding:5px 0;}
-.flow-tips li i{color:#4285f4;}
-.flow-tips li span{color:#999; font-size:12px; margin-left:4px;}
-
-.flow-record{padding:10px 10px 0;}
-.flow-record .layui-icon {font-size:20px;}
-.flow-record .layui-timeline-item{padding-bottom:10px;}
-.layui-timeline-content ul{font-size:12px;}
-.check-status{color:#999; margin-left:5px;}
-.check-remark{padding:6px; margin-top:6px; margin-bottom:10px; border-radius:4px; background-color:#f5f5f5;}
 .file-card {background: #fff;border: 1px solid #f1f1f1;border-radius: 2px; padding:8px 0; margin:4px 8px 4px 0;
     -webkit-box-align: center;
     -ms-flex-align: center;
@@ -55,4 +21,60 @@
     -webkit-box-orient: vertical;width: calc(100% - 80px);
 }
 .file-card .file-tool .layui-icon{font-size:22px; padding:2px; cursor:pointer;}
+
+.log-timeline{ position: relative; min-height:600px; padding-left: 48px; background-color:#fff;}
+.log-timeline:after {content: ""; position: absolute; top: 0; left: 24px; width: 1px; height: 100%; background: #e3e9ed;}
+.log-timeline dl{padding-bottom: 8px; position: relative;}
+.log-timeline dt{font-size: 16px; line-height: 2.4; color: #323232; font-weight:600}
+.log-timeline dd{font-size: 14px; line-height: 1.6; padding:5px 0}
+.log-timeline .date-second-point{width: 10px; height: 10px; display: block; border-radius: 50%; border: 3px solid #FBBC05; background: #fff; position: absolute; z-index: 99; left:-32px; top:9px}
+.log-timeline .log-thumb{width: 24px; height: 24px; border-radius: 50%; margin-right:4px;}
+.log-timeline .open-a{margin:0 4px;}
+.log-item i{font-weight:800; color:#323232}
+.log-content strong{margin:0 4px; color:#323232}
+
+.check-items{overflow-x: auto; padding: 2px 0;}
+.flow-flex-row {box-direction: row;
+	box-orient: horizontal;
+    -webkit-box-orient: horizontal;
+    -ms-flex-direction: row;
+    flex-direction: row;
+}
+.flow-flexbox { width: 100%;text-align: left;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    display: -webkit-flex;
+    box-align: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+	flex-wrap: wrap;
+}
+
+.check-item{width: auto; -ms-flex-negative: 0; flex-shrink: 0; padding:4px 0}
+.check-item i{ margin-right:3px; color:#646464;}
+.check-item span{color:#999;margin:0 3px;}
+.check-item .layui-icon {font-size:20px;}
+.check-item .layui-icon.layui-icon-right{font-size:12px;}
+.layui-icon[data-ok]{color:#34a853}
+.layui-icon[data-no]{color:#FF5722;}
+.check-item-status{color:#999; font-size:12px; margin-left:3px;}
+
+.flow-tips{padding:6px 10px;}
+.flow-tips li{padding:5px 0;}
+.flow-tips li i{color:#4285f4;}
+.flow-tips li span{color:#999; font-size:12px; margin-left:4px;}
+
+.flow-record{padding:4px 4px 0;}
+.flow-record .layui-timeline-item{text-decoration:line-through; color:#acacac; padding-bottom:10px;}
+.flow-record .layui-timeline-item.delete-0{text-decoration:none; color:#323232;}
+.layui-timeline-content ul{font-size:12px;}
+.check-status{color:#999; margin-left:5px;}
+.check-remark{padding:6px; margin-top:6px; margin-bottom:10px; border-radius:4px; background-color:#f5f5f5;}
+.check-record{line-height:1.5; padding:4px 0}
+.flow-this{font-weight:800;}
+.flow-this i{color:#4285f4}
+.layui-table-min th{font-size:13px; text-align:center; background-color:#f8f8f8;}
+.layui-table-min td{font-size:13px; padding:6px;text-align:center;}
 </style>

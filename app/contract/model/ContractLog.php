@@ -15,7 +15,7 @@ class ContractLog extends Model
 {
     public static $Sourse = [
 		'type' => ['', '未设置', '普通合同', '框架合同', '补充协议', '其他合同'],
-		'status' => ['', '已录入', '待审核', '已审核', '已中止', '已作废'],
+		'check_status' => ['待审核', '审核中', '审核通过', '审核拒绝', '已撤销', '已中止', '已作废'],
 		'action' => [			
 			'add' => '添加',
 			'edit' => '修改',
@@ -42,6 +42,7 @@ class ContractLog extends Model
 			'cost' => '金额',
 			'is_tax' => '是否含税',
 			'tax' => '税点',
+			'check_status' => '状态',
 			'status' => '状态',
 			'archive_status' => '归档状态',
 			'file' => '合同附件',

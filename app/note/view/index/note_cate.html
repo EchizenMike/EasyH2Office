@@ -3,7 +3,7 @@
 {block name="body"}
 <div class="p-3">
 	<div class="gg-form-bar border-t border-x">
-		<button class="layui-btn layui-btn-normal layui-btn-sm add-menu">+ 添加分类</button>
+		<button class="layui-btn layui-btn-sm add-menu">+ 添加分类</button>
     </div>
     <div>
       <table class="layui-hide" id="treeTable" lay-filter="treeTable"></table>
@@ -37,7 +37,7 @@
 				,{field:'title', title: '分类名称'}
 				,{field:'pid', title: '父级ID', width:80, align:'center'}
 				,{width:160,title: '操作', align:'center',templet: function(d){
-					var html = '<span class="layui-btn-group"><button class="layui-btn layui-btn-normal layui-btn-xs" lay-event="add">添加子分类</button><button class="layui-btn layui-btn-xs" lay-event="edit">编辑</button><button class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</button></span>';
+					var html = '<span class="layui-btn-group"><button class="layui-btn layui-btn-xs" lay-event="add">添加子分类</button><button class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit">编辑</button><button class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</button></span>';
 					return html;
 				  }
 				}

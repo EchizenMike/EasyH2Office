@@ -15,58 +15,7 @@ use think\facade\Db;
 use think\facade\View;
 
 class Index extends BaseController
-{
-    //获取消息列表
-    public function getList($map = [], $param = [],$uid)
-    {
-        $rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
-        //垃圾箱列表特殊处理
-        if ($param['status'] == 0) {
-            $where = [['from_uid', '=', $uid], ['to_uid', '=', $uid]];
-            $mail = MessageList::withoutField('content')
-				->where($map)
-                ->where(function ($query) use ($where) {$query->whereOr($where);})
-                ->order('create_time desc')
-                ->paginate($rows, false, ['query' => $param])
-                ->each(function ($item, $key) {
-					if($item->template==0){
-						$item->msg_type = '个人信息';
-						$item->from_name = Db::name('Admin')->where(['id' => $item->from_uid])->value('name');
-					}
-					else{
-						$item->msg_type = '系统信息';
-						$item->from_name = '系统';
-					}
-                    $item->send_time = empty($item->send_time) ? '-' : date('Y-m-d H:i:s', $item->send_time);
-                    $item->to_name = Db::name('Admin')->where(['id' => $item->to_uid])->value('name');
-                    $item->type_title = MessageList::$Type[(int)$item->type];
-                    $item->delete_source_title = MessageList::$Source[(int)$item->delete_source];
-                    $item->files = Db::name('MessageFileInterfix')->where(['mid' => $item->id])->count();
-                });
-            return $mail;
-        } else {
-            $mail = MessageList::withoutField('content')
-				->where($map)
-                ->order('create_time desc')
-                ->paginate($rows, false, ['query' => $param])
-                ->each(function ($item, $key) {
-					if($item->template==0){
-						$item->msg_type = '个人信息';
-						$item->from_name = Db::name('Admin')->where(['id' => $item->from_uid])->value('name');
-					}
-					else{
-						$item->msg_type = '系统信息';
-						$item->from_name = '系统';
-					}
-                    $item->send_time = empty($item->send_time) ? '-' : date('Y-m-d H:i:s', $item->send_time);
-                    $item->to_name = Db::name('Admin')->where(['id' => $item->to_uid])->value('name');
-                    $item->type_title = MessageList::$Type[(int)$item->type];
-                    $item->files = Db::name('MessageFileInterfix')->where(['mid' => $item->id])->count();
-                });
-            return $mail;
-        }
-    }
-	
+{	
     //收件箱
     public function inbox()
     {
@@ -99,9 +48,22 @@ class Index extends BaseController
             if ($start_time > 0 && $end_time > 0) {
                 $map[] = ['send_time', 'between', "$start_time,$end_time"];
             }
-            $list = $this->getList($map, $param, $this->uid);
+			$model = new MessageList();
+            $list = $model->get_list($param,$map,$this->uid);
             return table_assign(0, '', $list);
         } else {
+			$where1 = [['from_uid', '=', $this->uid]];
+			$where2 = [['to_uid', '=', $this->uid]];
+			$count = [
+				'inbox' => MessageList::where([['to_uid', '=', $this->uid],['status', '=', 1]])->count(),
+				'sendbox' => MessageList::where([['from_uid', '=', $this->uid],['to_uid', '=', 0],['is_draft', '=', 1],['status', '=', 1]])->count(),
+				'draft' => MessageList::where([['from_uid', '=', $this->uid],['is_draft', '=', 2],['status', '=', 1]])->count(),
+				'rubbish' => MessageList::where([['status', '=', 0]])->where(function($query) use ($where1,$where2) {
+								$query->where($where1)->whereor($where2);
+							})->count()
+			];
+			View::assign('count', $count);
+			View::assign('action', $this->action);
             return view();
         }
     }
@@ -125,9 +87,22 @@ class Index extends BaseController
             if ($start_time > 0 && $end_time > 0) {
                 $map[] = ['send_time', 'between', "$start_time,$end_time"];
             }
-            $list = $this->getList($map, $param, $this->uid);
+            $model = new MessageList();
+            $list = $model->get_list($param,$map,$this->uid);
             return table_assign(0, '', $list);
         } else {
+			$where1 = [['from_uid', '=', $this->uid]];
+			$where2 = [['to_uid', '=', $this->uid]];
+			$count = [
+				'inbox' => MessageList::where([['to_uid', '=', $this->uid],['status', '=', 1]])->count(),
+				'sendbox' => MessageList::where([['from_uid', '=', $this->uid],['to_uid', '=', 0],['is_draft', '=', 1],['status', '=', 1]])->count(),
+				'draft' => MessageList::where([['from_uid', '=', $this->uid],['is_draft', '=', 2],['status', '=', 1]])->count(),
+				'rubbish' => MessageList::where([['status', '=', 0]])->where(function($query) use ($where1,$where2) {
+								$query->where($where1)->whereor($where2);
+							})->count()
+			];
+			View::assign('count', $count);
+			View::assign('action', $this->action);
             return view();
         }
     }
@@ -151,9 +126,22 @@ class Index extends BaseController
             if ($start_time > 0 && $end_time > 0) {
                 $map[] = ['send_time', 'between', "$start_time,$end_time"];
             }
-            $list = $this->getList($map, $param, $this->uid);
+            $model = new MessageList();
+            $list = $model->get_list($param,$map,$this->uid);
             return table_assign(0, '', $list);
         } else {
+			$where1 = [['from_uid', '=', $this->uid]];
+			$where2 = [['to_uid', '=', $this->uid]];
+			$count = [
+				'inbox' => MessageList::where([['to_uid', '=', $this->uid],['status', '=', 1]])->count(),
+				'sendbox' => MessageList::where([['from_uid', '=', $this->uid],['to_uid', '=', 0],['is_draft', '=', 1],['status', '=', 1]])->count(),
+				'draft' => MessageList::where([['from_uid', '=', $this->uid],['is_draft', '=', 2],['status', '=', 1]])->count(),
+				'rubbish' => MessageList::where([['status', '=', 0]])->where(function($query) use ($where1,$where2) {
+								$query->where($where1)->whereor($where2);
+							})->count()
+			];
+			View::assign('count', $count);
+			View::assign('action', $this->action);
             return view();
         }
     }
@@ -175,9 +163,22 @@ class Index extends BaseController
             if ($start_time > 0 && $end_time > 0) {
                 $map[] = ['send_time', 'between', "$start_time,$end_time"];
             }
-            $list = $this->getList($map, $param, $this->uid);
+            $model = new MessageList();
+            $list = $model->get_list($param,$map,$this->uid);
             return table_assign(0, '', $list);
         } else {
+			$where1 = [['from_uid', '=', $this->uid]];
+			$where2 = [['to_uid', '=', $this->uid]];
+			$count = [
+				'inbox' => MessageList::where([['to_uid', '=', $this->uid],['status', '=', 1]])->count(),
+				'sendbox' => MessageList::where([['from_uid', '=', $this->uid],['to_uid', '=', 0],['is_draft', '=', 1],['status', '=', 1]])->count(),
+				'draft' => MessageList::where([['from_uid', '=', $this->uid],['is_draft', '=', 2],['status', '=', 1]])->count(),
+				'rubbish' => MessageList::where([['status', '=', 0]])->where(function($query) use ($where1,$where2) {
+								$query->where($where1)->whereor($where2);
+							})->count()
+			];
+			View::assign('count', $count);
+			View::assign('action', $this->action);
             return view();
         }
     }
@@ -188,10 +189,14 @@ class Index extends BaseController
         $id = empty(get_params('id')) ? 0 : get_params('id');
         $fid = 0;
         if ($id > 0) {
-            $detail = Db::name('Message')->where(['id' => $id, 'from_uid' => $this->uid])->find();
+            $model = new MessageList();
+			$detail = $model->detail($id);
             if (empty($detail)) {
-				echo '<div style="text-align:center;color:red;margin-top:20%;">该信息不存在</div>';exit;
+				throw new \think\exception\HttpException(406, '找不到记录');
             }
+			if ($detail['from_uid'] != $this->uid) {
+				throw new \think\exception\HttpException(406, '找不到记录');
+			}
             $fid = $detail['fid'];
             $person_name = [];
             if ($detail['type'] == 1) { //人员
@@ -207,29 +212,6 @@ class Index extends BaseController
                 $person_name = array_column($positions, 'title');
             }
             $detail['person_name'] = implode(",", $person_name);
-            $file_array = Db::name('MessageFileInterfix')
-                ->field('mf.id,mf.mid,mf.file_id,f.name,f.filesize,f.filepath')
-                ->alias('mf')
-                ->join('file f', 'mf.file_id = f.id', 'LEFT')
-                ->order('mf.create_time desc')
-                ->where(array('mf.mid' => $id))
-                ->select()->toArray();
-            $interfix_ids = array_column($file_array, 'file_id');
-            $detail['file_ids'] = implode(",", $interfix_ids);
-
-            //引用消息的附件
-            if($fid>0){
-                $detail['from_content'] = Db::name('Message')->where(['id' => $fid])->value('content');
-                $from_file_array = Db::name('MessageFileInterfix')
-                ->field('mf.id,mf.mid,mf.file_id,f.name,f.filesize,f.filepath')
-                ->alias('mf')
-                ->join('file f', 'mf.file_id = f.id', 'LEFT')
-                ->order('mf.create_time desc')
-                ->where(array('mf.mid' => $fid))
-                ->select()->toArray();
-                $detail['from_file_array'] = $from_file_array;
-            }
-            View::assign('file_array', $file_array);
             View::assign('detail', $detail);
         }
         View::assign('id', $id);
@@ -242,25 +224,16 @@ class Index extends BaseController
     {
         $id = empty(get_params('id')) ? 0 : get_params('id');
         $type = empty(get_params('type')) ? 0 : get_params('type');
-        $detail = Db::name('Message')->where(['id' => $id, 'template' => 0])->find();
+        $model = new MessageList();
+        $detail = $model->detail($id);
         if (empty($detail)) {
-            echo '<div style="text-align:center;color:red;margin-top:20%;">该信息不存在</div>';exit;
+			throw new \think\exception\HttpException(406, '找不到记录');
         }
         if ($detail['to_uid'] != $this->uid && $detail['from_uid'] != $this->uid) {
-            echo '<div style="text-align:center;color:red;margin-top:20%;">该信息不存在</div>';exit;
+            throw new \think\exception\HttpException(406, '找不到记录');
         }
         $sender = get_admin($detail['from_uid']);
         $detail['person_name'] = $sender['name'];
-        $file_array = Db::name('MessageFileInterfix')
-            ->field('mf.id,mf.mid,mf.file_id,f.name,f.filesize,f.filepath')
-            ->alias('mf')
-            ->join('file f', 'mf.file_id = f.id', 'LEFT')
-            ->order('mf.create_time desc')
-            ->where(array('mf.mid' => $id))
-            ->select()->toArray();
-        $interfix_ids = array_column($file_array, 'file_id');
-        $detail['file_ids'] = implode(",", $interfix_ids);
-        View::assign('file_array', $file_array);
         View::assign('detail', $detail);
         View::assign('fid', $id);
         View::assign('type', $type);
@@ -272,12 +245,13 @@ class Index extends BaseController
     {
         $param = get_params();
         $id = $param['id'];
-        $detail = Db::name('Message')->where(['id' => $id])->find();
+		$model = new MessageList();
+        $detail = $model->detail($id);
         if (empty($detail)) {
-            echo '<div style="text-align:center;color:red;margin-top:20%;">该信息不存在</div>';exit;
+            throw new \think\exception\HttpException(406, '找不到记录');
         }
         if ($detail['to_uid'] != $this->uid && $detail['from_uid'] != $this->uid) {
-            echo '<div style="text-align:center;color:red;margin-top:20%;">该信息不存在</div>';exit;
+            throw new \think\exception\HttpException(406, '找不到记录');
         }
         Db::name('Message')->where(['id' => $id])->update(['read_time' => time()]);
         if($detail['from_uid']==0){
@@ -287,37 +261,20 @@ class Index extends BaseController
             $sender = get_admin($detail['from_uid']);
             $detail['person_name'] = $sender['name'];
         }
-        //引用消息的附件
-        if($detail['fid']>0){
-            $detail['from_content'] = Db::name('Message')->where(['id' => $detail['fid']])->value('content');
-            $from_file_array = Db::name('MessageFileInterfix')
-            ->field('mf.id,mf.mid,mf.file_id,f.name,f.filesize,f.filepath')
-            ->alias('mf')
-            ->join('file f', 'mf.file_id = f.id', 'LEFT')
-            ->order('mf.create_time desc')
-            ->where(array('mf.mid' => $detail['fid']))
-            ->select()->toArray();
-            $detail['from_file_array'] = $from_file_array;
-        }
-
-        //当前消息的附件
-        $file_array = Db::name('MessageFileInterfix')
-            ->field('mf.id,mf.mid,mf.file_id,f.name,f.filesize,f.filepath')
-            ->alias('mf')
-            ->join('file f', 'mf.file_id = f.id', 'LEFT')
-            ->order('mf.create_time desc')
-            ->where(array('mf.mid' => $detail['id']))
-            ->select()->toArray();
-        $detail['file_array'] = $file_array;
-        $detail['send_time'] = date('Y-m-d H:i:s',$detail['send_time']);    
+		if($detail['send_time']>0){
+			$detail['send_time'] = date('Y-m-d H:i:s',$detail['send_time']);    
+		}
+		else{
+			$detail['send_time'] = '-';
+		}        
         //发送人查询
         $user_names=[];
         //已读回执
         $read_user_names = [];
 		
         if($detail['from_uid'] == $this->uid){
-            $mails= Db::name('Message')->where(['pid' => $id])->select()->toArray();
-            $read_mails= Db::name('Message')->where([['pid','=',$id],['read_time','>',2]])->select()->toArray();
+            $mails= MessageList::where(['pid' => $id])->select()->toArray();
+            $read_mails= MessageList::where([['pid','=',$id],['read_time','>',2]])->select()->toArray();
             $read_user_ids = array_column($read_mails, 'to_uid');
             $read_users = Db::name('Admin')->where('status', 1)->where('id', 'in', $read_user_ids)->select()->toArray();
             $read_user_names = array_column($read_users, 'name');
@@ -330,7 +287,6 @@ class Index extends BaseController
 			$users = Db::name('Admin')->where('id', $detail['to_uid'])->value('name');
 			array_push($user_names,$users);
 		}
-
         $detail['users'] = implode(",", $user_names);
         $detail['read_users'] = implode(",", $read_user_names);
         View::assign('detail', $detail);
@@ -375,6 +331,7 @@ class Index extends BaseController
         $basedata['type'] = $param['type'];
         $basedata['type_user'] = $type_user;
         $basedata['content'] = $param['content'];
+        $basedata['file_ids'] = $param['file_ids'];
 		$basedata['controller_name'] = $this->controller;
         $basedata['module_name'] = $this->module;
         $basedata['action_name'] = $this->action;
@@ -382,38 +339,18 @@ class Index extends BaseController
             //编辑信息的情况
             $basedata['update_time'] = time();
             $basedata['id'] = $id;
-            $res = Db::name('Message')->strict(false)->field(true)->update($basedata);
+            $res = MessageList::strict(false)->field(true)->update($basedata);
         } else {
             //新增信息的情况
             $basedata['create_time'] = time();
-            $res = Db::name('Message')->strict(false)->field(true)->insertGetId($basedata);
+            $res = MessageList::strict(false)->field(true)->insertGetId($basedata);
         }
         if ($res !== false) {
             //信息附件处理
             if ($id > 0) {
                 $mid = $id;
-				Db::name('MessageFileInterfix')->where(['mid' => $mid])->delete();
             } else {
                 $mid = $res;
-            }
-            //附件插入附件
-            if (!empty($param['file_ids'])) {
-                $file_array = explode(',', $param['file_ids']);
-                $file_data = array();
-                foreach ($file_array as $key => $value) {
-                    if (!$value) {
-                        continue;
-                    }
-                    $file_data[] = array(                        
-                        'file_id' => $value,
-						'mid' => $mid,	
-						'admin_id' => $admin_id,
-						'create_time' => time()						
-                    );
-                }
-                if ($file_data) {
-					$sql = Db::name('MessageFileInterfix')->insertAll($file_data);
-                }
             }
             add_log('save',$mid);
             return to_assign(0, '保存成功', $mid);
@@ -427,7 +364,7 @@ class Index extends BaseController
     {
         $param = get_params();
         //查询要发的消息
-        $msg = Db::name('Message')->where(['id' => $param['id']])->find();
+        $msg = MessageList::where(['id' => $param['id']])->find();
         $users = [];
         if ($msg) {
             $admin_id = $msg['from_uid'];
@@ -455,6 +392,7 @@ class Index extends BaseController
 					'fid' => $msg['fid'],//转发或回复消息关联id
 					'title' => $msg['title'],
 					'content' => $msg['content'],
+					'file_ids' => $msg['file_ids'],
 					'type' => $msg['type'],//接收人类型
 					'type_user' => $msg['type_user'],//接收人数据
 					'from_uid' => $this->uid,//发送人
@@ -465,32 +403,10 @@ class Index extends BaseController
 					'create_time' => time()
                 );
             }
-            $res = Db::name('Message')->strict(false)->field(true)->insertAll($send_data);
+            $res = MessageList::strict(false)->field(true)->insertAll($send_data);
             if ($res!==false) {
-                //查询原来的附件，并插入
-                $file_array = Db::name('MessageFileInterfix')->where('mid', $msg['id'])->select()->toArray();
-                if ($file_array) {
-                    $mids = Db::name('Message')->where('pid', $msg['id'])->select()->toArray();
-                    foreach ($mids as $k => $v) {
-                        $file_data = array();
-                        foreach ($file_array as $key => $value) {
-                            if (!$value) {
-                                continue;
-                            }
-                            $file_data[] = array(
-                                'mid' => $v['id'],
-                                'file_id' => $value['file_id'],
-                                'create_time' => time(),
-                                'admin_id' => $admin_id,
-                            );
-                        }
-                        if ($file_data) {
-                            Db::name('MessageFileInterfix')->strict(false)->field(true)->insertAll($file_data);
-                        }
-                    }
-                }
                 //草稿消息变成已发消息
-                Db::name('Message')->where(['id' => $msg['id']])->update(['is_draft' => '1', 'send_time' => time(), 'update_time' => time()]);
+                MessageList::where(['id' => $msg['id']])->update(['is_draft' => '1', 'send_time' => time(), 'update_time' => time()]);
                 add_log('send',$msg['id']);
                 return to_assign(0, '发送成功');
             } else {
@@ -542,7 +458,7 @@ class Index extends BaseController
 
         }
         foreach ($list as $key => $v) {
-            if (Db::name('Message')->update($v) !== false) {
+            if (MessageList::update($v) !== false) {
                 if ($type = 1) {
                     add_log('view', $v['id']);
                 } else if ($type = 2) {

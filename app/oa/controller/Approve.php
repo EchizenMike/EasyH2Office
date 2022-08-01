@@ -31,12 +31,12 @@ class Approve extends BaseController
 					$where[] = ['check_status','>',2];
 				}
             }
-			$where[] = ['create_admin_id','=',$this->uid];
+			$where[] = ['admin_id','=',$this->uid];
 			$rows = empty($param['limit']) ? get_config('app . page_size') : $param['limit'];
             $list = Db::name('Approve')
 				->field('f.*,a.name,d.title as department_name,t.title as flow_type')
 				->alias('f')
-                ->join('Admin a', 'a.id = f.create_admin_id', 'left')
+                ->join('Admin a', 'a.id = f.admin_id', 'left')
                 ->join('Department d', 'd.id = f.department_id', 'left')
                 ->join('FlowType t', 't.id = f.type', 'left')
 				->where($where)
@@ -77,7 +77,7 @@ class Approve extends BaseController
 				$list = Db::name('Approve')
 					->field('f.*,a.name,d.title as department_name,t.title as flow_type')
 					->alias('f')
-					->join('Admin a', 'a.id = f.create_admin_id', 'left')
+					->join('Admin a', 'a.id = f.admin_id', 'left')
 					->join('Department d', 'd.id = f.department_id', 'left')
 					->join('FlowType t', 't.id = f.type', 'left')
 					->whereOr([$map1,$map2])
@@ -99,7 +99,7 @@ class Approve extends BaseController
 				$list = Db::name('Approve')
 					->field('f.*,a.name,d.title as department_name,t.title as flow_type')
 					->alias('f')
-					->join('Admin a', 'a.id = f.create_admin_id', 'left')
+					->join('Admin a', 'a.id = f.admin_id', 'left')
 					->join('Department d', 'd.id = f.department_id', 'left')
 					->join('FlowType t', 't.id = f.type', 'left')
 					->where($map1)
@@ -120,7 +120,7 @@ class Approve extends BaseController
 				$list = Db::name('Approve')
 					->field('f.*,a.name,d.title as department_name,t.title as flow_type')
 					->alias('f')
-					->join('Admin a', 'a.id = f.create_admin_id', 'left')
+					->join('Admin a', 'a.id = f.admin_id', 'left')
 					->join('Department d', 'd.id = f.department_id', 'left')
 					->join('FlowType t', 't.id = f.type', 'left')
 					->where($map2)
@@ -156,7 +156,7 @@ class Approve extends BaseController
 			$list = Db::name('Approve')
 				->field('f.*,a.name,d.title as department_name,t.title as flow_type')
 				->alias('f')
-				->join('Admin a', 'a.id = f.create_admin_id', 'left')
+				->join('Admin a', 'a.id = f.admin_id', 'left')
 				->join('Department d', 'd.id = f.department_id', 'left')
 				->join('FlowType t', 't.id = f.type', 'left')
 				->where($map)
@@ -255,6 +255,15 @@ class Approve extends BaseController
 					);
 					$res = Db::name('FlowStep')->strict(false)->field(true)->insertGetId($flow_step);
 				}
+				//添加提交申请记录
+				$checkData=array(
+					'action_id' => $param['id'],
+					'check_user_id' => $this->uid,
+					'content' => '重新提交申请',
+					'check_time' => time(),
+					'create_time' => time()
+				);	
+				$record_id = Db::name('FlowRecord')->strict(false)->field(true)->insertGetId($checkData);
                 add_log('edit', $param['id'], $param);
 				//发送消息通知
 				$msg=[
@@ -265,7 +274,7 @@ class Approve extends BaseController
 				$users = $param['check_admin_ids'];
 				sendMessage($users,21,$msg);
             } else {
-                $param['create_admin_id'] = $this->uid;
+                $param['admin_id'] = $this->uid;
                 $param['department_id'] = $this->did;
 				$param['create_time'] = time();
 				
@@ -308,8 +317,17 @@ class Approve extends BaseController
 						'flow_uids' => $param['check_admin_ids'],
 						'create_time' => time()
 					);
-					$res = Db::name('FlowStep')->strict(false)->field(true)->insertGetId($flow_step);
+					$step_id = Db::name('FlowStep')->strict(false)->field(true)->insertGetId($flow_step);
 				}
+				//添加提交申请记录
+				$checkData=array(
+					'action_id' => $aid,
+					'check_user_id' => $this->uid,
+					'content' => '提交申请',
+					'check_time' => time(),
+					'create_time' => time()
+				);	
+				$record_id = Db::name('FlowRecord')->strict(false)->field(true)->insertGetId($checkData);
                 add_log('add', $aid, $param);
 				//给审核人发送消息通知
 				$msg=[
@@ -343,7 +361,7 @@ class Approve extends BaseController
             }
 			$department = $this->did;
 			//获取审批流程
-			$flows = get_flows($type,$department);
+			$flows = get_cate_department_flows($type,$department);
 			$moban=Db::name('FlowType')->where('id',$type)->value('name');
 			$module = strtolower(app('http')->getName());
             $class = strtolower(app('request')->controller());
@@ -357,7 +375,7 @@ class Approve extends BaseController
 			if(isTemplate($template)){
                 return view('add_'.$moban);
             }else{                
-                return view('Base@common/errortemplate',['file' =>$template]);
+                return view('../../base/view/common/errortemplate',['file' =>$template]);
             }            
         }
     }
@@ -367,6 +385,7 @@ class Approve extends BaseController
     {
 		$param = get_params();
 		$detail = Db::name('Approve')->where('id',$param['id'])->find();
+		$check_record = [];
 		if($detail['start_time']>0){
 			$detail['start_time'] = date('Y-m-d H:i',$detail['start_time']);
 		}
@@ -380,7 +399,7 @@ class Approve extends BaseController
 		$detail['days'] = floor($detail['duration']*10/75);
 		$detail['hours'] = (($detail['duration']*10)%75)/10;
 		
-		$detail['create_user'] = Db::name('Admin')->where('id',$detail['create_admin_id'])->value('name');
+		$detail['create_user'] = Db::name('Admin')->where('id',$detail['admin_id'])->value('name');
 		$flows = Db::name('FlowStep')->where(['action_id'=>$detail['id'],'type'=>1,'sort'=>$detail['check_step_sort'],'delete_time'=>0])->find();
 		$detail['check_user'] = '-';
 		$detail['copy_user'] = '-';
@@ -411,7 +430,7 @@ class Approve extends BaseController
 		
 		$is_check_admin = 0;
 		$is_create_admin = 0;
-		if($detail['create_admin_id'] == $this->uid){
+		if($detail['admin_id'] == $this->uid){
 			$is_create_admin = 1;
 		}
 		if(in_array($this->uid,$check_user_ids)){
@@ -425,6 +444,25 @@ class Approve extends BaseController
 				}
 			}
 		}
+		$check_record = Db::name('FlowRecord')->field('f.*,a.name,a.thumb')
+			->alias('f')
+			->join('Admin a', 'a.id = f.check_user_id', 'left')
+			->where(['f.action_id'=>$detail['id'],'f.type'=>1])
+			->order('check_time desc')
+			->select()->toArray();
+		foreach ($check_record as $kk => &$vv) {		
+			$vv['check_time_str'] = date('Y-m-d :H:i', $vv['check_time']);
+			$vv['status_str'] = '提交';
+			if($vv['status'] == 1){
+				$vv['status_str'] = '审核通过';
+			}
+			else if($vv['status'] == 2){
+				$vv['status_str'] = '审核拒绝';
+			}
+			if($vv['status'] == 3){
+				$vv['status_str'] = '撤销';
+			}
+		}
 		$moban=Db::name('FlowType')->where('id',$detail['type'])->value('name');
 		$module = strtolower(app('http')->getName());
 		$class = strtolower(app('request')->controller());
@@ -432,198 +470,13 @@ class Approve extends BaseController
 		$template = $module . '/view/'. $class .'/view_'.$moban.'.html';
 		View::assign('is_create_admin', $is_create_admin);
 		View::assign('is_check_admin', $is_check_admin);
+		View::assign('check_record', $check_record);
 		View::assign('detail', $detail);
 		View::assign('flows', $flows);
 		if(isTemplate($template)){
 			return view('view_'.$moban);
 		}else{                
-			return view('Base@common/errortemplate',['file' =>$template]);
+			return view('../../base/view/common/errortemplate',['file' =>$template]);
 		}        
-    }
-
-    //审核
-    public function check()
-    {
-        $param = get_params();
-		$detail = Db::name('Approve')->where('id',$param['id'])->find();
-		//当前审核节点详情
-		$step = Db::name('FlowStep')->where(['action_id'=>$detail['id'],'type'=>1,'sort'=>$detail['check_step_sort'],'delete_time'=>0])->find();
-		//审核通过
-		if($param['status'] == 1){
-			$check_admin_ids = explode(",", strval($detail['check_admin_ids']));
-			if (!in_array($this->uid, $check_admin_ids)){		
-				return to_assign(1,'您没权限审核该审批');
-			}
-			//多人会签审批
-			if($step['flow_type'] == 4){
-				//查询当前会签记录数
-				$check_count = Db::name('FlowRecord')->where(['action_id'=>$detail['id'],'type'=>1,'step_id'=>$step['id']])->count();
-				//当前会签记应有记录数
-				$param['check_admin_ids'] = $step['flow_uids'];
-				$flow_count = explode(',', $step['flow_uids']);
-				if(($check_count+1) >=count($flow_count)){
-					$next_step = Db::name('FlowStep')->where(['action_id'=>$detail['id'],'type'=>1,'sort'=>($detail['check_step_sort']+1),'delete_time'=>0])->find();
-					if($next_step){
-						//存在下一步审核
-						$param['check_step_sort'] = $detail['check_step_sort']+1;
-						$param['check_status'] = 1;
-						$param['check_admin_ids'] = $next_step['flow_uids'];
-					}
-					else{
-						//不存在下一步审核，审核结束
-						$param['check_status'] = 2;
-						$param['check_admin_ids'] ='';
-					}
-				}
-				else{
-					$param['check_status'] = 1;
-				}
-			}
-			else if($step['flow_type'] == 0){
-				//自由人审批
-				if($param['check_node'] == 2){
-					$next_step = $detail['check_step_sort']+1;
-					$flow_step = array(
-						'action_id' => $detail['id'],
-						'sort' => $next_step,
-						'flow_uids' => $param['check_admin_ids'],
-						'create_time' => time()
-					);
-					$fid = Db::name('FlowStep')->strict(false)->field(true)->insertGetId($flow_step);
-					//下一步审核步骤
-					$param['check_step_sort'] = $next_step;
-					$param['check_status'] = 1;
-				}
-				else{
-					//不存在下一步审核，审核结束
-					$param['check_status'] = 2;
-					$param['check_admin_ids'] ='';
-				}
-			}
-			else{
-				$next_step = Db::name('FlowStep')->where(['action_id'=>$detail['id'],'type'=>1,'sort'=>($detail['check_step_sort']+1),'delete_time'=>0])->find();
-				if($next_step){
-					//存在下一步审核
-					if($next_step['flow_type'] == 1){
-						$param['check_admin_ids'] = get_department_leader($this->uid);
-					}
-					else if($next_step['flow_type'] == 2){
-						$param['check_admin_ids'] = get_department_leader($this->uid,1);
-					}
-					else{
-						$param['check_admin_ids'] = $next_step['flow_uids'];
-					}
-					$param['check_step_sort'] = $detail['check_step_sort']+1;
-					$param['check_status'] = 1;
-				}
-				else{
-					//不存在下一步审核，审核结束
-					$param['check_status'] = 2;
-					$param['check_admin_ids'] ='';
-				}
-			}
-			if($param['check_status'] == 1 && $param['check_admin_ids']==''){
-				return to_assign(1,'找不到下一步的审批人，该审批流程设置有问题，请联系HR或者管理员');
-			}
-			//审核通过数据操作
-			$param['last_admin_id'] = $this->uid;
-			$param['flow_admin_ids'] = $detail['flow_admin_ids'].$this->uid.',';
-			$res = Db::name('Approve')->strict(false)->field('check_step_sort,check_status,last_admin_id,flow_admin_ids,check_admin_ids')->update($param);
-			if($res!==false){
-				$checkData=array(
-					'action_id' => $detail['id'],
-					'step_id' => $step['id'],
-					'check_user_id' => $this->uid,
-					'check_time' => time(),
-					'status' => $param['status'],
-					'content' => $param['content'],
-					'create_time' => time()
-				);	
-				$aid = Db::name('FlowRecord')->strict(false)->field(true)->insertGetId($checkData);
-				add_log('check', $param['id'], $param);
-
-				//发送消息通知
-				$msg=[
-					'from_uid'=>$detail['create_admin_id'],
-					'create_time'=>date('Y-m-d H:i:s',$detail['create_time']),
-					'title' => Db::name('FlowType')->where('id',$detail['type'])->value('title'),
-					'action_id'=>$detail['id']
-				];
-				if($param['check_status'] == 1){
-					$users = $param['check_admin_ids'];
-					sendMessage($users,21,$msg);
-				}
-				if($param['check_status'] == 2){
-					$users = $detail['create_admin_id'];
-					sendMessage($users,22,$msg);
-				}
-				return to_assign();
-			}
-			else{
-				return to_assign(1,'操作失败');
-			}
-		}
-		else if($param['status'] == 2){
-			$check_admin_ids = explode(",", strval($detail['check_admin_ids']));
-			if (!in_array($this->uid, $check_admin_ids)){		
-				return to_assign(1,'您没权限审核该审批');
-			}
-			//拒绝审核，数据操作
-			$param['check_status'] = 3;
-			$param['last_admin_id'] = $this->uid;
-			$param['flow_admin_ids'] = $detail['flow_admin_ids'].$this->uid.',';
-			$param['check_admin_ids'] ='';
-			$res = Db::name('Approve')->strict(false)->field('check_step_sort,check_status,last_admin_id,flow_admin_ids,check_admin_ids')->update($param);
-			if($res!==false){
-				$checkData=array(
-					'action_id' => $detail['id'],
-					'step_id' => $step['id'],
-					'check_user_id' => $this->uid,
-					'check_time' => time(),
-					'status' => $param['status'],
-					'content' => $param['content'],
-					'create_time' => time()
-				);	
-				$aid = Db::name('FlowRecord')->strict(false)->field(true)->insertGetId($checkData);
-				add_log('refue', $param['id'], $param);
-				//发送消息通知
-				$msg=[
-					'create_time'=>date('Y-m-d H:i:s',$detail['create_time']),
-					'title' => Db::name('FlowType')->where('id',$detail['type'])->value('title'),
-					'action_id'=>$detail['id']
-				];
-				$users = $detail['create_admin_id'];
-				sendMessage($users,23,$msg);
-				return to_assign();
-			}
-			else{
-				return to_assign(1,'操作失败');
-			}			
-		}		
-		else if($param['status'] == 3){
-			if($detail['create_admin_id'] != $this->uid){
-				return to_assign(1,'你没权限操作');
-			}
-			//撤销审核，数据操作
-			$param['check_status'] = 4;
-			$param['check_admin_ids'] ='';
-			$res = Db::name('Approve')->strict(false)->field('check_step_sort,check_status,last_admin_id,flow_admin_ids,check_admin_ids')->update($param);
-			if($res!==false){
-				$checkData=array(
-					'action_id' => $detail['id'],
-					'step_id' => 0,
-					'check_user_id' => $this->uid,
-					'check_time' => time(),
-					'status' => $param['status'],
-					'content' => $param['content'],
-					'create_time' => time()
-				);	
-				$aid = Db::name('FlowRecord')->strict(false)->field(true)->insertGetId($checkData);
-				add_log('back', $param['id'], $param);
-				return to_assign();
-			}else{
-				return to_assign(1,'操作失败');
-			}
-		}		
     }
 }

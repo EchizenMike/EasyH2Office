@@ -24,6 +24,7 @@ class ProjectLog extends Model
                 'status' => array('icon' => 'icon-wodedianping', 'title' => '状态'),
                 'content' => array('icon' => 'icon-wodedianping', 'title' => '项目描述'),
                 'file' => array('icon' => 'icon-sucaiziyuan', 'title' => '项目文件'),
+                'link' => array('icon' => 'icon-sucaiziyuan', 'title' => '项目链接'),
                 'user' => array('icon' => 'icon-xueshengzhuce', 'title' => '项目成员'),
                 'new' => array('icon' => 'icon-zidingyishezhi', 'title' => '项目'),
                 'delete' => array('icon' => 'icon-shanchu', 'title' => '项目'),
@@ -31,6 +32,7 @@ class ProjectLog extends Model
         'task' => [
             'priority' => ['', '低', '中', '高', '紧急'],
             'flow_status' => ['', '未开始', '进行中', '已完成', '已拒绝', '已关闭'],
+            'type' => ['', '需求', '设计', '研发', '缺陷'],
             'field_array' => [
                 'director_uid' => array('icon' => 'icon-xueshengzhuce', 'title' => '负责人'),
                 'assist_admin_ids' => array('icon' => 'icon-xueshengbaoming', 'title' => '协作人'),
@@ -41,11 +43,18 @@ class ProjectLog extends Model
                 'priority' => array('icon' => 'icon-wodedianping', 'title' => '等级'),
                 'type' => array('icon' => 'icon-wodedianping', 'title' => '任务类型'),
                 'cate' => array('icon' => 'icon-wodedianping', 'title' => '任务类别'),
-                'is_bug' => array('icon' => 'icon-wodedianping', 'title' => '任务性质'),
                 'done_ratio' => array('icon' => 'icon-wodedianping', 'title' => '完成进度'),
                 'project_id' => array('icon' => 'icon-wodedianping', 'title' => '关联项目'),
                 'content' => array('icon' => 'icon-wodedianping', 'title' => '描述'),
                 'file' => array('icon' => 'icon-sucaiziyuan', 'title' => '文件'),
+                'new' => array('icon' => 'icon-zidingyishezhi', 'title' => '任务'),
+                'delete' => array('icon' => 'icon-shanchu', 'title' => '任务'),
+            ]],
+		'document' => [
+            'field_array' => [
+                'title' => array('icon' => 'icon-wodedianping', 'title' => '标题'),
+                'project_id' => array('icon' => 'icon-wodedianping', 'title' => '关联项目'),
+                'content' => array('icon' => 'icon-wodedianping', 'title' => '描述'),
                 'new' => array('icon' => 'icon-zidingyishezhi', 'title' => '任务'),
                 'delete' => array('icon' => 'icon-shanchu', 'title' => '任务'),
             ]]
@@ -122,6 +131,7 @@ class ProjectLog extends Model
     public function project_log($param = [])
     {
         $task_ids = Db::name('ProjectTask')->where(['project_id' => $param['topic_id'], 'delete_time' => 0])->column('id');
+        $document_ids = Db::name('ProjectDocument')->where(['project_id' => $param['topic_id'], 'delete_time' => 0])->column('id');
 
         $where1 = [];
         $where2 = [];
@@ -132,6 +142,9 @@ class ProjectLog extends Model
 
         $where2[] = ['a.module', '=', 'task'];
         $where2[] = ['a.task_id', 'in', $task_ids];
+		
+		$where3[] = ['a.module', '=', 'document'];
+        $where3[] = ['a.document_id', 'in', $document_ids];
         $page = intval($param['page']);
         $rows = empty($param['limit']) ? get_config('app . page_size') : $param['limit'];
         $content = Db::name('ProjectLog')
@@ -139,13 +152,14 @@ class ProjectLog extends Model
             ->alias('a')
             ->join('Admin u', 'u.id = a.admin_id')
             ->order('a.create_time desc')
-            ->whereOr([$where1, $where2])
+            ->whereOr([$where1, $where2, $where3])
             ->page($page, $rows)
             ->select()->toArray();
 
         $module = [
             'project' => '',
             'task' => '任务',
+            'document' => '文档',
         ];
         $action = get_config('log.type_action');
         $data = [];

@@ -9,21 +9,6 @@
 .select-1,.select-2{display:none;}
 .layui-table-min th{font-size:13px; text-align:center; background-color:#f8f8f8;}
 .layui-table-min td{font-size:13px; padding:6px;text-align:center;}
-.file-card {background: #fff;border: 1px solid #f1f1f1;border-radius: 2px; padding:8px 0; margin:4px 8px 4px 0;
-    -webkit-box-align: center;
-    -ms-flex-align: center;
-    align-items: center;
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-}
-.file-card .file-icon{font-size:36px; color:#646464; margin-right: 4px;}
-.file-card .file-title {font-size: 12px; letter-spacing: 0; margin-right: 8px; line-height: 16px; word-break: break-all; overflow: hidden; text-overflow: ellipsis; display: -webkit-box;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    -webkit-box-orient: vertical;width: calc(100% - 110px);
-}
-.file-card .file-tool .layui-icon{font-size:22px; padding:2px; cursor:pointer;}
 </style>
 {/block}
 <!-- 主体 -->
@@ -58,31 +43,31 @@
 		</tr>
 		<tr>
 			<td class="layui-td-gray">报销选项<font>*</font></td>
-			<td colspan="5">	
-				<div>
-					<table id="interfix" class="layui-table layui-table-min">
-						<tr>
-							<th width="100">报销金额</th>
-							<th width="120">报销项目</th>
-							<th>备注信息</th>
-							<th width="60">操作</th>
-						</tr>
-						<tr class="more_interfix">
-							<td><input type="text" name="amount[]" value="" class="layui-input" lay-verify="required|number" lay-reqText="请完善报销金额"></td>
-							<td style="text-align:left">
-								<select name="cate_id[]" lay-verify="required" lay-reqText="请选择报销项目">
-									<option value="">请选择</option>
-									{volist name="$expense_cate" id="vo"}
-									  <option value="{$vo.id}">{$vo.title}</option>
-									{/volist}
-								</select>
-							</td>
-							<td><input type="text" name="remarks[]" class="layui-input" value=""><input type="hidden" name="expense_id[]" class="layui-input" value="0"></td>
-							<td><a class="layui-btn layui-btn-danger layui-btn-xs" data-id="0" lay-event="del">删除</a></td>
-						</tr>
-					</table>
+			<td colspan="5">				
+				<table id="interfix" class="layui-table layui-table-min">
+					<tr>
+						<th width="100">报销金额</th>
+						<th width="120">报销项目</th>
+						<th>备注信息</th>
+						<th width="60">操作</th>
+					</tr>
+					<tr class="more_interfix">
+						<td><input type="text" name="amount[]" value="" class="layui-input" lay-verify="required|number" lay-reqText="请完善报销金额"></td>
+						<td style="text-align:left">
+							<select name="cate_id[]" lay-verify="required" lay-reqText="请选择报销项目">
+								<option value="">请选择</option>
+								{volist name="$expense_cate" id="vo"}
+								  <option value="{$vo.id}">{$vo.title}</option>
+								{/volist}
+							</select>
+						</td>
+						<td><input type="text" name="remarks[]" class="layui-input" value=""><input type="hidden" name="expense_id[]" class="layui-input" value="0"></td>
+						<td><a class="layui-btn layui-btn-danger layui-btn-xs" data-id="0" lay-event="del">删除</a></td>
+					</tr>
+				</table>
+				<div class="pt-2">
+					<button class="layui-btn layui-btn-sm" type="button" id="addInterfix">+ 报销选项</button>
 				</div>
-				<button class="layui-btn layui-btn-normal layui-btn-sm" type="button" id="addInterfix">+报销选项</button>
 			</td>
 		</tr>
 		<tr>
@@ -113,7 +98,7 @@
 		<tr>
 			<td class="layui-td-gray">抄送人</td>
 			<td colspan="5">
-				<select id="copy_uids" name="copy_uids" xm-selected="" xm-select="selectcopy" xm-select-skin="default"></select>
+				<input type="text" name="copy_names" value="" autocomplete="off" placeholder="请选择审核人" class="layui-input picker-more" readonly><input type="hidden" name="copy_uids" value="" readonly>
 			</td>
 		</tr>
 	</table>
@@ -142,32 +127,32 @@
 		<tr>
 			<td class="layui-td-gray">报销选项<font>*</font></td>
 			<td colspan="5">	
-				<div>
-					<table id="interfix" class="layui-table layui-table-min">
-						<tr>
-							<th width="100">报销金额</th>
-							<th width="120">报销类别</th>
-							<th>备注信息</th>
-							<th width="60">操作</th>
-						</tr>
-						{volist name="$expense.list" id="val"}
-						<tr class="more_interfix">
-							<td><input type="text" name="amount[]" value="{$val.amount}" class="layui-input" lay-verify="required|number" lay-reqText="请完善报销金额"></td>
-							<td style="text-align:left">
-								<select name="cate_id[]" lay-verify="required" lay-reqText="请选择报销项目">
-									<option value="">请选择</option>
-									{volist name="$expense_cate" id="vo"}
-									  <option value="{$vo.id}" {eq name="$vo.id" value="$val.cate_id"} selected{/eq}>{$vo.title}</option>
-									{/volist}
-								</select>
-							</td>
-							<td><input type="text" name="remarks[]" class="layui-input" value="{$val.remarks}"><input type="hidden" name="expense_id[]" class="layui-input" value="{$val.id}"></td>
-							<td><a class="layui-btn layui-btn-danger layui-btn-xs" data-id="{$val.id}" lay-event="del">删除</a></td>
-						</tr>
-						{/volist}
-					</table>
+				<table id="interfix" class="layui-table layui-table-min">
+					<tr>
+						<th width="100">报销金额</th>
+						<th width="120">报销类别</th>
+						<th>备注信息</th>
+						<th width="60">操作</th>
+					</tr>
+					{volist name="$expense.list" id="val"}
+					<tr class="more_interfix">
+						<td><input type="text" name="amount[]" value="{$val.amount}" class="layui-input" lay-verify="required|number" lay-reqText="请完善报销金额"></td>
+						<td style="text-align:left">
+							<select name="cate_id[]" lay-verify="required" lay-reqText="请选择报销项目">
+								<option value="">请选择</option>
+								{volist name="$expense_cate" id="vo"}
+								  <option value="{$vo.id}" {eq name="$vo.id" value="$val.cate_id"} selected{/eq}>{$vo.title}</option>
+								{/volist}
+							</select>
+						</td>
+						<td><input type="text" name="remarks[]" class="layui-input" value="{$val.remarks}"><input type="hidden" name="expense_id[]" class="layui-input" value="{$val.id}"></td>
+						<td><a class="layui-btn layui-btn-danger layui-btn-xs" data-id="{$val.id}" lay-event="del">删除</a></td>
+					</tr>
+					{/volist}
+				</table>
+				<div class="pt-2">
+					<button class="layui-btn layui-btn-sm" type="button" id="addInterfix">+ 报销选项</button>
 				</div>
-				<button class="layui-btn layui-btn-normal layui-btn-sm" type="button" id="addInterfix">+报销选项</button>
 			</td>
 		</tr>
 		<tr>
@@ -177,13 +162,13 @@
 					<input type="hidden" name="file_ids" value="{$expense.file_ids}">
 					{notempty name="$expense.file_ids"}
 					{volist name="$expense.fileArray" id="vo"}
-					<div class="layui-col-md3" id="uploadImg{$vo.id}">
+					<div class="layui-col-md4" id="uploadImg{$vo.id}">
 						<div class="file-card">
 							<i class="file-icon iconfont icon-renwuguanli"></i>
 							<div class="file-title">{$vo.name}</div>
 							<div class="file-tool">
-								<a href="{$vo.filepath}" download="{$vo.name}" target="_blank" title="下载查看"><i class="layui-icon layui-icon-download-circle" style="color: #12bb37;"></i></a>
-								<i class="btn-delete layui-icon layui-icon-delete" data-id="{$vo.id}" style="color: #FF5722;" title="删除"></i>
+								<a href="{$vo.filepath}" download="{$vo.name}" target="_blank" title="下载查看"><i class="iconfont icon-shujudaoru blue"></i></a>
+								<i class="btn-delete iconfont icon-shanchu red" data-id="{$vo.id}" title="删除"></i>
 							</div>
 						</div>
 					</div>
@@ -212,7 +197,7 @@
 		<tr>
 			<td class="layui-td-gray">抄送人</td>
 			<td colspan="5">
-				<select id="copy_uids" name="copy_uids" xm-selected="" xm-select="selectcopy" xm-select-skin="default"></select>
+				<input type="text" name="copy_names" value="" autocomplete="off" placeholder="请选择审核人" class="layui-input picker-more" readonly><input type="hidden" name="copy_uids" value="" readonly>
 			</td>
 		</tr>
 	</table>
@@ -220,7 +205,7 @@
 
 	<div class="py-3">
 		<input name="id" id="id" type="hidden" value="{$id}">
-		<button class="layui-btn" lay-submit="" lay-filter="webform">保存并提交审核</button>
+		<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform">保存并提交审核</button>
 		<button type="reset" class="layui-btn layui-btn-primary">重置</button>
 	</div>
 </form>
@@ -255,56 +240,13 @@ Array.prototype.remove = function (val) {
 	}
 };
 
-const moduleInit = ['tool','formSelects','employeepicker'];
+const moduleInit = ['tool','employeepicker'];
 	function gouguInit() {
 		var form = layui.form,
 			upload = layui.upload,
 			tool=layui.tool,
-			formSelects = layui.formSelects,
 			employeepicker = layui.employeepicker,
 			laydate = layui.laydate;	
-
-		//多附件上传
-		upload.render({
-			elem: '#upFile'
-			,url: "/api/index/upload"
-			,multiple: true
-			,accept: 'file' //普通文件
-    		,exts: 'png|jpg|gif|jpeg|doc|docx|ppt|pptx|xls|xlsx|pdf|zip|rar|7z' //只允许上传文件格式
-			,done: function(res){
-				layer.msg(res.msg);
-				if (res.code == 0) {
-					//上传成功
-					var idsStr = $('#fileList input').val(),idsArray = [];
-					if (idsStr != '') {
-						idsArray = idsStr.split(",");
-					}
-					idsArray.push(res.data.id);
-					$('#fileList input').attr('value', idsArray.join(','));
-					let temp = `<div class="layui-col-md3" id="uploadImg${res.data.id}">
-							<div class="file-card">
-								<i class="file-icon layui-icon layui-icon-file"></i>
-								<div class="file-title">${res.data.name}</div>
-								<div class="file-tool">
-									<a href="${res.data.filepath}" download="${res.data.name}" title="下载查看" target="_blank"><i class="layui-icon layui-icon-download-circle" style="color: #12bb37;"></i></a>
-									<i class="btn-delete layui-icon layui-icon-delete" data-id="${res.data.id}" style="color: #FF5722;" title="删除"></i>
-								</div>
-							</div>
-						</div>`;
-					$('#fileList').append(temp);
-				}
-			}
-		});
-		$('#fileList').on('click', '.btn-delete', function () {
-			var _id = $(this).data('id');
-			var idsStr = $('#fileList input').val(),idsArray = [];
-			if (idsStr != '') {
-				idsArray = idsStr.split(",");
-			}
-			idsArray.remove(_id);
-			$('#fileList input').attr('value', idsArray.join(','));
-			$('#uploadImg' + _id).remove();
-		})	
 
 		laydate.render({
 			elem: '#income_month',
@@ -345,7 +287,7 @@ const moduleInit = ['tool','formSelects','employeepicker'];
 					title: '提示'
 				}, function(index) {
 					$.ajax({
-						url: "/api/index/del_expense_interfix",
+						url: "/finance/api/del_expense_interfix",
 						type:'post',
 						data: {id: _id},
 						success: function(res) {
@@ -393,35 +335,53 @@ const moduleInit = ['tool','formSelects','employeepicker'];
 			return false;
 		});
 		
-		//选择人员		
-		$('.layui-form').on('click','[name="check_admin_name"]',function(){
+		//选择单个员工弹窗	
+		$('body').on('click','.picker-one',function () {
 			if($('[name="flow_id"]').val()==''){
 				layer.msg('请先选择审批流程');
 				return false;
 			}
+			let that = $(this);
+			let ids=that.next().val()+'',names = that.val()+'';
 			employeepicker.init({
+				ids:ids,
+				names:names,
+				type:0,
 				department_url: "/api/index/get_department_tree",
 				employee_url: "/api/index/get_employee",
-				type:0,
-				callback:function(ids,names){
-					$('[name="check_admin_ids"]').val(ids),
-					$('[name="check_admin_name"]').val(names);
+				callback:function(ids,names,dids,departments){
+					that.val(names);
+					that.next().val(ids);
 				}
 			});
-		})
-		
-		//选择抄送人员
-		var copy_uids = $('#copy_uids').attr('xm-selected');
-		formSelects.data('selectcopy', 'server', {
-			url: '/api/index/get_employee_select',
-			keyword: copy_uids,
 		});
-
+		
+		//选择多个员工弹窗	
+		$('body').on('click','.picker-more',function () {
+			let that = $(this);
+			let ids=that.next().val()+'',names = that.val()+'',ids_array=[],names_array=[];
+			if(ids.length>0){
+				ids_array=ids.split(',');
+				names_array=names.split(',');
+			}
+			employeepicker.init({
+				ids:ids_array,
+				names:names_array,
+				type:1,
+				department_url: "/api/index/get_department_tree",
+				employee_url: "/api/index/get_employee",
+				callback:function(ids,names,dids,departments){
+					that.val(names.join(','));
+					that.next().val(ids.join(','));
+				}
+			});
+		});
+		
 		form.on('select(flowtype)', function(data){
 			var check_type = data.elem[data.elem.selectedIndex].title;
 			var formHtml='<td class="layui-td-gray">审核人<font>*</font></td>\
 			<td colspan="5">\
-				<input type="hidden" name="check_admin_ids" value=""><input type="text" name="check_admin_name" value="" autocomplete="off" placeholder="请选择审核人" lay-verify="required" lay-reqText="请选择审核人" class="layui-input">\
+				<input type="text" name="check_admin_name" value="" autocomplete="off" placeholder="请选择审核人" lay-verify="required" lay-reqText="请选择审核人" class="layui-input picker-one"><input type="hidden" name="check_admin_ids" value="">\
 			</td>';
 			if(check_type == 2){
 				$('#flow_tr').html(formHtml);
@@ -439,24 +399,33 @@ const moduleInit = ['tool','formSelects','employeepicker'];
 						var flowLi='';
 						var flow_data = e.data.flow_data;
 						if(e.data.copy_uids && e.data.copy_uids !=''){
-							formSelects.value('selectcopy', e.data.copy_uids.split(',')); 
+							$('[name="copy_names"]').val(e.data.copy_unames);
+							$('[name="copy_uids"]').val(e.data.copy_uids.split(','));
 						}
-						if(check_type == 1){
+						if(check_type == 1 || check_type == 3){
 							for(var a=0;a<flow_data.length;a++){
 								var userList='',sign_type = '';
-								if(flow_data[a].flow_type==1){
-									userList+= '<li style="padding:3px 0">当前部门负责人</li>';
-								}
-								else if(flow_data[a].flow_type==2){
-									userList+= '<li style="padding:3px 0">上级部门负责人</li>';
-								}
-								else{
-									if(flow_data[a].flow_type==3){
-										sign_type= ' <span class="layui-badge layui-bg-blue">或签</span>'
+								if(check_type == 1){
+									if(flow_data[a].flow_type==1){
+										userList+= '<li style="padding:3px 0">当前部门负责人</li>';
 									}
-									if(flow_data[a].flow_type==4){
-										sign_type= ' <span class="layui-badge layui-bg-blue">会签</span>'
+									else if(flow_data[a].flow_type==2){
+										userList+= '<li style="padding:3px 0">上级部门负责人</li>';
 									}
+									else{
+										if(flow_data[a].flow_type==3){
+											sign_type= ' <span class="layui-badge layui-bg-blue">或签</span>';
+										}
+										if(flow_data[a].flow_type==4){
+											sign_type= ' <span class="layui-badge layui-bg-blue">会签</span>';
+										}
+										for(var b=0;b<flow_data[a].user_id_info.length;b++){
+											userList+= '<li style="padding:3px 0"><img src="'+flow_data[a].user_id_info[b].thumb+'" style="width:24px; height:24px; border-radius:50%; margin-right:8px;" />'+flow_data[a].user_id_info[b].name+'</li>';
+										}
+									}
+								}
+								else if(check_type == 3){
+									sign_type= ' <span class="layui-badge layui-bg-blue">'+flow_data[a].flow_name+'</span>'
 									for(var b=0;b<flow_data[a].user_id_info.length;b++){
 										userList+= '<li style="padding:3px 0"><img src="'+flow_data[a].user_id_info[b].thumb+'" style="width:24px; height:24px; border-radius:50%; margin-right:8px;" />'+flow_data[a].user_id_info[b].name+'</li>';
 									}
@@ -470,7 +439,7 @@ const moduleInit = ['tool','formSelects','employeepicker'];
 								</li>';
 							}							
 							formHtml = '<td class="layui-td-gray">审批流程</td>\
-										<td colspan="5">\
+										<td colspan="7">\
 											<ul id="flowList" class="layui-timeline">'+flowLi+'</ul>\
 										</td>';
 							$('#flow_tr').html(formHtml);
@@ -479,6 +448,48 @@ const moduleInit = ['tool','formSelects','employeepicker'];
 				}
 			})
 		});
+		
+		$('#fileList').on('click', '.btn-delete', function () {
+			var _id = $(this).data('id');
+			var idsStr = $('#fileList input').val(),idsArray = [];
+			if (idsStr != '') {
+				idsArray = idsStr.split(",");
+			}
+			idsArray.remove(_id);
+			$('#fileList input').attr('value', idsArray.join(','));
+			$('#uploadImg' + _id).remove();
+		})
+		//多附件上传
+		upload.render({
+			elem: '#upFile'
+			,url: "/api/index/upload"
+			,multiple: true
+			,accept: 'file' //普通文件
+    		,exts: 'png|jpg|gif|jpeg|doc|docx|ppt|pptx|xls|xlsx|pdf|zip|rar|7z' //只允许上传文件格式
+			,done: function(res){
+				layer.msg(res.msg);
+				if (res.code == 0) {
+					//上传成功
+					var idsStr = $('#fileList input').val(),idsArray = [];
+					if (idsStr != '') {
+						idsArray = idsStr.split(",");
+					}
+					idsArray.push(res.data.id);
+					$('#fileList input').attr('value', idsArray.join(','));
+					let temp = `<div class="layui-col-md4" id="uploadImg${res.data.id}">
+							<div class="file-card">
+								<i class="file-icon layui-icon layui-icon-file"></i>
+								<div class="file-title">${res.data.name}</div>
+								<div class="file-tool">
+									<a href="${res.data.filepath}" download="${res.data.name}" title="下载查看" target="_blank"><i class="iconfont icon-shujudaoru blue"></i></a>
+									<i class="btn-delete iconfont icon-shanchu red" data-id="${res.data.id}" style="color: #FF5722;" title="删除"></i>
+								</div>
+							</div>
+						</div>`;
+					$('#fileList').append(temp);
+				}
+			}
+		});	
 	}		
 	</script>
 {/block}

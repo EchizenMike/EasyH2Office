@@ -44,19 +44,48 @@ class Flow extends BaseController
     {
         $param = get_params();
         if (request()->isAjax()) {
-			$flowTypeData = isset($param['flowType']) ? $param['flowType'] : '';
-            $flowUidsData = isset($param['flowUids']) ? $param['flowUids'] : '';
-			$flow_list=[];
-			foreach ($flowTypeData as $key => $value) {
-				if (!$value) {
-					continue;
+			$param['flow_list'] = '';
+			$flow_list=[];			
+			if($param['check_type']==1){
+				$flowTypeData = isset($param['flowType']) ? $param['flowType'] : '';
+				$flowUidsData = isset($param['flowUidsA']) ? $param['flowUidsA'] : '';
+				foreach ($flowTypeData as $key => $value) {
+					if (!$value) {
+						continue;
+					}
+					if($value>2 && $flowUidsData[$key]==''){
+						return to_assign(1, '第'.($key+1).'行的指定人未选择');
+						break;
+					}
+					$item = [];
+					$item['flow_type'] = $value;
+					$item['flow_uids'] = $flowUidsData[$key];
+					$flow_list[]=$item;	
 				}
-				$item = [];
-				$item['flow_type'] = $value;
-				$item['flow_uids'] = $flowUidsData[$key];
-				$flow_list[]=$item;	
+				$param['flow_list'] = serialize($flow_list);
 			}
-            $param['flow_list'] = serialize($flow_list);
+			if($param['check_type']==3){
+				$flowNameData = isset($param['flowName']) ? $param['flowName'] : '';
+				$flowUidsData = isset($param['flowUidsB']) ? $param['flowUidsB'] : '';
+				foreach ($flowNameData as $key => $value) {
+					if (!$value) {
+						continue;
+					}
+					if($flowUidsData[$key]==''){
+						return to_assign(1, '第'.($key+1).'行的指定人未选择');
+						break;
+					}
+					$item = [];
+					$item['flow_name'] = $value;
+					$item['flow_type'] = 5;
+					$item['flow_uids'] = $flowUidsData[$key];
+					$flow_list[]=$item;	
+				}
+				if(empty($flow_list)){
+					return to_assign(1, '审批流程信息未完善');
+				}
+				$param['flow_list'] = serialize($flow_list);
+			}		
             if ($param['id'] > 0) {
                 try {
                     validate(FlowCheck::class)->scene('edit')->check($param);
@@ -84,7 +113,22 @@ class Flow extends BaseController
             $id = isset($param['id']) ? $param['id'] : 0;
             if($id>0){
                 $detail = Db::name('Flow')->where('id',$id)->find();
-                $detail['flow_list'] = unserialize($detail['flow_list']);
+                $flow_list = unserialize($detail['flow_list']);
+				if(!empty($flow_list)){
+					foreach ($flow_list as $key => &$val) {
+						$val['flow_unames'] ='';
+						if($val['flow_type']>2){
+							$flow_unames = Db::name('Admin')->where('id', 'in', $val['flow_uids'])->column('name');
+							$val['flow_unames'] = implode(',', $flow_unames);
+						}
+					}
+				}
+				$detail['flow_list'] = $flow_list;
+				$detail['copy_unames'] ='';
+				if($detail['copy_uids']!=''){
+					$copy_unames = Db::name('Admin')->where('id', 'in', $detail['copy_uids'])->column('name');
+					$detail['copy_unames'] = implode(',', $copy_unames);
+				}
                 $detail['flow_cate_list'] = Db::name('FlowType')->where(['type'=>$detail['type'],'status'=>1])->select()->toArray();
                 View::assign('detail', $detail);
             }

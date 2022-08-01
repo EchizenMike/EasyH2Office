@@ -99,8 +99,8 @@
 						<td colspan="3">{:LAYUI_VERSION}<a class="layui-badge layui-bg-blue" style="margin-left:8px" href="https://layui.gitee.io/v2/docs/" target="_blank">Layui文档</a></td>
 					</tr>
 					<tr>
-						<td class="info-td">BUG反馈</td>
-						<td colspan="3"><a href="mailto:hdm58@qq.com" target="_blank">hdm58@qq.com</a></td>
+						<td class="info-td">合作联系微信号</td>
+						<td colspan="3">hdm588，业务合作、功能定制请备注</td>
 					</tr>
 					<tr>
 						<td class="info-td">QQ交流群</td>
@@ -120,7 +120,7 @@
 			</div>
 		</div>
 		<div class="layui-card">
-			<div class="layui-card-header"><h3>员工动态</h3><a data-title="员工动态" data-href="/api/index/log_list" class="pull-right tab-a">更多</a></div>
+			<div class="layui-card-header"><h3>员工动态</h3><a data-title="员工动态" data-href="/home/api/log_list" class="pull-right tab-a">更多</a></div>
 			<div class="layui-card-body">
 				<ul class="layui-timeline" id="logs"></ul>
 			</div>
@@ -141,10 +141,10 @@
 		//公告
 		table.render({
 			elem: '#Note'
-			, url: "/api/index/get_note_list" //数据接口
+			, url: "/home/api/get_note_list" //数据接口
 			, page: false //开启分页
 			, cols: [[ //表头
-				{ field: 'cate_title', title: '公告分类', align: 'center','width': 90 },
+				{ field: 'cate_title', title: '公告分类', align: 'center','width': 90},
 				{ field: 'title', title: '公告标题',templet: '<div><a data-href="/note/index/view/id/{{d.id}}.html" class="right-a" target="_blank">{{d.title}}</a></div>'},
 				{ field: 'create_time', title: '发布时间', align: 'center','width': 136}
 			]]
@@ -152,7 +152,7 @@
 		//文章
 		table.render({
 			elem: '#Article'
-			, url: "/api/index/get_article_list" //数据接口
+			, url: "/home/api/get_article_list" //数据接口
 			, page: false //开启分页
 			, cols: [[ //表头
 				{ field: 'cate_title', title: '知识分类', align: 'center','width': 90 },
@@ -164,7 +164,7 @@
 		//项目
 		table.render({
 			elem: '#Project'
-			, url: "/api/index/get_project_list" //数据接口
+			, url: "/home/api/get_project_list" //数据接口
 			, page: false //开启分页
 			, cols: [[ //表头
 				{ field: 'id', title: '项目编号', align: 'center','width': 90, templet: function (d) {
@@ -197,7 +197,7 @@
 
 	function get_logs() {
 		$.ajax({
-			url: "/api/index/log_list",
+			url: "/home/api/log_list",
 			type: 'get',
 			data: {
 				page: 1,
@@ -232,7 +232,7 @@
 	var chartView = echarts.init(document.getElementById('chartView'));
 	function get_view_data() {
 		$.ajax({
-			url: "/api/index/get_view_data",
+			url: "/home/api/get_view_data",
 			type: 'get',
 			data: {},
 			success: function (e) {

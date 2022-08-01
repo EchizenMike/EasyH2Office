@@ -3,8 +3,7 @@
 		<div class="py-1">
 			<span class="gray">项目状态：</span>
 			<span class="layui-color-{$detail.status}" id="status_{$detail.id}"
-			data-val="{$detail.status}">{$detail.status_name}</span><i
-			class="iconfont icon-wodedianping" title="编辑" data-name="status"></i>
+			data-val="{$detail.status}">{$detail.status_name}</span>
 			<span class="gray" style="margin-left:32px">负责人：</span>
 			<span id="director_uid_{$detail.id}" data-val="{$detail.director_uid}">{$detail.director_name}</span>
 			<i class="iconfont icon-wodedianping" title="编辑" data-id="{$detail.id}" data-name="director_uid"></i>
@@ -12,9 +11,9 @@
 		</div>
 		<div class="py-1">
 			<span class="gray">计划完成周期：</span>
-			<span id="start_time_{$detail.id}" data-val="">{$detail.start_time}</span>
+			<span id="start_time_{$detail.id}" data-val="">{$detail.start_time_str}</span>
 			<i class="iconfont icon-wodedianping" title="修改计划开始日期" 	data-name="start_time"></i> 至&nbsp;&nbsp;&nbsp;&nbsp; <span id="end_time_{$detail.id}"
-				data-val="">{$detail.end_time}</span><i class="iconfont icon-wodedianping"
+				data-val="">{$detail.end_time_str}</span><i class="iconfont icon-wodedianping"
 				title="修改计划结束日期" data-name="end_time"></i>
 		</div>
 		<div class="py-1">
@@ -22,6 +21,79 @@
 			<span id="content_{$detail.id}" data-val="{$detail.content}">{$detail.content}</span>
 			<i class="iconfont icon-wodedianping" title="编辑" data-id="{$detail.id}" data-name="content"></i>
 		</div>
+	</div>
+</div>
+
+<div class="layui-card border-y">
+	<div class="layui-card-header" style="height:45px;">
+		<div class="layui-row">
+			<div class="layui-col-md6">
+				<h5>项目阶段</h5>
+			</div>
+			{gt name="$role" value="0"}
+			<div class="layui-col-md6" style="text-align:right">
+				<a href="/project/index/edit/id/{$detail.id}" class="layui-btn layui-btn-normal layui-btn-sm">编辑项目阶段</a>
+			</div>
+			{/gt}
+		</div>
+	</div>
+	{notempty name="$step" id="vo"}
+	<div class="p-3 border-b">
+		<span class="gray">当前阶段：</span>{$step.flow_name}
+		<span class="gray" style="margin-left:20px">负责人：</span>{$step.check_name}
+		<span class="gray" style="margin-left:20px">成员：</span>{$step.flow_names}
+		<span class="gray" style="margin-left:20px">周期：</span>{$step.start_time|time_format=###,'Y-m-d'} 到 {$step.end_time|time_format=###,'Y-m-d'}
+		{eq name="$step.flow_uid" value="$login_user"}
+		<div class="pt-3">
+			<span class="layui-btn layui-btn-normal layui-btn-sm" data-event="step" data-check="1">确认</span>
+			{gt name="$detail.step_sort" value="0"}
+			<span class="layui-btn layui-btn-danger layui-btn-sm" data-event="step" data-check="2">退回</span>
+			{/gt}
+		</div>
+		{/eq}
+	</div>
+	{/notempty}
+	<div class="px-3 py-1 border-b">
+		<div class="flow-flexbox check-items flow-flex-row">
+			{volist name="$step_array" id="vo"}
+			<div class="flow-flexbox check-item flow-flex-row">
+				{gt name="$vo.sort" value="$detail.step_sort"}
+				<i class="layui-icon layui-icon-time"></i>
+				{/gt}
+				{eq name="$vo.sort" value="$detail.step_sort"}
+				<i class="layui-icon layui-icon-username" data-on=""></i>
+				{/eq}
+				{lt name="$vo.sort" value="$detail.step_sort"}
+				<i class="layui-icon layui-icon-ok-circle" data-ok=""></i>
+				{/lt}
+				<div class="check-item-name">{$vo.flow_name}</div>
+				<div class="check-item-status">{$vo.check_name}</div>
+				<span class="layui-icon layui-icon-right"></span>
+			</div>
+			{/volist}
+		</div>
+	</div>
+	<div class="p-3">
+		<p>阶段流转记录</p>
+		{notempty name="$step_record"}
+			<ul class="layui-timeline pt-2">
+			{volist name="$step_record" id="vo"}		
+				<li class="layui-timeline-item delete_{$vo.delete_time}">
+					<i class="layui-icon layui-timeline-axis">&#xe63f;</i>
+					{if ($vo.status == 1)}
+					<p style="padding-left:24px">{$vo.check_time_str}<span class="black mx-1">{$vo.check_name}</span><span class="mr-1 green">{$vo.status_str}</span>了{$vo.flow_name}的工作。</p>
+					{elseif ($vo.status == 2) /}
+					<p style="padding-left:24px">{$vo.check_time_str}<span class="black mx-1">{$vo.check_name}</span>在{$vo.flow_name}执行了<span class="mx-1 red">{$vo.status_str}</span>操作。操作意见：<span class="red">{$vo.content}</span></p>
+					{else /}
+					<p style="padding-left:24px">{$vo.check_time_str}<span class="black mx-1">{$vo.check_name}</span><span class="mr-1 layui-color-{$vo.status}">{$vo.status_str}</span>了该阶段流程。操作意见：<span class="red">{$vo.content}</span></p>
+					{/if}
+					
+				</li>
+			{/volist}
+			</ul>
+		{else/}
+		<div class="layui-data-none">暂无记录</div>
+		{/notempty}
 	</div>
 </div>
 
@@ -40,15 +112,15 @@
 		{volist name="file_array" id="vo"}
 			<div class="layui-col-md4">
 				<div class="file-card">
-					<i class="file-icon iconfont icon-ziyuan"></i>
+					<i class="file-icon iconfont icon-renwuguanli"></i>
 					<div class="file-title" title="上传人：{$vo.admin_name}">
 						{$vo.name}
 					</div>
 					<div class="file-tool">
 						<a href="{$vo.filepath}" download="{$vo.name}" data-id="{$vo.id}" target="_blank" title="大小：{$vo.filesize/1048576|round=2}MB">
-							<i class="iconfont icon-shujudaoru" style="color: #12bb37;"></i>
+							<i class="iconfont icon-shujudaoru blue"></i>
 						</a>
-						<i class="btn-delete iconfont icon-shanchu" data-id="{$vo.id}" style="color: #FF5722;"></i>
+						<i class="btn-delete iconfont icon-shanchu red" data-id="{$vo.id}"></i>
 					</div>
 				</div>
 			</div>
@@ -59,32 +131,79 @@
 	</div>
 </div>
 
+<div class="layui-card border-y">
+	<div class="layui-card-header" style="height:45px;">
+		<div class="layui-row">
+			<div class="layui-col-md6">
+				<h5>关联链接</h5>
+			</div>
+			<div class="layui-col-md6" style="text-align:right">
+				<button type="button" class="layui-btn layui-btn-sm layui-btn-sm2" id="linkBtn">新增链接</button>
+			</div>
+		</div>
+	</div>
+	<div class="layui-card-body">
+		<table class="layui-table">
+			<thead>
+				<tr>
+					<th width="50%">链接URL</th>
+					<th width="30%" style="text-align:center">链接说明</th>
+					<th width="10%" style="text-align:center">添加人</th>
+					<th width="10%" style="text-align:center">操作</th>
+				</tr>
+			</thead>
+			<tbody id="linkList">
+				{volist name="link_array" id="vo"}
+				<tr>
+					<td><a href="{$vo.url}" target="_blank">{$vo.url}</a></td>
+					<td>{$vo.desc}</td>
+					<td style="text-align: center;">{$vo.admin_name}</td>
+					<td style="text-align: center;">
+						<div class="layui-btn-group" style="width:66px">
+							<button type="button" class="layui-btn layui-btn-xs link-edit" data-id="{$vo.id}" data-url="{$vo.url}" data-desc="{$vo.desc}"><i class="layui-icon"></i></button>
+							<button type="button" class="layui-btn layui-btn-danger layui-btn-xs link-delete" data-id="{$vo.id}"><i class="layui-icon"></i></button>
+						</div>
+					</td>
+				</tr>
+				{/volist}
+				{empty name="$link_array" }
+				<tr>
+					<td colspan="4"><div class="layui-data-none">暂无链接</div></td>
+				</tr>
+				{/empty}
+			</tbody>
+		</table>
+	</div>
+</div>
+
 <div class="layui-row mb-3 border-y">
 	<div class="layui-col-xs6 layui-col-md4">
-		<div class="layui-card border-l">
+		<div class="layui-card">
 			<div class="layui-card-header">
 				<h5>项目概况</h5>
 			</div>
-			<div class="layui-card-body">
-				<div style="width:100%; height:200px;">
-					<dl>
-						<dt>任务 <span class="gray">(已完成/总任务)</span></dt>
-						<dd class="layui-card-value" title="已完成/总任务">{$detail.tasks_finish} / {$detail.tasks}</dd>
-					</dl>
-					<dl>
-						<dt>项目工时 <span class="gray">(实际工时/计划工时)</span></dt>
-						<dd class="layui-card-value" title="实际工时/计划工时">{$detail.hours} / {$detail.plan_hours}</dd>
-					</dl>
-					<dl>
-						<dt>工作记录</dt>
-						<dd class="layui-card-value" title="工作记录数">{$detail.schedules}</dd>
-					</dl>
-				</div>
+			<div class="p-3">
+				<dl>
+					<dt>任务 <span class="gray">(已完成/全部)</span></dt>
+					<dd class="layui-card-value" title="已完成/总任务">{$detail.tasks_finish} / {$detail.tasks}</dd>
+				</dl>
+			</div>
+			<div class="pt-2 px-3">
+				<dl>
+					<dt>项目工时 <span class="gray">(实际/计划)</span></dt>
+					<dd class="layui-card-value" title="实际工时/计划工时">{$detail.hours} / {$detail.plan_hours}</dd>
+				</dl>
+			</div>
+			<div class="pt-2 px-3">
+				<dl>
+					<dt>工作记录</dt>
+					<dd class="layui-card-value" title="工作记录数">{$detail.schedules}</dd>
+				</dl>
 			</div>
 		</div>
 	</div>
 	<div class="layui-col-xs6 layui-col-md8">
-		<div class="layui-card">
+		<div class="layui-card border-l">
 			<div class="layui-card-header">
 				<h5>项目进度</h5>
 			</div>
@@ -99,7 +218,7 @@
 				</div>
 			</div>
 		</div>
-	</div>	
+	</div>
 </div>
 
 
@@ -138,7 +257,7 @@
 </div>
 <script>
 function overview(){
-	let form = layui.form,tool = layui.tool, edit = layui.oaEdit,upload = layui.upload;
+	let form = layui.form,tool = layui.tool, comment = layui.oaComment, edit = layui.oaEdit,upload = layui.upload;
 	$('.hover-edit').hover(function () {
 		$(this).addClass('hover-on');
 	}, function () {
@@ -168,7 +287,7 @@ function overview(){
 		}
 		let postData = { id: id };
 		postData[name] = real_val;
-		tool.post("/project/index/add", postData, callback);
+		tool.post("/project/index/edit", postData, callback);
 	}
 
 	function editShow(id, name, show_txt, real_txt) {
@@ -187,19 +306,10 @@ function overview(){
 		if (name == "status") {
 			edit.dropdown(id, name, real_txt, opsData[name], editPost);
 		}
-		if (name == "product_id") {
-			loading = true;
-			gougu.get("/api/index/get_product", {}, function (res) {
-				let data = res.data;
-				loading = false;
-				edit.dropdown(id, name, real_txt, data, editPost, 1);
-			});
-		}
 		if (name == "content") {
 			edit.textarea(id, name, real_txt, editPost);
 		}
-	}
-	
+	}	
 
 	$('#delProject').on('click', function () {
 		layer.confirm('确定要删除该项目吗？请慎重', { icon: 3, title: '提示' }, function (index) {
@@ -216,6 +326,46 @@ function overview(){
 			tool.delete("/project/index/delete", postData, callback);
 		});
 	})
+	
+	$('body').on('click','[data-event="step"]',function(){
+		let check = $(this).data('check');
+		let callback = function (e) {
+			layer.msg(e.msg);
+			if(e.code==0){
+				parent.layui.pageTable.reload();
+				setTimeout(function(){
+					location.reload();
+				},2000)
+			}
+		}
+		if(check == 2){
+			layer.open({
+				type: 1,
+				title: '请输入退回的原因或理由',
+				area: ['800px', '360px'],
+				content: '<div style="padding:5px;"><textarea class="layui-textarea" id="remarkTextarea" style="width: 100%; height: 240px;"></textarea></div>',
+				btnAlign: 'c',
+				btn: ['提交保存'],
+				yes: function () {
+					let remark = $("#remarkTextarea").val();
+					if (remark != '') {
+						tool.post("/project/api/step_check", {id: project_id,check:check,content:remark}, callback);
+					} else {
+						layer.msg('请输入原因或理由');
+					}
+				}
+			})
+		}
+		else{
+			layer.confirm('确认已完成该阶段工作，进入下个阶段？', {
+				icon: 3,
+				title: '提示'
+			},
+			function(index) {
+				tool.post("/project/api/step_check", {id: project_id,check:check}, callback);
+			})
+		}
+	});
 
 	upload.render({
 		elem: '#fileBtn'
@@ -280,7 +430,7 @@ function overview(){
 				},2000)	
 			}
 			let postData = { "id": id };
-			tool.delete("/api/appendix/delete_link", postData, callback);
+			tool.delete("/project/api/delete_link", postData, callback);
 		});
 	})
 
@@ -316,14 +466,14 @@ function overview(){
 					},
 					data: [{
 						value: res.data.task_pie.delay,
-						name: '延误',
+						name: '延迟',
 						itemStyle: {
 							color: "#ED6666",
 						}
 					},
 					{
-						value: res.data.task_pie.count - res.data.task_pie.delay,
-						name: '按时完成',
+						value: (res.data.task_pie.count - res.data.task_pie.delay),
+						name: '未延迟',
 						itemStyle: {
 							color: "#91CC75",
 						}
@@ -403,7 +553,7 @@ function overview(){
 					optionF.series = {
 						type: 'heatmap',
 						coordinateSystem: 'calendar',
-						data: dataE.data
+						data: dataF.data
 					}
 				optionF && workChart.setOption(optionF);
 			}

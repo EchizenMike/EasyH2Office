@@ -18,6 +18,13 @@ function oa_seal_cate()
     return $list;
 }
 
+//读取会议室
+function oa_meeting_cate()
+{
+    $list = Db::name('MeetingCate')->where(['status' => 1])->select()->toArray();
+    return $list;
+}
+
 //读取车辆类型
 function oa_car_cate()
 {

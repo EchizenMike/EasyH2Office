@@ -8,11 +8,7 @@ declare (strict_types = 1);
 namespace app\api\controller;
 
 use app\api\BaseController;
-use app\home\model\AdminLog;
-use app\user\validate\AdminCheck;
-use think\exception\ValidateException;
 use think\facade\Db;
-use think\facade\Session;
 
 class Index extends BaseController
 {
@@ -126,13 +122,6 @@ class Index extends BaseController
         return to_assign(0, '系统缓存已清空');
     }
 
-    //获取关键字
-    public function get_keyword_cate()
-    {
-        $keyword = Db::name('Keywords')->where(['status' => 1])->order('id desc')->select()->toArray();
-        return to_assign(0, '', $keyword);
-    }
-
     // 测试邮件发送
     public function email_test()
     {
@@ -228,177 +217,6 @@ class Index extends BaseController
         $position = Db::name('Position')->field('id,title as name')->where([['status', '=', 1], ['id', '>', 1]])->select();
         return to_assign(0, '', $position);
     }
-
-    //首页公告
-    public function get_note_list()
-    {
-        $list = Db::name('Note')
-            ->field('a.id,a.title,a.create_time,c.title as cate_title')
-            ->alias('a')
-            ->join('note_cate c', 'a.cate_id = c.id')
-            ->where(['a.status' => 1])
-            ->order('a.id desc')
-            ->limit(10)
-            ->select()->toArray();
-        foreach ($list as $key => $val) {
-            $list[$key]['create_time'] = date('Y-m-d :H:i', $val['create_time']);
-        }
-        $res['data'] = $list;
-        return table_assign(0, '', $res);
-    }
-	
-	//首页文章
-    public function get_article_list()
-    {
-		$prefix = get_config('database.connections.mysql.prefix');//判断是否安装了文章模块
-		$exist = Db::query('show tables like "'.$prefix.'article"');
-		$res['data'] = [];
-		if($exist){
-			$list = Db::name('Article')
-				->field('a.id,a.title,a.create_time,a.read,c.title as cate_title')
-				->alias('a')
-				->join('article_cate c', 'a.cate_id = c.id')
-				->where(['a.delete_time' => 0])
-				->order('a.id desc')
-				->limit(10)
-				->select()->toArray();
-			foreach ($list as $key => $val) {
-				$list[$key]['create_time'] = date('Y-m-d :H:i', $val['create_time']);
-			}
-			$res['data'] = $list;			
-		}
-		return table_assign(0, '', $res);
-	}
-
-
-    //首页项目
-    public function get_project_list()
-    {
-		$prefix = get_config('database.connections.mysql.prefix');//判断是否安装了项目模块
-		$exist = Db::query('show tables like "'.$prefix.'project"');
-		$res['data'] = [];
-		if($exist){
-			$project_ids = Db::name('ProjectUser')->where(['uid' => $this->uid, 'delete_time' => 0])->column('project_id');
-			$list = Db::name('Project')
-				->field('a.id,a.name,a.status,a.create_time,a.start_time,a.end_time,u.name as director_name')
-				->alias('a')
-				->join('Admin u', 'a.director_uid = u.id')
-				->where([['a.delete_time', '=', 0], ['a.id', 'in', $project_ids]])
-				->order('a.id desc')
-				->limit(10)
-				->select()->toArray();
-			foreach ($list as $key => $val) {
-				$list[$key]['create_time'] = date('Y-m-d :H:i', $val['create_time']);
-				$list[$key]['plan_time'] = date('Y-m-d', $list[$key]['start_time']) . ' 至 ' . date('Y-m-d', $list[$key]['end_time']);
-				$list[$key]['status_name'] = \app\project\model\Project::$Status[(int) $val['status']];
-			}
-			$res['data'] = $list;
-		}
-        return table_assign(0, '', $res);
-    }
-
-    //修改个人信息
-    public function edit_personal()
-    {
-		if (request()->isAjax()) {
-            $param = get_params();
-            $uid = $this->uid;
-            Db::name('Admin')->where(['id' => $uid])->strict(false)->field(true)->update($param);
-            $session_admin = get_config('app.session_admin');
-            Session::set($session_admin, Db::name('admin')->find($uid));
-            return to_assign();
-        }
-		else{
-			return view('user@user/edit_personal', [
-				'admin' => get_admin($this->uid),
-			]);
-		}
-    }
-
-    //修改密码
-    public function edit_password()
-    {
-		if (request()->isAjax()) {
-            $param = get_params();
-            try {
-                validate(AdminCheck::class)->scene('editPwd')->check($param);
-            } catch (ValidateException $e) {
-                // 验证失败 输出错误信息
-                return to_assign(1, $e->getError());
-            }
-            $uid = $this->uid;
-			
-			$admin = Db::name('Admin')->where(['id' => $uid])->find();
-			$old_psw = set_password($param['old_pwd'], $admin['salt']);
-			if ($admin['pwd'] != $old_psw) {
-				return to_assign(1, '旧密码错误');
-			}
-
-			$salt = set_salt(20);
-			$new_pwd = set_password($param['pwd'], $salt);
-			$data = [
-				'reg_pwd' => '',
-				'salt' => $salt,
-				'pwd' => $new_pwd,
-				'update_time' => time(),
-			];
-            Db::name('Admin')->where(['id' => $uid])->strict(false)->field(true)->update($data);
-            $session_admin = get_config('app.session_admin');
-            Session::set($session_admin, Db::name('admin')->find($uid));
-            return to_assign();
-        }
-		else{
-			return view('user@user/edit_password', [
-				'admin' => get_admin($this->uid),
-			]);
-		}
-    }
-	
-    //系统操作日志
-    public function log_list()
-    {
-		if (request()->isAjax()) {
-			$param = get_params();
-			$log = new AdminLog();
-			$content = $log->get_log_list($param);
-			return table_assign(0, '', $content);
-		}else{
-			return view('home@log/log_list');
-		}
-    }
-
-    //保存密码修改
-    public function password_submit()
-    {
-        if (request()->isAjax()) {
-            $param = get_params();
-            try {
-                validate(AdminCheck::class)->scene('editpwd')->check($param);
-            } catch (ValidateException $e) {
-                // 验证失败 输出错误信息
-                return to_assign(1, $e->getError());
-            }
-            $admin = get_admin($this->uid);
-            if (set_password($param['old_pwd'], $admin['salt']) !== $admin['pwd']) {
-                return to_assign(1, '旧密码不正确!');
-            }
-            unset($param['username']);
-            $param['salt'] = set_salt(20);
-            $param['pwd'] = set_password($param['pwd'], $param['salt']);
-            Db::name('Admin')->where(['id' => $admin['id'],
-            ])->strict(false)->field(true)->update($param);
-            $session_admin = get_config('app.session_admin');
-            Session::set($session_admin, Db::name('admin')->find($admin['id']));
-            return to_assign();
-        }
-    }
-	
-	//获取工作类型列表
-    public function get_work_cate()
-    {
-        $cate = Db::name('WorkCate')->field('id,title')->where([['status', '=', 1]])->select();
-        return to_assign(0, '', $cate);
-    }
 	
 	//获取审核类型
     public function get_flow_cate($type=0)
@@ -411,10 +229,17 @@ class Index extends BaseController
     {
         $flow = Db::name('Flow')->where(['id' => $id])->find();
         $flowData = unserialize($flow['flow_list']);
-		foreach ($flowData as $key => &$val) {
-            $val['user_id_info'] = Db::name('Admin')->field('id,name,thumb')->where('id','in',$val['flow_uids'])->select()->toArray();
-        }
+		if(!empty($flowData)){
+			foreach ($flowData as $key => &$val) {
+				$val['user_id_info'] = Db::name('Admin')->field('id,name,thumb')->where('id','in',$val['flow_uids'])->select()->toArray();
+			}
+		}
 		$data['copy_uids'] = $flow['copy_uids'];
+		$data['copy_unames'] ='';
+		if($flow['copy_uids']!=''){
+			$copy_unames = Db::name('Admin')->where('id', 'in', $flow['copy_uids'])->column('name');
+			$data['copy_unames'] = implode(',', $copy_unames);
+		}
 		$data['flow_data'] = $flowData;
         return to_assign(0, '', $data);
     }
@@ -468,57 +293,341 @@ class Index extends BaseController
 		}
         return to_assign(0, '', $check_list);
     }
-
-
-    //删除报销附件
-    public function del_expense_interfix()
-    {
-        $id = get_params("id");
-        $admin_id = Db::name('ExpenseInterfix')->where('id', $id)->value('admin_id');
-        if ($admin_id == $this->uid) {
-            if (Db::name('ExpenseInterfix')->where('id', $id)->delete() !== false) {
-                return to_assign(0, "删除成功");
-            } else {
-                return to_assign(1, "删除失败");
-            }
-        } else {
-            return to_assign(1, "您没权限删除该报销数据");
-        }
-    }
 	
-    //删除消息附件
-    public function del_message_interfix()
-    {
-        $id = get_params("id");
-        $detail = Db::name('MessageFileInterfix')->where('id', $id)->find();
-        if ($detail['admin_id'] == $this->uid) {
-            if (Db::name('MessageFileInterfix')->where('id', $id)->delete() !== false) {
-				$data = Db::name('MessageFileInterfix')->where('mid', $detail['mid'])->column('file_id');
-                return to_assign(0, "删除成功",$data);
-            } else {
-                return to_assign(1, "删除失败");
-            }
-        } else {
-            return to_assign(1, "您没权限删除该消息附件");
-        }
-
-    }
-
-    //获取访问记录
-    public function get_view_data()
+    //流程审核
+    public function flow_check()
     {
         $param = get_params();
-        $first_time = time();
-        $second_time = $first_time - 86400;
-        $three_time = $first_time - 86400 * 365;
-        $begin_first = strtotime(date('Y-m-d', $first_time) . " 00:00:00");
-        $end_first = strtotime(date('Y-m-d', $first_time) . " 23:59:59");
-        $begin_second = strtotime(date('Y-m-d', $second_time) . " 00:00:00");
-        $end_second = strtotime(date('Y-m-d', $second_time) . " 23:59:59");
-        $begin_three = strtotime(date('Y-m-d', $three_time) . " 00:00:00");
-        $data_first = Db::name('AdminLog')->field('create_time')->whereBetween('create_time', "$begin_first,$end_first")->select();
-        $data_second = Db::name('AdminLog')->field('create_time')->whereBetween('create_time', "$begin_second,$end_second")->select();
-        $data_three = Db::name('AdminLog')->field('create_time')->whereBetween('create_time', "$begin_three,$end_first")->select();
-        return to_assign(0, '', ['data_first' => hour_document($data_first), 'data_second' => hour_document($data_second), 'data_three' => date_document($data_three)]);
+		$id = $param['id'];
+		$type = $param['type'];
+		$detail = [];
+		if($type==1){
+			//日常审核
+			$detail = Db::name('Approve')->where(['id' => $id])->find();
+		}
+		else if($type==2){
+			//报销审核
+			$detail = Db::name('Expense')->where(['id' => $id])->find();
+		}
+		else if($type==3){
+			//发票审核
+			$detail = Db::name('Invoice')->where(['id' => $id])->find();
+		}
+		else if($type==4){
+			//合同审核
+			$detail = Db::name('Contract')->where(['id' => $id])->find();
+		}
+		if (empty($detail)){		
+			return to_assign(1,'审批数据错误');
+		}
+		//当前审核节点详情
+		$step = Db::name('FlowStep')->where(['action_id'=>$id,'type'=>$type,'sort'=>$detail['check_step_sort'],'delete_time'=>0])->find();
+		
+		//审核通过
+		if($param['check'] == 1){
+			$check_admin_ids = explode(",", strval($detail['check_admin_ids']));
+			if (!in_array($this->uid, $check_admin_ids)){		
+				return to_assign(1,'您没权限审核该审批');
+			}
+			
+			//多人会签审批
+			if($step['flow_type'] == 4){
+				//查询当前会签记录数
+				$check_count = Db::name('FlowRecord')->where(['action_id'=>$id,'type'=>$type,'step_id'=>$step['id']])->count();
+				//当前会签记应有记录数
+				$flow_count = explode(',', $step['flow_uids']);
+				if(($check_count+1) >=count($flow_count)){
+					$next_step = Db::name('FlowStep')->where(['action_id'=>$id,'type'=>$type,'sort'=>($detail['check_step_sort']+1),'delete_time'=>0])->find();
+					if($next_step){
+						//存在下一步审核
+						$param['check_admin_ids'] = $next_step['flow_uids'];
+						$param['check_step_sort'] = $detail['check_step_sort']+1;
+						$param['check_status'] = 1;
+					}
+					else{
+						//不存在下一步审核，审核结束
+						$param['check_status'] = 2;
+						$param['check_admin_ids'] ='';
+					}
+				}
+				else{
+					$param['check_status'] = 1;
+					$param['check_admin_ids'] = $step['flow_uids'];
+				}
+			}
+			else if($step['flow_type'] == 0){
+				//自由人审批
+				if($param['check_node'] == 2){
+					$next_step = $detail['check_step_sort']+1;
+					$flow_step = array(
+						'action_id' => $id,
+						'sort' => $next_step,
+						'type' => $type,
+						'flow_uids' => $param['check_admin_ids'],
+						'create_time' => time()
+					);
+					$fid = Db::name('FlowStep')->strict(false)->field(true)->insertGetId($flow_step);
+					//下一步审核步骤
+					$param['check_admin_ids'] = $param['check_admin_ids'];
+					$param['check_step_sort'] = $next_step;
+					$param['check_status'] = 1;
+				}
+				else{
+					//不存在下一步审核，审核结束
+					$param['check_status'] = 2;
+					$param['check_admin_ids'] ='';
+				}
+			}
+			else{
+				$next_step = Db::name('FlowStep')->where(['action_id'=>$id,'type'=>$type,'sort'=>($detail['check_step_sort']+1),'delete_time'=>0])->find();
+				if($next_step){
+					//存在下一步审核
+					if($next_step['flow_type'] == 1){
+						$param['check_admin_ids'] = get_department_leader($this->uid);
+					}
+					else if($next_step['flow_type'] == 2){
+						$param['check_admin_ids'] = get_department_leader($this->uid,1);
+					}
+					else{
+						$param['check_admin_ids'] = $next_step['flow_uids'];
+					}
+					$param['check_step_sort'] = $detail['check_step_sort']+1;
+					$param['check_status'] = 1;
+				}
+				else{
+					//不存在下一步审核，审核结束
+					$param['check_status'] = 2;
+					$param['check_admin_ids'] ='';
+				}
+			}
+			if($param['check_status'] == 1 && $param['check_admin_ids']==''){
+				return to_assign(1,'找不到下一步的审批人，该审批流程设置有问题，请联系HR或者管理员');
+			}			
+			//审核通过数据操作
+			$param['last_admin_id'] = $this->uid;
+			$param['flow_admin_ids'] = $detail['flow_admin_ids'].$this->uid.',';
+			
+			if($type==1){
+				//日常审核
+				$res = Db::name('Approve')->strict(false)->field('check_step_sort,check_status,last_admin_id,flow_admin_ids,check_admin_ids')->update($param);
+			}
+			else if($type==2){
+				//报销审核
+				$res = Db::name('Expense')->strict(false)->field('check_step_sort,check_status,last_admin_id,flow_admin_ids,check_admin_ids')->update($param);
+			}
+			else if($type==3){
+				//发票审核
+				$res = Db::name('Invoice')->strict(false)->field('check_step_sort,check_status,last_admin_id,flow_admin_ids,check_admin_ids')->update($param);
+			}
+			else if($type==4){
+				//合同审核
+				$res = Db::name('Contract')->strict(false)->field('check_step_sort,check_status,last_admin_id,flow_admin_ids,check_admin_ids')->update($param);
+			}
+			
+			if($res!==false){
+				$checkData=array(
+					'action_id' => $id,
+					'step_id' => $step['id'],
+					'check_user_id' => $this->uid,
+					'type' => $type,
+					'check_time' => time(),
+					'status' => $param['check'],
+					'content' => $param['content'],
+					'create_time' => time()
+				);	
+				$aid = Db::name('FlowRecord')->strict(false)->field(true)->insertGetId($checkData);
+				add_log('check', $param['id'], $param);
+				//发送消息通知
+				$msg=[
+					'create_time'=>time(),
+					'action_id'=>$id
+				];
+				if($param['check_status'] == 1){
+					$users = $param['check_admin_ids'];
+					sendMessage($users,($type*10+11),$msg);
+				}
+				if($param['check_status'] == 2){
+					$users = $detail['admin_id'];
+					sendMessage($users,($type*10+12),$msg);
+				}
+				return to_assign();
+			}
+			else{
+				return to_assign(1,'操作失败');
+			}
+		}
+		else if($param['check'] == 2){
+			$check_admin_ids = explode(",", strval($detail['check_admin_ids']));
+			if (!in_array($this->uid, $check_admin_ids)){		
+				return to_assign(1,'您没权限审核该审批');
+			}
+			//拒绝审核，数据操作
+			$param['check_status'] = 3;
+			$param['last_admin_id'] = $this->uid;
+			$param['flow_admin_ids'] = $detail['flow_admin_ids'].$this->uid.',';
+			$param['check_admin_ids'] ='';
+			if($step['flow_type'] == 5){
+				//获取上一步的审核信息
+				$prev_step = Db::name('FlowStep')->where(['action_id'=>$id,'type'=>$type,'sort'=>($detail['check_step_sort']-1),'delete_time'=>0])->find();
+				if($prev_step){
+					//存在上一步审核
+					$param['check_step_sort'] = $prev_step['sort'];
+					$param['check_admin_ids'] = $prev_step['flow_uids'];
+					$param['check_status'] = 1;
+				}
+				else{
+					//不存在上一步审核，审核初始化步骤
+					$param['check_step_sort'] = 0;
+					$param['check_admin_ids'] = '';					
+					$param['check_status'] = 0;
+				}
+			}
+			if($type==1){
+				//日常审核
+				$res = Db::name('Approve')->strict(false)->field('check_step_sort,check_status,last_admin_id,flow_admin_ids,check_admin_ids')->update($param);
+			}
+			else if($type==2){
+				//报销审核
+				$res = Db::name('Expense')->strict(false)->field('check_step_sort,check_status,last_admin_id,flow_admin_ids,check_admin_ids')->update($param);
+			}
+			else if($type==3){
+				//发票审核
+				$res = Db::name('Invoice')->strict(false)->field('check_step_sort,check_status,last_admin_id,flow_admin_ids,check_admin_ids')->update($param);
+			}
+			else if($type==4){
+				//合同审核
+				$res = Db::name('Contract')->strict(false)->field('check_step_sort,check_status,last_admin_id,flow_admin_ids,check_admin_ids')->update($param);
+			}
+			if($res!==false){
+				$checkData=array(
+					'action_id' => $id,
+					'step_id' => $step['id'],
+					'check_user_id' => $this->uid,
+					'type' => $type,
+					'check_time' => time(),
+					'status' => $param['check'],
+					'content' => $param['content'],
+					'create_time' => time()
+				);	
+				$aid = Db::name('FlowRecord')->strict(false)->field(true)->insertGetId($checkData);
+				add_log('refue', $param['id'], $param);
+				//发送消息通知
+				$msg=[
+					'create_time'=>date('Y-m-d H:i:s',$detail['create_time']),
+					'action_id'=>$detail['id']
+				];
+				$users = $detail['admin_id'];
+				sendMessage($users,($type*10+13),$msg);
+				return to_assign();
+			}
+			else{
+				return to_assign(1,'操作失败');
+			}			
+		}		
+		else if($param['check'] == 3){
+			if($detail['admin_id'] != $this->uid){
+				return to_assign(1,'你没权限操作');
+			}
+			//撤销审核，数据操作
+			$param['check_status'] = 4;
+			$param['check_admin_ids'] ='';
+			$param['check_step_sort'] =0;
+			if($type==1){
+				//日常审核
+				$res = Db::name('Approve')->strict(false)->field('check_step_sort,check_status,check_admin_ids')->update($param);
+			}
+			else if($type==2){
+				//报销审核
+				$res = Db::name('Expense')->strict(false)->field('check_step_sort,check_status,check_admin_ids')->update($param);
+			}
+			else if($type==3){
+				//发票审核
+				$res = Db::name('Invoice')->strict(false)->field('check_step_sort,check_status,check_admin_ids')->update($param);
+			}
+			else if($type==4){
+				//合同审核
+				$res = Db::name('Contract')->strict(false)->field('check_step_sort,check_status,check_admin_ids')->update($param);
+			}
+			if($res!==false){
+				$checkData=array(
+					'action_id' => $id,
+					'step_id' => 0,
+					'check_user_id' => $this->uid,
+					'type' => $type,
+					'check_time' => time(),
+					'status' => $param['check'],
+					'content' => $param['content'],
+					'create_time' => time()
+				);	
+				$aid = Db::name('FlowRecord')->strict(false)->field(true)->insertGetId($checkData);
+				add_log('back', $param['id'], $param);
+				return to_assign();
+			}else{
+				return to_assign(1,'操作失败');
+			}
+		}		
+    }
+
+    //获取关键字
+    public function get_keyword_cate()
+    {
+        $keyword = Db::name('Keywords')->where(['status' => 1])->order('id desc')->select()->toArray();
+        return to_assign(0, '', $keyword);
+    }
+	
+	//读取报销类型
+	function get_expense_cate()
+	{
+		$cate = get_expense_cate();
+		return to_assign(0, '', $cate);
+	}
+
+	//读取费用类型
+	function get_cost_cate()
+	{
+		$cate = get_cost_cate();
+		return to_assign(0, '', $cate);
+	}
+
+	//读取印章类型
+	function get_seal_cate()
+	{
+		$cate = get_seal_cate();
+		return to_assign(0, '', $cate);
+	}
+
+	//读取车辆类型
+	function get_car_cate()
+	{
+		$cate = get_car_cate();
+		return to_assign(0, '', $cate);
+	}
+
+	//读取企业主体
+	function get_subject()
+	{
+		$subject = get_subject();
+		return to_assign(0, '', $subject);
+	}
+
+	//读取行业类型
+	function get_industry()
+	{
+		$industry = get_industry();
+		return to_assign(0, '', $industry);
+	}
+
+	//读取服务类型
+	function get_services()
+	{
+		$services = get_services();
+		return to_assign(0, '', $services);
+	}
+	
+	//获取工作类型列表
+    public function get_work_cate()
+    {
+        $cate = get_work_cate();
+        return to_assign(0, '', $cate);
     }
 }

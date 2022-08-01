@@ -1,0 +1,94 @@
+{extend name="../../base/view/common/base" /}
+<!-- 主体 -->
+{block name="body"}
+<form class="layui-form p-4">
+	<h3 class="pb-3">权限配置</h3>
+	<table class="layui-table layui-table-form">
+		<tr>
+			<td colspan="4" class="red" style="line-height:1.8">
+				<p><strong>项目模块使用说明：</strong></p>
+				<p><strong>1、设置项目管理员，可设置多个</strong></p>
+				<p style="text-indent:2em">a、拥有项目管理员权限的员工可以查看所有项目。</p>
+				<p style="text-indent:2em">b、非项目管理员的员工，可查看（项目创建人，项目负责人，项目成员）相关联的项目。</p>
+				<p style="text-indent:2em; margin-bottom:8px">c、项目的编辑权限只有项目录入人、项目负责人、项目管理员拥有。</p>
+				<p><strong>2、系统会记录每一次项目的操作记录</strong></p>
+				<p style="text-indent:2em">a、记录每一次项目的操作记录，防止合同被误操作和后期问题追踪。</p>
+			</td>
+		</tr>
+		<tr>
+			<td class="layui-td-gray">权限名称</td>
+			<td>
+				<input type="hidden" name="id" value="{$detail.id}" />
+				{$detail.title}
+			</td>
+			<td class="layui-td-gray">权限标识</td>
+			<td>{$detail.name}</td>
+		</tr>
+		<tr>
+			<td class="layui-td-gray-2">默认阶段配置<font>*</font>
+			</td>
+			<td colspan="3">
+				<input type="text" name="conf_1" value="{$detail.conf_1}" placeholder="请输入默认阶段，每个阶段以|分割" lay-verify="required" lay-reqText="请输入默认阶段" autocomplete="off" class="layui-input">
+			</td>
+		</tr>
+		<tr>
+			<td class="layui-td-gray">权限人员<font>*</font>
+			</td>
+			<td colspan="3">
+				<input type="text" id="unames" name="unames" value="{$detail.unames}" readonly placeholder="请选择权限人员" autocomplete="off" class="layui-input">
+				<input type="hidden" id="uids" name="uids" value="{$detail.uids}" lay-verify="required" lay-reqText="请选择权限人员">
+			</td>
+		</tr>
+		<tr>
+			<td colspan="4">
+				<span class="red" style="font-size: 12px;">{$detail.desc}</span>
+			</td>
+		</tr>
+	</table>
+	<div class="py-3">
+		<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform">立即提交</button>
+		<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+	</div>
+</form>
+{/block}
+<!-- /主体 -->
+
+<!-- 脚本 -->
+{block name="script"}
+<script>
+	const moduleInit = ['tool','employeepicker'];
+	function gouguInit() {
+		var form = layui.form, tool = layui.tool,employeepicker = layui.employeepicker;
+		
+		//选择共享成员弹窗	
+		$('body').on('click','#unames',function () {
+			var ids=$('#uids').val(),names=$(this).val(),share_ids_array=[],share_names_array=[];
+			if(ids.length>0){
+				share_ids_array=ids.split(',');
+				share_names_array=names.split(',');
+			}
+			employeepicker.init({
+				ids:share_ids_array,
+				names:share_names_array,
+				type:1,
+				department_url: "/api/index/get_department_tree",
+				employee_url: "/api/index/get_employee",
+				callback:function(ids,names,dids,departments){
+					$('#uids').val(ids);
+					$('#unames').val(names);
+				}
+			});
+		});
+		
+		//监听提交
+		form.on('submit(webform)', function (data) {
+			let callback = function (e) {
+				layer.msg(e.msg);
+			}
+			tool.post("/project/index/conf", data.field, callback);
+			return false;
+		});
+	}
+</script>
+{/block}
+<!-- /脚本 -->

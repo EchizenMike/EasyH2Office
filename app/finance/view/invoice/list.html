@@ -87,23 +87,23 @@
 						field: 'check_status',
 						title: '发票状态',
 						align: 'center',
-						width: 100,
+						width: 120,
 						templet:function(d){
-							var html='<span class="green">待审核</span>';
+							var html='<span class="black">待审核</span>';
 							if(d.check_status==1){
-								html='<span class="green">审核中</span>';
+								html='<span class="blue">审核中</span>';
 							}
 							else if(d.check_status==2){
-								html='<span class="blue">待开具</span>';
+								html='<span class="green">审核通过,待开具</span>';
 							}
 							else if(d.check_status==3){
 								html='<span class="red">审核不通过</span>';
 							}
 							else if(d.check_status==4){
-								html='<span class="red">撤销</span>';
+								html='<span class="red">已撤销</span>';
 							}
 							else if(d.check_status==5){
-								html='<span class="blue">已开具</span>';
+								html='<span class="green">已开具</span>';
 							}
 							else if(d.check_status==10){
 								html='<span class="yellow">已作废</span>';

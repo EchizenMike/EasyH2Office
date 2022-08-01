@@ -32,6 +32,14 @@ class ProjectTask extends Model
         self::FOUR => '已拒绝',
         self::FIVE => '已关闭',
     ];
+	
+	public static $Type = [
+        self::ZERO => '未设置',
+        self::ONE => '需求',
+        self::TWO => '设计',
+        self::THREE => '研发',
+        self::FOUR => '缺陷',
+    ];
 
     //列表
     function list($param) {
@@ -95,6 +103,7 @@ class ProjectTask extends Model
                 }
                 $item['priority_name'] = self::$Priority[(int) $item['priority']];
                 $item['flow_name'] = self::$FlowStatus[(int) $item['flow_status']];
+                $item['type_name'] = self::$Type[(int) $item['type']];
                 return $item;
             });
         return $list;
@@ -123,6 +132,7 @@ class ProjectTask extends Model
             }
             $detail['priority_name'] = self::$Priority[(int) $detail['priority']];
             $detail['flow_name'] = self::$FlowStatus[(int) $detail['flow_status']];
+			$detail['type_name'] = self::$Type[(int) $detail['type']];
             $detail['times'] = time_trans($detail['create_time']);
             $detail['end_time'] = date('Y-m-d', $detail['end_time']);
             $detail['delay'] = 0;

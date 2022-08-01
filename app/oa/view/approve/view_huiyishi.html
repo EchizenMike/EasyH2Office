@@ -8,8 +8,12 @@
 	<h3 class="pb-3">会议室预定审批</h3>
 	<table class="layui-table layui-table-form">
 		<tr>
-			<td class="layui-td-gray">会议室名称</td>
-			<td>{$detail.name}</td>
+			<td class="layui-td-gray">会议室</td>
+			<td>
+				{volist name=":oa_meeting_cate()" id="vo"}
+				{eq name="$detail.detail_type" value="$vo.id"}{$vo.title}{/eq}
+				{/volist}
+			</td>
 		</tr>
 		<tr>
 			<td class="layui-td-gray">预定时间</td>

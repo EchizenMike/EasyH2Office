@@ -8,23 +8,6 @@
 .layui-card-tips {color: #969696;}
 .layui-card-value {padding: 4px 0 16px;font-size: 18px;color: #1E9FFF;}
 
-.file-card {background: #fff;border: 1px solid #f1f1f1;border-radius: 2px; padding: 8px; margin:8px;
-    -webkit-box-align: center;
-    -ms-flex-align: center;
-    align-items: center;
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-}
-.file-card .file-icon{font-size:42px; color:#999; margin-right: 8px;}
-.file-card .file-title {font-size: 14px; color: #409eff; letter-spacing: 0; margin-right: 8px; line-height: 18px; cursor: pointer; word-break: break-all; overflow: hidden; text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    -webkit-box-orient: vertical;width: calc(100% - 110px);
-}
-.file-card .file-tool .iconfont{font-size:16px; padding:4px; cursor:pointer;}
-
 .log-timeline{ position: relative; min-height:600px; padding-left: 48px; background-color:#fff;}
 .log-timeline:after {content: ""; position: absolute; top: 0; left: 24px; width: 1px; height: 100%; background: #e3e9ed;}
 .log-timeline dl{padding-bottom: 8px; position: relative;}
@@ -35,6 +18,8 @@
 .log-timeline .open-a{margin:0 4px;}
 .log-item i{font-weight:800; color:#323232}
 .log-content strong{margin:0 4px; color:#323232}
+.layui-timeline-item{color:#c9c9c9; padding-bottom:8px}
+.layui-timeline-item.delete_0{color:#646464;}
 
 .comment-input .comment-image{width:40px; height:40px; border-radius:50%}
 .comment-item .comment-avatar{width:50px; float:left}
@@ -44,6 +29,33 @@
 .comment-item .comment-actions a{color:#8c95a8; cursor:pointer; font-size:12px;}
 .comment-item .comment-actions a:hover{color:#3582fb;}
 .comment-meta span{font-size:12px;}
+
+.check-items{overflow-x: auto; padding: 2px 0;}
+.flow-flex-row {box-direction: row;
+	box-orient: horizontal;
+    -webkit-box-orient: horizontal;
+    -ms-flex-direction: row;
+    flex-direction: row;
+}
+.flow-flexbox { width: 100%;text-align: left;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    display: -webkit-flex;
+    box-align: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+	flex-wrap: wrap;
+}
+.check-item{width: auto; -ms-flex-negative: 0; flex-shrink: 0; padding:4px 0;}
+.check-item i{font-size:20px; margin-right:3px;}
+.check-item span{color:#999;margin:0 1px;}
+.layui-icon[data-ok]{color:#34a853}
+.layui-icon[data-no]{color:#FF5722;}
+.layui-icon[data-on]{color:#4285f4;}
+.check-item-status{color:#969696; font-size:12px; margin-left:3px;}
+.check-item:last-child .layui-icon-right{display:none;}
 </style>
 {/block}
 <!-- 主体 -->
@@ -70,6 +82,7 @@
 			<li class="layui-this" data-load="true">项目概览</li>
 			<li data-load="">项目任务</li>
 			<li data-load="">工作记录</li>
+			<li data-load="">项目文档</li>
 			<li data-load="">项目人员</li>
 			<li data-load="">项目动态</li>
 			<li data-load="">项目评论</li>
@@ -85,6 +98,10 @@
 			
 			<div class="layui-tab-item">
 				{include file="/index/view_schedule" /}				
+			</div>
+			
+			<div class="layui-tab-item">
+				{include file="/index/view_document" /}				
 			</div>
 			
 			<div class="layui-tab-item">
@@ -200,14 +217,14 @@
 				},
 				data: [{
 					value: 1048,
-					name: '延误',
+					name: '延迟',
 					itemStyle: {
 						color: "#ED6666",
 					}
 				},
 				{
 					value: 735,
-					name: '按时完成',
+					name: '未延迟',
 					itemStyle: {
 						color: "#91CC75",
 					}
@@ -216,6 +233,7 @@
 			}
 		]
 	};
+
 
 	var chartCross = document.getElementById('cross');
 	var crossChart = echarts.init(chartCross);
@@ -498,24 +516,26 @@
 	
 	function gouguInit() {
 		var element = layui.element;
-		overview(layui);		
+		overview();		
 		element.on('tab(project)', function(data){
 			let index = data.index;
-			console.log(index);
 			if(index == 1){
-				task(layui);	
+				project_task();	
 			}
 			else if(index == 2){
-				schedule(layui);	
+				project_schedule();	
 			}
 			else if(index == 3){
-				user(layui);	
+				project_document();	
 			}
 			else if(index == 4){
-				log(layui);	
+				project_user();	
 			}
 			else if(index == 5){
-				comment(layui);	
+				project_log();	
+			}
+			else if(index == 6){
+				project_comment();	
 			}
 		});
 	}	

@@ -2,22 +2,25 @@
 <!-- 主体 -->
 {block name="body"}
 <div class="p-3">
-	<form class="layui-form gg-form-bar border-t border-x">
-		<div class="layui-inline" style="width:240px">
-			<input type="text" name="keywords" placeholder="关键字" class="layui-input" autocomplete="off"/>
-		</div>
-		<div class="layui-inline" id="date">
-			<div class="layui-input-inline" style="width:112px">
-			  <input type="text" autocomplete="off" id="start_time" name="start_time" class="layui-input" placeholder="发送开始日期">
+	{include file="index/msgmenu" /}
+	<div style="margin-left:172px;">
+		<form class="layui-form gg-form-bar border-t border-x">
+			<div class="layui-inline" style="width:240px">
+				<input type="text" name="keywords" placeholder="关键字" class="layui-input" autocomplete="off"/>
 			</div>
-			~
-			<div class="layui-input-inline" style="width:112px">
-			  <input type="text" autocomplete="off" id="end_time" name="end_time" class="layui-input" placeholder="发送结束日期">
+			<div class="layui-inline" id="date">
+				<div class="layui-input-inline" style="width:112px">
+				  <input type="text" autocomplete="off" id="start_time" name="start_time" class="layui-input" placeholder="发送开始日期">
+				</div>
+				~
+				<div class="layui-input-inline" style="width:112px">
+				  <input type="text" autocomplete="off" id="end_time" name="end_time" class="layui-input" placeholder="发送结束日期">
+				</div>
 			</div>
-		</div>
-		<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform">提交搜索</button>
-	</form> 
-	<table class="layui-hide" id="test" lay-filter="test"></table>
+			<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform">提交搜索</button>
+		</form> 
+		<table class="layui-hide" id="test" lay-filter="test"></table>
+	</div>
 </div>
 
 <script type="text/html" id="mail_type">
@@ -60,14 +63,13 @@
 			url: "/message/index/sendbox", //数据接口
 			page: true ,//开启分页
 			limit: 20,
-			cellMinWidth: 80, //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+			cellMinWidth: 200, //全局定义常规单元格的最小宽度，layui 2.2.1 新增
 			cols: [[ //表头
 			  {type:'checkbox',fixed:'left'},
 			  {field: 'type_title', title: '接收人类型',width:100,align:'center'},
 			  {field: 'title', title: '消息主题'},
 			  {field: 'send_time', title: '发件时间', align:'center',width:160},
-			  {field: 'files', title: '附件(个)',align:'center', width:86},
-			  {field: 'right', title: '操作',fixed:'right', toolbar: '#barDemo', width:136, align:'center'}
+			  {field: 'right', title: '操作',fixed:'right', toolbar: '#barDemo', width:140, align:'center'}
 			]],
 			where:{type:1}
 		  });

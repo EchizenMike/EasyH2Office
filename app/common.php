@@ -231,58 +231,170 @@ function get_position()
     return $position;
 }
 
-//读取行业
+//根据流程类型读取某部门某模块的审核流程
+function get_cate_department_flows($cate=1,$department=0)
+{
+	$map1 = [];
+	$map2 = [];
+	$map1[] = ['status', '=', 1];
+	$map1[] = ['flow_cate', '=', $cate];
+	$map1[] = ['department_ids', '=', ''];
+
+	$map2[] = ['status', '=', 1];
+	$map2[] = ['flow_cate', '=', $cate];
+	$map2[] = ['', 'exp', Db::raw("FIND_IN_SET('{$department}',department_ids)")];
+
+    $list = Db::name('Flow')->field('id,name,check_type')->whereOr([$map1,$map2])->order('id desc')->select()->toArray();
+    return $list;
+}
+
+//根据流程所属模块读取某部门某模块的审核流程
+function get_type_department_flows($type=6,$department=0)
+{
+	$map1 = [];
+	$map2 = [];
+	$map1[] = ['status', '=', 1];
+	$map1[] = ['type', '=', $type];
+	$map1[] = ['department_ids', '=', ''];
+
+	$map2[] = ['status', '=', 1];
+	$map2[] = ['type', '=', $type];
+	$map2[] = ['', 'exp', Db::raw("FIND_IN_SET('{$department}',department_ids)")];
+
+    $list = Db::name('Flow')->field('id,name,check_type')->whereOr([$map1,$map2])->order('id desc')->select()->toArray();
+    return $list;
+}
+
+
+/**
+ * 初始化审批流程数据
+ * @param  $flow_id 审批流程id
+ * @return
+ */
+function set_flow($flow_id,$check_admin_ids='')
+{
+    $flow_detail = Db::name('Flow')->where('id',$flow_id)->find();
+    $check_type = $flow_detail['check_type'];
+    $flow = unserialize($flow_detail['flow_list']);
+    if ($check_type == 1) {
+        if($flow[0]['flow_type'] == 1){
+            //部门负责人
+            $leader = get_department_leader($this->uid);
+            if($leader == 0){
+                return to_assign(1,'审批流程设置有问题：当前部门负责人还未设置，请联系HR或者管理员');
+            }
+            else{
+                $check_admin_ids = $leader;
+            }                        
+        }
+        else if($flow[0]['flow_type'] == 2){
+            //上级部门负责人
+            $leader = get_department_leader($this->uid,1);
+            if($leader == 0){
+                return to_assign(1,'审批流程设置有问题：上级部门负责人还未设置，请联系HR或者管理员');
+            }
+            else{
+                $check_admin_ids = $leader;
+            }
+        }
+        else{
+            $check_admin_ids = $flow[0]['flow_uids'];
+        }
+    }
+    else if ($check_type == 3) {
+        $check_admin_ids = $flow[0]['flow_uids'];
+    }
+    $flow_data = array(
+        'check_type' => $check_type,
+        'flow' => $flow,
+        'check_admin_ids' => $check_admin_ids
+    );
+    return $flow_data;
+}
+
+/**
+ * 获取审批流程数据
+ * @param  $uid 当前登录用户
+ * @param  $flows 当前步骤内容
+ * @return
+ */
+function get_flow($uid,$flows)
+{
+    $check_user = '';
+    $check_user_ids = [];
+    if($flows['flow_type']==1){
+        $check_user = '部门负责人-';                
+        $check_user_ids[]=get_department_leader($uid);
+    }
+    else if($flows['flow_type']==2){
+        $check_user = '上级部门负责人-';
+        $check_user_ids[]=get_department_leader($uid,1);
+    }
+    else{
+        $check_user_ids = explode(',',$flows['flow_uids']);        
+    }
+    $check_user_array = Db::name('Admin')->where('id','in',$check_user_ids)->column('name');
+    $res = array(
+        'check_user' => $check_user.implode(',',$check_user_array),
+        'check_user_ids' => $check_user_ids
+    );
+    return $res;
+}
+
+//读取报销类型
+function get_expense_cate()
+{
+    $expense = Db::name('ExpenseCate')->where(['status' => 1])->select()->toArray();
+    return $expense;
+}
+
+//读取费用类型
+function get_cost_cate()
+{
+    $cost = Db::name('CostCate')->where(['status' => 1])->select()->toArray();
+    return $cost;
+}
+
+//读取印章类型
+function get_seal_cate()
+{
+    $seal = Db::name('SealCate')->where(['status' => 1])->select()->toArray();
+    return $seal;
+}
+
+//读取车辆类型
+function get_car_cate()
+{
+    $car = Db::name('CarCate')->where(['status' => 1])->select()->toArray();
+    return $car;
+}
+
+//读取企业主体
+function get_subject()
+{
+    $subject = Db::name('Subject')->where(['status' => 1])->select()->toArray();
+    return $subject;
+}
+
+//读取行业类型
 function get_industry()
 {
     $industry = Db::name('Industry')->where(['status' => 1])->select()->toArray();
     return $industry;
 }
 
-//读取服务
+//读取服务类型
 function get_services()
 {
     $services = Db::name('Services')->where(['status' => 1])->select()->toArray();
     return $services;
 }
 
-//根据流程模块读取某部门某模块的审核流程
-function get_flows($type=1,$department=0)
+//读取工作类型
+function get_work_cate()
 {
-	$map1 = [];
-	$map2 = [];
-	$map1[] = ['status', '=', 1];
-	$map1[] = ['flow_cate', '=', $type];
-	$map1[] = ['department_ids', '=', ''];
-
-	$map2[] = ['status', '=', 1];
-	$map2[] = ['flow_cate', '=', $type];
-	$map2[] = ['', 'exp', Db::raw("FIND_IN_SET('{$department}',department_ids)")];
-
-    $list = Db::name('Flow')
-		->field('id,name,check_type')
-		->whereOr([$map1,$map2])
-		->order('id desc')->select()->toArray();
-    return $list;
-}
-
-//根据流程所属模块读取某部门某模块的审核流程
-function get_type_flows($module=6,$department=0)
-{
-	$map1 = [];
-	$map2 = [];
-	$map1[] = ['status', '=', 1];
-	$map1[] = ['type', '=', $module];
-	$map1[] = ['department_ids', '=', ''];
-
-	$map2[] = ['status', '=', 1];
-	$map2[] = ['type', '=', $module];
-	$map2[] = ['', 'exp', Db::raw("FIND_IN_SET('{$department}',department_ids)")];
-
-    $list = Db::name('Flow')
-		->field('id,name,check_type')
-		->whereOr([$map1,$map2])
-		->order('id desc')->select()->toArray();
-    return $list;
+    $work = Db::name('WorkCate')->where(['status' => 1])->select()->toArray();
+    return $work;
 }
 
 /**

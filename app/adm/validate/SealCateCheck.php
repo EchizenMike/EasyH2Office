@@ -5,7 +5,7 @@
  * @link https://www.gougucms.com
  */
 
-namespace app\home\validate;
+namespace app\adm\validate;
 
 use think\Validate;
 

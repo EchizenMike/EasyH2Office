@@ -18,6 +18,7 @@ class Contract extends Model
     const THREE = 3;
     const FORE = 4;
     const FIVE = 5;
+    const SIX = 6;
 
     public static $Type = [
         self::ZERO => '未设置',
@@ -28,22 +29,54 @@ class Contract extends Model
     ];
 	
 	public static $Status = [
-        self::ZERO => '未设置',
-        self::ONE => '已录入',
-        self::TWO => '待审核',
-        self::THREE => '已审核',
-        self::FORE => '已中止',
-        self::FIVE => '已作废',
+        self::ZERO => '待审核',
+        self::ONE => '审核中',
+        self::TWO => '审核通过',
+        self::THREE => '审核拒绝',
+        self::FORE => '已撤销',
+        self::FIVE => '已中止',
+        self::SIX => '已作废',
     ];
 	
 	public static $ArchiveStatus = [
         self::ZERO => '未归档',
         self::ONE => '已归档',
     ];
+	
+	//列表检索
+    public function get_list($param = [], $where = [], $whereOr=[])
+    {
+        $rows = empty($param['limit']) ? get_config('app . page_size') : $param['limit'];
+        $list = self::where($where)
+            ->where(function ($query) use($whereOr) {
+					$query->whereOr($whereOr);
+			})
+			->field('a.*,a.type as type_a, c.title as cate_title,d.title as sign_department')
+			->alias('a')
+			->join('contract_cate c', 'a.cate_id = c.id')
+			->join('department d', 'a.sign_did = d.id','LEFT')
+			->order('a.create_time desc')
+			->paginate($rows, false, ['query' => $param])
+			->each(function ($item, $key) {
+				$item->keeper_name = Db::name('Admin')->where(['id' => $item->keeper_uid])->value('name');
+				$item->sign_name = Db::name('Admin')->where(['id' => $item->sign_uid])->value('name');
+				$item->sign_time = date('Y-m-d', $item->sign_time);
+				$item->interval_time = date('Y-m-d', $item->start_time) . ' 至 ' . date('Y-m-d', $item->end_time);
+				$item->type_name = self::$Type[(int)$item->type_a];
+				$item->status_name = self::$Status[(int)$item->check_status];
+				$item->chack_status_name = self::$Status[(int) $item->CheckStatus];
+				if($item->cost == 0){
+					$item->cost = '-';
+				}
+			});
+        return $list;
+    }
+	
+	
     // 获取合同详情
     public function detail($id)
     {
-        $detail = Db::name('Contract')->where(['id' => $id])->find();
+        $detail = self::where(['id' => $id])->find();
         if (!empty($detail)) {
 			$file_array = Db::name('ContractFile')
 				->field('cf.id,f.filepath,f.name,f.filesize,f.fileext')
@@ -53,12 +86,11 @@ class Contract extends Model
 				->where(array('cf.contract_id' => $id, 'cf.delete_time' => 0))
 				->select()->toArray();
 				
-			$detail['status_name'] = self::$Status[(int) $detail['status']];	
+			$detail['status_name'] = self::$Status[(int) $detail['check_status']];	
 			$detail['archive_status_name'] = self::$ArchiveStatus[(int) $detail['archive_status']];	
 			$detail['sign_time'] = date('Y-m-d', $detail['sign_time']);
             $detail['start_time'] = date('Y-m-d', $detail['start_time']);
             $detail['end_time'] = date('Y-m-d', $detail['end_time']);
-            $detail['create_time'] = date('Y-m-d', $detail['create_time']);
 			$detail['cate_title'] = Db::name('ContractCate')->where(['id' => $detail['cate_id']])->value('title');
 			$detail['sign_department'] = Db::name('Department')->where(['id' => $detail['sign_did']])->value('title');
 			$detail['sign_name'] = Db::name('Admin')->where(['id' => $detail['sign_uid']])->value('name');
@@ -91,7 +123,7 @@ class Contract extends Model
 			}
 			
 			if($detail['pid']>0){
-				$detail['pname'] = Db::name('Contract')->where(['id' => $detail['pid']])->value('name');
+				$detail['pname'] = self::where(['id' => $detail['pid']])->value('name');
 			}
 			$detail['file_array'] = $file_array;
         }

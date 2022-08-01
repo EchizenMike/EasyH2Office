@@ -18,74 +18,24 @@ use think\facade\View;
 
 class Expense extends BaseController
 {
-    public function get_list($where = [], $param = [], $type='and')
+	public function conf()
     {
-        $rows = empty($param['limit']) ? get_config('app . page_size') : $param['limit'];
-		if($type == 'or'){
-			$expense = ExpenseList::whereOr($where)
-				->order('id desc')
-				->paginate($rows, false, ['query' => $param])
-				->each(function ($item, $key) {
-					$item->income_month = empty($item->income_month) ? '-' : date('Y-m', $item->income_month);
-					$item->expense_time = empty($item->expense_time) ? '-' : date('Y-m-d', $item->expense_time);
-					$item->admin_name = Db::name('Admin')->where(['id' => $item->admin_id])->value('name');
-					$item->department = Db::name('Department')->where(['id' => $item->did])->value('title');
-					$item->pay_name = Db::name('Admin')->where(['id' => $item->pay_admin_id])->value('name');
-					$item->pay_time = empty($item->pay_time) ? '-' : date('Y-m-d H:i', $item->pay_time);
-					$item->amount = Db::name('ExpenseInterfix')->where(['exid' => $item->id])->sum('amount');
-					$item['check_user'] = '-';
-					if($item['check_status']<2 && !empty($item['check_admin_ids'])){
-						$check_user = Db::name('Admin')->where('id','in',$item['check_admin_ids'])->column('name');
-						$item['check_user'] = implode(',',$check_user);
-					}
-				});
-		}
-		else{
-        $expense = ExpenseList::where($where)
-            ->order('id desc')
-            ->paginate($rows, false, ['query' => $param])
-            ->each(function ($item, $key) {
-                $item->income_month = empty($item->income_month) ? '-' : date('Y-m', $item->income_month);
-                $item->expense_time = empty($item->expense_time) ? '-' : date('Y-m-d', $item->expense_time);
-                $item->admin_name = Db::name('Admin')->where(['id' => $item->admin_id])->value('name');
-                $item->department = Db::name('Department')->where(['id' => $item->did])->value('title');
-                $item->pay_name = Db::name('Admin')->where(['id' => $item->pay_admin_id])->value('name');
-                $item->pay_time = empty($item->pay_time) ? '-' : date('Y-m-d H:i', $item->pay_time);
-                $item->amount = Db::name('ExpenseInterfix')->where(['exid' => $item->id])->sum('amount');
-				$item['check_user'] = '-';
-				if($item['check_status']<2 && !empty($item['check_admin_ids'])){
-					$check_user = Db::name('Admin')->where('id','in',$item['check_admin_ids'])->column('name');
-					$item['check_user'] = implode(',',$check_user);
-				}
-            });
-		}
-        return $expense;
-    }
-
-    public function detail($id = 0)
-    {
-        $expense = Db::name('Expense')->where(['id' => $id])->find();
-        if ($expense) {
-            $expense['income_month'] = empty($expense['income_month']) ? '-' : date('Y-m', $expense['income_month']);
-            $expense['expense_time'] = empty($expense['expense_time']) ? '-' : date('Y-m-d', $expense['expense_time']);
-            $expense['create_user'] = Db::name('Admin')->where(['id' => $expense['admin_id']])->value('name');
-            $expense['department'] = Db::name('Department')->where(['id' => $expense['did']])->value('title');
-            $expense['amount'] = Db::name('ExpenseInterfix')->where(['exid' => $expense['id']])->sum('amount');
-            if ($expense['pay_time'] > 0) {
-                $expense['pay_time'] = date('Y-m-d H:i:s', $expense['pay_time']);
-				$expense['pay_admin'] = Db::name('Admin')->where(['id' => $expense['pay_admin_id']])->value('name');
-            }
-            else{
-                $expense['pay_time'] = '-';
-            }
-            $expense['list'] = Db::name('ExpenseInterfix')
-                ->field('a.*,c.title as cate_title')
-                ->alias('a')
-                ->join('ExpenseCate c', 'a.cate_id = c.id','LEFT')
-                ->where(['a.exid' => $expense['id']])
-                ->select();
+		$param = get_params();
+        if (request()->isPost()) {
+			$param['update_time'] = time();
+            $res = Db::name('DataAuth')->strict(false)->field(true)->update($param);
+            return to_assign();
+        } else {
+			$detail = Db::name('DataAuth')->where('name','finance_admin')->find();
+			$unames = Db::name('Admin')->where('id', 'in', $detail['uids'])->column('name');
+            $detail['unames'] = implode(',', $unames);
+			$conf_unames_1 = Db::name('Admin')->where('id', 'in', $detail['conf_1'])->column('name');
+            $detail['conf_unames_1'] = implode(',', $conf_unames_1);
+			$conf_unames_2 = Db::name('Admin')->where('id', 'in', $detail['conf_2'])->column('name');
+            $detail['conf_unames_2'] = implode(',', $conf_unames_2);
+			View::assign('detail', $detail);
+            return view();
         }
-        return $expense;
     }
 
     public function index()
@@ -93,6 +43,7 @@ class Expense extends BaseController
         if (request()->isAjax()) {
             $param = get_params();
             $where = [];
+            $where[] = ['delete_time', '=', 0];
             //按时间检索
             $start_time = !empty($param['start_time']) ? strtotime(urldecode($param['start_time'])) : 0;
             $end_time = !empty($param['end_time']) ? strtotime(urldecode($param['end_time'])) : 0;
@@ -103,9 +54,10 @@ class Expense extends BaseController
 			$where[] = ['admin_id','=',$this->uid];
             if (!empty($param['check_status']) && $param['check_status']!='') {
                 $where[] = ['check_status', '=', $param['check_status']];
-            }            
-            $expense = $this->get_list($where, $param);
-            return table_assign(0, '', $expense);
+            }    
+			$model = new ExpenseList;
+            $list = $model->get_list($param,$where);
+            return table_assign(0, '', $list);
         } else {
             return view();
         }
@@ -122,16 +74,22 @@ class Expense extends BaseController
 			$map1 = [];
 			$map2 = [];
 			$map1[] = ['', 'exp', Db::raw("FIND_IN_SET('{$user_id}',check_admin_ids)")];
+			$map1[] = ['delete_time', '=', 0];
+			
 			$map2[] = ['', 'exp', Db::raw("FIND_IN_SET('{$user_id}',flow_admin_ids)")];
+			$map2[] = ['delete_time', '=', 0];
 			
 			if($status == 0){
-				$list = $this->get_list([$map1,$map2],$param,'or');
+				$model = new ExpenseList;
+				$list = $model->get_list($param,[$map1,$map2],'or');
 			}			
 			if($status == 1){
-				$list = $this->get_list($map1,$param);
+				$model = new ExpenseList;
+				$list = $model->get_list($param,$map1);
 			}
 			if($status == 2){
-				$list = $this->get_list($map2,$param);
+				$model = new ExpenseList;
+				$list = $model->get_list($param,$map2);
             }	
             return table_assign(0, '', $list);
         } else {
@@ -150,12 +108,13 @@ class Expense extends BaseController
             $start_time = !empty($param['start_time']) ? strtotime(urldecode($param['start_time'])) : 0;
             $end_time = !empty($param['end_time']) ? strtotime(urldecode($param['end_time'])) : 0;
             if ($start_time > 0 && $end_time > 0) {
-                $where[] = ['expense_time', 'between', [$start_time, $end_time]];
+                $map[] = ['expense_time', 'between', [$start_time, $end_time]];
             }
 			$map[] = ['check_status', '=', 2];			
-			$map[] = ['', 'exp', Db::raw("FIND_IN_SET('{$user_id}',copy_uids)")];	
-			$expense = $this->get_list($map, $param);			
-            return table_assign(0, '', $expense);
+			$map[] = ['', 'exp', Db::raw("FIND_IN_SET('{$user_id}',copy_uids)")];
+			$model = new ExpenseList;
+			$list = $model->get_list($param,$map);		
+            return table_assign(0, '', $list);
         } else {
             return view();
         }
@@ -179,9 +138,14 @@ class Expense extends BaseController
             if ($start_time > 0 && $end_time > 0) {
                 $where[] = ['expense_time', 'between', [$start_time, $end_time]];
             }			
-			$list = $this->get_list($where,$param);
+			$model = new ExpenseList;
+			$list = $model->get_list($param,$where);	
             return table_assign(0, '', $list);
         } else {
+			$auth = isAuthExpense($this->uid);
+			if($auth == 0){
+				return view('../../base/view/common/roletemplate');
+			}
             return view();
         }
     }
@@ -191,7 +155,6 @@ class Expense extends BaseController
     {
         $param = get_params();
         if (request()->isAjax()) {
-            $dbRes = false; 
             $admin_id = $this->uid;       
             $param['income_month'] = isset($param['income_month']) ? strtotime(urldecode($param['income_month'])) : 0;
             $param['expense_time'] = isset($param['expense_time']) ? strtotime(urldecode($param['expense_time'])) : 0;
@@ -229,6 +192,7 @@ class Expense extends BaseController
 				}
 			}
 			
+			$dbRes = false; 
             if (!empty($param['id']) && $param['id'] > 0) {
                 try {
                     validate(ExpenseCheck::class)->scene('edit')->check($param);
@@ -287,49 +251,56 @@ class Expense extends BaseController
 					}
 					
                     $res = ExpenseList::where('id', $param['id'])->strict(false)->field(true)->update($param);
-                    if ($res !== false) {
-                        $exid = $param['id'];
-                        //相关内容多个数组;
-                        $amountData = isset($param['amount']) ? $param['amount'] : '';
-                        $remarksData = isset($param['remarks']) ? $param['remarks'] : '';
-                        $cateData = isset($param['cate_id']) ? $param['cate_id'] : '';
-                        $idData = isset($param['expense_id']) ? $param['expense_id'] : 0;
-                        if ($amountData) {
-                            foreach ($amountData as $key => $value) {
-                                if (!$value) {
-                                    continue;
-                                }    
-                                $data = [];
-                                $data['id'] = $idData[$key];
-                                $data['exid'] = $exid;
-                                $data['admin_id'] = $admin_id;
-                                $data['amount'] = $amountData[$key];
-                                $data['cate_id'] = $cateData[$key];
-                                $data['remarks'] = $remarksData[$key];
-                                if ($data['id'] > 0) {
-                                    $data['update_time'] = time();
-                                    $resa = Db::name('ExpenseInterfix')->strict(false)->field(true)->update($data);
-                                } else {
-                                    $data['create_time'] = time();
-                                    $eid = Db::name('ExpenseInterfix')->strict(false)->field(true)->insertGetId($data);
-                                }
-                            }
-                        }						
-                        add_log('edit', $exid, $param);
-						//发送消息通知
-						$msg=[
-							'from_uid'=>$this->uid,
-							'action_id'=>$param['id']
-						];
-						$users = $param['check_admin_ids'];
-						sendMessage($users,31,$msg);
-                        Db::commit();
-                        $dbRes = true;
-                    } else {
-                        Db::rollback();
-                    }
+					
+					$exid = $param['id'];
+					//相关内容多个数组;
+					$amountData = isset($param['amount']) ? $param['amount'] : '';
+					$remarksData = isset($param['remarks']) ? $param['remarks'] : '';
+					$cateData = isset($param['cate_id']) ? $param['cate_id'] : '';
+					$idData = isset($param['expense_id']) ? $param['expense_id'] : 0;
+					if ($amountData) {
+						foreach ($amountData as $key => $value) {
+							if (!$value) {
+								continue;
+							}    
+							$data = [];
+							$data['id'] = $idData[$key];
+							$data['exid'] = $exid;
+							$data['admin_id'] = $admin_id;
+							$data['amount'] = $amountData[$key];
+							$data['cate_id'] = $cateData[$key];
+							$data['remarks'] = $remarksData[$key];
+							if ($data['id'] > 0) {
+								$data['update_time'] = time();
+								$resa = Db::name('ExpenseInterfix')->strict(false)->field(true)->update($data);
+							} else {
+								$data['create_time'] = time();
+								$eid = Db::name('ExpenseInterfix')->strict(false)->field(true)->insertGetId($data);
+							}
+						}
+					}		
+					//添加提交申请记录
+					$checkData=array(
+						'action_id' => $exid,
+						'check_user_id' => $this->uid,
+						'content' => '重新提交申请',
+						'type' => 2,
+						'check_time' => time(),
+						'create_time' => time()
+					);	
+					$record_id = Db::name('FlowRecord')->strict(false)->field(true)->insertGetId($checkData);	
+					add_log('edit', $exid, $param);
+					//发送消息通知
+					$msg=[
+						'from_uid'=>$this->uid,
+						'action_id'=>$param['id']
+					];
+					$users = $param['check_admin_ids'];
+					sendMessage($users,31,$msg);
+					Db::commit();
+					$dbRes = true;
                 } catch (\Exception $e) { ##这里参数不能删除($e：错误信息)
-                Db::rollback();
+					Db::rollback();
                     return to_assign(1, $e->getMessage());
                 }
             } else {
@@ -390,41 +361,47 @@ class Expense extends BaseController
 						Db::name('FlowStep')->strict(false)->field(true)->insertGetId($flow_step);
 					}
 					
-                    if ($exid) {
-                        //相关内容多个数组;
-                        $amountData = isset($param['amount']) ? $param['amount'] : '';
-                        $remarksData = isset($param['remarks']) ? $param['remarks'] : '';
-                        $cateData = isset($param['cate_id']) ? $param['cate_id'] : '';
-                        if ($amountData) {
-                            foreach ($amountData as $key => $value) {
-                                if (!$value) {
-                                    continue;
-                                }
-                                $data = [];
-                                $data['exid'] = $exid;
-                                $data['admin_id'] = $admin_id;
-                                $data['amount'] = $amountData[$key];
-                                $data['cate_id'] = $cateData[$key];
-                                $data['remarks'] = $remarksData[$key];
-                                $data['create_time'] = time();
-                                $eid = Db::name('ExpenseInterfix')->strict(false)->field(true)->insertGetId($data);
-                            }
-                        }						
-                        add_log('add', $exid, $param);
-						//发送消息通知
-						$msg=[
-							'from_uid'=>$this->uid,
-							'action_id'=>$exid
-						];
-						$users = $param['check_admin_ids'];
-						sendMessage($users,31,$msg);
-                        Db::commit();
-                        $dbRes = true;
-                    } else {
-                        Db::rollback();
-                    }
+					//相关内容多个数组;
+					$amountData = isset($param['amount']) ? $param['amount'] : '';
+					$remarksData = isset($param['remarks']) ? $param['remarks'] : '';
+					$cateData = isset($param['cate_id']) ? $param['cate_id'] : '';
+					if ($amountData) {
+						foreach ($amountData as $key => $value) {
+							if (!$value) {
+								continue;
+							}
+							$data = [];
+							$data['exid'] = $exid;
+							$data['admin_id'] = $admin_id;
+							$data['amount'] = $amountData[$key];
+							$data['cate_id'] = $cateData[$key];
+							$data['remarks'] = $remarksData[$key];
+							$data['create_time'] = time();
+							$eid = Db::name('ExpenseInterfix')->strict(false)->field(true)->insertGetId($data);
+						}
+					}
+					//添加提交申请记录
+					$checkData=array(
+						'action_id' => $exid,
+						'check_user_id' => $this->uid,
+						'content' => '提交申请',
+						'type' => 2,
+						'check_time' => time(),
+						'create_time' => time()
+					);	
+					$record_id = Db::name('FlowRecord')->strict(false)->field(true)->insertGetId($checkData);					
+					add_log('add', $exid, $param);
+					//发送消息通知
+					$msg=[
+						'from_uid'=>$this->uid,
+						'action_id'=>$exid
+					];
+					$users = $param['check_admin_ids'];
+					sendMessage($users,31,$msg);
+					Db::commit();
+					$dbRes = true;
                 } catch (\Exception $e) { ##这里参数不能删除($e：错误信息)
-                Db::rollback();
+					Db::rollback();
                     return to_assign(1, $e->getMessage());
                 }
             }
@@ -437,7 +414,13 @@ class Expense extends BaseController
         else{
             $id = isset($param['id']) ? $param['id'] : 0;
             if ($id > 0) {
-                $expense = $this->detail($id);
+                $expense = (new ExpenseList())->detail($id);
+				if($expense['admin_id']!=$this->uid){
+					throw new \think\exception\HttpException(403, '禁止访问');
+				}
+				if($expense['check_status']!=4){
+					throw new \think\exception\HttpException(403, '禁止访问');
+				}
 				if($expense['file_ids'] !=''){
 					$fileArray = Db::name('File')->where('id','in',$expense['file_ids'])->select();
 					$expense['fileArray'] = $fileArray;
@@ -446,7 +429,7 @@ class Expense extends BaseController
             }
 			$department = $this->did;
 			//获取报销审批流程
-			$flows = get_type_flows(6,$department);
+			$flows = get_type_department_flows(6,$department);
             $expense_cate = Db::name('ExpenseCate')->where(['status' => 1])->select()->toArray();
             View::assign('user', get_admin($this->uid));
             View::assign('expense_cate', $expense_cate);
@@ -460,12 +443,12 @@ class Expense extends BaseController
     public function view()
     {
         $id = empty(get_params('id')) ? 0 : get_params('id');
-        $detail = $this->detail($id);
+        $detail = (new ExpenseList())->detail($id);
 		$flows = Db::name('FlowStep')->where(['action_id'=>$detail['id'],'type'=>2,'sort'=>$detail['check_step_sort'],'delete_time'=>0])->find();
 		$detail['check_user'] = '-';
 		$detail['copy_user'] = '-';
 		$check_user_ids = [];
-		if($detail['check_status']<2){
+		if($detail['check_status']==1){
 			if($flows['flow_type']==1){
 				$detail['check_user'] = '部门负责人';				
 				$check_user_ids[]=get_department_leader($detail['admin_id']);
@@ -477,7 +460,7 @@ class Expense extends BaseController
 			else{
 				$check_user_ids = explode(',',$flows['flow_uids']);
 				$check_user = Db::name('Admin')->where('id','in',$flows['flow_uids'])->column('name');
-				$detail['check_user'] = implode(',',$check_user);			
+				$detail['check_user'] = implode(',',$check_user);
 			}
 		}
 		if($detail['copy_uids'] !=''){
@@ -505,8 +488,30 @@ class Expense extends BaseController
 				}
 			}
 		}
+		
+		$check_record = Db::name('FlowRecord')->field('f.*,a.name,a.thumb')
+			->alias('f')
+			->join('Admin a', 'a.id = f.check_user_id', 'left')
+			->where(['f.action_id'=>$detail['id'],'f.type'=>2])
+			->order('check_time desc')
+			->select()->toArray();
+		foreach ($check_record as $kk => &$vv) {		
+			$vv['check_time_str'] = date('Y-m-d :H:i', $vv['check_time']);
+			$vv['status_str'] = '提交';
+			if($vv['status'] == 1){
+				$vv['status_str'] = '审核通过';
+			}
+			else if($vv['status'] == 2){
+				$vv['status_str'] = '审核拒绝';
+			}
+			if($vv['status'] == 3){
+				$vv['status_str'] = '撤销';
+			}
+		}
+		
 		View::assign('is_create_admin', $is_create_admin);
 		View::assign('is_check_admin', $is_check_admin);
+		View::assign('check_record', $check_record);
 		View::assign('detail', $detail);
 		View::assign('flows', $flows);
         View::assign('uid', $this->uid);
@@ -517,16 +522,15 @@ class Expense extends BaseController
     public function delete()
     {
         $id = get_params("id");
-        $expense = $this->detail($id);
+        $expense = (new ExpenseList())->detail($id);
         if ($expense['check_status'] == 2) {
             return to_assign(1, "已审核的报销记录不能删除");
         }
-        if ($expense['check_status'] == 3) {
+        if ($expense['check_status'] == 5) {
             return to_assign(1, "已打款的报销记录不能删除");
         }
-        $data['status'] = '-1';
+        $data['delete'] = time();
         $data['id'] = $id;
-        $data['update_time'] = time();
         if (Db::name('expense')->update($data) !== false) {
             add_log('delete', $id);
             return to_assign(0, "删除成功");
@@ -534,218 +538,4 @@ class Expense extends BaseController
             return to_assign(1, "删除失败");
         }
     }
-	
-	
-    //审核
-    public function check()
-    {
-        $param = get_params();
-		$detail = Db::name('Expense')->where(['id' => $param['id']])->find();
-		//当前审核节点详情
-		$step = Db::name('FlowStep')->where(['action_id'=>$detail['id'],'type'=>2,'sort'=>$detail['check_step_sort'],'delete_time'=>0])->find();
-		//审核通过
-		if($param['status'] == 1){
-			$check_admin_ids = explode(",", strval($detail['check_admin_ids']));
-			if (!in_array($this->uid, $check_admin_ids)){		
-				return to_assign(1,'您没权限审核该审批');
-			}
-			//多人会签审批
-			if($step['flow_type'] == 4){
-				//查询当前会签记录数
-				$check_count = Db::name('FlowRecord')->where(['action_id'=>$detail['id'],'type'=>2,'step_id'=>$step['id']])->count();
-				//当前会签记应有记录数
-				$flow_count = explode(',', $step['flow_uids']);
-				if(($check_count+1) >=count($flow_count)){
-					$next_step = Db::name('FlowStep')->where(['action_id'=>$detail['id'],'type'=>2,'sort'=>($detail['check_step_sort']+1),'delete_time'=>0])->find();
-					if($next_step){
-						//存在下一步审核
-						$param['check_step_sort'] = $detail['check_step_sort']+1;
-						$param['check_status'] = 1;
-					}
-					else{
-						//不存在下一步审核，审核结束
-						$param['check_status'] = 2;
-					}
-				}
-				else{
-					$param['check_status'] = 1;
-				}
-			}
-			else if($step['flow_type'] == 0){
-				//自由人审批
-				if($param['check_node'] == 2){
-					$next_step = $detail['check_step_sort']+1;
-					$flow_step = array(
-						'action_id' => $detail['id'],
-						'sort' => $next_step,
-						'type' => 2,
-						'flow_uids' => $param['check_admin_ids'],
-						'create_time' => time()
-					);
-					$fid = Db::name('FlowStep')->strict(false)->field(true)->insertGetId($flow_step);
-					//下一步审核步骤
-					$param['check_admin_ids'] = $param['check_admin_ids'];
-					$param['check_step_sort'] = $next_step;
-					$param['check_status'] = 1;
-				}
-				else{
-					//不存在下一步审核，审核结束
-					$param['check_status'] = 2;
-					$param['check_admin_ids'] ='';
-				}
-			}
-			else{
-				$next_step = Db::name('FlowStep')->where(['action_id'=>$detail['id'],'type'=>2,'sort'=>($detail['check_step_sort']+1),'delete_time'=>0])->find();
-				if($next_step){
-					//存在下一步审核
-					if($next_step['flow_type'] == 1){
-						$param['check_admin_ids'] = get_department_leader($this->uid);
-					}
-					else if($next_step['flow_type'] == 2){
-						$param['check_admin_ids'] = get_department_leader($this->uid,1);
-					}
-					else{
-						$param['check_admin_ids'] = $next_step['flow_uids'];
-					}
-					$param['check_step_sort'] = $detail['check_step_sort']+1;
-					$param['check_status'] = 1;
-				}
-				else{
-					//不存在下一步审核，审核结束
-					$param['check_status'] = 2;
-					$param['check_admin_ids'] ='';
-				}
-			}
-			if($param['check_status'] == 1 && $param['check_admin_ids']==''){
-				return to_assign(1,'找不到下一步的审批人，该审批流程设置有问题，请联系HR或者管理员');
-			}			
-			//审核通过数据操作
-			$param['last_admin_id'] = $this->uid;
-			$param['flow_admin_ids'] = $detail['flow_admin_ids'].$this->uid.',';
-			$res = Db::name('Expense')->strict(false)->field('check_step_sort,check_status,last_admin_id,flow_admin_ids,check_admin_ids')->update($param);
-			if($res!==false){
-				$checkData=array(
-					'action_id' => $detail['id'],
-					'step_id' => $step['id'],
-					'check_user_id' => $this->uid,
-					'type' => 2,
-					'check_time' => time(),
-					'status' => $param['status'],
-					'content' => $param['content'],
-					'create_time' => time()
-				);	
-				$aid = Db::name('FlowRecord')->strict(false)->field(true)->insertGetId($checkData);
-				add_log('check', $param['id'], $param);
-				//发送消息通知
-				$msg=[
-					'from_uid'=>$detail['admin_id'],
-					'create_time'=>date('Y-m-d H:i:s',$detail['create_time']),
-					'action_id'=>$detail['id']
-				];
-				if($param['check_status'] == 1){
-					$users = $param['check_admin_ids'];
-					sendMessage($users,31,$msg);
-				}
-				if($param['check_status'] == 2){
-					$users = $detail['admin_id'];
-					sendMessage($users,32,$msg);
-				}
-				return to_assign();
-			}
-			else{
-				return to_assign(1,'操作失败');
-			}
-		}
-		else if($param['status'] == 2){
-			$check_admin_ids = explode(",", strval($detail['check_admin_ids']));
-			if (!in_array($this->uid, $check_admin_ids)){		
-				return to_assign(1,'您没权限审核该审批');
-			}
-			//拒绝审核，数据操作
-			$param['check_status'] = 3;
-			$param['last_admin_id'] = $this->uid;
-			$param['flow_admin_ids'] = $detail['flow_admin_ids'].$this->uid.',';
-			$param['check_admin_ids'] ='';
-			$res = Db::name('Expense')->strict(false)->field('check_step_sort,check_status,last_admin_id,flow_admin_ids,check_admin_ids')->update($param);
-			if($res!==false){
-				$checkData=array(
-					'action_id' => $detail['id'],
-					'step_id' => $step['id'],
-					'check_user_id' => $this->uid,
-					'type' => 2,
-					'check_time' => time(),
-					'status' => $param['status'],
-					'content' => $param['content'],
-					'create_time' => time()
-				);	
-				$aid = Db::name('FlowRecord')->strict(false)->field(true)->insertGetId($checkData);
-				add_log('refue', $param['id'], $param);
-				//发送消息通知
-				$msg=[
-					'create_time'=>date('Y-m-d H:i:s',$detail['create_time']),
-					'action_id'=>$detail['id']
-				];
-				$users = $detail['admin_id'];
-				sendMessage($users,33,$msg);
-				return to_assign();
-			}
-			else{
-				return to_assign(1,'操作失败');
-			}			
-		}		
-		else if($param['status'] == 3){
-			if($detail['admin_id'] != $this->uid){
-				return to_assign(1,'你没权限操作');
-			}
-			//撤销审核，数据操作
-			$param['check_status'] = 4;
-			$param['check_admin_ids'] ='';
-			$param['check_step_sort'] =0;
-			$res = Db::name('Expense')->strict(false)->field('check_step_sort,check_status,last_admin_id,flow_admin_ids,check_admin_ids')->update($param);
-			if($res!==false){
-				$checkData=array(
-					'action_id' => $detail['id'],
-					'step_id' => 0,
-					'check_user_id' => $this->uid,
-					'type' => 2,
-					'check_time' => time(),
-					'status' => $param['status'],
-					'content' => $param['content'],
-					'create_time' => time()
-				);	
-				$aid = Db::name('FlowRecord')->strict(false)->field(true)->insertGetId($checkData);
-				add_log('back', $param['id'], $param);
-				return to_assign();
-			}else{
-				return to_assign(1,'操作失败');
-			}
-		}		
-    }
-	
-	//设置为已打款
-    public function topay()
-    {
-        $param = get_params();
-        if (request()->isAjax()) {
-			//打款，数据操作
-            $param['check_status'] = 5;
-            $param['pay_admin_id'] = $this->uid;
-            $param['pay_time'] = time();
-            $res = ExpenseList::where('id', $param['id'])->strict(false)->field(true)->update($param);
-            if ($res !== false) {
-				//发送消息通知
-				$detail = Db::name('Expense')->where(['id' => $param['id']])->find();
-				$msg=[
-					'create_time'=>date('Y-m-d H:i:s',$detail['create_time']),
-					'action_id'=>$detail['id']
-				];
-				$users = $detail['admin_id'];
-				sendMessage($users,34,$msg);
-                return to_assign();
-            } else {
-                return to_assign(1, "操作失败");
-            }
-        }
-    }
-
 }

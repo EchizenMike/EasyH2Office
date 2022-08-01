@@ -30,6 +30,7 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
+	const auth = "{$auth}";
 	const moduleInit = ['tool'];
 	function gouguInit() {
 		var form = layui.form,table = layui.table,tool=layui.tool, laydate = layui.laydate;
@@ -151,8 +152,15 @@
 						width: 142,
 						align: 'center',
 						templet:function(d){
-							var html='<div class="layui-btn-group"><span class="layui-btn layui-btn-xs" lay-event="add">到账管理</span><span class="layui-btn layui-btn-normal layui-btn-xs" lay-event="view">到账详情</span></div>';
-							return html;
+							var html='<div class="layui-btn-group">';
+							var btn1='<span class="layui-btn layui-btn-xs" lay-event="add">到账管理</span>';
+							var btn2='<span class="layui-btn layui-btn-normal layui-btn-xs" lay-event="view">到账详情</span>';
+							if(auth == 1){
+								return html+btn1+btn2+'</div>';
+							}
+							else{
+								return html+btn2+'</div>';
+							}
 						}
 					}
 				]

@@ -33,43 +33,24 @@ class Index extends BaseController
 			if (!empty($param['type'])) {
                 $where[] = ['a.type', '=', $param['type']];
             }
-			if (!empty($param['status'])) {
-                $where[] = ['a.status', '=', $param['status']];
+			if (!empty($param['check_status'])) {
+                $where[] = ['a.check_status', '=', $param['check_status']];
             }
             $where[] = ['a.delete_time', '=', 0];
             $where[] = ['a.archive_status', '=', 0];
 			
 			$uid = $this->uid;
-			$auth = contract_auth($uid);
+			$auth = isAuth($uid,'contract');
 			if($auth==0){
 				$whereOr[] =['a.admin_id|a.prepared_uid|a.sign_uid|a.keeper_uid', '=', $uid];
 				$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',a.share_ids)")];
+				$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',a.check_admin_ids)")];
+				$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',a.flow_admin_ids)")];
 			}
 			
-            $rows = empty($param['limit']) ? get_config('app . page_size') : $param['limit'];
-            $content = ContractList::where($where)
-				->where(function ($query) use($whereOr) {
-					$query->whereOr($whereOr);
-				})
-                ->field('a.*,c.title as cate_title,d.title as sign_department')
-                ->alias('a')
-                ->join('contract_cate c', 'a.cate_id = c.id')
-                ->join('department d', 'a.sign_did = d.id','LEFT')
-                ->order('a.create_time desc')
-                ->paginate($rows, false, ['query' => $param])
-				->each(function ($item, $key) {
-                    $item->keeper_name = Db::name('Admin')->where(['id' => $item->keeper_uid])->value('name');
-                    $item->sign_name = Db::name('Admin')->where(['id' => $item->sign_uid])->value('name');
-                    $item->sign_time = date('Y-m-d', $item->sign_time);
-                    $item->interval_time = date('Y-m-d', $item->start_time) . ' 至 ' . date('Y-m-d', $item->end_time);
-                    $item->type_name = ContractList::$Type[(int) $item->type];
-                    $item->status_name = ContractList::$Status[(int) $item->status];
-                    $item->chack_status_name = ContractList::$Status[(int) $item->CheckStatus];
-					if($item->cost == 0){
-						$item->cost = '-';
-					}
-				});
-            return table_assign(0, '', $content);
+            $model = new ContractList();
+			$list = $model->get_list($param, $where, $whereOr);
+            return table_assign(0, '', $list);
         } else {
             return view();
         }
@@ -97,36 +78,14 @@ class Index extends BaseController
             $where[] = ['a.archive_status', '=', 1];
 			
 			$uid = $this->uid;
-			$auth = contract_auth($uid);
+			$auth = isAuth($uid,'contract_admin');
 			if($auth==0){
 				$whereOr[] =['a.admin_id|a.prepared_uid|a.sign_uid|a.keeper_uid', '=', $uid];
 				$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',a.share_ids)")];
-			}
-			
-            $rows = empty($param['limit']) ? get_config('app . page_size') : $param['limit'];
-            $content = ContractList::where($where)
-				->where(function ($query) use($whereOr) {
-					$query->whereOr($whereOr);
-				})
-                ->field('a.*,c.title as cate_title,d.title as sign_department')
-                ->alias('a')
-                ->join('contract_cate c', 'a.cate_id = c.id')
-                ->join('department d', 'a.sign_did = d.id','LEFT')
-                ->order('a.create_time desc')
-                ->paginate($rows, false, ['query' => $param])
-				->each(function ($item, $key) {
-                    $item->keeper_name = Db::name('Admin')->where(['id' => $item->keeper_uid])->value('name');
-                    $item->sign_name = Db::name('Admin')->where(['id' => $item->sign_uid])->value('name');
-                    $item->sign_time = date('Y-m-d', $item->sign_time);
-                    $item->interval_time = date('Y-m-d', $item->start_time) . ' 至 ' . date('Y-m-d', $item->end_time);
-                    $item->type_name = ContractList::$Type[(int) $item->type];
-                    $item->status_name = ContractList::$Status[(int) $item->status];
-                    $item->chack_status_name = ContractList::$Status[(int) $item->CheckStatus];
-					if($item->cost == 0){
-						$item->cost = '-';
-					}
-				});
-            return table_assign(0, '', $content);
+			}			
+            $model = new ContractList();
+			$list = $model->get_list($param, $where, $whereOr);
+            return table_assign(0, '', $list);
         } else {
             return view();
         }
@@ -158,11 +117,11 @@ class Index extends BaseController
                 }
                 $param['update_time'] = time();
 				$old = Db::name('Contract')->where(['id' => $param['id']])->find();
-				$auth = contract_auth($this->uid);
-				if($this->uid!=$old['admin_id'] && $auth==0 && $old['status'] == 1){
+				$auth = isAuth($this->uid,'contract_admin');
+				if($this->uid!=$old['admin_id'] && $auth==0 && $old['check_status'] == 1){
 					return to_assign(1, "只有录入人员和合同管理员有权限操作");
 				}
-				if($auth==0 && $old['status'] > 1){
+				if($auth==0 && $old['check_status'] > 1){
 					return to_assign(1, "只有合同管理员有权限操作");
 				}
 				$res = contractList::strict(false)->field(true)->update($param);
@@ -205,10 +164,10 @@ class Index extends BaseController
             View::assign('id', $id);
             View::assign('type', $type);
             View::assign('pid', $pid);
-			View::assign('auth', contract_auth($this->uid));
+			View::assign('auth', isAuth($this->uid,'contract_admin'));
             if ($id > 0) {
                 $detail = (new ContractList())->detail($id);
-				if($detail['status']>1){
+				if($detail['check_status']>1){
 					echo '<div style="text-align:center;color:red;margin-top:20%;">当前状态不开放编辑，请联系合同管理员</div>';exit;
 				}
                 View::assign('detail', $detail);
@@ -222,27 +181,100 @@ class Index extends BaseController
         }
     }
 
-    //查看文章
+    //查看
     public function view()
     {
         $id = get_params("id");
         $detail = (new ContractList())->detail($id);
-		$auth = contract_auth($this->uid);
-		
+		$auth = isAuth($this->uid,'contract_admin');
+		$is_check_admin = 0;
+		$is_create_admin = 0;
+		$check_record = [];
 		$auth_array=[];
 		if(!empty($detail['share_ids'])){
-			$auth_array = explode(",",$detail['share_ids']);
+			$share_ids = explode(",",$detail['share_ids']);
+			$auth_array = array_merge($auth_array,$share_ids);
+		}
+		if(!empty($detail['check_admin_ids'])){
+			$check_admin_ids = explode(",",$detail['check_admin_ids']);
+			$auth_array = array_merge($auth_array,$check_admin_ids);
+		}
+		if(!empty($detail['flow_admin_ids'])){
+			$flow_admin_ids = explode(",",$detail['flow_admin_ids']);
+			$auth_array = array_merge($auth_array,$flow_admin_ids);
 		}		
 		array_push($auth_array,$detail['admin_id'],$detail['prepared_uid'],$detail['sign_uid'],$detail['keeper_uid']);
-		
 		if($auth==0 && !in_array($this->uid,$auth_array)){
-			echo '<div style="text-align:center;color:red;margin-top:20%;">你无权限查看该合同</div>';exit;
+			return view('../../base/view/common/roletemplate');
 		}
+		
+		$detail['create_user'] = Db::name('Admin')->where(['id' => $detail['admin_id']])->value('name');
+		
+		$detail['copy_user'] = '-';			
+		if($detail['copy_uids'] !=''){
+			$copy_user = Db::name('Admin')->where('id','in',$detail['copy_uids'])->column('name');
+			$detail['copy_user'] = implode(',',$copy_user);
+		}
+		
+		if($detail['check_status']==1){
+			$flows = Db::name('FlowStep')->where(['action_id'=>$detail['id'],'type'=>4,'sort'=>$detail['check_step_sort'],'delete_time'=>0])->find();
+			$flow_check = get_flow($this->uid,$flows);
+			$detail['check_user'] = $flow_check['check_user'];
+			$check_user_ids = $flow_check['check_user_ids'];
+			if(in_array($this->uid,$check_user_ids)){
+				$is_check_admin = 1;
+				if($flows['flow_type'] == 4){
+					$check_count = Db::name('FlowRecord')->where(['action_id'=>$detail['id'],'type'=>4,'step_id'=>$flows['id'],'check_user_id'=>$this->uid])->count();
+					if($check_count>0){
+						$is_check_admin = 0;
+					}
+				}
+			}
+			
+		}
+		else{
+			//获取合同审批流程
+			$flows = get_type_department_flows(8,$this->did);
+			$detail['check_user'] = '-';
+		}
+
+		if($detail['admin_id'] == $this->uid){
+			$is_create_admin = 1;
+		}
+		
+		$check_record = Db::name('FlowRecord')->field('f.*,a.name,a.thumb')
+			->alias('f')
+			->join('Admin a', 'a.id = f.check_user_id', 'left')
+			->where(['f.action_id'=>$detail['id'],'f.type'=>4])
+			->order('check_time asc')
+			->select()->toArray();
+		foreach ($check_record as $kk => &$vv) {		
+			$vv['check_time_str'] = date('Y-m-d :H:i', $vv['check_time']);
+			$vv['status_str'] = '提交';
+			if($vv['status'] == 1){
+				$vv['status_str'] = '审核通过';
+			}
+			else if($vv['status'] == 2){
+				$vv['status_str'] = '审核拒绝';
+			}
+			if($vv['status'] == 3){
+				$vv['status_str'] = '撤销';
+			}
+		}
+		View::assign('is_check_admin', $is_check_admin);
+		View::assign('is_create_admin', $is_create_admin);
+		View::assign('check_record', $check_record);
+		View::assign('flows', $flows);
         View::assign('auth', $auth);
         View::assign('detail', $detail);
-        return view();
+		if($detail['check_status'] == 0 || $detail['check_status'] == 4){
+			return view('view_set');
+		}
+		else{
+			return view();
+		}
     }
-    //删除文章
+    //删除
     public function delete()
     {
 		if (request()->isDelete()) {

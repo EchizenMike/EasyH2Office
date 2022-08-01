@@ -31,8 +31,8 @@ class Project extends Model
             $detail['team_admin_names'] = implode(',', $team_admin_names);
             $detail['status_name'] = self::$Status[(int) $detail['status']];
             $detail['times'] = time_trans($detail['create_time']);
-			$detail['start_time'] = date('Y-m-d', $detail['start_time']);
-			$detail['end_time'] = date('Y-m-d', $detail['end_time']);
+			$detail['start_time_str'] = date('Y-m-d', $detail['start_time']);
+			$detail['end_time_str'] = date('Y-m-d', $detail['end_time']);
             $detail['users'] = Db::name('ProjectUser')->where(['delete_time' => 0,'project_id'=>$id])->count();
             $detail['comments'] = Db::name('ProjectComment')->where([['module','=','project'],['topic_id','=',$detail['id']],['delete_time','=',0]])->count();
 			$detail['logs'] = Db::name('ProjectLog')->where(['module' => 'project', 'project_id' => $detail['id']])->count();

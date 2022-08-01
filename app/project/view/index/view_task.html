@@ -1,11 +1,13 @@
-<div class="gg-form-bar border-x p-3">
-	<button class="layui-btn layui-btn-sm add-new">+ 新建任务</button>
-</div>
-<div class="px-3 pb-3 bg-white">
+<div class="p-3 bg-white">
 	<table class="layui-hide" id="task" lay-filter="task"></table>
 </div>
+<script type="text/html" id="toolbartask">
+  <div class="layui-btn-container">
+  	<button class="layui-btn layui-btn-sm" lay-event="add">+ 新建任务</button>
+  </div>
+</script>
 <script>
-function task(){
+function project_task(){
 	if($('#projectTab').find('li').eq(1).data('load') =='true'){
 		return false;
 	}
@@ -15,6 +17,7 @@ function task(){
 	parent.layui.taskTable = table.render({
 		elem: '#task',
 		title: '任务列表',
+		toolbar: '#toolbartask',
 		cellMinWidth:200,
 		url: "/project/task/index",
 		where:{'project_id':project_id},
@@ -29,7 +32,11 @@ function task(){
 				var html = '<span class="layui-badge layui-bg-'+d.flow_status+'">'+d.flow_name+'</span>';
 				return html;
 			}}
-			, { field: 'cate_name', title: '工作类型', width: 90, align: 'center' }
+			, { field: 'cate_name', title: '工作类型', width: 90, align: 'center'}
+			, { field: 'type_name', title: '任务类型', width: 90, align: 'center',templet:function(d){
+				var html = '<span class="layui-color-'+d.type+'">'+d.type_name+'</span>';
+				return html;
+			}}
 			,{field:'title',title: '任务主题',rowspan: 2,templet:function(d){
 				var html = '<span class="layui-badge layui-bg-'+d.priority+'">'+d.priority_name+'</span> <a class="right-a" lay-event="detail">'+d.title+'</a>';
 				return html;
@@ -46,8 +53,15 @@ function task(){
 			}}
 		]]
 	});
-	$('.add-new').on('click',function(){
-		parent.layui.tool.side('/project/task/add?project_id='+project_id);
+	
+	//触发事件
+	table.on('toolbar(task)', function(obj){
+	  var checkStatus = table.checkStatus(obj.config.id);
+	  switch(obj.event){
+		case 'add':
+		  parent.layui.tool.side('/project/task/add?project_id='+project_id);
+		break;
+	  };
 	});
 	
 	table.on('tool(task)', function(obj){

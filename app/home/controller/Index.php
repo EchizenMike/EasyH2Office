@@ -22,7 +22,7 @@ class Index extends BaseController
             //发票待审核统计
             $invoice_map_check[] = ['check_status', '<', 2];
             $invoice_map_check[] = ['', 'exp', Db::raw("FIND_IN_SET('{$admin_id}',check_admin_ids)")];
-            $invoice_map_check[] = ['status', '=', 1];
+            $invoice_map_check[] = ['delete_time', '=', 0];
             $invoice_count_check = Db::name('Invoice')->where($invoice_map_check)->count();
             $statistics['invoice_html_check'] = '<a data-id="130" class="side-menu-item" data-href="/finance/invoice/list" class="menu-active"> 您有<font style="color:#FF0000">' . $invoice_count_check . '</font>条发票申请待审核</a>';
             if ($invoice_count_check == 0) {
@@ -32,7 +32,7 @@ class Index extends BaseController
             //发票待开具统计
             $invoice_map_open[] = ['open_time', '=', 0];
             $invoice_map_open[] = ['open_admin_id', '=', $admin_id];
-            $invoice_map_open[] = ['status', '=', 1];
+            $invoice_map_open[] = ['delete_time', '=', 0];
             $invoice_count_open = Db::name('Invoice')->where($invoice_map_open)->count();
             $statistics['invoice_html_open'] = '<a data-id="131" class="side-menu-item" data-href="/finance/invoice/checkedlist">您有<font style="color:#FF0000">' . $invoice_count_open . '</font>条发票待开具</a>';
             if ($invoice_count_open == 0) {
@@ -42,7 +42,7 @@ class Index extends BaseController
             //待审核的报销统计
             $expense_map_check[] = ['check_status', '<', 2];
             $expense_map_check[] = ['', 'exp', Db::raw("FIND_IN_SET('{$admin_id}',check_admin_ids)")];
-            $expense_map_check[] = ['status', '=', 1];
+            $expense_map_check[] = ['delete_time', '=', 0];
             $expense_count_check = Db::name('Expense')->where($expense_map_check)->count();
             $statistics['expense_html_check'] = '<a data-id="121" class="side-menu-item" data-title="待我审批的报销" data-href="/finance/expense/list">您有<font style="color:#FF0000">' . $expense_count_check . '</font>条报销单待审核</a>';
             if ($expense_count_check == 0) {
@@ -97,8 +97,8 @@ class Index extends BaseController
         $total = [];
         $adminCount = Db::name('Admin')->where('status', '1')->count();
         $approveCount = Db::name('Approve')->count();
-        $expenseCount = Db::name('Expense')->where('status', '1')->count();
-        $invoiceCount = Db::name('Invoice')->where('status', '1')->count();
+        $expenseCount = Db::name('Expense')->where('delete_time', '0')->count();
+        $invoiceCount = Db::name('Invoice')->where('delete_time', '0')->count();
         $total[] = array(
             'name' => '员工',
             'num' => $adminCount,

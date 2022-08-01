@@ -10,11 +10,11 @@
 </script>
 <script type="text/html" id="toolbarDemo">
   <div class="layui-btn-container">
-    <span class="layui-btn layui-btn-normal layui-btn-sm" lay-event="add">+ 添加公告</span>
+    <span class="layui-btn layui-btn-sm" lay-event="add">+ 添加公告</span>
   </div>
 </script>
 <script type="text/html" id="barDemo">
-<div class="layui-btn-group"><span class="layui-btn layui-btn-normal layui-btn-xs" lay-event="view">查看</span><span class="layui-btn layui-btn-xs" lay-event="edit">编辑</span><span class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</span></div>
+<div class="layui-btn-group"><span class="layui-btn layui-btn-xs" lay-event="edit">编辑</span><span class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</span></div>
 </script>
 {/block}
 <!-- /主体 -->
@@ -48,10 +48,15 @@
 						field: 'cate_title',
 						title: '公告分类',
 						align: 'center',
-						width: 136
+						width: 136,
+						templet: function (d) {
+							var html = '<span class="layui-color-'+d.cate_id+'">'+d.cate_title+'</span>';
+							return html;
+						}
 					}, {
 						field: 'title',
-						title: '公告标题'
+						title: '公告标题',
+						templet: '<div><a data-href="/note/index/view/id/{{d.id}}.html" class="right-a">{{d.title}}</a></div>'
 					}, {
 						field: 'cate_title',
 						title: '公告展示期间',
@@ -71,7 +76,7 @@
 						field: 'right',
 						title: '操作',
 						toolbar: '#barDemo',
-						width: 136,
+						width: 110,
 						align: 'center'
 					}
 				]
@@ -89,10 +94,6 @@
 		//监听行工具事件
 		table.on('tool(test)', function(obj) {
 			var data = obj.data;
-			if (obj.event === 'view') {
-				tool.side("/note/index/view?id="+data.id);
-				return;
-			}
 			if (obj.event === 'edit') {
 				tool.side("/note/index/add?id="+data.id);
 				return;

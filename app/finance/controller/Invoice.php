@@ -18,90 +18,6 @@ use think\facade\View;
 
 class Invoice extends BaseController
 {
-	//发票列表检索
-	public function get_list($where = [],$param=[], $type='and')
-    {
-		$rows = empty($param['limit']) ? get_config('app . page_size') : $param['limit'];
-		if($type == 'or'){
-			$list = Db::name('Invoice')
-				->field('i.*,a.name,d.title as department_name')
-				->alias('i')
-				->join('Admin a', 'a.id = i.admin_id', 'left')
-				->join('Department d', 'd.id = i.did', 'left')
-				->whereOr($where)
-				->order('i.id desc')
-				->group('i.id')
-				->paginate(['list_rows' => $rows, 'query' => $param])
-				->each(function($item, $key){
-					$item['create_time'] = date('Y-m-d H:i', $item['create_time']);
-					if ($item['open_time'] > 0) {
-						$item['open_time'] = empty($item['open_time']) ? '0' : date('Y-m-d', $item['open_time']);
-						$item['open_name'] = Db::name('Admin')->where('id',$item['open_admin_id'])->value('name');
-					}
-					else{
-						$item['open_time'] = '';
-						$item['open_name'] = '-';
-					}
-					$item['check_user'] = '-';
-					if($item['check_status']<2 && !empty($item['check_admin_ids'])){
-						$check_user = Db::name('Admin')->where('id','in',$item['check_admin_ids'])->column('name');
-						$item['check_user'] = implode(',',$check_user);
-					}
-					return $item;
-				});
-		}
-		else{
-			$list = Db::name('Invoice')
-				->field('i.*,a.name,d.title as department_name')
-				->alias('i')
-				->join('Admin a', 'a.id = i.admin_id', 'left')
-				->join('Department d', 'd.id = i.did', 'left')
-				->where($where)
-				->order('i.id desc')
-				->paginate(['list_rows' => $rows, 'query' => $param])
-				->each(function($item, $key){
-					$item['create_time'] = date('Y-m-d H:i', $item['create_time']);
-					$item['check_user'] = '-';
-					if ($item['open_time'] > 0) {
-						$item['open_time'] = empty($item['open_time']) ? '0' : date('Y-m-d', $item['open_time']);
-						$item['open_name'] = Db::name('Admin')->where('id',$item['open_admin_id'])->value('name');
-					}
-					else{
-						$item['open_time'] = '';
-						$item['open_name'] = '-';
-					}
-					if($item['check_status']<2 && !empty($item['check_admin_ids'])){
-						$check_user = Db::name('Admin')->where('id','in',$item['check_admin_ids'])->column('name');
-						$item['check_user'] = implode(',',$check_user);
-					}
-					return $item;
-				});
-		}
-        return $list;
-    }
-	
-	//发票详情
-    public function detail($id = 0)
-    {
-        $invoice = Db::name('Invoice')->where(['id' => $id])->find();
-        if ($invoice) {
-            $invoice['create_user'] = Db::name('Admin')->where(['id' => $invoice['admin_id']])->value('name');
-            $invoice['department'] = Db::name('Department')->where(['id' => $invoice['did']])->value('title');
-            $invoice['check_admin'] = Db::name('Admin')->where(['id' => $invoice['check_admin_id']])->value('name');
-            $invoice['open_admin'] = Db::name('Admin')->where(['id' => $invoice['open_admin_id']])->value('name');
-            if ($invoice['check_time'] > 0) {
-                $invoice['check_time'] = empty($invoice['check_time']) ? '0' : date('Y-m-d H:i', $invoice['check_time']);
-            }
-            if ($invoice['open_time'] > 0) {
-                $invoice['open_time'] = empty($invoice['open_time']) ? '0' : date('Y-m-d', $invoice['open_time']);
-            }
-            else{
-                $invoice['open_time'] = '-';
-            }
-        }
-        return $invoice;
-    }
-
 	//我申请的发票
     public function index()
     {
@@ -118,8 +34,9 @@ class Invoice extends BaseController
                 $where[] = ['i.create_time', 'between', [$start_time, $end_time]];
             }			
 			$where[] = ['i.admin_id','=',$this->uid];
-			$where[] = ['i.status','=',1];
-			$list = $this->get_list($where,$param);
+			$where[] = ['i.delete_time','=',0];
+			$model = new InvoiceList();
+            $list = $model->get_list($param, $where);
             return table_assign(0, '', $list);
         } else {
             return view();
@@ -137,18 +54,18 @@ class Invoice extends BaseController
 			$map1 = [];
 			$map2 = [];
 			$map1[] = ['', 'exp', Db::raw("FIND_IN_SET('{$user_id}',i.check_admin_ids)")];
-			$map1[] = ['i.status','=',1];
+			$map1[] = ['i.delete_time','=',0];
 			$map2[] = ['', 'exp', Db::raw("FIND_IN_SET('{$user_id}',i.flow_admin_ids)")];
-			$map2[] = ['i.status','=',1];
-			
+			$map2[] = ['i.delete_time','=',0];
+			$model = new InvoiceList();
 			if($status == 0){
-				$list = $this->get_list([$map1,$map2],$param,'or');
+				$list = $model->get_list($param,[$map1,$map2],'or');
 			}			
 			if($status == 1){
-				$list = $this->get_list($map1,$param);
+				$list = $model->get_list($param,$map1);
 			}
 			if($status == 2){
-				$list = $this->get_list($map2,$param);
+				$list = $model->get_list($param,$map2);
             }	
             return table_assign(0, '', $list);
         } else {
@@ -169,11 +86,12 @@ class Invoice extends BaseController
             if ($start_time > 0 && $end_time > 0) {
                 $where[] = ['i.expense_time', 'between', [$start_time, $end_time]];
             }
-			$map[] = ['i.status','=',1];
+			$map[] = ['i.delete_time','=',0];
 			$map[] = ['i.check_status', '=', 2];			
-			$map[] = ['', 'exp', Db::raw("FIND_IN_SET('{$user_id}',i.copy_uids)")];	
-			$expense = $this->get_list($map, $param);			
-            return table_assign(0, '', $expense);
+			$map[] = ['', 'exp', Db::raw("FIND_IN_SET('{$user_id}',i.copy_uids)")];
+			$model = new InvoiceList();
+			$list = $model->get_list($param,$map);			
+            return table_assign(0, '', $list);
         } else {
             return view();
         }
@@ -197,10 +115,15 @@ class Invoice extends BaseController
             if ($start_time > 0 && $end_time > 0) {
                 $where[] = ['i.create_time', 'between', [$start_time, $end_time]];
             }			
-			$where[] = ['i.status','=',1];
-			$list = $this->get_list($where,$param);
+			$where[] = ['i.delete_time','=',0];
+			$model = new InvoiceList();
+			$list = $model->get_list($param,$where);
             return table_assign(0, '', $list);
         } else {
+			$auth = isAuthInvoice($this->uid);
+			if($auth == 0){
+				return view('../../base/view/common/roletemplate');
+			}
             return view();
         }
     }
@@ -289,6 +212,16 @@ class Invoice extends BaseController
 				
                 $res = InvoiceList::where('id', $param['id'])->strict(false)->field(true)->update($param);
                 if ($res !== false) {
+					//添加提交申请记录
+					$checkData=array(
+						'action_id' => $param['id'],
+						'check_user_id' => $this->uid,
+						'content' => '重新提交申请',
+						'type' => 3,
+						'check_time' => time(),
+						'create_time' => time()
+					);	
+					$record_id = Db::name('FlowRecord')->strict(false)->field(true)->insertGetId($checkData);
                     add_log('edit', $param['id'], $param);
 					//发送消息通知
 					$msg=[
@@ -308,9 +241,8 @@ class Invoice extends BaseController
                     // 验证失败 输出错误信息
                     return to_assign(1, $e->getError());
                 }
-                $admin_id = $this->uid;
-                $param['admin_id'] = $admin_id;
-                $param['did'] = get_login_admin('did');
+                $param['admin_id'] = $this->uid;
+                $param['did'] = $this->did;
                 $param['create_time'] = time();
 				
 				if (!isset($param['check_admin_ids'])) {
@@ -360,6 +292,16 @@ class Invoice extends BaseController
 				}				
                 
                 if ($exid) {
+					//添加提交申请记录
+					$checkData=array(
+						'action_id' => $exid,
+						'check_user_id' => $this->uid,
+						'content' => '提交申请',
+						'type' => 3,
+						'check_time' => time(),
+						'create_time' => time()
+					);	
+					$record_id = Db::name('FlowRecord')->strict(false)->field(true)->insertGetId($checkData);
                     add_log('apply', $exid, $param);
 					//发送消息通知
 					$msg=[
@@ -376,7 +318,11 @@ class Invoice extends BaseController
         } else {
             $id = isset($param['id']) ? $param['id'] : 0;
             if ($id > 0) {
-                $detail = $this->detail($id);
+                $model = new InvoiceList();
+				$detail = $model->detail($id);
+				if(empty($detail)){
+					throw new \think\exception\HttpException(406, '找不到记录');
+				}
 				if($detail['file_ids'] !=''){
 					$fileArray = Db::name('File')->where('id','in',$detail['file_ids'])->select();
 					$detail['fileArray'] = $fileArray;
@@ -385,7 +331,7 @@ class Invoice extends BaseController
             }
 			$department = $this->did;
 			//获取发票审批流程
-			$flows = get_type_flows(7,$department);
+			$flows = get_type_department_flows(7,$department);
             View::assign('user', get_admin($this->uid));
             View::assign('id', $id);
 			View::assign('flows', $flows);
@@ -397,12 +343,16 @@ class Invoice extends BaseController
     public function view()
     {
         $id = empty(get_params('id')) ? 0 : get_params('id');
-        $detail = $this->detail($id);
+		$model = new InvoiceList();
+		$detail = $model->detail($id);
+		if(empty($detail)){
+			throw new \think\exception\HttpException(406, '找不到记录');
+		}
 		$flows = Db::name('FlowStep')->where(['action_id'=>$detail['id'],'type'=>3,'sort'=>$detail['check_step_sort'],'delete_time'=>0])->find();
 		$detail['check_user'] = '-';
 		$detail['copy_user'] = '-';
 		$check_user_ids = [];
-		if($detail['check_status']<2){
+		if($detail['check_status'] == 1){
 			if($flows['flow_type']==1){
 				$detail['check_user'] = '部门负责人';				
 				$check_user_ids[]=get_department_leader($detail['admin_id']);
@@ -435,7 +385,6 @@ class Invoice extends BaseController
 		if(in_array($this->uid,$check_user_ids)){
 			$is_check_admin = 1;
 			//当前审核节点详情
-			//$step = Db::name('FlowStep')->where(['action_id'=>$detail['id'],'type'=>3,'sort'=>$detail['check_step_sort'],'delete_time'=>0])->find();
 			if($flows['flow_type'] == 4){
 				$check_count = Db::name('FlowRecord')->where(['action_id'=>$detail['id'],'type'=>3,'step_id'=>$flows['id'],'check_user_id'=>$this->uid])->count();
 				if($check_count>0){
@@ -443,8 +392,30 @@ class Invoice extends BaseController
 				}
 			}
 		}
+		
+		$check_record = Db::name('FlowRecord')->field('f.*,a.name,a.thumb')
+			->alias('f')
+			->join('Admin a', 'a.id = f.check_user_id', 'left')
+			->where(['f.action_id'=>$detail['id'],'f.type'=>3])
+			->order('check_time desc')
+			->select()->toArray();
+		foreach ($check_record as $kk => &$vv) {		
+			$vv['check_time_str'] = date('Y-m-d :H:i', $vv['check_time']);
+			$vv['status_str'] = '提交';
+			if($vv['status'] == 1){
+				$vv['status_str'] = '审核通过';
+			}
+			else if($vv['status'] == 2){
+				$vv['status_str'] = '审核拒绝';
+			}
+			if($vv['status'] == 3){
+				$vv['status_str'] = '撤销';
+			}
+		}
+		
 		View::assign('is_create_admin', $is_create_admin);
 		View::assign('is_check_admin', $is_check_admin);
+		View::assign('check_record', $check_record);
 		View::assign('detail', $detail);
 		View::assign('flows', $flows);
         View::assign('uid', $this->uid);
@@ -455,253 +426,20 @@ class Invoice extends BaseController
     public function delete()
     {
         $id = get_params("id");
-        $detail = $this->detail($id);
-        if ($detail['status'] == 2) {
+        $status = InvoiceList::where(['id' => $param['id']])->value('check_status');
+        if ($status == 2) {
             return to_assign(1, "已审核的发票不能删除");
         }
-        if ($detail['status'] == 3) {
+        if ($status == 3) {
             return to_assign(1, "已开具的发票不能删除");
         }
-        $data['status'] = '-1';
+        $data['delete_time'] = time();
         $data['id'] = $id;
-        $data['update_time'] = time();
-        if (Db::name('Invoice')->update($data) !== false) {
+        if (InvoiceList::update($data) !== false) {
             add_log('delete', $id);
             return to_assign(0, "删除成功");
         } else {
             return to_assign(1, "删除失败");
         }
-    }
-	
-    //审核
-    public function check()
-    {
-        $param = get_params();
-		$detail = Db::name('Invoice')->where(['id' => $param['id']])->find();
-		//当前审核节点详情
-		$step = Db::name('FlowStep')->where(['action_id'=>$detail['id'],'type'=>3,'sort'=>$detail['check_step_sort'],'delete_time'=>0])->find();
-		//审核通过
-		if($param['status'] == 1){
-			$check_admin_ids = explode(",", strval($detail['check_admin_ids']));
-			if (!in_array($this->uid, $check_admin_ids)){		
-				return to_assign(1,'您没权限审核该审批');
-			}
-			//多人会签审批
-			if($step['flow_type'] == 4){
-				//查询当前会签记录数
-				$check_count = Db::name('FlowRecord')->where(['action_id'=>$detail['id'],'type'=>3,'step_id'=>$step['id']])->count();
-				//当前会签记应有记录数
-				$flow_count = explode(',', $step['flow_uids']);
-				if(($check_count+1) >=count($flow_count)){
-					$next_step = Db::name('FlowStep')->where(['action_id'=>$detail['id'],'type'=>3,'sort'=>($detail['check_step_sort']+1),'delete_time'=>0])->find();
-					if($next_step){
-						//存在下一步审核
-						$param['check_step_sort'] = $detail['check_step_sort']+1;
-						$param['check_status'] = 1;
-					}
-					else{
-						//不存在下一步审核，审核结束
-						$param['check_status'] = 2;
-					}
-				}
-				else{
-					$param['check_status'] = 1;
-				}
-			}
-			else if($step['flow_type'] == 0){
-				//自由人审批
-				if($param['check_node'] == 2){
-					$next_step = $detail['check_step_sort']+1;
-					$flow_step = array(
-						'action_id' => $detail['id'],
-						'sort' => $next_step,
-						'type' => 3,
-						'flow_uids' => $param['check_admin_ids'],
-						'create_time' => time()
-					);
-					$fid = Db::name('FlowStep')->strict(false)->field(true)->insertGetId($flow_step);
-					//下一步审核步骤
-					$param['check_admin_ids'] = $param['check_admin_ids'];
-					$param['check_step_sort'] = $next_step;
-					$param['check_status'] = 1;
-				}
-				else{
-					//不存在下一步审核，审核结束
-					$param['check_status'] = 2;
-					$param['check_admin_ids'] ='';
-				}
-			}
-			else{
-				$next_step = Db::name('FlowStep')->where(['action_id'=>$detail['id'],'type'=>3,'sort'=>($detail['check_step_sort']+1),'delete_time'=>0])->find();
-				if($next_step){
-					//存在下一步审核
-					if($next_step['flow_type'] == 1){
-						$param['check_admin_ids'] = get_department_leader($this->uid);
-					}
-					else if($next_step['flow_type'] == 2){
-						$param['check_admin_ids'] = get_department_leader($this->uid,1);
-					}
-					else{
-						$param['check_admin_ids'] = $next_step['flow_uids'];
-					}
-					$param['check_step_sort'] = $detail['check_step_sort']+1;
-					$param['check_status'] = 1;
-				}
-				else{
-					//不存在下一步审核，审核结束
-					$param['check_status'] = 2;
-					$param['check_admin_ids'] ='';
-				}
-			}
-			if($param['check_status'] == 1 && $param['check_admin_ids']==''){
-				return to_assign(1,'找不到下一步的审批人，该审批流程设置有问题，请联系HR或者管理员');
-			}			
-			//审核通过数据操作
-			$param['last_admin_id'] = $this->uid;
-			$param['flow_admin_ids'] = $detail['flow_admin_ids'].$this->uid.',';
-			$res = Db::name('Invoice')->strict(false)->field('check_step_sort,check_status,last_admin_id,flow_admin_ids,check_admin_ids')->update($param);
-			if($res!==false){
-				$checkData=array(
-					'action_id' => $detail['id'],
-					'step_id' => $step['id'],
-					'check_user_id' => $this->uid,
-					'type' => 3,
-					'check_time' => time(),
-					'status' => $param['status'],
-					'content' => $param['check_remark'],
-					'create_time' => time()
-				);	
-				$aid = Db::name('FlowRecord')->strict(false)->field(true)->insertGetId($checkData);
-				add_log('check', $param['id'], $param);
-				//发送消息通知
-				$msg=[
-					'from_uid'=>$detail['admin_id'],
-					'create_time'=>date('Y-m-d H:i:s',$detail['create_time']),
-					'action_id'=>$detail['id']
-				];
-				if($param['check_status'] == 1){
-					$users = $param['check_admin_ids'];
-					sendMessage($users,41,$msg);
-				}
-				if($param['check_status'] == 2){
-					$users = $detail['admin_id'];
-					sendMessage($users,42,$msg);
-				}
-				return to_assign();
-			}
-			else{
-				return to_assign(1,'操作失败');
-			}
-		}
-		else if($param['status'] == 2){
-			$check_admin_ids = explode(",", strval($detail['check_admin_ids']));
-			if (!in_array($this->uid, $check_admin_ids)){		
-				return to_assign(1,'您没权限审核该审批');
-			}
-			//拒绝审核，数据操作
-			$param['check_status'] = 3;
-			$param['last_admin_id'] = $this->uid;
-			$param['flow_admin_ids'] = $detail['flow_admin_ids'].$this->uid.',';
-			$param['check_admin_ids'] ='';
-			$res = Db::name('Invoice')->strict(false)->field('check_step_sort,check_status,last_admin_id,flow_admin_ids,check_admin_ids,check_remark')->update($param);
-			if($res!==false){
-				$checkData=array(
-					'action_id' => $detail['id'],
-					'step_id' => $step['id'],
-					'check_user_id' => $this->uid,
-					'type' => 3,
-					'check_time' => time(),
-					'status' => $param['status'],
-					'content' => $param['check_remark'],
-					'create_time' => time()
-				);	
-				$aid = Db::name('FlowRecord')->strict(false)->field(true)->insertGetId($checkData);
-				add_log('refue', $param['id'], $param);
-				//发送消息通知
-				$msg=[
-					'create_time'=>date('Y-m-d H:i:s',$detail['create_time']),
-					'action_id'=>$detail['id']
-				];
-				$users = $detail['admin_id'];
-				sendMessage($users,43,$msg);
-				return to_assign();
-			}
-			else{
-				return to_assign(1,'操作失败');
-			}			
-		}		
-		else if($param['status'] == 3){
-			if($detail['admin_id'] != $this->uid){
-				return to_assign(1,'你没权限操作');
-			}
-			//撤销审核，数据操作
-			$param['check_status'] = 4;
-			$param['check_admin_ids'] ='';
-			$param['check_step_sort'] =0;
-			$res = Db::name('Invoice')->strict(false)->field('check_step_sort,check_status,last_admin_id,flow_admin_ids,check_admin_ids,check_remark')->update($param);
-			if($res!==false){
-				$checkData=array(
-					'action_id' => $detail['id'],
-					'step_id' => 0,
-					'check_user_id' => $this->uid,
-					'type' => 3,
-					'check_time' => time(),
-					'status' => $param['status'],
-					'content' => $param['check_remark'],
-					'create_time' => time()
-				);	
-				$aid = Db::name('FlowRecord')->strict(false)->field(true)->insertGetId($checkData);
-				add_log('back', $param['id'], $param);
-				return to_assign();
-			}else{
-				return to_assign(1,'操作失败');
-			}
-		}		
-    }
-	
-	
-    //作废
-    public function tovoid()
-    {
-        $param = get_params();
-        if (request()->isAjax()) {
-            if ($param['check_status'] == 10) {
-                $count = Db::name('InvoiceIncome')->where(['inid'=>$param['id'],'status'=>1])->count();
-                if($count>0){
-                    return to_assign(1, "发票已经新增有到账记录，请先反到账后再作废发票");
-                }
-                else{
-                    $param['update_time'] = time();
-                    add_log('tovoid', $param['id'],$param);
-                }
-            }
-            $res = InvoiceList::where('id', $param['id'])->strict(false)->field('check_status')->update($param);
-            if ($res !== false) {
-                return to_assign();
-            } else {
-                return to_assign(1, "操作失败");
-            }
-        }
-    }
-	
-    //开具发票
-    public function open()
-    {
-        $param = get_params();
-        if (request()->isAjax()) {
-			$detail = Db::name('Invoice')->where(['id' => $param['id']])->find();
-            if ($detail['check_status'] == 2) {
-                $param['check_status'] = 5;
-                $param['open_admin_id'] = $this->uid;
-            }
-			$param['open_time'] = isset($param['open_time']) ? strtotime(urldecode($param['open_time'])) : 0;
-            $res = InvoiceList::where('id', $param['id'])->strict(false)->field('code,check_status,open_time,open_admin_id,delivery')->update($param);
-            if ($res !== false) {
-				add_log('open', $param['id'],$param);
-                return to_assign();
-            } else {
-                return to_assign(1, "操作失败");
-            }
-        }
-    }
+    }	
 }

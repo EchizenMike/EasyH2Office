@@ -10,67 +10,21 @@ declare (strict_types = 1);
 namespace app\finance\controller;
 
 use app\base\BaseController;
-use app\finance\model\Invoice as InvoiceList;
+use app\finance\model\Invoice;
+use app\finance\model\InvoiceIncome;
 use think\exception\ValidateException;
 use think\facade\Db;
 use think\facade\View;
 
 class Income extends BaseController
 {
-    public function get_list($param = [], $where = [])
-    {
-        $rows = empty($param['limit']) ? get_config('app . page_size') : $param['limit'];
-        $expense = InvoiceList::where($where)
-            ->order('create_time asc')
-            ->paginate($rows, false, ['query' => $param])
-            ->each(function ($item, $key) {
-                $item->user = Db::name('Admin')->where(['id' => $item->admin_id])->value('name');
-                $item->department = Db::name('Department')->where(['id' => $item->did])->value('title');
-                $item->check_name = Db::name('Admin')->where(['id' => $item->check_admin_id])->value('name');
-                $item->check_time = empty($item->check_time) ? '-' : date('Y-m-d H:i', $item->check_time);
-                $item->enter_time = empty($item->enter_time) ? '-' : date('Y-m-d H:i', $item->enter_time);
-                $item->open_name = Db::name('Admin')->where(['id' => $item->open_admin_id])->value('name');
-                $item->open_time = empty($item->open_time) ? '-' : date('Y-m-d H:i', $item->open_time);
-            });
-        return $expense;
-    }
-
-    public function detail($id = 0)
-    {
-        $invoice = Db::name('Invoice')->where(['id' => $id])->find();
-        if ($invoice) {
-            $invoice['user'] = Db::name('Admin')->where(['id' => $invoice['admin_id']])->value('name');
-            $invoice['department'] = Db::name('Department')->where(['id' => $invoice['did']])->value('title');
-            $invoice['check_admin'] = Db::name('Admin')->where(['id' => $invoice['check_admin_id']])->value('name');
-            $invoice['open_admin'] = Db::name('Admin')->where(['id' => $invoice['open_admin_id']])->value('name');
-            if ($invoice['check_time'] > 0) {
-                $invoice['check_time'] = empty($invoice['check_time']) ? '0' : date('Y-m-d H:i', $invoice['check_time']);
-            }
-            if ($invoice['open_time'] > 0) {
-                $invoice['open_time'] = empty($invoice['open_time']) ? '0' : date('Y-m-d H:i', $invoice['open_time']);
-            }
-            else{
-                $invoice['open_time'] = '-';
-            }
-            $invoice['not_income'] =  ($invoice['amount']*100 - $invoice['enter_amount']*100)/100;
-            //已到账的记录
-            $invoice['income'] = Db::name('InvoiceIncome')
-            ->field('i.*,a.name as admin')
-            ->alias('i')
-            ->join('Admin a', 'a.id = i.admin_id', 'LEFT')
-            ->where(['i.inid'=>$id,'i.status'=>1])
-            ->order('i.id asc')
-            ->select();
-        }
-        return $invoice;
-    }
-
     public function index()
     {
+		$auth = isAuthIncome($this->uid);
         if (request()->isAjax()) {
             $param = get_params();
             $where = [];
-            $where[] = ['status', '=', 1];
+            $where[] = ['delete_time', '=', 0];
             $where[] = ['check_status', '=', 5];
             //按时间检索
             $start_time = isset($param['start_time']) ? strtotime(urldecode($param['start_time'])) : 0;
@@ -81,9 +35,14 @@ class Income extends BaseController
             if (isset($param['is_cash']) && $param['is_cash']!='') {
                 $where[] = ['is_cash', '=', $param['is_cash']];
             }
-            $invoice = $this->get_list($param, $where);
+			if($auth == 0){
+				$where[] = ['admin_id','=',$this->uid];
+			}
+			$model = new Invoice();
+            $invoice = $model->income_list($param, $where);
             return table_assign(0, '', $invoice);
         } else {
+			View::assign('auth', $auth);
             return view();
         }
     }
@@ -92,13 +51,17 @@ class Income extends BaseController
     public function add()
     {
         $param = get_params();
+		$auth = isAuthIncome($this->uid);
         if (request()->isAjax()) {   
+			if($auth == 0){
+				return to_assign(1, "你没有到账管理权限，请联系管理员或者HR");
+			}
             $inid = $param['inid'];   
             $admin_id = $this->uid;
             //计算已到账的金额
-            $hasIncome = Db::name('InvoiceIncome')->where(['inid'=>$inid,'status'=>1])->sum('amount');
+            $hasIncome = InvoiceIncome::where(['inid'=>$inid,'status'=>1])->sum('amount');
             //查询发票金额
-            $invoiceAmount = Db::name('Invoice')->where(['id'=>$inid])->value('amount');
+            $invoiceAmount = Invoice::where(['id'=>$inid])->value('amount');
             if($param['enter_type']==1){ //单个到账记录
                 //相关内容多个数组
                 $enterPriceData=isset($param['amount'])? $param['amount'] : '';
@@ -126,16 +89,16 @@ class Income extends BaseController
                         return to_assign(1,'到账金额大于发票金额，不允许保存');
                     }
                     else{
-                        $res = Db::name('InvoiceIncome')->strict(false)->field(true)->insertAll($insert);
+                        $res = InvoiceIncome::strict(false)->field(true)->insertAll($insert);
                         if($res!==false){
                             if(($enter_price + $hasIncome*100) == $invoiceAmount*100){
                                 //发票全部到账
-                                Db::name('Invoice')->where(['id'=>$inid])->update(['is_cash'=>2,'enter_amount'=>$invoiceAmount,'enter_time'=>time()]);
+                                Invoice::where(['id'=>$inid])->update(['is_cash'=>2,'enter_amount'=>$invoiceAmount,'enter_time'=>time()]);
                             }
                             else if(($enter_price + $hasIncome*100) < $invoiceAmount*100){
                                 $incomeTotal=($enter_price + $hasIncome*100)/100;
                                 //发票部分到账
-                                Db::name('Invoice')->where(['id'=>$inid])->update(['is_cash'=>1,'enter_amount'=>$incomeTotal,'enter_time'=>time()]);
+                                Invoice::where(['id'=>$inid])->update(['is_cash'=>1,'enter_amount'=>$incomeTotal,'enter_time'=>time()]);
                             }
                             add_log('add',$inid,$param);
                             return to_assign();
@@ -159,28 +122,47 @@ class Income extends BaseController
                     'admin_id' => $admin_id,
                     'create_time' => time()
                 ];
-                $res = Db::name('InvoiceIncome')->strict(false)->field(true)->insertGetId($data);
+                $res = InvoiceIncome::strict(false)->field(true)->insertGetId($data);
                 if($res!==false){
                     //设置发票全部到账
-                    Db::name('Invoice')->where(['id'=>$inid])->update(['is_cash'=>2,'enter_amount'=>$invoiceAmount,'enter_time'=>time()]);
+                    Invoice::where(['id'=>$inid])->update(['is_cash'=>2,'enter_amount'=>$invoiceAmount,'enter_time'=>time()]);
                     add_log('add',$inid,$param);
                     return to_assign();
                 }
             }
             else if ($param['enter_type']==3) {//全部反账记录
                 //作废初始化发票到账数据
-                $res = Db::name('InvoiceIncome')->where(['inid'=>$inid])->update(['status'=>'6','update_time'=>time()]);
+                $res = InvoiceIncome::where(['inid'=>$inid])->update(['status'=>'6','update_time'=>time()]);
                 if($res!==false){
                     //设置发票全部没到账
-                    Db::name('Invoice')->where(['id'=>$inid])->update(['is_cash'=>0,'enter_amount'=>0,'enter_time'=>0]);
+                    Invoice::where(['id'=>$inid])->update(['is_cash'=>0,'enter_amount'=>0,'enter_time'=>0]);
                     add_log('tovoid',$inid,$param);
                     return to_assign();
                 }                
             }
         }
         else{
+			if($auth == 0){
+				return view('../../base/view/common/roletemplate');
+			}
             $id = isset($param['id']) ? $param['id']: 0 ;
-            $detail = $this->detail($id);
+			$model = new Invoice();
+            $detail = $model->detail($id);
+			if(empty($detail)){
+				throw new \think\exception\HttpException(406, '找不到记录');
+			}
+			if($detail['file_ids'] !=''){
+				$fileArray = Db::name('File')->where('id','in',$detail['file_ids'])->select();
+				$detail['fileArray'] = $fileArray;
+			}
+			$detail['not_income'] =  ($detail['amount']*100 - $detail['enter_amount']*100)/100;
+			//已到账的记录
+			$detail['income'] = InvoiceIncome::field('i.*,a.name as admin')
+				->alias('i')
+				->join('Admin a', 'a.id = i.admin_id', 'LEFT')
+				->where(['i.inid'=>$id,'i.status'=>1])
+				->order('i.enter_time desc')
+				->select();
             View::assign('uid', $this->uid);
             View::assign('id', $id);
             View::assign('detail', $detail);
@@ -191,7 +173,19 @@ class Income extends BaseController
     public function view()
     {
         $id = empty(get_params('id')) ? 0 : get_params('id');
-        $detail = $this->detail($id);
+        $model = new Invoice();
+        $detail = $model->detail($id);
+		if(empty($detail)){
+			throw new \think\exception\HttpException(406, '找不到记录');
+		}
+		$detail['not_income'] =  ($detail['amount']*100 - $detail['enter_amount']*100)/100;
+		//已到账的记录
+		$detail['income'] = InvoiceIncome::field('i.*,a.name as admin')
+			->alias('i')
+			->join('Admin a', 'a.id = i.admin_id', 'LEFT')
+			->where(['i.inid'=>$id,'i.status'=>1])
+			->order('i.enter_time desc')
+			->select();
         View::assign('uid', $this->uid);
         View::assign('detail', $detail);
         return view();
@@ -203,19 +197,19 @@ class Income extends BaseController
         $param = get_params();
         if (request()->isAjax()) {
             //作废初始化发票到账数据
-            $income = Db::name('InvoiceIncome')->where(['id'=>$param['id']])->find();
-            $invoice = Db::name('Invoice')->where(['id'=>$income['inid']])->find();
+            $income =InvoiceIncome::where(['id'=>$param['id']])->find();
+            $invoice = Invoice::where(['id'=>$income['inid']])->find();
             if($income){
-                $res = Db::name('InvoiceIncome')->where(['id'=>$param['id']])->update(['status'=>'6','update_time'=>time()]);
+                $res = InvoiceIncome::where(['id'=>$param['id']])->update(['status'=>'6','update_time'=>time()]);
                 if($res!==false){
                     if($income['amount']*100 == $invoice['amount']*100){
                         //发票全部反到账
-                        Db::name('Invoice')->where(['id'=>$income['inid']])->update(['is_cash'=>0,'enter_amount'=>0,'enter_time'=>0]);
+                        Invoice::where(['id'=>$income['inid']])->update(['is_cash'=>0,'enter_amount'=>0,'enter_time'=>0]);
                     }
                     else if($income['amount']*100 < $invoice['amount']*100){
-                        $incomeTotal=Db::name('InvoiceIncome')->where(['inid'=>$income['inid'],'status'=>1])->sum('amount');
+                        $incomeTotal=InvoiceIncome::where(['inid'=>$income['inid'],'status'=>1])->sum('amount');
                         //发票部分到账
-                        Db::name('Invoice')->where(['id'=>$income['inid']])->update(['is_cash'=>1,'enter_amount'=>$incomeTotal,'enter_time'=>time()]);
+                        Invoice::where(['id'=>$income['inid']])->update(['is_cash'=>1,'enter_amount'=>$incomeTotal,'enter_time'=>time()]);
                     }
                     add_log('enter',$income['inid'],$invoice);
                     return to_assign();

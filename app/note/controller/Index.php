@@ -33,7 +33,7 @@ class Index extends BaseController
                 ->field('a.*,c.title as cate_title')
                 ->alias('a')
                 ->join('NoteCate c', 'a.cate_id = c.id', 'LEFT')
-                ->order('a.create_time asc')
+                ->order('a.end_time desc,a.sort desc,a.create_time desc')
                 ->paginate($rows, false, ['query' => $param])
                 ->each(function ($item, $key) {
                     $item->start_time = empty($item->start_time) ? '-' : date('Y-m-d', $item->start_time);
@@ -126,7 +126,7 @@ class Index extends BaseController
         }
     }
 	
-//公告类别
+	//公告类别
     public function note_cate()
     {
         if (request()->isAjax()) {

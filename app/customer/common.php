@@ -85,7 +85,7 @@ function trace_stage()
 
 
 //写入日志
-function to_log($uid,$type=0,$new,$old)
+function to_log($uid,$type,$new,$old)
 {
 	$log_data = [];
 	$key_array = ['id', 'create_time', 'update_time', 'admin_id','belong_did','belong_time','distribute_time'];

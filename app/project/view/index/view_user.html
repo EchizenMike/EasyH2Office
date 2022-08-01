@@ -1,27 +1,30 @@
-<div class="gg-form-bar border-x p-3">
-	<button class="layui-btn layui-btn-sm add-user">+ 新增项目成员</button>
-</div>
-<div class="px-3 pb-3 bg-white">
+<div class="p-3 bg-white">
 	<table class="layui-hide" id="user" lay-filter="user"></table>
 </div>
+<script type="text/html" id="toolbaruser">
+  <div class="layui-btn-container">
+  	<button class="layui-btn layui-btn-sm" lay-event="add">+ 新增项目成员</button>
+  </div>
+</script>
 <script>
-function user(){
-	if($('#projectTab').find('li').eq(3).data('load') =='true'){
+function project_user(){
+	if($('#projectTab').find('li').eq(4).data('load') =='true'){
 		return false;
 	}
-	$('#projectTab').find('li').eq(3).data('load','true');
+	$('#projectTab').find('li').eq(4).data('load','true');
 	let tool = layui.tool, table = layui.table,employeepicker=layui.employeepicker;
 	//项目成员
 	layui.userTable = table.render({
 		elem: '#user',
 		title: '项目成员列表',
 		cellMinWidth: 120,
+		toolbar: '#toolbaruser',
 		url: "/project/api/project_user", //数据接口
 		where: { 'tid': project_id },
 		page: false, //开启分页
 		limit: 20,
 		cols: [[ //表头
-			{ field: 'name', fixed: 'left', title: '成员姓名', width: 90, rowspan: 2 }
+			{ field: 'name', fixed: 'left', title: '成员姓名', width: 90, align: 'center', rowspan: 2 }
 			, { field: 'create_time', title: '进入项目日期', width: 110, align: 'center', rowspan: 2 }
 			, { field: 'role', title: '角色', align: 'center', width: 90, rowspan: 2, templet: function (d) {
 				var html='<span style="color: #4285F4;">普通成员</span>';
@@ -61,22 +64,28 @@ function user(){
 			, { field: 'tasks_pensent', align: 'center', style: 'color: #EE6666;', width: 72, 'title': '完成率' }
 		]]
 	});
-	// 选择员工
-	$('body').on('click', '.add-user', function () {
-		employeepicker.init({
-			type: 0,
-			department_url: "/api/index/get_department_tree",
-			employee_url: "/api/index/get_employee",
-			callback: function (ids, names, dids, departments) {
-				let callback = function (e) {
-					layer.msg(e.msg);
-					if(e.code == 0){
-						layui.userTable.reload();
-					}						
+	
+	//触发事件
+	table.on('toolbar(user)', function(obj){
+		var checkStatus = table.checkStatus(obj.config.id);
+		switch(obj.event){
+			case 'add':
+			  employeepicker.init({
+				type: 0,
+				department_url: "/api/index/get_department_tree",
+				employee_url: "/api/index/get_employee",
+				callback: function (ids, names, dids, departments) {
+					let callback = function (e) {
+						layer.msg(e.msg);
+						if(e.code == 0){
+							layui.userTable.reload();
+						}						
+					}
+					tool.post("/project/api/add_user", {uid: ids,project_id: project_id}, callback);
 				}
-				tool.post("/project/api/add_user", {uid: ids,project_id: project_id}, callback);
-			}
-		})
+			})			
+			break;
+		};
 	});
 
 	//监听行工具事件

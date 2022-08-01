@@ -87,30 +87,71 @@ class Api extends BaseController
     public function check()
     {
         if (request()->isPost()) {
-			$params = get_params();
-			if($params['status'] == 3){
-				$params['check_uid'] = $this->uid;
-				$params['check_time'] = time();
-				$params['check_remark'] = $params['mark'];
+			$param = get_params();
+			if($param['check_status'] == 1){
+				$check_admin_ids = isset($param['check_admin_ids'])?$param['check_admin_ids']:'';
+				$flow_data = set_flow($param['flow_id'],$check_admin_ids);
+				$param['check_admin_ids'] = $flow_data['check_admin_ids'];
+				$flow = $flow_data['flow'];
+				$check_type = $flow_data['check_type'];
+				//删除原来的审核流程和审核记录
+				Db::name('FlowStep')->where(['action_id'=>$param['id'],'type'=>4,'delete_time'=>0])->update(['delete_time'=>time()]);
+				Db::name('FlowRecord')->where(['action_id'=>$param['id'],'type'=>4,'delete_time'=>0])->update(['delete_time'=>time()]);	
+				if($check_type == 2){
+					$flow_step = array(
+						'action_id' => $param['id'],
+						'type' => 4,
+						'flow_uids' => $param['check_admin_ids'],
+						'create_time' => time()
+					);
+					//增加审核流程
+					Db::name('FlowStep')->strict(false)->field(true)->insertGetId($flow_step);
+				}
+				else{
+					foreach ($flow as $key => &$value){
+						$value['action_id'] = $param['id'];
+						$value['sort'] = $key;
+						$value['type'] = 4;
+						$value['create_time'] = time();
+					}
+					//增加审核流程
+					Db::name('FlowStep')->strict(false)->field(true)->insertAll($flow);
+				}
+				$checkData=array(
+					'action_id' => $param['id'],
+					'step_id' => 0,
+					'check_user_id' => $this->uid,
+					'type' => 4,
+					'check_time' => time(),
+					'status' => 0,
+					'content' => '提交申请',
+					'create_time' => time()
+				);	
+				$aid = Db::name('FlowRecord')->strict(false)->field(true)->insertGetId($checkData);
 			}
-			if($params['status'] == 4){
-				$params['stop_uid'] = $this->uid;
-				$params['stop_time'] = time();
-				$params['stop_remark'] = $params['mark'];
+			if($param['check_status'] == 3){
+				$param['check_uid'] = $this->uid;
+				$param['check_time'] = time();
+				$param['check_remark'] = $param['mark'];
 			}
-			if($params['status'] == 5){
-				$params['void_uid'] = $this->uid;
-				$params['void_time'] = time();
-				$params['void_remark'] = $params['mark'];
+			if($param['check_status'] == 4){
+				$param['stop_uid'] = $this->uid;
+				$param['stop_time'] = time();
+				$param['stop_remark'] = $param['mark'];
 			}
-			$old =  Db::name('Contract')->where('id', $params['id'])->find();
-			if (Db::name('Contract')->strict(false)->update($params) !== false) {
+			if($param['check_status'] == 5){
+				$param['void_uid'] = $this->uid;
+				$param['void_time'] = time();
+				$param['void_remark'] = $param['mark'];
+			}
+			$old =  Db::name('Contract')->where('id', $param['id'])->find();
+			if (Db::name('Contract')->strict(false)->update($param) !== false) {
                 $log_data = array(
-                    'field' => 'status',
-                    'contract_id' => $params['id'],
+                    'field' => 'check_status',
+                    'contract_id' => $param['id'],
                     'admin_id' => $this->uid,
-                    'new_content' => $params['status'],
-                    'old_content' => $old['status'],
+                    'new_content' => $param['check_status'],
+                    'old_content' => $old['check_status'],
                     'create_time' => time(),
                 );
                 Db::name('ContractLog')->strict(false)->field(true)->insert($log_data);
@@ -127,20 +168,20 @@ class Api extends BaseController
     public function archive()
     {
         if (request()->isPost()) {
-			$params = get_params();
+			$param = get_params();
 			$old = 1;
-			if($params['archive_status'] == 1){
-				$params['archive_uid'] = $this->uid;
-				$params['archive_time'] = time();
+			if($param['archive_status'] == 1){
+				$param['archive_uid'] = $this->uid;
+				$param['archive_time'] = time();
 				$old = 0;
 			}
-			$old =  Db::name('Contract')->where('id', $params['id'])->find();
-			if (Db::name('Contract')->strict(false)->update($params) !== false) {
+			$old =  Db::name('Contract')->where('id', $param['id'])->find();
+			if (Db::name('Contract')->strict(false)->update($param) !== false) {
                 $log_data = array(
                     'field' => 'archive_status',
-                    'contract_id' => $params['id'],
+                    'contract_id' => $param['id'],
                     'admin_id' => $this->uid,
-                    'new_content' => $params['archive_status'],
+                    'new_content' => $param['archive_status'],
                     'old_content' => $old['archive_status'],
                     'create_time' => time(),
                 );

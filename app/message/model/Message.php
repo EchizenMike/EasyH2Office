@@ -33,4 +33,74 @@ class Message extends Model
         self::THREE => '岗位',
         self::FOUR => '全部',
     ];
+	
+    //获取消息列表
+    public function get_list($param = [],$map = [], $uid)
+    {
+        $rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
+        //垃圾箱列表特殊处理
+        if ($param['status'] == 0) {
+            $where = [['from_uid', '=', $uid], ['to_uid', '=', $uid]];
+            $list = Message::withoutField('content')
+				->where($map)
+                ->where(function ($query) use ($where) {$query->whereOr($where);})
+                ->order('create_time desc')
+                ->paginate($rows, false, ['query' => $param])
+                ->each(function ($item, $key) {
+					if($item->template==0){
+						$item->msg_type = '个人信息';
+						$item->from_name = Db::name('Admin')->where(['id' => $item->from_uid])->value('name');
+					}
+					else{
+						$item->msg_type = '系统信息';
+						$item->from_name = '系统';
+					}
+                    $item->send_time = empty($item->send_time) ? '-' : date('Y-m-d H:i:s', $item->send_time);
+                    $item->to_name = Db::name('Admin')->where(['id' => $item->to_uid])->value('name');
+                    $item->type_title = Message::$Type[(int)$item->type];
+                    $item->delete_source_title = Message::$Source[(int)$item->delete_source];
+                });
+            return $list;
+        } else {
+            $list = Message::withoutField('content')
+				->where($map)
+                ->order('create_time desc')
+                ->paginate($rows, false, ['query' => $param])
+                ->each(function ($item, $key) {
+					if($item->template==0){
+						$item->msg_type = '个人信息';
+						$item->from_name = Db::name('Admin')->where(['id' => $item->from_uid])->value('name');
+					}
+					else{
+						$item->msg_type = '系统信息';
+						$item->from_name = '系统';
+					}
+                    $item->send_time = empty($item->send_time) ? '-' : date('Y-m-d H:i:s', $item->send_time);
+                    $item->to_name = Db::name('Admin')->where(['id' => $item->to_uid])->value('name');
+                    $item->type_title = Message::$Type[(int)$item->type];
+                });
+            return $list;
+        }
+    }
+	
+    //消息详情
+    public function detail($id)
+    {
+        $detail = Db::name('Message')->where(['id' => $id])->find();
+		if(!empty($detail)){
+			//消息附件
+			$file_array = Db::name('File')->order('create_time desc')->where([['id','in',$detail['file_ids']]])->select()->toArray();
+			$detail['file_array'] = $file_array;
+			//引用消息附件
+			if($detail['fid']>0){
+				$from_msg = Db::name('Message')->field('content,file_ids')->where(['id' => $detail['fid']])->find();
+				$detail['from_content'] = $from_msg['content'];
+				$detail['from_file_ids'] = $from_msg['file_ids'];
+				
+				$from_file_array = Db::name('File')->order('create_time desc')->where([['id','in',$detail['from_file_ids']]])->select()->toArray();
+				$detail['from_file_array'] = $from_file_array;
+			}
+		}
+        return $detail;
+    }
 }

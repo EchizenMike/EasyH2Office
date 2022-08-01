@@ -6,7 +6,7 @@
 </div>
 <script type="text/html" id="toolbarDemo">
   <div class="layui-btn-container">
-  	<button class="layui-btn layui-btn-normal layui-btn-sm addNew" type="button">+ 添加审批流程</button>
+  	<button class="layui-btn layui-btn-sm addNew" type="button">+ 添加审批流程</button>
   </div>
 </script>
 {/block}
@@ -28,11 +28,14 @@
 			,cellMinWidth: 80
 			,cols: [[
 					{field:'id',width:80, title: 'ID号', align:'center'}
-					,{field:'name',title: '流程名称',width:120}
-					,{field:'check_type',title: '流程类型', align:'center',width:100,templet:function(d){
-						var html = '固定审批流';
+					,{field:'name',title: '流程名称',width:180}
+					,{field:'check_type',title: '流程类型', align:'center',width:120,templet:function(d){
+						var html = '<span class="green">固定审批流</span>';
 						if(d.check_type==2){
-							html = '授权审批人';
+							html = '<span class="blue">自由审批流</span>';
+						}
+						if(d.check_type==3){
+							html = '<span class="yellow">可回退的审批流</span>';
 						}
 						return html;
 					}}
@@ -72,9 +75,9 @@
 					}}
 					,{width:100,title: '操作', align:'center',templet: function(d){
 						var html='';
-						var btn='<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>';
+						var btn='<a class="layui-btn layui-btn-normal  layui-btn-xs" lay-event="edit">编辑</a>';
 						var btn1='<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="disable">禁用</a>';
-						var btn2='<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="open">启用</a>';
+						var btn2='<a class="layui-btn layui-btn-xs" lay-event="open">启用</a>';
 						if(d.status==1){
 							html = '<div class="layui-btn-group">'+btn+btn1+'</div>';
 						}
