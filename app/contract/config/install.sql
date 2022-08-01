@@ -1,4 +1,3 @@
-
 -- ----------------------------
 -- Table structure for oa_contract_cate
 -- ----------------------------
@@ -7,8 +6,8 @@ CREATE TABLE `oa_contract_cate`  (
   `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `title` varchar(100) NOT NULL DEFAULT '' COMMENT '合同类别名称',
   `status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '状态：-1删除 0禁用 1启用',
-  `create_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
-  `update_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间',
+  `create_time` int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
+  `update_time` int(11) NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COMMENT = '合同类别';
 
@@ -34,7 +33,7 @@ CREATE TABLE `oa_contract`  (
   `cate_id` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '分类id',
   `type` tinyint(1) NOT NULL DEFAULT 0 COMMENT '合同性质：0未设置,1普通合同、2框架合同、3补充协议、4其他合同',
   `subject_id` varchar(255) NOT NULL DEFAULT '' COMMENT '签约主体',
-  `customer_id` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '客户ID,预设数据',
+  `customer_id` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '关联客户ID,预设数据',
   `customer` varchar(255) NOT NULL DEFAULT '' COMMENT '客户名称',
   `customer_name` varchar(255) NOT NULL DEFAULT '' COMMENT '客户代表',
   `customer_mobile` varchar(255) NOT NULL DEFAULT '' COMMENT '客户电话',
@@ -51,7 +50,12 @@ CREATE TABLE `oa_contract`  (
   `cost` decimal(15, 2) NOT NULL DEFAULT 0.00 COMMENT '合同金额',
   `is_tax` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否含税：0未含税,1含税',
   `tax` decimal(15, 2) NOT NULL DEFAULT 0.00 COMMENT '税点',
-  `status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '合同状态：0未设置,1已录入,2待审核,3已审核,4已中止,5已作废',
+  `check_status` tinyint(1) NOT NULL DEFAULT 0 COMMENT '合同状态：0待审核,1审核中,2审核通过,3审核不通过,4撤销审核,5已中止,6已作废',
+  `check_step_sort` int(11) NOT NULL DEFAULT 0 COMMENT '当前审批步骤',
+  `check_admin_ids` varchar(500) NOT NULL DEFAULT '' COMMENT '当前审批人ID，如:1,2,3',
+  `flow_admin_ids` varchar(500) NOT NULL DEFAULT '' COMMENT '历史审批人ID，如:1,2,3',
+  `last_admin_id` varchar(200) NOT NULL DEFAULT '0' COMMENT '上一审批人', 
+  `copy_uids` varchar(500) NOT NULL DEFAULT '' COMMENT '抄送人ID，如:1,2,3',
   `check_uid` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '审核人',
   `check_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '审核时间',
   `check_remark` text NULL COMMENT '审核备注信息',
@@ -65,9 +69,9 @@ CREATE TABLE `oa_contract`  (
   `archive_uid` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '归档人',
   `archive_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '归档时间',
   `remark` text NULL COMMENT '备注信息',
-  `create_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '添加时间',
-  `update_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '修改时间',
-  `delete_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '删除时间',
+  `create_time` int(11) NOT NULL DEFAULT 0 COMMENT '添加时间',
+  `update_time` int(11) NOT NULL DEFAULT 0 COMMENT '修改时间',
+  `delete_time` int(11) NOT NULL DEFAULT 0 COMMENT '删除时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1000 CHARACTER SET = utf8mb4 COMMENT = '合同表';
 
@@ -80,9 +84,9 @@ CREATE TABLE `oa_contract_file`  (
   `contract_id` int(11) UNSIGNED NOT NULL COMMENT '关联合同id',
   `file_id` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '相关联附件id',
   `admin_id` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建人',
-  `create_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
-  `update_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '修改时间',
-  `delete_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '删除时间',
+  `create_time` int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
+  `update_time` int(11) NOT NULL DEFAULT 0 COMMENT '修改时间',
+  `delete_time` int(11) NOT NULL DEFAULT 0 COMMENT '删除时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COMMENT = '合同附件关联表';
 
@@ -99,26 +103,9 @@ CREATE TABLE `oa_contract_log`  (
   `old_content` text NULL COMMENT '修改前的内容',
   `new_content` text NULL COMMENT '修改后的内容',
   `remark` text NULL COMMENT '补充备注',
-  `create_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
+  `create_time` int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COMMENT = '合同操作记录表';
 
 
--- ----------------------------
--- Table structure for oa_data_auth
--- ----------------------------
-DROP TABLE IF EXISTS `oa_data_auth`;
-CREATE TABLE `oa_data_auth`  (
-  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `title` varchar(255) NOT NULL DEFAULT '' COMMENT '权限名称',
-  `name` varchar(255) NOT NULL DEFAULT '' COMMENT '权限标识唯一，字母',
-  `desc` text NULL COMMENT '备注描述',
-  `module` varchar(255) NOT NULL DEFAULT '' COMMENT '所属模块，唯一，字母',
-  `uids` text NULL COMMENT '权限用户，1,2,3',
-  `create_time` int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
-  `update_time` int(11) NOT NULL DEFAULT 0 COMMENT '更新时间',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COMMENT = '数据权限表';
-
-
-INSERT INTO `oa_data_auth` VALUES ((SELECT MAX(id) +1  FROM `oa_data_auth` a), '合同管理员','contract_admin','拥有该权限的员工可以查看、编辑、审核、作废、中止所有合同。', 'contract', '',0,0,0, 1656143065, 0);
+INSERT INTO `oa_data_auth` VALUES ((SELECT MAX(id) +1  FROM `oa_data_auth` a), '合同管理员','contract_admin','拥有该权限的员工可以查看、编辑、作废、中止所有合同。', 'contract', '',0,0,0,'','','',1656143065, 0);

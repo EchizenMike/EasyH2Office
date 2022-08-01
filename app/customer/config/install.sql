@@ -1,29 +1,4 @@
 -- ----------------------------
--- Table structure for oa_industry
--- ----------------------------
-DROP TABLE IF EXISTS `oa_industry`;
-CREATE TABLE `oa_industry`  (
-  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `title` varchar(100) NOT NULL DEFAULT '' COMMENT '行业名称',
-  `status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '状态：-1删除 0禁用 1启用',
-  `create_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
-  `update_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COMMENT = '行业';
-
--- ----------------------------
--- Records of oa_industry
--- ----------------------------
-INSERT INTO `oa_industry` VALUES (1, '工业品企业', 1, 1637987189, 0);
-INSERT INTO `oa_industry` VALUES (2, '互联网企业', 1, 1637987199, 0);
-INSERT INTO `oa_industry` VALUES (3, '服务行业', 1, 1637987199, 0);
-INSERT INTO `oa_industry` VALUES (4, '消费品企业', 1, 1637987199, 0);
-INSERT INTO `oa_industry` VALUES (5, '原材料企业', 1, 1637987199, 0);
-INSERT INTO `oa_industry` VALUES (6, '农业企业', 1, 1637987199, 0);
-INSERT INTO `oa_industry` VALUES (7, '科技企业', 1, 1637987199, 0);
-INSERT INTO `oa_industry` VALUES (8, '其他行业', 1, 1637987199, 0);
-
--- ----------------------------
 -- Table structure for oa_customer_grade
 -- ----------------------------
 DROP TABLE IF EXISTS `oa_customer_grade`;
@@ -31,8 +6,8 @@ CREATE TABLE `oa_customer_grade`  (
   `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `title` varchar(100) NOT NULL DEFAULT '' COMMENT '客户等级名称',
   `status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '状态：-1删除 0禁用 1启用',
-  `create_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
-  `update_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间',
+  `create_time` int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
+  `update_time` int(11) NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COMMENT = '客户等级';
 
@@ -53,8 +28,55 @@ CREATE TABLE `oa_customer_source`  (
   `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `title` varchar(100) NOT NULL DEFAULT '' COMMENT '客户渠道名称',
   `status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '状态：-1删除 0禁用 1启用',
-  `create_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
-  `update_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间',
+  `create_time` int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
+  `update_time` int(11) NOT NULL DEFAULT 0 COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COMMENT = '客户来源';
+
+-- ----------------------------
+-- Records of oa_customer_source
+-- ----------------------------
+INSERT INTO `oa_customer_source` VALUES (1, '独立开发', 1, 1637987189, 0);
+INSERT INTO `oa_customer_source` VALUES (2, '微信公众号', 1, 1637987199, 0);
+INSERT INTO `oa_customer_source` VALUES (3, '今日头条', 1, 1637987199, 0);
+INSERT INTO `oa_customer_source` VALUES (4, '百度搜索', 1, 1637987199, 0);
+INSERT INTO `oa_customer_source` VALUES (5, '销售活动', 1, 1637987199, 0);
+INSERT INTO `oa_customer_source` VALUES (6, '电话来访', 1, 1637987199, 0);
+INSERT INTO `oa_customer_source` VALUES (7, '客户介绍', 1, 1637987199, 0);
+INSERT INTO `oa_customer_source` VALUES (8, '其他来源', 1, 1637987199, 0);
+
+-- ----------------------------
+-- Table structure for oa_customer_grade
+-- ----------------------------
+DROP TABLE IF EXISTS `oa_customer_grade`;
+CREATE TABLE `oa_customer_grade`  (
+  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `title` varchar(100) NOT NULL DEFAULT '' COMMENT '客户等级名称',
+  `status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '状态：-1删除 0禁用 1启用',
+  `create_time` int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
+  `update_time` int(11) NOT NULL DEFAULT 0 COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COMMENT = '客户等级';
+
+-- ----------------------------
+-- Records of oa_customer_grade
+-- ----------------------------
+INSERT INTO `oa_customer_grade` VALUES (1, '普通客户', 1, 1637987189, 0);
+INSERT INTO `oa_customer_grade` VALUES (2, 'VIP客户', 1, 1637987199, 0);
+INSERT INTO `oa_customer_grade` VALUES (3, '白银客户', 1, 1637987199, 0);
+INSERT INTO `oa_customer_grade` VALUES (4, '黄金客户', 1, 1637987199, 0);
+INSERT INTO `oa_customer_grade` VALUES (5, '钻石客户', 1, 1637987199, 0);
+
+-- ----------------------------
+-- Table structure for oa_customer_source
+-- ----------------------------
+DROP TABLE IF EXISTS `oa_customer_source`;
+CREATE TABLE `oa_customer_source`  (
+  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `title` varchar(100) NOT NULL DEFAULT '' COMMENT '客户渠道名称',
+  `status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '状态：-1删除 0禁用 1启用',
+  `create_time` int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
+  `update_time` int(11) NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COMMENT = '客户来源';
 
@@ -103,9 +125,9 @@ CREATE TABLE `oa_customer`  (
   `tax_num` varchar(100) NOT NULL DEFAULT '' COMMENT '纳税人识别号',
   `cperson_mobile` varchar(20) NOT NULL DEFAULT '' COMMENT '开票电话',
   `cperson_address` varchar(200) NOT NULL DEFAULT '' COMMENT '开票地址',
-  `discard_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '废弃时间',
-  `create_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '添加时间',
-  `update_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '修改时间',
+  `discard_time` int(11) NOT NULL DEFAULT 0 COMMENT '废弃时间',
+  `create_time` int(11) NOT NULL DEFAULT 0 COMMENT '添加时间',
+  `update_time` int(11) NOT NULL DEFAULT 0 COMMENT '修改时间',
   `delete_time` int(11) NOT NULL DEFAULT 0 COMMENT '删除时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1000 CHARACTER SET = utf8mb4 COMMENT = '客户表';
@@ -125,9 +147,9 @@ CREATE TABLE `oa_customer_trace`  (
   `follow_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '跟进时间',
   `next_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '下次跟进时间',
   `admin_id` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建人',
-  `create_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
-  `update_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间',
-  `delete_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '删除时间',
+  `create_time` int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
+  `update_time` int(11) NOT NULL DEFAULT 0 COMMENT '更新时间',
+  `delete_time` int(11) NOT NULL DEFAULT 0 COMMENT '删除时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COMMENT = '客户跟进记录表';
 
@@ -149,9 +171,9 @@ CREATE TABLE `oa_customer_contact`  (
   `department` varchar(50) NOT NULL DEFAULT '' COMMENT '部门',
   `position` varchar(50) NOT NULL DEFAULT '' COMMENT '职务',
   `admin_id` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建人',
-  `create_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
-  `update_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间',
-  `delete_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '删除时间',
+  `create_time` int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
+  `update_time` int(11) NOT NULL DEFAULT 0 COMMENT '更新时间',
+  `delete_time` int(11) NOT NULL DEFAULT 0 COMMENT '删除时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COMMENT = '客户联系人表';
 
@@ -173,9 +195,9 @@ CREATE TABLE `oa_customer_chance`  (
   `admin_id` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建人',
   `belong_uid` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '所属人',
   `assist_ids` varchar(500) NOT NULL DEFAULT '' COMMENT '协助人员，如:1,2,3',
-  `create_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
-  `update_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间',
-  `delete_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '删除时间',
+  `create_time` int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
+  `update_time` int(11) NOT NULL DEFAULT 0 COMMENT '更新时间',
+  `delete_time` int(11) NOT NULL DEFAULT 0 COMMENT '删除时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COMMENT = '客户销售机会表';
 
@@ -188,9 +210,9 @@ CREATE TABLE `oa_customer_file`  (
   `customer_id` int(11) UNSIGNED NOT NULL COMMENT '关联客户id',
   `file_id` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '相关联附件id',
   `admin_id` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建人',
-  `create_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
-  `update_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '修改时间',
-  `delete_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '删除时间',
+  `create_time` int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
+  `update_time` int(11) NOT NULL DEFAULT 0 COMMENT '修改时间',
+  `delete_time` int(11) NOT NULL DEFAULT 0 COMMENT '删除时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COMMENT = '客户附件关联表';
 
@@ -211,9 +233,8 @@ CREATE TABLE `oa_customer_log`  (
   `old_content` text NULL COMMENT '修改前的内容',
   `new_content` text NULL COMMENT '修改后的内容',
   `remark` text NULL COMMENT '补充备注',
-  `create_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
+  `create_time` int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COMMENT = '客户操作记录表';
 
-
-INSERT INTO `oa_data_auth` VALUES ((SELECT MAX(id) +1  FROM `oa_data_auth` a), '客户管理员','customer_admin','拥有该权限的员工可以查看、转移所有客户。', 'customer', '',0,0,0, 1656143065, 0);
+INSERT INTO `oa_data_auth` VALUES ((SELECT MAX(id) +1  FROM `oa_data_auth` a), '客户管理员','customer_admin','拥有该权限的员工可以查看、转移所有客户。', 'customer', '',10,0,0,'','','',1656143065, 0);
