@@ -212,13 +212,13 @@ function flowStep(){
 				}
 				idsArray.push(res.data.id);
 				$('#fileList input').attr('value', idsArray.join(','));
-				let temp = `<div class="layui-col-md3" id="uploadImg${res.data.id}">
+				let temp = `<div class="layui-col-md4" id="uploadImg${res.data.id}">
 						<div class="file-card">
-							<i class="file-icon layui-icon layui-icon-file"></i>
+							<i class="file-icon iconfont icon-renwuguanli"></i>
 							<div class="file-title">${res.data.name}</div>
 							<div class="file-tool">
-								<a href="${res.data.filepath}" download="${res.data.name}" title="下载查看" target="_blank"><i class="layui-icon layui-icon-download-circle" style="color: #12bb37;"></i></a>
-								<i class="btn-delete layui-icon layui-icon-delete" data-id="${res.data.id}" style="color: #FF5722;" title="删除"></i>
+								<a href="${res.data.filepath}" download="${res.data.name}" title="下载查看" target="_blank"><i class="iconfont icon-shujudaoru blue"></i></a>
+								<i class="btn-delete iconfont icon-shanchu red" data-id="${res.data.id}" title="删除"></i>
 							</div>
 						</div>
 					</div>`;

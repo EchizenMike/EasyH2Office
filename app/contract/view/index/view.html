@@ -145,19 +145,21 @@ html{background-color:#fff;}
 					<div class="layui-input-inline">合同附件</div>
 					{eq name="$detail.check_status" value="1" }<div class="layui-input-inline"><button type="button" class="layui-btn layui-btn-xs" id="upFile"><i class="layui-icon"></i></button></div>{/eq}
 				</td>
-				<td colspan="7" id="fileList">
+				<td colspan="7" style="line-height:inherit">
+					<div id="fileList">
 					{volist name="$detail.file_array" id="vo"}
 					<div class="layui-col-md4" id="file_{$vo.id}">
 						<div class="file-card">
-							<i class="file-icon layui-icon layui-icon-file"></i>
+							<i class="file-icon iconfont icon-renwuguanli"></i>
 							<div class="file-title">{$vo.name}</div>
 							<div class="file-tool">
-								<a href="{$vo.filepath}" download="{$vo.name}" title="下载查看" target="_blank"><i class="layui-icon layui-icon-download-circle" style="color: #12bb37;"></i></a>
-								<i class="btn-delete layui-icon layui-icon-delete" data-id="{$vo.id}" style="color: #FF5722;" title="删除"></i>
+								<a href="{$vo.filepath}" download="{$vo.name}" title="下载查看" target="_blank"><i class="iconfont icon-shujudaoru blue"></i></a>
+								<i class="btn-delete iconfont icon-shanchu red" data-id="{$vo.id}" title="删除"></i>
 							</div>
 						</div>
 					</div>
 					{/volist}
+					</div>
 				</td>
 			   </tr>
 			  <tr>
@@ -466,11 +468,11 @@ const moduleInit = ['tool','employeepicker'];
 						layer.msg(e.msg);
 						let temp = `<div class="layui-col-md4" id="file_${e.data}">
 								<div class="file-card">
-									<i class="file-icon layui-icon layui-icon-file"></i>
+									<i class="file-icon iconfont icon-renwuguanli"></i>
 									<div class="file-title">${res.data.name}</div>
 									<div class="file-tool">
-										<a href="${res.data.filepath}" download="${res.data.name}" title="下载查看" target="_blank"><i class="layui-icon layui-icon-download-circle" style="color: #12bb37;"></i></a>
-										<i class="btn-delete layui-icon layui-icon-delete" data-id="${e.data}" style="color: #FF5722;" title="删除"></i>
+										<a href="${res.data.filepath}" download="${res.data.name}" title="下载查看" target="_blank"><i class="iconfont icon-shujudaoru blue"></i></a>
+										<i class="btn-delete iconfont icon-shanchu red" data-id="${e.data}" title="删除"></i>
 									</div>
 								</div>
 							</div>`;

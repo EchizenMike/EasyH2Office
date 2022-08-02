@@ -104,15 +104,15 @@
 		{notempty name="$detail.file_ids"}
 		<tr>
 			<td class="layui-td-gray">相关附件</td>
-			<td colspan="5">
+			<td colspan="5" style="line-height:inherit">
 				<div class="layui-row">
 					{volist name="$detail.fileArray" id="vo"}
-					<div class="layui-col-md3">
+					<div class="layui-col-md4">
 						<div class="file-card">
 							<i class="file-icon iconfont icon-renwuguanli"></i>
 							<div class="file-title">{$vo.name}</div>
 							<div class="file-tool">
-								<a href="{$vo.filepath}" download="{$vo.name}" target="_blank" title="下载查看"><i class="layui-icon layui-icon-download-circle" style="color: #12bb37;"></i></a>
+								<a href="{$vo.filepath}" download="{$vo.name}" target="_blank" title="下载查看"><i class="iconfont icon-shujudaoru blue"></i></a>
 							</div>
 						</div>
 					</div>

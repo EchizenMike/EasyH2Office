@@ -57,7 +57,7 @@ html {background-color: #FAFAFA; color: #162a48}
 html,body{height:100%;}
 body.right-open{overflow:hidden;}
 .bg-white{background-color:#fff;}
-a.tab-a,a.open-a,a.link-a,a.right-a{color:#187FDD; cursor:pointer;}
+a.tab-a,a.open-a,a.link-a,a.right-a,a.side-a{color:#187FDD; cursor:pointer;}
 a.tab-a:hover,a:hover,a.open-a:hover,a.link-a:hover,a.right-a:hover{color:#187FDD; opacity:0.8}
 .left{float:left;}
 .right{float:right;}

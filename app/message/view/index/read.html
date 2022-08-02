@@ -40,14 +40,14 @@
 					{notempty name="$detail.from_file_array"}
 					<tr>
 						<td class="layui-td-gray-2" style="vertical-align:top">引用消息附件</td>
-						<td>						
+						<td style="line-height:inherit">						
 							{volist name="$detail.from_file_array" id="vo"}
-								<div class="layui-col-md3" id="uploadImg{$vo.id}">
+								<div class="layui-col-md4" id="uploadImg{$vo.id}">
 									<div class="file-card">
 										<i class="file-icon iconfont icon-renwuguanli"></i>
 										<div class="file-title">{$vo.name}</div>
 										<div class="file-tool">
-											<a href="{$vo.filepath}" download="{$vo.name}" target="_blank" title="下载查看"><i class="layui-icon layui-icon-download-circle" style="color: #12bb37;"></i></a>
+											<a href="{$vo.filepath}" download="{$vo.name}" target="_blank" title="下载查看"><i class="iconfont icon-shujudaoru blue"></i></a>
 										</div>
 									</div>
 								</div>
@@ -65,14 +65,14 @@
 		{notempty name="$detail.file_array"}
 		<tr>
 			<td class="layui-td-gray" style="vertical-align:top">相关附件</td>
-			<td colspan="5">
+			<td colspan="5" style="line-height:inherit">
 				{volist name="$detail.file_array" id="vo"}
-					<div class="layui-col-md3" id="uploadImg{$vo.id}">
+					<div class="layui-col-md4" id="uploadImg{$vo.id}">
 						<div class="file-card">
 							<i class="file-icon iconfont icon-renwuguanli"></i>
 							<div class="file-title">{$vo.name}</div>
 							<div class="file-tool">
-								<a href="{$vo.filepath}" download="{$vo.name}" target="_blank" title="下载查看"><i class="layui-icon layui-icon-download-circle" style="color: #12bb37;"></i></a>
+								<a href="{$vo.filepath}" download="{$vo.name}" target="_blank" title="下载查看"><i class="iconfont icon-shujudaoru blue"></i></a>
 							</div>
 						</div>
 					</div>

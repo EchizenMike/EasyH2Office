@@ -25,7 +25,7 @@ class api extends BaseController
             ->join('note_cate c', 'a.cate_id = c.id')
             ->where(['a.status' => 1])
             ->order('a.end_time desc,a.sort desc,a.create_time desc')
-            ->limit(10)
+            ->limit(8)
             ->select()->toArray();
         foreach ($list as $key => $val) {
             $list[$key]['create_time'] = date('Y-m-d :H:i', $val['create_time']);
@@ -47,7 +47,7 @@ class api extends BaseController
 				->join('article_cate c', 'a.cate_id = c.id')
 				->where(['a.delete_time' => 0])
 				->order('a.id desc')
-				->limit(10)
+				->limit(8)
 				->select()->toArray();
 			foreach ($list as $key => $val) {
 				$list[$key]['create_time'] = date('Y-m-d :H:i', $val['create_time']);
@@ -56,7 +56,6 @@ class api extends BaseController
 		}
 		return table_assign(0, '', $res);
 	}
-
 
     //首页项目
     public function get_project_list()
@@ -72,13 +71,48 @@ class api extends BaseController
 				->join('Admin u', 'a.director_uid = u.id')
 				->where([['a.delete_time', '=', 0], ['a.id', 'in', $project_ids]])
 				->order('a.id desc')
-				->limit(10)
+				->limit(8)
 				->select()->toArray();
 			foreach ($list as $key => $val) {
 				$list[$key]['create_time'] = date('Y-m-d :H:i', $val['create_time']);
 				$list[$key]['plan_time'] = date('Y-m-d', $list[$key]['start_time']) . ' 至 ' . date('Y-m-d', $list[$key]['end_time']);
 				$list[$key]['status_name'] = \app\project\model\Project::$Status[(int) $val['status']];
 			}
+			$res['data'] = $list;
+		}
+        return table_assign(0, '', $res);
+    }
+	
+    //首页任务
+    public function get_task_list()
+    {
+		$prefix = get_config('database.connections.mysql.prefix');//判断是否安装了项目模块
+		$exist = Db::query('show tables like "'.$prefix.'project_task"');
+		$res['data'] = [];
+		if($exist){
+			$where = array();
+			$map1 = [];
+			$map2 = [];
+			$map3 = [];
+			$map1[] = ['admin_id', '=', $this->uid];
+			$map2[] = ['director_uid', '=', $this->uid];
+			$map3[] = ['', 'exp', Db::raw("FIND_IN_SET({$this->uid},assist_admin_ids)")];
+
+			$where[] = ['delete_time', '=', 0];
+			$list = Db::name('ProjectTask')->where($where)
+				->where(function ($query) use ($map1, $map2, $map3) {
+					$query->where($map1)->whereor($map2)->whereor($map3);
+				})
+				->withoutField('content,md_content')
+				->order('flow_status asc')
+				->order('id desc')
+				->limit(8)
+				->select()->toArray();
+				foreach ($list as $key => $val) {
+					$list[$key]['director_name'] = Db::name('Admin')->where(['id' => $val['director_uid']])->value('name');
+					$list[$key]['end_time'] = date('Y-m-d', $val['end_time']);
+					$list[$key]['flow_name'] = \app\project\model\ProjectTask::$FlowStatus[(int) $val['flow_status']];
+				}
 			$res['data'] = $list;
 		}
         return table_assign(0, '', $res);

@@ -263,7 +263,7 @@ layui.define([], function (exports) {
 		}
 		return false;
 	});
-	$('body').on('click', '.right-a', function () {
+	$('body').on('click', '.side-a', function () {
 		let url = $(this).data('href');
 		if (url && url !== '') {
 			tool.side(url);

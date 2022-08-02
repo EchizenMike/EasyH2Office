@@ -5,11 +5,11 @@
 <!-- 主体 -->
 {block name="body"}
 <form class="layui-form p-4">
-	<h3 class="pb-3">请假审批</h3>
+	<h3 class="pb-3">请假申请</h3>
 	{eq name="$id" value="0"}
 	<table class="layui-table layui-table-form">
 		<tr>
-			<td class="layui-td-gray">请假类型<font>*</font></td>
+			<td class="layui-td-gray-2">请假类型<font>*</font></td>
 			<td colspan="5">
 				<select name="detail_type" lay-verify="required" lay-reqText="请选择请假类型">
 				  <option value="">--请选择--</option>
@@ -94,7 +94,7 @@
 		</tr>
 		<tr>
 			<td class="layui-td-gray"><div class="layui-input-inline">附件</div> <div class="layui-input-inline"><button type="button" class="layui-btn layui-btn-xs" id="upFile"><i class="layui-icon"></i></button></div></td>
-			<td colspan="5">
+			<td colspan="5" style="line-height:inherit">
 				<div class="layui-row" id="fileList">
 					<input type="hidden" name="file_ids" value="">
 				</div>
@@ -189,18 +189,18 @@
 		</tr>
 		<tr>
 			<td class="layui-td-gray"><div class="layui-input-inline">附件</div> <div class="layui-input-inline"><button type="button" class="layui-btn layui-btn-xs" id="upFile"><i class="layui-icon"></i></button></div></td>
-			<td colspan="5">
+			<td colspan="5" style="line-height:inherit">
 				<div class="layui-row" id="fileList">
 					<input type="hidden" name="file_ids" value="{$detail.file_ids}">
 					{notempty name="$detail.file_ids"}
 					{volist name="$detail.fileArray" id="vo"}
-					<div class="layui-col-md3" id="uploadImg{$vo.id}">
+					<div class="layui-col-md4" id="uploadImg{$vo.id}">
 						<div class="file-card">
 							<i class="file-icon iconfont icon-renwuguanli"></i>
 							<div class="file-title">{$vo.name}</div>
 							<div class="file-tool">
-								<a href="{$vo.filepath}" download="{$vo.name}" target="_blank" title="下载查看"><i class="layui-icon layui-icon-download-circle" style="color: #12bb37;"></i></a>
-								<i class="btn-delete layui-icon layui-icon-delete" data-id="{$vo.id}" style="color: #FF5722;" title="删除"></i>
+								<a href="{$vo.filepath}" download="{$vo.name}" target="_blank" title="下载查看"><i class="iconfont icon-shujudaoru blue"></i></a>
+								<i class="btn-delete iconfont icon-shanchu red" data-id="{$vo.id}" title="删除"></i>
 							</div>
 						</div>
 					</div>

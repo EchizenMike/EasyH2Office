@@ -115,6 +115,16 @@ class Index extends BaseController
             'name' => '发票',
             'num' => $invoiceCount,
         );
+		
+		$handle=[
+			'approve'=>Db::name('Approve')->where([['', 'exp', Db::raw("FIND_IN_SET('{$this->uid}',check_admin_ids)")]])->count(),
+			'expenses'=>Db::name('Expense')->where([['', 'exp', Db::raw("FIND_IN_SET('{$this->uid}',check_admin_ids)")],['delete_time', '=', 0]])->count(),
+			'invoice'=>Db::name('Invoice')->where([['', 'exp', Db::raw("FIND_IN_SET('{$this->uid}',check_admin_ids)")],['delete_time', '=', 0]])->count(),
+			'income'=>Db::name('Invoice')->where([['is_cash', '<', 2],['admin_id','=',$this->uid],['check_status', '=', 5],['delete_time', '=', 0]])->count(),
+			'contract'=>0,
+			'task'=>0
+		];
+		
         $module = Db::name('AdminModule')->column('name');
         if (in_array('customer', $module)) {
             $customerCount = Db::name('Customer')->where([['delete_time', '=', 0]])->count();
@@ -129,6 +139,7 @@ class Index extends BaseController
                 'name' => '合同',
                 'num' => $contractCount,
             );
+			$handle['contract'] = Db::name('Contract')->where([['', 'exp', Db::raw("FIND_IN_SET('{$this->uid}',check_admin_ids)")],['delete_time', '=', 0]])->count();
         }
         if (in_array('project', $module)) {
             $projectCount = Db::name('Project')->where([['delete_time', '=', 0]])->count();
@@ -141,6 +152,7 @@ class Index extends BaseController
                 'name' => '任务',
                 'num' => $taskCount,
             );
+			$handle['task'] = Db::name('ProjectTask')->where([['director_uid', '=', $this->uid],['delete_time', '=', 0]])->count();
         }
         if (in_array('article', $module)) {
             $articleCount = Db::name('Article')->where([['delete_time', '=', 0]])->count();
@@ -150,8 +162,41 @@ class Index extends BaseController
             );
         }
         View::assign('total', $total);
+        View::assign('handle', $handle);
         View::assign('install', $install);
         View::assign('TP_VERSION', \think\facade\App::version());
         return View();
+    }
+	
+	//通讯录
+	public function mail_list()
+    {
+        if (request()->isAjax()) {
+            $param = get_params();
+            $where = array();
+            if (!empty($param['keywords'])) {
+                $where[] = ['id|username|name|nickname|mobile|desc', 'like', '%' . $param['keywords'] . '%'];
+            }
+            $where[] = ['status', '<', 2];
+            if (isset($param['status']) && $param['status']!='') {
+                $where[] = ['status', '=', $param['status']];
+            }
+            if (!empty($param['did'])) {
+                $department_array = get_department_son($param['did']);
+                $where[] = ['did', 'in', $department_array];
+            }
+            $rows = empty($param['limit']) ? get_config('app . page_size') : $param['limit'];
+            $admin = \app\user\model\Admin::where($where)
+                ->order('id desc')
+                ->paginate($rows, false, ['query' => $param])
+                ->each(function ($item, $key) {
+                    $item->department = Db::name('Department')->where(['id' => $item->did])->value('title');
+                    $item->position = Db::name('Position')->where(['id' => $item->position_id])->value('title');
+                    $item->entry_time = empty($item->entry_time) ? '-' : date('Y-m-d', $item->entry_time);
+                });
+            return table_assign(0, '', $admin);
+        } else {
+            return view();
+        }
     }
 }

@@ -5,7 +5,7 @@
     .panel-num table {width: 100%;}
     .panel-num td {text-align: center; padding: 16px 0; border-left: 1px solid #f1f1f1; position: relative;}
     .panel-num td:nth-child(1) { border-left: none}
-    .panel-num .num-title { padding-bottom: 10px; color: #999;}
+    .panel-num .num-title { padding-bottom: 16px; color: #999;}
     .panel-num .blue {font-size: 20px; font-weight: 300;}
     .panel-num td .badge {position: absolute;top: 0; right: 0;}
     .panel-num td .badge span { padding: 2px 4px; font-size: 12px; border-radius: 0 0 0 4px;}
@@ -15,6 +15,18 @@
     .info-td {width: 90px; text-align: right;background-color: #fafafa; color: #999; padding: 5px 3px;}
 	.layui-card-body .layui-timeline-title {padding-bottom: 0;font-size: 14px; margin-bottom:4px;}
 	.layui-card-body .layui-timeline-item {padding-bottom: 5px;}
+	.layui-short-menu li { text-align: center;}
+	.layui-short-menu li .iconfont {display: inline-block; font-weight:600; width: 100%; height: 58px; line-height: 58px; margin-bottom:5px; text-align: center;border-radius: 3px; font-size: 28px; background-color: #F8F8F8; color: #969696; transition: all .3s; -webkit-transition: all .3s;}
+	.layui-short-menu li cite {color: #646464;}
+	.layui-short-menu li:hover .iconfont{color: #187FDD; background-color:#F2F8FF;}
+	.layui-short-menu li:hover cite {color: #187FDD;}
+	.layui-matter-item li a{display: block; padding: 12px; background-color: #f8f8f8; color: #999; border-radius: 3px; transition: all .3s;-webkit-transition: all .3s;}
+	.layui-matter-item li a:hover{background-color:#F2F8FF;}
+	.layui-matter-item li cite {font-size: 24px;font-weight: 300;color: #187FDD;}
+	
+	.layui-right-bar a{display: inline-block; width: 100%; height: 64px; text-align: center;border-radius: 3px; background-color: #F8F8F8; color: #969696; transition: all .3s; -webkit-transition: all .3s;}
+	.layui-right-bar a .iconfont{display: inline-block; font-weight:600; width: 100%; height: 37px; line-height: 39px; text-align: center;font-size: 24px;}
+	.layui-right-bar a:hover{color: #187FDD; background-color:#F2F8FF;}
 </style>
 {/block}
 <!-- 主体 -->
@@ -36,12 +48,136 @@
 						</tr>
 					</table>
 				</div>
+			</div>
+		</div>
+		<div class="layui-row layui-col-space12">
+			<div class="layui-col-md6">
 				<div class="layui-card">
-					<div class="layui-card-title">企业公告</div>
-					<div style="padding: 12px;">
-						<table id="Note" lay-filter="Note" class="layui-hide" style="margin-top:0"></table>
+					<div class="layui-card-header"><h3>快捷申请</h3><a href="javascript:;" data-href="/oa/approve/index" data-title="快捷申请" class="tab-a pull-right blue">更多</a></div>
+					<div class="layui-card-body layui-short-menu p-3">
+						<ul class="layui-row layui-col-space12">
+							<li class="layui-col-xs3">
+								<a href="javascript:;" data-href="/oa/approve/add?type=1" class="side-a">
+									<i class="iconfont icon-kechengziyuanguanli"></i>
+									<cite>请假申请</cite>
+								</a>
+							</li>
+							<li class="layui-col-xs3">
+								<a href="javascript:;" data-href="/oa/approve/add?type=2" class="side-a">
+									<i class="iconfont icon-jiaoshiguanli"></i>
+									<cite>出差申请</cite>
+								</a>
+							</li>
+							<li class="layui-col-xs3">
+								<a href="javascript:;" data-href="/oa/approve/add?type=3" class="side-a">
+									<i class="iconfont icon-tuiguangguanli"></i>
+									<cite>外出申请</cite>
+								</a>
+							</li>
+							<li class="layui-col-xs3">
+								<a href="javascript:;" data-href="/oa/approve/add?type=4" class="side-a">
+									<i class="iconfont icon-xueshengchengji"></i>
+									<cite>加班申请</cite>
+								</a>
+							</li>
+							<li class="layui-col-xs3">
+								<a href="javascript:;" data-href="/oa/approve/add?type=14" class="side-a">
+									<i class="iconfont icon-shoufeiguanli"></i>
+									<cite>采购申请</cite>
+								</a>
+							</li>
+							<li class="layui-col-xs3">
+								<a href="javascript:;" data-href="/oa/approve/add?type=7" class="side-a">
+									<i class="iconfont icon-chuangjianxitong"></i>
+									<cite>物品维修</cite>
+								</a>
+							</li>
+							<li class="layui-col-xs3">
+								<a href="javascript:;" data-href="/oa/approve/add?type=8" class="side-a">
+									<i class="iconfont icon-shenpishezhi"></i>
+									<cite>用章申请</cite>
+								</a>
+							</li>
+							<li class="layui-col-xs3">
+								<a href="javascript:;" data-href="/oa/approve/add?type=9" class="side-a">
+									<i class="iconfont icon-dongtaiguanli"></i>
+									<cite>用车申请</cite>
+								</a>
+							</li>
+						</ul>
 					</div>
 				</div>
+			</div>
+			<div class="layui-col-md6">
+				<div class="layui-card">
+					<div class="layui-card-header"><h3>待办事项</h3></div>
+					<div class="layui-card-body layui-matter-item p-3">
+						<ul class="layui-row layui-col-space12">
+							<li class="layui-col-xs4">
+								<a href="javascript:;" data-href="/oa/approve/list" class="tab-a" data-title="待审审批">
+									<p>待审审批</p>
+									<p class="pt-3"><cite>{$handle.approve}</cite></p>
+								</a>
+							</li>
+							<li class="layui-col-xs4">
+								<a href="javascript:;" data-href="/finance/expense/list" class="tab-a" data-title="待审报销">
+									<p>待审报销</p>
+									<p class="pt-3"><cite>{$handle.expenses}</cite></p>
+								</a>
+							</li>
+							<li class="layui-col-xs4">
+								<a href="javascript:;" data-href="/finance/invoice/list" class="tab-a" data-title="待审发票">
+									<p>待审发票</p>
+									<p class="pt-3"><cite>{$handle.invoice}</cite></p>
+								</a>
+							</li>
+							<li class="layui-col-xs4">
+								<a href="javascript:;" data-href="/finance/income/index" class="tab-a" data-title="待回款">
+									<p>待回款</p>
+									<p class="pt-3"><cite>{$handle.income}</cite></p>
+								</a>
+							</li>
+							<li class="layui-col-xs4">
+								<a href="javascript:;" data-href="/contract/index/index" class="tab-a" data-title="待审合同">
+									<p>待审合同</p>
+									<p class="pt-3"><cite>{$handle.contract}</cite></p>
+								</a>
+							</li>
+							<li class="layui-col-xs4">
+								<a href="javascript:;" data-href="/project/task/index" class="tab-a" data-title="待完成任务">
+									<p>待完成任务</p>
+									<p class="pt-3"><cite>{$handle.task}</cite></p>
+								</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>				
+		
+		<div class="layui-row layui-col-space12">
+			<div class="layui-col-md12">
+				<div class="layui-card">
+					<div class="layui-tab layui-tab-brief layadmin-latestData">
+						<ul class="layui-tab-title">
+							<li class="layui-this"><h3>企业公告</h3></li>
+							<li><h3>知识列表</h3></li>
+						</ul>
+						<div class="layui-tab-content p-3">
+							<div class="layui-tab-item layui-show">
+								<table id="Note" lay-filter="Note" class="layui-hide" style="margin-top:0"></table>
+							</div>
+							<div class="layui-tab-item">
+								<table id="Article" lay-filter="Article" class="layui-hide" style="margin-top:0"></table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="layui-row layui-col-space12">
+			<div class="layui-col-md12">		
 				<div class="layui-card">
 					<div class="layui-card-title">项目列表</div>
 					<div style="padding: 12px;">
@@ -49,9 +185,9 @@
 					</div>
 				</div>
 				<div class="layui-card">
-					<div class="layui-card-title">知识列表</div>
+					<div class="layui-card-title">任务列表</div>
 					<div style="padding: 12px;">
-						<table id="Article" lay-filter="Article" class="layui-hide" style="margin-top:0"></table>
+						<table id="Task" lay-filter="Task" class="layui-hide" style="margin-top:0"></table>
 					</div>
 				</div>
 				<div class="layui-card">
@@ -64,6 +200,36 @@
 		</div>
 	</div>
 	<div class="layui-col-md4">
+		<div class="layui-card layui-right-bar">
+			<div class="layui-row pt-3 px-3 py-2">
+			<ul class="layui-col-space12">
+				<li class="layui-col-xs3">
+					<a href="javascript:;" data-href="/home/index/mail_list" class="tab-a" data-title="通讯录">
+						<i class="iconfont icon-huamingce"></i>
+						<cite>通讯录</cite>
+					</a>
+				</li>
+				<li class="layui-col-xs3">
+					<a href="javascript:;" data-href="/oa/plan/calendar" class="tab-a" data-title="日程安排">
+						<i class="iconfont icon-kaoshijihua"></i>
+						<cite>日程安排</cite>
+					</a>
+				</li>
+				<li class="layui-col-xs3">
+					<a href="javascript:;" class="report-add">
+						<i class="iconfont icon-fuwuliebiao"></i>
+						<cite>+工作汇报</cite>
+					</a>
+				</li>
+				<li class="layui-col-xs3">
+					<a href="javascript:;" class="work-add">
+						<i class="iconfont icon-paikeshezhi"></i>
+						<cite>+工作记录</cite>
+					</a>
+				</li>
+			</ul>
+		</div>
+		</div>
 		<div class="layui-card">
 			<div class="layui-card-title">系统信息</div>
 			<div class="layui-card-body">
@@ -135,9 +301,46 @@
 {block name="script"}
 <script src="https://cdn.staticfile.org/echarts/5.3.0/echarts.min.js"></script>
 <script>
-	const moduleInit = ['tool'];
+	const moduleInit = ['tool','oaSchedule'];
 	function gouguInit() {
-		var table = layui.table;
+		var tool = layui.tool,table = layui.table,work = layui.oaSchedule;
+		
+		$('.work-add').on('click',function(){
+			work.add(0,{'id':0});
+		})
+		$('.report-add').on('click',function(){
+			var type=[{'id':1,'title':'日报'},{'id':2,'title':'周报'},{'id':3,'title':'月报'}];
+			var tablereport;
+			layer.open({
+				title:'选择汇报类型',
+				type:1,
+				area:['360px','300px'],
+				content:'<div style="width:325px; padding:15px 15px 0"><div id="selectType"></div></div>',
+				success:function(){
+					tablereport=table.render({
+						elem: '#selectType',
+						cols: [[ //标题栏
+							{type:'radio',title: '选择'},
+							{field: 'title', title: '汇报类型'}
+						]],
+						data: type
+					  });			
+				},
+				btn:['确定'],
+				yes: function(idx){
+					var checkStatus = table.checkStatus(tablereport.config.id);
+					var data = checkStatus.data;
+					if(data.length>0){
+						tool.side('/oa/work/add?type='+data[0].id);
+						layer.close(idx);
+					}
+					else{
+						layer.msg('请选择汇报类型');
+						return false;
+					}
+				}
+			})
+		});
 		//公告
 		table.render({
 			elem: '#Note'
@@ -145,8 +348,8 @@
 			, page: false //开启分页
 			, cols: [[ //表头
 				{ field: 'cate_title', title: '公告分类', align: 'center','width': 90},
-				{ field: 'title', title: '公告标题',templet: '<div><a data-href="/note/index/view/id/{{d.id}}.html" class="right-a" target="_blank">{{d.title}}</a></div>'},
-				{ field: 'create_time', title: '发布时间', align: 'center','width': 136}
+				{ field: 'title', title: '公告标题',templet: '<div><a data-href="/note/index/view/id/{{d.id}}.html" class="side-a"">{{d.title}}</a></div>'},
+				{ field: 'create_time', title: '发布时间', align: 'center','width': 150}
 			]]
 		});
 		//文章
@@ -156,9 +359,8 @@
 			, page: false //开启分页
 			, cols: [[ //表头
 				{ field: 'cate_title', title: '知识分类', align: 'center','width': 90 },
-				{ field: 'title', title: '知识标题',templet: '<div><a data-href="/article/index/view/id/{{d.id}}.html" class="right-a" target="_blank">{{d.title}}</a></div>'},
-				{ field: 'read', title: '访问量', align: 'center','width': 80 },
-				{ field: 'create_time', title: '发布时间', align: 'center','width': 136}
+				{ field: 'title', title: '知识标题',templet: '<div><a data-href="/article/index/view/id/{{d.id}}.html" class="side-a">{{d.title}}</a></div>'},
+				{ field: 'create_time', title: '发布时间', align: 'center','width': 150}
 			]]
 		});
 		//项目
@@ -176,9 +378,30 @@
 						return html;
 					}
 				},
-				{ field: 'title', title: '项目名称',templet: '<div><a data-href="/project/index/view/id/{{d.id}}.html" class="right-a" target="_blank">{{d.name}}</a></div>'},
+				{ field: 'title', title: '项目名称',templet: '<div><a data-href="/project/index/view/id/{{d.id}}.html" class="side-a">{{d.name}}</a></div>'},
 				{ field: 'director_name', title: '负责人', align: 'center', width: 80},
 				{ field: 'plan_time', title: '项目周期', align: 'center', width: 190},
+			]]
+		});
+		
+		//任务
+		table.render({
+			elem: '#Task'
+			, url: "/home/api/get_task_list" //数据接口
+			, page: false //开启分页
+			, cols: [[ //表头
+				{ field: 'id', title: '任务编号', align: 'center','width': 90, templet: function (d) {
+						return 'T' + d.id;
+					}
+				},
+				{field: 'flow_status', title: '状态', align: 'center', width: 80, templet: function (d) {
+						var html = '<span class="layui-btn layui-btn-xs bg-status-' + d.flow_status + '">' + d.flow_name + '</span>';
+						return html;
+					}
+				},
+				{ field: 'title', title: '任务主题',templet: '<div><a data-href="/project/task/view/id/{{d.id}}.html" class="side-a">{{d.title}}</a></div>'},
+				{ field: 'director_name', title: '负责人', align: 'center', width: 80},
+				{ field: 'end_time', title: '计划完成日期', align: 'center', width: 190},
 			]]
 		});
 		$('body').on('click','[data-event="pay"]',function(){
