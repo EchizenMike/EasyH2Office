@@ -167,11 +167,13 @@ class Index extends BaseController
 			View::assign('auth', isAuth($this->uid,'contract_admin'));
             if ($id > 0) {
                 $detail = (new ContractList())->detail($id);
-				if($detail['check_status']>1){
+				if($detail['check_status'] == 0 || $detail['check_status'] == 4){
+					View::assign('detail', $detail);
+					return view('edit');
+				}
+				else{
 					echo '<div style="text-align:center;color:red;margin-top:20%;">当前状态不开放编辑，请联系合同管理员</div>';exit;
 				}
-                View::assign('detail', $detail);
-                return view('edit');
             }
 			if($pid>0){
 				$p_contract = Db::name('Contract')->where(['id' => $pid])->find();

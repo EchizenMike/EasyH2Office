@@ -207,7 +207,7 @@ html{background-color:#fff;}
 				</td>
 			</tr>
 			{/notempty}
-			{eq name="$detail.check_status" value="3" }
+			{eq name="$detail.check_status" value="2" }
 			  <tr>
 				<td class="layui-td-gray-2">归档状态</td>
 				{eq name="$detail.archive_status" value="0" }
@@ -254,7 +254,7 @@ html{background-color:#fff;}
 			{/eq}
 			
 			{gt name="$auth" value="0"}				
-				{eq name="$detail.check_status" value="3" }
+				{eq name="$detail.check_status" value="2" }
 				<div class="py-4">
 					{eq name="$detail.archive_status" value="1" }
 						<span class="layui-btn layui-btn-danger" data-event="archive" data-status="0">反确认归档</span>
