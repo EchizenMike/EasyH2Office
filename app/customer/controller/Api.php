@@ -71,11 +71,11 @@ class Api extends BaseController
 				$data['delete_time'] = -1;
 			}
 			if (Db::name('Customer')->update($data) !== false) {
-				add_log('delete', $params['id']);
+				add_log('delete', $params['id'],[],'客户');
 				Db::name('CustomerLog')->strict(false)->field(true)->insert($log_data);
-				return to_assign(0, "删除成功");
+				return to_assign();
 			} else {
-				return to_assign(1, "删除失败");
+				return to_assign(1, "操作失败");
 			}
 		} else {
             return to_assign(1, "错误的请求");
@@ -94,7 +94,7 @@ class Api extends BaseController
 			$data['id'] = $params['id'];
 			$data['delete_time'] = 0;
 			if (Db::name('Customer')->update($data) !== false) {
-				add_log('recovery', $params['id']);
+				add_log('recovery', $params['id'],[],'客户');
 				$log_data = array(
 					'field' => 'del',
 					'action' => 'recovery',
@@ -104,9 +104,9 @@ class Api extends BaseController
 					'create_time' => time(),
 				);
 				Db::name('CustomerLog')->strict(false)->field(true)->insert($log_data);
-				return to_assign(0, "删除成功");
+				return to_assign();
 			} else {
-				return to_assign(1, "删除失败");
+				return to_assign(1, "操作失败");
 			}
 		} else {
             return to_assign(1, "错误的请求");

@@ -117,7 +117,7 @@
 							obj.del();
 						}
 					}
-					tool.post("/customer/index/revert", {id: data.id}, callback);
+					tool.post("/customer/api/revert", {id: data.id}, callback);
 					layer.close(index);
 				});
 			}
@@ -132,7 +132,7 @@
 							obj.del();
 						}
 					}
-					tool.delete("/customer/index/delete", {id: data.id,type:2}, callback);
+					tool.delete("/customer/api/delete", {id: data.id,type:2}, callback);
 					layer.close(index);
 				});
 			}

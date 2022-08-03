@@ -35,8 +35,8 @@ class Index extends BaseController
 			
 			$uid = $this->uid;
 			$auth = isAuth($uid,'customer_admin');
+			$dids = get_department_son($this->did,0);
 			if($auth==0){
-				$dids = get_department_son($this->did,0);
 				if($tab==1){
 					$whereOr[] =['a.belong_uid', '=', $uid];
 				}
@@ -57,7 +57,6 @@ class Index extends BaseController
 				}
 			}
 			else if($auth==1){
-				$dids = get_department_son($this->did,0);
 				if($tab==1){
 					$whereOr[] =['a.belong_uid', '=', $uid];
 				}
@@ -68,6 +67,9 @@ class Index extends BaseController
 				}
 				else if($tab==3){
 					$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',a.share_ids)")];
+				}
+				else{
+					$whereOr[] =['a.belong_uid', '>', 0];
 				}
 			}
 			
