@@ -28,7 +28,7 @@
 	<div class="layui-card-header" style="height:45px;">
 		<div class="layui-row">
 			<div class="layui-col-md6">
-				<h5>项目阶段</h5>
+				<strong>项目阶段</strong>
 			</div>
 			{gt name="$role" value="0"}
 			<div class="layui-col-md6" style="text-align:right">
@@ -74,7 +74,7 @@
 		</div>
 	</div>
 	<div class="p-3">
-		<p>阶段流转记录</p>
+		<p><strong>阶段流转记录</strong></p>
 		{notempty name="$step_record"}
 			<ul class="layui-timeline pt-2">
 			{volist name="$step_record" id="vo"}		
@@ -101,7 +101,7 @@
 	<div class="layui-card-header" style="height:45px;">
 		<div class="layui-row">
 			<div class="layui-col-md6">
-				<h5>项目附件</h5>
+				<strong>项目附件</strong>
 			</div>
 			<div class="layui-col-md6" style="text-align:right">
 				<button type="button" class="layui-btn layui-btn-normal layui-btn-sm" id="fileBtn">上传附件</button>
@@ -135,7 +135,7 @@
 	<div class="layui-card-header" style="height:45px;">
 		<div class="layui-row">
 			<div class="layui-col-md6">
-				<h5>关联链接</h5>
+				<strong>关联链接</strong>
 			</div>
 			<div class="layui-col-md6" style="text-align:right">
 				<button type="button" class="layui-btn layui-btn-sm layui-btn-sm2" id="linkBtn">新增链接</button>
@@ -180,7 +180,7 @@
 	<div class="layui-col-xs6 layui-col-md4">
 		<div class="layui-card">
 			<div class="layui-card-header">
-				<h5>项目概况</h5>
+				<strong>项目概况</strong>
 			</div>
 			<div class="p-3">
 				<dl>
@@ -205,7 +205,7 @@
 	<div class="layui-col-xs6 layui-col-md8">
 		<div class="layui-card border-l">
 			<div class="layui-card-header">
-				<h5>项目进度</h5>
+				<strong>项目进度</strong>
 			</div>
 			<div class="layui-card-body">
 				<div class="layui-row">
@@ -224,7 +224,7 @@
 
 <div class="layui-card border-y">
 	<div class="layui-card-header">
-		<h5>项目燃尽图</h5>
+		<strong>项目燃尽图</strong>
 	</div>
 	<div class="layui-card-body">
 		<div id="cross" class="gougu-data-none" style="width:100%; height:360px;"
@@ -237,7 +237,7 @@
 	<div class="layui-col-xs6 layui-col-md6">
 		<div class="layui-card  border-r">
 			<div class="layui-card-header">
-				<h5>任务分配情况</h5>
+				<strong>任务分配情况</strong>
 			</div>
 			<div class="layui-card-body">
 				<div id="plan" class="gougu-data-none" style="width:100%; height:150px;"></div>
@@ -247,7 +247,7 @@
 	<div class="layui-col-xs6 layui-col-md6">
 		<div class="layui-card">
 			<div class="layui-card-header">
-				<h5>工时登记情况</h5>
+				<strong>工时登记情况</strong>
 			</div>
 			<div class="layui-card-body">
 				<div id="work" class="gougu-data-none" style="width:100%; height:150px;"></div>

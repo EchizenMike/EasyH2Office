@@ -61,7 +61,6 @@ class Api extends BaseController
             $date_schedules = hour_count($schedules);
         }
         $res['task_pie'] = $task_pie;
-        $res['bug_status'] = $bug_status;
         $res['date_tasks'] = $date_tasks;
         $res['date_tasks_ok'] = $date_tasks_ok;
         $res['date_schedules'] = $date_schedules;
