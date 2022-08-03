@@ -105,11 +105,16 @@ class Index extends BaseController
         $total = [];
         $adminCount = Db::name('Admin')->where('status', '1')->count();
         $approveCount = Db::name('Approve')->count();
+        $noteCount = Db::name('Note')->where('status', '1')->count();
         $expenseCount = Db::name('Expense')->where('delete_time', '0')->count();
         $invoiceCount = Db::name('Invoice')->where('delete_time', '0')->count();
         $total[] = array(
             'name' => '员工',
             'num' => $adminCount,
+        );
+		$total[] = array(
+            'name' => '公告',
+            'num' => $noteCount,
         );
         $total[] = array(
             'name' => '审批',
