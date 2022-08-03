@@ -286,6 +286,12 @@
 			</div>
 		</div>
 		<div class="layui-card">
+			<div class="layui-card-header"><h3>最活跃员工<span style="color:#999; font-size:14px; font-weight:400; margin-left:5px">最近30天前十的活跃度</span></h3></div>
+			<div class="layui-card-body">
+				<div id="logChart" style="width: 100%; height:268px;"></div>
+			</div>
+		</div>
+		<div class="layui-card">
 			<div class="layui-card-header"><h3>员工动态</h3><a data-title="员工动态" data-href="/home/api/log_list" class="pull-right tab-a">更多</a></div>
 			<div class="layui-card-body">
 				<ul class="layui-timeline" id="logs"></ul>
@@ -452,7 +458,6 @@
 		return str;
 	}
 	
-	var chartView = echarts.init(document.getElementById('chartView'));
 	function get_view_data() {
 		$.ajax({
 			url: "/home/api/get_view_data",
@@ -463,11 +468,13 @@
 					var data_first = e.data.data_first;
 					var data_second = e.data.data_second;
 					archiveCalendar = e.data.data_three;
+					var data_logs = e.data.data_logs;
 					var myDate = new Date();
 					var nowHour = myDate.getHours(); //获取当前小时数(0-23)
 					var xData = [];
 					var yData1 = [];
 					var yData2 = [];
+					var logItem = [];
 					$.each(data_first, function (key, value) {
 						if (key <= nowHour) {
 							yData1.push(value);
@@ -477,6 +484,15 @@
 						xData.push(setHour(key));
 						yData2.push(value);
 					});
+					$.each(data_logs, function (key, value) {
+						let item = {
+							value: value.count,
+							name: value.name
+						};
+						logItem.push(item);
+					});
+						
+					var chartView = echarts.init(document.getElementById('chartView'));
 					var ops = {
 						title: {
 							top: '12px',
@@ -626,10 +642,40 @@
 					};
 					myChart.setOption(option);
 
+					var logChart = echarts.init(document.getElementById('logChart'));
+					let optC = {
+						tooltip: {
+							trigger: 'item',
+							formatter: '{a} <br/>{b} :{d}%'
+						},
+						legend: {
+							top: '1%',
+							left: 'center'
+						},
+						series: [
+							{
+								name: '活跃度',
+								type: 'pie',
+								radius: '50%',
+								center: ['50%', '60%'],
+								data: logItem,
+								emphasis: {
+									itemStyle: {
+										shadowBlur: 10,
+										shadowOffsetX: 0,
+										shadowColor: 'rgba(0, 0, 0, 0.5)'
+									}
+								}
+							}
+						]
+					};
+					logChart.setOption(optC);
+					
 					setTimeout(function () {
 						window.onresize = function () {
 							chartView.resize();
 							myChart.resize();
+							logChart.resize();
 						}
 					})
 					console.log(e.data);
