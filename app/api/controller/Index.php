@@ -301,21 +301,26 @@ class Index extends BaseController
 		$id = $param['id'];
 		$type = $param['type'];
 		$detail = [];
+		$subject = '一个审批';
 		if($type==1){
 			//日常审核
 			$detail = Db::name('Approve')->where(['id' => $id])->find();
+			$subject = '一个日常审批';
 		}
 		else if($type==2){
 			//报销审核
 			$detail = Db::name('Expense')->where(['id' => $id])->find();
+			$subject = '一个报销审批';
 		}
 		else if($type==3){
 			//发票审核
 			$detail = Db::name('Invoice')->where(['id' => $id])->find();
+			$subject = '一个发票审批';
 		}
 		else if($type==4){
 			//合同审核
 			$detail = Db::name('Contract')->where(['id' => $id])->find();
+			$subject = '一个合同审批';
 		}
 		if (empty($detail)){		
 			return to_assign(1,'审批数据错误');
@@ -436,7 +441,7 @@ class Index extends BaseController
 					'create_time' => time()
 				);	
 				$aid = Db::name('FlowRecord')->strict(false)->field(true)->insertGetId($checkData);
-				add_log('check', $param['id'], $param);
+				add_log('check', $param['id'], $param,$subject);
 				//发送消息通知
 				$msg=[
 					'create_time'=>date('Y-m-d H:i:s',$detail['create_time']),
@@ -512,7 +517,7 @@ class Index extends BaseController
 					'create_time' => time()
 				);	
 				$aid = Db::name('FlowRecord')->strict(false)->field(true)->insertGetId($checkData);
-				add_log('refue', $param['id'], $param);
+				add_log('refue', $param['id'], $param,$subject);
 				//发送消息通知
 				$msg=[
 					'create_time'=>date('Y-m-d H:i:s',$detail['create_time']),
@@ -564,7 +569,7 @@ class Index extends BaseController
 					'create_time' => time()
 				);	
 				$aid = Db::name('FlowRecord')->strict(false)->field(true)->insertGetId($checkData);
-				add_log('back', $param['id'], $param);
+				add_log('back', $param['id'], $param,$subject);
 				return to_assign();
 			}else{
 				return to_assign(1,'操作失败');
