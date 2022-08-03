@@ -143,11 +143,11 @@ class Task extends BaseController
     {
         if (request()->isDelete()) {
             $id = get_params("id");
-            $detail = Db::name('Task')->where('id', $id)->find();
+            $detail = Db::name('ProjectTask')->where('id', $id)->find();
             if ($detail['admin_id'] != $this->uid) {
                 return to_assign(1, "你不是该任务的创建人，无权限删除");
             }
-            if (Db::name('Task')->where('id', $id)->update(['delete_time' => time()]) !== false) {
+            if (Db::name('ProjectTask')->where('id', $id)->update(['delete_time' => time()]) !== false) {
                 $log_data = array(
                     'module' => 'task',
                     'field' => 'delete',
