@@ -33,6 +33,7 @@ CREATE TABLE `oa_admin`  (
   `sex` int(255) NOT NULL DEFAULT 0 COMMENT '性别1男,2女',
   `nickname` varchar(255) NOT NULL DEFAULT '' COMMENT '昵称',
   `thumb` varchar(255) NOT NULL COMMENT '头像',
+  `theme` varchar(255) NOT NULL DEFAULT 'black' COMMENT '系统主题',
   `did` int(11) NOT NULL DEFAULT 0 COMMENT '部门id',
   `position_id` int(11) NOT NULL DEFAULT 0 COMMENT '职位id',
   `type` int(1) NOT NULL DEFAULT 0 COMMENT '员工类型：0未设置,1正式,2试用,3实习',

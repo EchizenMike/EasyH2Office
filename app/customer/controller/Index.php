@@ -416,6 +416,94 @@ class Index extends BaseController
 		} else {
             return to_assign(1, "错误的请求");
         }
-	}
+	}	
+	
+	//客户移入废弃池
+    public function to_trash()
+    {
+		if (request()->isAjax()) {
+			$params = get_params();			
+			$data['id'] = $params['id'];
+			$log_data = array(
+				'field' => 'del',
+				'action' => 'delete',
+				'type' => 0,
+				'customer_id' => $params['id'],
+				'admin_id' => $this->uid,
+				'create_time' => time(),
+			);
+			$data['delete_time'] = time();
+			$log_data['action'] = 'totrash';
+			if (Db::name('Customer')->update($data) !== false) {
+				add_log('totrash', $params['id']);
+				Db::name('CustomerLog')->strict(false)->field(true)->insert($log_data);
+				return to_assign();
+			} else {
+				return to_assign(1, "操作失败");
+			}
+		} else {
+            return to_assign(1, "错误的请求");
+        }
+    }
+	
+	//还原客户
+    public function revert()
+    {
+		if (request()->isAjax()) {
+			$params = get_params();		
+			$data['id'] = $params['id'];
+			$data['delete_time'] = 0;
+			if (Db::name('Customer')->update($data) !== false) {
+				add_log('recovery', $params['id']);
+				$log_data = array(
+					'field' => 'del',
+					'action' => 'recovery',
+					'type' => 0,
+					'customer_id' => $params['id'],
+					'admin_id' => $this->uid,
+					'create_time' => time(),
+				);
+				Db::name('CustomerLog')->strict(false)->field(true)->insert($log_data);
+				return to_assign();
+			} else {
+				return to_assign(1, "操作失败");
+			}
+		} else {
+            return to_assign(1, "错误的请求");
+        }
+    }
+	
+	//彻底删除客户
+    public function delete()
+    {
+		if (request()->isDelete()) {
+			$params = get_params();
+			//是否是客户管理员
+			$auth = isAuth($this->uid,'customer_admin');
+			if($auth==0){
+				return to_assign(1, "只有客户管理员才有权限操作");
+			}			
+			$data['id'] = $params['id'];
+			$data['delete_time'] = -1;
+			$log_data = array(
+				'field' => 'del',
+				'action' => 'delete',
+				'type' => 0,
+				'customer_id' => $params['id'],
+				'admin_id' => $this->uid,
+				'create_time' => time()
+			);
+			if (Db::name('Customer')->update($data) !== false) {
+				add_log('delete', $params['id']);
+				Db::name('CustomerLog')->strict(false)->field(true)->insert($log_data);
+				return to_assign();
+			} else {
+				return to_assign(1, "操作失败");
+			}
+		} else {
+            return to_assign(1, "错误的请求");
+        }
+    }
+
 
 }

@@ -33,7 +33,7 @@ class Api extends BaseController
 			$data['belong_did'] = $params['did'];
 			$data['distribute_time'] = time();
 			if (Db::name('Customer')->update($data) !== false) {
-				add_log('allot', $data['id']);
+				add_log('allot', $data['id'],[],'客户');
 				to_log($this->uid,0,$data,['belong_uid'=>0]);
 				return to_assign(0, "操作成功");
 			} else {
@@ -43,75 +43,6 @@ class Api extends BaseController
             return to_assign(1, "错误的请求");
         }
 	}
-	
-    //删除客户
-    public function delete()
-    {
-		if (request()->isDelete()) {
-			$params = get_params();
-			//是否是客户管理员
-			$auth = isAuth($this->uid,'customer_admin');
-			if($auth==0){
-				return to_assign(1, "只有客户管理员才有权限操作");
-			}			
-			$data['id'] = $params['id'];
-			$log_data = array(
-				'field' => 'del',
-				'action' => 'delete',
-				'type' => 0,
-				'customer_id' => $params['id'],
-				'admin_id' => $this->uid,
-				'create_time' => time(),
-			);
-			if($params['type'] ==1){
-				$data['delete_time'] = time();
-				$log_data['action'] = 'totrash';
-			}
-			else{
-				$data['delete_time'] = -1;
-			}
-			if (Db::name('Customer')->update($data) !== false) {
-				add_log('delete', $params['id'],[],'客户');
-				Db::name('CustomerLog')->strict(false)->field(true)->insert($log_data);
-				return to_assign();
-			} else {
-				return to_assign(1, "操作失败");
-			}
-		} else {
-            return to_assign(1, "错误的请求");
-        }
-    }
-	//还原客户
-    public function revert()
-    {
-		if (request()->isAjax()) {
-			$params = get_params();
-			//是否是客户管理员
-			$auth = isAuth($this->uid,'customer_admin');
-			if($auth==0){
-				return to_assign(1, "只有客户管理员才有权限操作");
-			}			
-			$data['id'] = $params['id'];
-			$data['delete_time'] = 0;
-			if (Db::name('Customer')->update($data) !== false) {
-				add_log('recovery', $params['id'],[],'客户');
-				$log_data = array(
-					'field' => 'del',
-					'action' => 'recovery',
-					'type' => 0,
-					'customer_id' => $params['id'],
-					'admin_id' => $this->uid,
-					'create_time' => time(),
-				);
-				Db::name('CustomerLog')->strict(false)->field(true)->insert($log_data);
-				return to_assign();
-			} else {
-				return to_assign(1, "操作失败");
-			}
-		} else {
-            return to_assign(1, "错误的请求");
-        }
-    }
 	
 	//跟进记录列表
 	public function get_trace()
@@ -154,7 +85,7 @@ class Api extends BaseController
 				}
 				$res = CustomerTrace::strict(false)->field(true)->update($param);
 				if ($res) {
-					add_log('edit', $param['id'], $param);
+					add_log('edit', $param['id'], $param,'客户跟进记录');
 					to_log($this->uid,1,$param,$old);
 					return to_assign();
 				} else {
@@ -165,7 +96,7 @@ class Api extends BaseController
                 $param['admin_id'] = $this->uid;
 				$tid = CustomerTrace::strict(false)->field(true)->insertGetId($param);
 				if ($tid) {
-					add_log('add', $tid, $param);
+					add_log('add', $tid, $param,'客户跟进记录');
 					$log_data = array(
 						'field' => 'new',
 						'action' => 'add',
@@ -220,7 +151,7 @@ class Api extends BaseController
             $param['delete_time'] = time();
 			$res = CustomerTrace::strict(false)->field(true)->update($param);
 			if ($res) {
-				add_log('edit', $param['id'], $param);
+				add_log('delete', $param['id'], $param,'客户跟进记录');
 				to_log($this->uid,1,$param,['delete_time'=>0]);
 				return to_assign();
 			} else {
@@ -273,7 +204,7 @@ class Api extends BaseController
 				}
 				$res = CustomerChance::strict(false)->field(true)->update($param);
 				if ($res) {
-					add_log('edit', $param['id'], $param);
+					add_log('edit', $param['id'], $param,'客户销售机会');
 					to_log($this->uid,3,$param,$old);
 					return to_assign();
 				} else {
@@ -284,7 +215,7 @@ class Api extends BaseController
                 $param['admin_id'] = $this->uid;
 				$tid = CustomerChance::strict(false)->field(true)->insertGetId($param);
 				if ($tid) {
-					add_log('add', $tid, $param);
+					add_log('add', $tid, $param,'客户销售机会');
 					$log_data = array(
 						'field' => 'new',
 						'action' => 'add',
@@ -339,7 +270,7 @@ class Api extends BaseController
             $param['delete_time'] = time();
 			$res = CustomerChance::strict(false)->field(true)->update($param);
 			if ($res) {
-				add_log('edit', $param['id'], $param);
+				add_log('delete', $param['id'], $param,'客户销售机会');
 				to_log($this->uid,3,$param,['delete_time'=>0]);
 				return to_assign();
 			} else {
@@ -378,7 +309,7 @@ class Api extends BaseController
 			CustomerContact::where(['cid' => $detail['cid']])->strict(false)->field(true)->update(['is_default'=>0]);
 			$res = CustomerContact::where(['id' => $param['id']])->update(['is_default'=>1]);
 			if ($res) {
-				add_log('edit', $param['id'], $param);
+				add_log('edit', $param['id'], $param,'客户联系人');
 				to_log($this->uid,2,$param,$detail);
 				return to_assign();
 			} else {

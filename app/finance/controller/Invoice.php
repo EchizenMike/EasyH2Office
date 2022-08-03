@@ -226,6 +226,7 @@ class Invoice extends BaseController
 					//发送消息通知
 					$msg=[
 						'from_uid'=>$this->uid,
+						'title'=>'发票',
 						'action_id'=>$param['id']
 					];
 					$users = $param['check_admin_ids'];
@@ -306,6 +307,7 @@ class Invoice extends BaseController
 					//发送消息通知
 					$msg=[
 						'from_uid'=>$this->uid,
+						'title'=>'发票',
 						'action_id'=>$exid
 					];
 					$users = $param['check_admin_ids'];

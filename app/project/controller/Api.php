@@ -239,7 +239,6 @@ class Api extends BaseController
             $schedule['end_time_1'] = date('H:i', $schedule['end_time']);
             $schedule['start_time'] = date('Y-m-d', $schedule['start_time']);
             $schedule['end_time'] = date('Y-m-d', $schedule['end_time']);
-            // $schedule['create_time'] = date('Y-m-d H:i:s', $schedule['create_time']);
             $schedule['user'] = Db::name('Admin')->where(['id' => $schedule['admin_id']])->value('name');
             $schedule['department'] = Db::name('Department')->where(['id' => $schedule['did']])->value('title');
         }

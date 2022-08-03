@@ -293,6 +293,7 @@ class Expense extends BaseController
 					//发送消息通知
 					$msg=[
 						'from_uid'=>$this->uid,
+						'title'=>'报销',
 						'action_id'=>$param['id']
 					];
 					$users = $param['check_admin_ids'];
@@ -394,6 +395,7 @@ class Expense extends BaseController
 					//发送消息通知
 					$msg=[
 						'from_uid'=>$this->uid,
+						'title'=>'报销',
 						'action_id'=>$exid
 					];
 					$users = $param['check_admin_ids'];

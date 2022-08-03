@@ -439,8 +439,10 @@ class Index extends BaseController
 				add_log('check', $param['id'], $param);
 				//发送消息通知
 				$msg=[
-					'create_time'=>time(),
-					'action_id'=>$id
+					'create_time'=>date('Y-m-d H:i:s',$detail['create_time']),
+					'action_id'=>$id,
+					'title' => Db::name('FlowType')->where('id',$checkData['type'])->value('title'),
+					'from_uid'=>$detail['admin_id']
 				];
 				if($param['check_status'] == 1){
 					$users = $param['check_admin_ids'];
@@ -514,7 +516,9 @@ class Index extends BaseController
 				//发送消息通知
 				$msg=[
 					'create_time'=>date('Y-m-d H:i:s',$detail['create_time']),
-					'action_id'=>$detail['id']
+					'action_id'=>$detail['id'],
+					'title' => Db::name('FlowType')->where('id',$checkData['type'])->value('title'),
+					'from_uid'=>$detail['admin_id']
 				];
 				$users = $detail['admin_id'];
 				sendMessage($users,($type*10+13),$msg);

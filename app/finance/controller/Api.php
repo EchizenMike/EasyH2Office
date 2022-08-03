@@ -52,6 +52,7 @@ class Api extends BaseController
 				$detail = Expense::where(['id' => $param['id']])->find();
 				$msg=[
 					'create_time'=>date('Y-m-d H:i:s',(int)$detail['create_time']),
+					'title'=>'报销',
 					'action_id'=>$detail['id']
 				];
 				$users = $detail['admin_id'];
