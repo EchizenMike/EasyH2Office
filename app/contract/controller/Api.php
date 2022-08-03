@@ -83,7 +83,7 @@ class Api extends BaseController
         }
     } 
 
-	//审核等操作
+	//状态改变等操作
     public function check()
     {
         if (request()->isPost()) {

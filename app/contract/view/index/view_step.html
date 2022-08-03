@@ -52,21 +52,13 @@
 	<input type="hidden" name="check_step_sort" value="{$detail.check_step_sort}">
 	<input type="hidden" name="check_status" value="{$detail.check_status}">
 	<div id="formBtn" style="padding: 10px 0">
-		{eq name="$detail.check_status" value='1'}
-			{eq name="$is_check_admin" value='1'}
-			<span class="layui-btn layui-btn-normal" data-status="1"><i class="layui-icon layui-icon-ok"></i> 通过</span>
-			<span class="layui-btn layui-btn-danger" data-status="2"><i class="layui-icon layui-icon-close"></i> {$flows.flow_type == 5?'回退':'拒绝'}</span>
-			{/eq}
-			{eq name="$is_create_admin" value='1'}
-			<span class="layui-btn layui-btn-primary" data-status="3"><i class="layui-icon layui-icon-reduce-circle"></i> 撤回</span>
-			{/eq}
+		{eq name="$is_check_admin" value='1'}
+		<span class="layui-btn layui-btn-normal" data-status="1"><i class="layui-icon layui-icon-ok"></i> 通过</span>
+		<span class="layui-btn layui-btn-danger" data-status="2"><i class="layui-icon layui-icon-close"></i> {$flows.flow_type == 5?'回退':'拒绝'}</span>
 		{/eq}
-		{if ( $detail.check_status eq 3) AND ( $is_create_admin eq 1) }
-			<span class="layui-btn layui-btn-primary" data-status="3"><i class="layui-icon layui-icon-reduce-circle"></i> 撤回</span>
-		{/if}
-		{if ( $detail.check_status eq 4) AND ( $is_create_admin eq 1) }
-		<a class="layui-btn" href="/finance/invoice/add?id={$detail.id}">重新编辑</a>
-		{/if}
+		{eq name="$is_create_admin" value='1'}
+		<span class="layui-btn layui-btn-primary" data-status="3"><i class="layui-icon layui-icon-reduce-circle"></i> 撤回</span>
+		{/eq}
     </div>
 	<script>
 		function flowStep(){

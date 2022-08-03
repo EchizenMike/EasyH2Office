@@ -252,39 +252,41 @@ html{background-color:#fff;}
 			{eq name="$detail.check_status" value="1" }
 				{include file="/index/view_step" /}			
 			{/eq}
-			
-			{gt name="$auth" value="0"}				
-				{eq name="$detail.check_status" value="2" }
-				<div class="py-4">
-					{eq name="$detail.archive_status" value="1" }
-						<span class="layui-btn layui-btn-danger" data-event="archive" data-status="0">反确认归档</span>
-					{else/}
-					<span class="layui-btn layui-btn-normal" data-event="archive" data-status="1">合同归档</span>
-					<span class="layui-btn layui-btn-danger" data-event="check" data-status="0">反确认审核</span>
+			<div class="py-4">
+				{gt name="$auth" value="0"}				
+					{eq name="$detail.check_status" value="2" }
+						{eq name="$detail.archive_status" value="1" }
+							<span class="layui-btn layui-btn-danger" data-event="archive" data-status="0">反确认归档</span>
+						{else/}
+						<span class="layui-btn layui-btn-normal" data-event="archive" data-status="1">合同归档</span>
+						<span class="layui-btn layui-btn-danger" data-event="check" data-status="0">反确认审核</span>
+						{/eq}
 					{/eq}
-				</div>
-				{/eq}
-
-				{eq name="$detail.check_status" value="5" }
-				<div class="p-4" style="text-align:center;">
-					<span class="layui-btn layui-btn-danger" data-event="check" data-status="0">反中止合同</span>
-				</div>
-				{/eq}
-				
-				{eq name="$detail.check_status" value="6" }
-				<div class="p-4" style="text-align:center;">
-					<span class="layui-btn layui-btn-danger" data-event="check" data-status="0">反作废合同</span>
-				</div>
-				{/eq}
-			{/gt}
+					{eq name="$detail.check_status" value="5" }
+					<div class="py-2">
+						<span class="layui-btn layui-btn-danger" data-event="check" data-status="0">反中止合同</span>
+					</div>
+					{/eq}
+					
+					{eq name="$detail.check_status" value="6" }
+					<div class="py-2">
+						<span class="layui-btn layui-btn-danger" data-event="check" data-status="0">反作废合同</span>
+					</div>
+					{/eq}
+				{/gt}	
+				{if ( $detail.check_status eq 3) AND ( $is_create_admin eq 1) }
+					<span class="layui-btn layui-btn-primary check_back"><i class="layui-icon layui-icon-reduce-circle"></i> 撤回</span>
+				{/if}
+				{if ( $detail.check_status eq 4) AND ( $is_create_admin eq 1) }
+				<a class="layui-btn" href="/finance/invoice/add?id={$detail.id}">重新编辑</a>
+				{/if}
+			</div>
 		</div>
 		<div class="layui-tab-item">
 			{include file="/index/view_log" /}
 		</div>
 	  </div>
 	</div>
-	
-	
 </form>
 {/block}
 <!-- /主体 -->
@@ -364,19 +366,11 @@ const moduleInit = ['tool','employeepicker'];
 				title = '确定要反确认该合同的审核?';
 				action = 'check_refue';
 			}
-			if(contract_status == 0 && status == 3){
-				title = '确定要中止该合同?';
-				action = 'stop_ok';
-			}
-			if(contract_status == 3 && status == 0){
+			if(contract_status == 5 && status == 0){
 				title = '确定要反中止该合同?';
 				action = 'stop_no';
 			}
-			if(contract_status == 0 && status == 4){
-				title = '确定要作废该合同?';
-				action = 'void_ok';
-			}
-			if(contract_status == 4 && status == 0){
+			if(contract_status == 6 && status == 0){
 				title = '确定要反作废该合同?';
 				action = 'void_no';
 			}
@@ -391,37 +385,14 @@ const moduleInit = ['tool','employeepicker'];
 						location.reload();
 					},2000)					
 				}
-				
-				if(status == 3 || status == 4){
-					layer.open({
-						type: 1,
-						title: '请输入原因或理由',
-						area: ['800px', '360px'],
-						content: '<div style="padding:5px;"><textarea class="layui-textarea" id="remarkTextarea" style="width: 100%; height: 240px;"></textarea></div>',
-						btnAlign: 'c',
-						btn: ['提交保存'],
-						yes: function () {
-							let remark = $("#remarkTextarea").val();
-							if (remark != '') {
-								tool.post("/contract/api/check", {id: contract_id,check_status:status,mark:remark}, callback);
-							} else {
-								layer.msg('请输入原因或理由');
-							}
-						}
-					})
-				}
-				else{
-					tool.post("/contract/api/check", {id: contract_id,check_status:status,mark:''}, callback);
-				}
-				
+				tool.post("/contract/api/check", {id: contract_id,check_status:status,mark:''}, callback);			
 				layer.close(index);
 			});
 		});
 		
 		$('body').on('click','[data-event="archive"]',function(){
 			let status = $(this).data('status');
-			let title = '合同归档后将不能进行任何数据操作，确定要提交归档?';
-			layer.confirm(title, {
+			layer.confirm('合同归档后将不能进行任何数据操作，确定要提交归档?', {
 				icon: 3,
 				title: '提示'
 			}, function(index) {
@@ -436,6 +407,35 @@ const moduleInit = ['tool','employeepicker'];
 				layer.close(index);
 			});
 		})
+		
+		
+		$('body').on('click','.check_back',function(){
+			layer.prompt({
+				formType: 2,
+				title: '请输入撤回理由',
+				area: ['500px', '120px'] //自定义文本域宽高
+			}, function(value, index, elem){
+				$.ajax({
+					url: "/api/index/flow_check",
+					type:'post',
+					data:{
+						id:contract_id,
+						type:4,
+						check:3,
+						content:value
+					},
+					success: function (e) {
+						layer.msg(e.msg);
+						if (e.code == 0) {	
+							parent.layui.pageTable.reload();
+							location.reload();
+						}
+					}
+				})
+				layer.close(index);
+			});
+		})
+		
 		
 		
 		//删除附件

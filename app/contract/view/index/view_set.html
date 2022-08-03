@@ -253,8 +253,8 @@ html{background-color:#fff;}
 				<a class="layui-btn" href="/contract/index/add/id/{$detail.id}">编辑合同</a>
 				{/eq}
 				{gt name="$auth" value="0"}
-				<span class="layui-btn layui-btn-warm" data-event="check" data-status="3">中止合同</span>
-				<span class="layui-btn layui-btn-danger" data-event="check" data-status="4">作废合同</span>
+				<span class="layui-btn layui-btn-warm" data-event="check" data-status="5">中止合同</span>
+				<span class="layui-btn layui-btn-danger" data-event="check" data-status="6">作废合同</span>
 				{/gt}
 			</div>
 		</div>
@@ -326,11 +326,11 @@ const moduleInit = ['tool','employeepicker'];
 			let status = $(this).data('status');
 			let action = '';
 			let title = ''
-			if(contract_status == 0 && status == 3){
+			if(status == 5){
 				title = '确定要中止该合同?';
 				action = 'stop_ok';
 			}
-			if(contract_status == 0 && status == 4){
+			if(status == 6){
 				title = '确定要作废该合同?';
 				action = 'void_ok';
 			}
@@ -360,8 +360,7 @@ const moduleInit = ['tool','employeepicker'];
 							layer.msg('请输入原因或理由');
 						}
 					}
-				})				
-				tool.post("/contract/api/check", {id: contract_id,check_status:status,mark:''}, callback);				
+				})		
 				layer.close(index);
 			});
 		});
