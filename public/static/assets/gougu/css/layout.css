@@ -7,6 +7,7 @@
 .gg-head-item .layui-nav{background:0 0;padding:0;}
 .gg-head-item .layui-nav .layui-nav-item a{padding:0;}
 .layui-layout-right .gg-head-item{border-left:1px solid #eeeeee;}
+.layui-layout-right .gg-head-item i.layui-icon{font-weight:600}
 
 .layui-layout-right .gg-head-message{position:relative;}
 .layui-layout-right .gg-message-num{height: 18px;position: absolute; top: -12px;margin-left: -4px;left: 50%;}
@@ -17,15 +18,15 @@
 .gg-head-item .layui-nav .layui-this:after{display:none;}
 
 .gg-layout .layui-side {width: 200px;top: 0;z-index: 1001}
-.gg-layout .layui-logo {position: fixed;left: 0; top: 0; z-index: 1001; width: 200px; height: 50px; text-align:center; line-height:50px; overflow: hidden;background-color: #001529;box-shadow: 0 1px 2px 0 rgba(0, 0, 0, .15); cursor:pointer;}
+.gg-layout .layui-logo {position: fixed;left: 0; top: 0; z-index: 1001; width: 200px; height: 49px; text-align:center; line-height:49px; overflow: hidden;background-color: #001529;  border-bottom: 1px solid #011120; cursor:pointer;}
 .gg-layout .layui-logo,
 .gg-layout .layui-logo a {color: #f1f1f1; text-align:center;}
 
 .layui-side-menu {box-shadow: 1px 0 2px 0 rgba(0, 0, 0, .05);background-color: #001529; color: #fff}
 .layui-side-menu .layui-side-scroll {width: 100%}
 .layui-side-menu .layui-nav {width: 200px; margin-top: 50px; background: 0 0}
-.layui-side-menu .layui-nav .layui-nav-item a {height: 40px;line-height: 40px; padding-left: 40px; padding-right: 20px}
-.layui-side-menu .layui-nav .layui-nav-item>a {padding-top: 8px;padding-bottom: 8px}
+.layui-side-menu .layui-nav .layui-nav-item a {height: 40px;line-height: 40px; padding-left: 44px; padding-right: 20px}
+.layui-side-menu .layui-nav .layui-nav-item>a {padding-top: 2px;padding-bottom: 2px}
 .layui-side-menu .layui-nav .layui-nav-itemed>.layui-nav-child { padding: 0}
 .layui-side-menu .layui-nav .layui-nav-item .bi,
 .layui-side-menu .layui-nav .layui-nav-item .iconfont,
@@ -33,9 +34,10 @@
 .layui-side-menu .layui-nav .layui-nav-item .bi,
 .layui-side-menu .layui-nav .layui-nav-item .iconfont{font-size:18px;}
 .layui-side-menu .layui-nav .layui-nav-item .layui-nav-more {margin-top: -24px; color:#677C91}
+.layui-side-menu .layui-nav .layui-nav-child .layui-nav-more {margin-top: -20px; color:#677C91}
 
 .layui-side-menu .layui-nav .layui-nav-child .layui-nav-child { background: 0 0 !important}
-.layui-side-menu .layui-nav .layui-nav-child .layui-nav-child a {padding-left: 55px}
+.layui-side-menu .layui-nav .layui-nav-child .layui-nav-child a {padding-left: 58px}
 .layui-side-menu .layui-nav .layui-nav-more {right: 12px}
 
 .layui-nav-tree .layui-nav-child dd.layui-this,
@@ -46,6 +48,23 @@
 
 .layui-side .layui-nav-tree .layui-nav-child dd a:hover{background-color:#192A3B;}
 .layui-side .layui-nav-tree .layui-nav-bar{background-color: #3C9CFF;width:3px;}
+
+.layui-side-white{background-color: #fff; color: #323232}
+.layui-side-white .layui-logo {background-color: #ffffff;border-bottom: 1px solid #eeeeee;}
+.layui-side-white .layui-nav .layui-nav-item a{color: #323232}
+.layui-side-white .layui-nav .layui-nav-item .iconfont{font-weight:600;}
+.layui-side-white .layui-nav-itemed>.layui-nav-child{background-color:#fff!important;}
+.layui-side-white .layui-nav-itemed>a,
+.layui-side-white .layui-nav-tree .layui-nav-title a,
+.layui-side-white .layui-nav-tree .layui-nav-title a:hover{color:#187FDD!important;}
+.layui-side-white .layui-nav-tree .layui-nav-child dd.layui-this,
+.layui-side-white .layui-nav-tree .layui-nav-child dd.layui-this a,
+.layui-side-white .layui-nav-tree .layui-this,
+.layui-side-white .layui-nav-tree .layui-this>a,
+.layui-side-white .layui-nav-tree .layui-this>a:hover {background-color: #ECF6FF;color: #187FDD;}
+
+.layui-side-white .layui-nav-tree .layui-nav-child dd a:hover{background-color:#ffffff;color: #187FDD;}
+.layui-side-white .layui-nav-tree .layui-nav-bar{background-color: #187FDD;width:3px;left:inherit;right:0}
 
 .page-tabs{ position: fixed;top: 50px;right: 0; z-index: 999; height: 40px; line-height: 40px; padding: 0 80px 0 40px; background-color: #fff;box-sizing: border-box; box-shadow: 0 1px 20px 0 rgba(0, 0, 0, 8%)}
 .page-tabs,
@@ -77,6 +96,7 @@
 .page-tabs .layui-icon-down {right: 0}
 .page-tabs .layui-tab {margin: 0; overflow: hidden}
 .page-tabs .layui-tab-title {height: 40px;border: none}
+.page-tabs .layui-tab-title i{font-size:18px; font-weight:600}
 
 .page-tabs .layui-tab-title li { min-width: 0; line-height: 40px; max-width: 160px; text-overflow: ellipsis; padding-left:12px; padding-right: 32px;overflow: hidden;border-right: 1px solid #eeeeee;vertical-align: top}
 .page-tabs .layui-tab-title li:first-child {padding-right: 15px}
@@ -89,7 +109,7 @@
 .page-tabs .layui-tab-title li:hover:after {width: 100%}
 
 .page-tabs .layui-tab-title li.layui-this,
-.page-tabs .layui-tab-title li:hover { background-color: #fafafa}
+.page-tabs .layui-tab-title li:hover { background-color: #fafafa; color:#187FDD}
 
 .page-tabs .layui-tab-title li.layui-this:after {width: 100%; border: none;height: 2px; background-color: #1E9FFF}
 

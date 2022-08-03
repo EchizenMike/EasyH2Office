@@ -5,6 +5,16 @@
 	<h3 class="pb-3">其他配置</h3>
 	<table class="layui-table layui-table-form">
 		<tr>
+			<td class="layui-td-gray">系统主题</td>
+			<td>
+				{empty name="$config.theme"}
+					<input type="radio" name="theme" value="black" title="经典黑" checked>
+					<input type="radio" name="theme" value="white" title="简约白" >
+				{else/}
+					<input type="radio" name="theme" value="black" title="经典黑" {eq name="$config.theme" value="black"}checked{/eq}>
+					<input type="radio" name="theme" value="white" title="简约白" {eq name="$config.theme" value="white"}checked{/eq}>
+				{/empty}				
+			</td>
 			<td class="layui-td-gray">开发者</td>
 			<td>
 				<input type="hidden" value="{$id}" name="id">

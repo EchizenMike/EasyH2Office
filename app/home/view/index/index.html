@@ -24,12 +24,17 @@
                 <div class="layui-layout-right">
                     <span class="gg-head-item gg-head-refresh">
                         <a href="javascript:;" class="refreshThis" gg-event="refresh" title="刷新">
-                            <i class="layui-icon layui-icon-refresh-3"></i>
+                            <i class="layui-icon layui-icon-refresh"></i>
                         </a>
                     </span>
                     <span class="gg-head-item gg-head-screen">
                         <a href="javascript:;" gg-event="screen" data-screen="full">
                             <i class="fullScreen layui-icon layui-icon-screen-full"></i>
+                        </a>
+                    </span>
+					<span class="gg-head-item gg-head-set">
+                        <a href="javascript:;" id="theme">
+                            <i class="layui-icon layui-icon-set"></i>
                         </a>
                     </span>
                     <span class="gg-head-item gg-head-message">
@@ -59,7 +64,7 @@
             </div>
 
             <!-- 侧边菜单 -->
-            <div class="layui-side layui-side-menu">
+            <div class="layui-side layui-side-menu layui-side-{$theme}">
                 <div class="layui-side-scroll">
                     <div class="layui-logo" gg-event="closeAllTabs">
                         <img src="{__IMG__}/syslogo.png" style="height: 40px;" class="syslogo">
@@ -67,6 +72,9 @@
                     </div>
 
 					<ul id="menuList" class="layui-nav layui-nav-tree layui-inline" lay-shrink="all">
+						<li class="layui-nav-item menu-li">
+							<a href="javascript:;" class="side-menu-item layui-this" data-href="/home/index/main.html" data-id="0" style="padding-top:0; padding-bottom:0;"><i class="iconfont icon-xueshuguanli"></i> 工 作 台</a>
+						</li>
 					{foreach name="menu" item="a"}
 						<li class="layui-nav-item menu-li">
 							<a href="javascript:;" lay-tips="{$a.title}" lay-direction="2" data-id="{$a.id}" data-title="{$a.title}" data-href="/{$a.src}"><i class="iconfont {$a.icon}"></i> {$a.title}</a>
@@ -119,7 +127,7 @@
                 </div>
                 <div class="layui-tab gg-admin-tab" lay-unauto lay-allowClose="true" lay-filter="gg-admin-tab">
                     <ul class="layui-tab-title">
-                        <li lay-id="0" lay-attr="view/home/index.html" class="layui-this"><i class="layui-icon layui-icon-home"></i></li>
+                        <li lay-id="0" lay-attr="view/home/index.html" class="layui-this"><i class="iconfont icon-xueshuguanli"></i></li>
                     </ul>
                 </div>
             </div>
@@ -160,7 +168,32 @@
 				layer.close(index);
 			});
 		});
-
+		layui.dropdown.render({
+			elem: '#theme',
+			trigger: 'mousedown',
+			align: 'center',
+			data: [{
+				title: '经典黑',
+				theme: 'black'
+			},{
+				title: '简约白',
+				theme: 'white'
+			}],
+			click: function(data, othis){
+				$.ajax({
+					url: "/home/index/set_theme",
+					data:{'theme':data.theme},
+					success: function (e) {
+						layer.msg(e.msg);
+						if (e.code == 0) {
+							setTimeout(function () {
+								parent.location.reload();
+							}, 1000)
+						}
+					}
+				})
+			}
+		});
 		//轮循获取消息
 		var getStatus = setInterval(function () {
 			$.ajax({

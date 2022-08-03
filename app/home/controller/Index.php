@@ -84,6 +84,7 @@ class Index extends BaseController
                 \think\facade\Cache::tag('adminMenu')->set('menu' . $admin['id'], $list);
             }
             View::assign('menu', $list);
+			View::assign('theme', get_system_config('other','theme'));
             return View();
         }
     }
@@ -198,5 +199,18 @@ class Index extends BaseController
         } else {
             return view();
         }
+    }
+	
+	//设置theme
+	public function set_theme()
+    {
+        if (request()->isAjax()) {
+            $param = get_params();
+            set_system_config('other','theme',$param['theme']);
+            return to_assign();
+        }
+		else{
+			return to_assign(1,'操作错误');
+		}
     }
 }

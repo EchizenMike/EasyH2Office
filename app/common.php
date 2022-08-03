@@ -44,10 +44,27 @@ function get_system_config($name, $key = '')
     if ($key == '') {
         return $config;
     } else {
-        if ($config[$key]) {
+        if (isset($config[$key])) {
             return $config[$key];
         }
+		else{
+			return '';
+		}
     }
+}
+
+//设置系统配置
+function set_system_config($name, $key, $value='')
+{
+    $config = [];
+	$conf = Db::name('config')->where('name', $name)->find();
+	if ($conf['content']) {
+		$config = unserialize($conf['content']);
+	}
+	$config[$key] = $value;
+	set_cache('system_config' . $name, $config);
+	$content = serialize($config);
+	Db::name('config')->where('name', $name)->update(['content'=>$content]);
 }
 
 
