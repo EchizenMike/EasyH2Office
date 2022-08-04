@@ -126,7 +126,7 @@
 				layer.msg(res.msg);
 				if (res.code == 0) {
 					//上传成功
-					$('#logo input').attr('value', res.data.id);
+					$('#logo input').attr('value', res.data.filepath);
 					$('#logo img').attr('src', res.data.filepath);
 				}
 			}
