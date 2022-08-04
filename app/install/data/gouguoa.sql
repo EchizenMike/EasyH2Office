@@ -246,8 +246,8 @@ INSERT INTO `oa_admin_rule` VALUES (91, 89, 'note/index/delete', '删除', '公�
 INSERT INTO `oa_admin_rule` VALUES (92, 89, 'note/index/view', '查看', '公告', 'note', '', 2, 1, 1, 0, 0);
 
 INSERT INTO `oa_admin_rule` VALUES (93, 6, 'oa/approve/index', '我发起的', '办公审批', 'oa', '', 1, 1, 1, 0, 0);
-INSERT INTO `oa_admin_rule` VALUES (94, 94, 'oa/approve/add', '新建/编辑', '办公审批', 'oa', '', 2, 1, 1, 0, 0);
-INSERT INTO `oa_admin_rule` VALUES (95, 94, 'oa/approve/view', '查看', '办公审批', 'oa', '', 2, 1, 1, 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (94, 93, 'oa/approve/add', '新建/编辑', '办公审批', 'oa', '', 2, 1, 1, 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (95, 93, 'oa/approve/view', '查看', '办公审批', 'oa', '', 2, 1, 1, 0, 0);
 
 INSERT INTO `oa_admin_rule` VALUES (96, 6, 'oa/approve/list', '我处理的', '办公审批', 'oa', '', 1, 1, 1, 0, 0);
 INSERT INTO `oa_admin_rule` VALUES (97, 6, 'oa/approve/copy', '抄送给我的', '办公审批', 'oa', '', 1, 1, 1, 0, 0);
