@@ -950,7 +950,7 @@ CREATE TABLE `oa_keywords`  (
 INSERT INTO `oa_keywords` VALUES (1, '勾股OA', 1, 1, 1638006730, 0);
 INSERT INTO `oa_keywords` VALUES (2, '勾股CMS', 1, 1, 1638006730, 0);
 INSERT INTO `oa_keywords` VALUES (3, '勾股BLOG', 1, 1, 1638006730, 0);
-INSERT INTO `oa_keywords` VALUES (3, '勾股DEV', 1, 1, 1638006730, 0);
+INSERT INTO `oa_keywords` VALUES (4, '勾股DEV', 1, 1, 1638006730, 0);
 
 -- ----------------------------
 -- Table structure for oa_message
