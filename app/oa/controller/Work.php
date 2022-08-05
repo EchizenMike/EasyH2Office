@@ -75,7 +75,7 @@ class Work extends BaseController
 			}
 			else{
 				if (!empty($param['read'])) {
-					if($param['read']==0){
+					if($param['read']==1){
 						$map[] = ['a.read_time', '=', 0];
 					}else{
 						$map[] = ['a.read_time', '>', 0];
