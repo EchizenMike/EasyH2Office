@@ -138,7 +138,7 @@
 									obj.del();
 								}
 							}
-							tool.post("/customer/index/distribute", {id: data.id,uid:ids,did:dids}, callback);
+							tool.post("/customer/api/distribute", {id: data.id,uid:ids,did:dids}, callback);
 							layer.close(index);
 						});
 					}

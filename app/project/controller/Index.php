@@ -225,11 +225,13 @@ class Index extends BaseController
 		if (request()->isPost()) {
 			if ($this->uid == $detail['admin_id'] || $this->uid == $detail['director_uid']) {
 				if (isset($param['start_time'])) {
+					$param['start_time'] = strtotime(urldecode($param['start_time']));
 					if ($param['start_time'] >= $detail['end_time']) {
 						return to_assign(1, '开始时间不能大于计划结束时间');
 					}
 				}
 				if (isset($param['end_time'])) {
+					$param['end_time'] = strtotime(urldecode($param['end_time']));
 					if ($param['end_time'] <= $detail['start_time']) {
 						return to_assign(1, '计划结束时间不能小于开始时间');
 					}
