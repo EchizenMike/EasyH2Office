@@ -17,8 +17,8 @@ class CustomerCheck extends Validate
     ];
 
     protected $message = [
-        'name.require' => '合同名称不能为空',
-        'name.unique' => '同样的合同名称已经存在',
+        'name.require' => '客户名称不能为空',
+        'name.unique' => '同样的客户名称已经存在',
         'id.require' => '缺少更新条件',
     ];
 
