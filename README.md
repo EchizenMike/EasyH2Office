@@ -7,25 +7,25 @@
 - 文档地址：[https://blog.gougucms.com/home/book/detail/bid/3.html](https://blog.gougucms.com/home/book/detail/bid/3.html)
 - 项目会不定时进行更新，建议⭐star⭐和👁️watch👁️一份。
 
-### ⭕ 开源项目
+### ⭕ 同系列开源项目
 1. [开源项目系列：勾股OA —— OA协同办公系统](https://gitee.com/gougucms/office)
-2. [开源项目系列：勾股CMS —— CMS内容管理系统框架](https://gitee.com/gougucms/gougucms)
-3. [开源项目系列：勾股BLOG —— 个人&工作室博客系统](https://gitee.com/gougucms/blog)
-4. [开源项目系列：勾股DEV —— 项目研发管理系统](https://gitee.com/gougucms/dev)
+2. [开源项目系列：勾股DEV —— 项目研发管理系统](https://gitee.com/gougucms/dev)
+3. [开源项目系列：勾股CMS —— CMS内容管理系统框架](https://gitee.com/gougucms/gougucms)
+4. [开源项目系列：勾股BLOG —— 个人&工作室博客系统](https://gitee.com/gougucms/blog)
 5. [开源项目系列：勾股Admin —— 基于Layui的Web UI解决方案。](https://gitee.com/gouguopen/guoguadmin.gitv)
 
 
 ### 📋 系统介绍
-勾股OA是一款基于ThinkPHP6 + Layui + MySql打造的简单实用的开源的企业办公系统。可以帮助解决企业办公项目大部分的重复工作，让开发更多关注业务逻辑。既能快速提高开发效率，帮助公司节省人力成本，同时又不失灵活性。使用勾股OA可以简单快速地开发出企业级的Web应用系统。
+勾股OA是一款基于ThinkPHP6 + Layui + MySql打造的实用的开源的企业办公系统，开箱即用，使用勾股OA可以简单快速地建立企业级的办公自动化系统。
+办公自动化系统是员工及管理者使用频率最高的应用系统，可以极大提高公司的办公效率，我们立志为中小企业提供开源好用的办公自动化系统，帮助企业节省数字化、信息化办公的成本。
 
 ### ✳️ 演示地址
 
-   勾股OA演示地址：[https://oa.gougucms.com](https://oa.gougucms.com)
+勾股OA演示地址：[https://oa.gougucms.com](https://oa.gougucms.com)
 
 PS：为了给后面的人提供良好的演示体验，体验以查看为主，如果确实需要填写数据，大家最好填些看似正常的数据，请不要乱填数据，比如：1111，aaa那些数据就不要乱来了。
-如果大家不遵守体验规则，后期发现很多乱的数据的话，就关闭对应的填写权限了。
 
-   登录账号及密码：
+体验账号及密码：
 ~~~
 BOSS角色：suhaizhen     123456
 总 经 理：yiyeshu      123456
