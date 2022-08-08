@@ -1,6 +1,48 @@
 layui.define(['tool'], function (exports) {
 	const layer = layui.layer, tool = layui.tool;
 	const obj = {
+		addLink: function (id, topic_id, module, url, desc) {
+			let that = this;
+			layer.open({
+				title: '添加链接',
+				type: 1,
+				area: ['580px', '240px'],
+				content: '<div class="px-4 pt-4"><div class="layui-input-inline mr-3">URL</div><div class="layui-input-inline" style="width:500px;"><input type="text" id="box_url" placeholder="请输入URL" value="' + url + '" class="layui-input" autocomplete="off" /></div></div><div class="px-4 pt-4"><div class="layui-input-inline mr-3">说明 </div><div class="layui-input-inline" style="width:500px;"><input type="text" id="box_desc" placeholder="请输入链接说明" value="' + desc + '" class="layui-input" autocomplete="off" /></div></div>',
+				btnAlign: 'c',
+				btn: ['提交发布'],
+				yes: function () {
+					let callback = function (e) {
+						if(e.code==0){
+							layer.closeAll();
+							layer.msg(e.msg);
+							if(module == 'project'){
+								setTimeout(function(){
+									location.reload();
+								},2000)	
+							}
+							else{
+								tool.load('/' + module + '/index/view/id/' + topic_id);
+							}
+						}
+						else{
+							layer.msg(e.msg);
+						}				
+					}
+					let url = $('#box_url').val();
+					let desc = $('#box_desc').val();
+					if (url == '') {
+						layer.msg('请输入URL');
+						return false;
+					}
+					if (desc == '') {
+						layer.msg('请输入链接说明');
+						return false;
+					}
+					let postData = { id: id, topic_id: topic_id, module: module, url: url, desc: desc };
+					tool.post("/project/api/add_link", postData, callback);
+				}
+			})
+		},
 		log: function (topic_id, module) {
 			let callback = function (res) {
 				if (res.code == 0 && res.data.length > 0) {
