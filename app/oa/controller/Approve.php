@@ -55,6 +55,7 @@ class Approve extends BaseController
         } else {
 			$list = Db::name('FlowType')->where(['status'=>1])->select()->toArray();			
 			View::assign('list', $list);
+			View::assign('type', get_config('approve.type'));
             return view();
         }
     }

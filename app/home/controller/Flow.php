@@ -20,6 +20,7 @@ class Flow extends BaseController
     public function index()
     {
         if (request()->isAjax()) {
+			$type = get_config('approve.type');
             $list = Db::name('Flow')
 				->field('f.*,a.name as username,t.title as flow_cate')
 				->alias('f')
@@ -31,6 +32,11 @@ class Flow extends BaseController
 				$value['department'] = implode(',',$department);
 				if($value['department']==''){
 					$value['department'] = '全公司';
+				}
+				foreach ($type as $k => $val){
+					if($value['type'] == $val['id']){
+						$value['type_name'] = $val['title'];						
+					}
 				}
 			}
             return to_assign(0, '', $list);
@@ -133,6 +139,7 @@ class Flow extends BaseController
                 View::assign('detail', $detail);
             }
             View::assign('id', $id);
+            View::assign('type', get_config('approve.type'));
             return view();
         }
     }

@@ -10,14 +10,9 @@
 			<td>
 				<select name="type" lay-verify="required" lay-reqText="请选择所属分类">
 				  <option value="">--请选择--</option>
-				  <option value="1">假勤</option>
-				  <option value="2">行政</option>
-				  <option value="3">财务</option>
-				  <option value="4">人事</option>
-				  <option value="5">其他</option>
-				  <option value="6">报销</option>
-				  <option value="7">发票</option>
-				  <option value="8">合同</option>
+				  {volist name="$type" id="vo"}
+				  <option value="{$vo.id}">{$vo.title}</option>
+				  {/volist}
 				</select>
 			</td>
 			<td class="layui-td-gray">名称<font>*</font></td>
@@ -49,14 +44,9 @@
 			<td>
 				<select name="type" lay-verify="required" lay-reqText="请选择所属分类">
 				  <option value="">--请选择--</option>
-				  <option value="1" {eq name="$detail.type" value="1"}selected=""{/eq}>假勤</option>
-				  <option value="2" {eq name="$detail.type" value="2"}selected=""{/eq}>行政</option>
-				  <option value="3" {eq name="$detail.type" value="3"}selected=""{/eq}>财务</option>
-				  <option value="4" {eq name="$detail.type" value="4"}selected=""{/eq}>人事</option>
-				  <option value="5" {eq name="$detail.type" value="5"}selected=""{/eq}>其他</option>
-				  <option value="6" {eq name="$detail.type" value="6"}selected=""{/eq}>报销</option>
-				  <option value="7" {eq name="$detail.type" value="7"}selected=""{/eq}>发票</option>
-				  <option value="8" {eq name="$detail.type" value="8"}selected=""{/eq}>合同</option>
+				  {volist name="$type" id="vo"}
+				  <option value="{$vo.id}" {eq name="$detail.type" value="$vo.id"}selected=""{/eq}>{$vo.title}</option>
+				  {/volist}
 				</select>
 			</td>
 			<td class="layui-td-gray">名称<font>*</font></td>

@@ -29,7 +29,15 @@ class Cate extends BaseController
     public function flow_type()
     {
         if (request()->isAjax()) {
-            $cate = Db::name('FlowType')->order('id asc')->select();
+            $cate = Db::name('FlowType')->order('id asc')->select()->toArray();
+			$type = get_config('approve.type');
+			foreach ($cate as $key => &$value){
+				foreach ($type as $k => $val){
+					if($value['type'] == $val['id']){
+						$value['type_name'] = $val['title'];						
+					}
+				}
+			}
             return to_assign(0, '', $cate);
         } else {
             return view();
@@ -76,6 +84,7 @@ class Cate extends BaseController
                 View::assign('detail', $detail);
             }
             View::assign('id', $id);
+			View::assign('type', get_config('approve.type'));
             return view();
         }
     }

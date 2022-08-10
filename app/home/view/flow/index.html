@@ -39,27 +39,7 @@
 						}
 						return html;
 					}}
-					,{field:'name',title: '应用模块',width:80, align:'center',templet:function(d){
-						var html = '其他';
-						if(d.type==1){
-							html = '假勤';
-						}else if(d.type==2){
-							html = '行政';
-						}else if(d.type==3){
-							html = '财务';
-						}else if(d.type==4){
-							html = '人事';
-						}else if(d.type==5){
-							html = '其他';
-						}else if(d.type==6){
-							html = '报销';
-						}else if(d.type==7){
-							html = '发票';
-						}else if(d.type==8){
-							html = '合同';
-						}
-						return html;
-					}}
+					,{field:'type_name',title: '应用模块',width:80, align:'center'}
 					,{field:'flow_cate',title: '审批类型',width:100, align:'center'}
 					,{field:'department',title: '适用部门'}
 					,{field:'username',title: '最后修改人',width:90,align:'center'}

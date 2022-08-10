@@ -15,7 +15,7 @@
 		<tr>
 			<td class="layui-td-gray">开始时间<font>*</font></td>
 			<td>
-				<input id="start_time_a" name="start_time_a" autocomplete="off" class="layui-input" value="" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
+				<input id="start_time_a" name="start_time_a" autocomplete="off" class="layui-input select-time" value="" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
 			</td>
 			<td>
 				<select lay-filter="time_b" id="start_time_b" name="start_time_b">
@@ -41,7 +41,7 @@
 			</td>
 			<td class="layui-td-gray">结束时间<font>*</font></td>
 			<td>
-				<input id="end_time_a" name="end_time_a" autocomplete="off" class="layui-input" value="" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
+				<input id="end_time_a" name="end_time_a" autocomplete="off" class="layui-input select-time" value="" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
 			</td>
 			<td>
 				<input type="hidden" name="duration" value="">
@@ -97,7 +97,7 @@
 		<tr>
 			<td class="layui-td-gray">开始时间<font>*</font></td>
 			<td>
-				<input id="start_time_a" name="start_time_a" autocomplete="off" class="layui-input" value="{$detail.start_time_a}" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
+				<input id="start_time_a" name="start_time_a" autocomplete="off" class="layui-input select-time" value="{$detail.start_time_a}" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
 			</td>
 			<td>
 				<select lay-filter="time_b" id="start_time_b" name="start_time_b" lay-verify="required" lay-reqText="请选择具体时间">
@@ -123,7 +123,7 @@
 			</td>
 			<td class="layui-td-gray">结束时间<font>*</font></td>
 			<td>
-				<input id="end_time_a" name="end_time_a" autocomplete="off" class="layui-input" value="{$detail.end_time_a}" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
+				<input id="end_time_a" name="end_time_a" autocomplete="off" class="layui-input select-time" value="{$detail.end_time_a}" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
 			</td>
 			<td>
 				<input type="hidden" name="duration" value="{$detail.duration}">
@@ -205,9 +205,11 @@ function leaveTime() {
 		return 0;
 	}	
 
-    var start = new Date(data_1+' '+data_1_1); 
-    var end = new Date(data_2+' '+data_2_1); 
-    var startHour = start.getHours(); //16
+    var start_date = data_1+' '+data_1_1; 
+    var end_date = data_2+' '+data_2_1; 
+	var start = new Date(start_date.replace(/-/g,'/'));
+	var end = new Date(end_date.replace(/-/g,'/'));
+    var startHour = start.getHours();
     var startMin = start.getMinutes(); 
     var endHour = end.getHours();
 	var endMin = end.getMinutes(); 
@@ -267,49 +269,42 @@ const moduleInit = ['tool','employeepicker'];
 			flowStep();
 		}	
 		//日期时间范围
-		laydate.render({
-			elem: '#start_time_a',
-			type: 'date',
-			format: 'yyyy-MM-dd',
-			showBottom: false,
-			done:function(){
-				var hours = leaveTime();
-				if(hours == 0){
-					$('#hours,#days').html('-');
-				}
-				else{
-					$('#hours').html('共'+hours/10+'小时');
-					var days = 0;
-					if(hours>75){
-						days = parseInt(hours/75);
+		lay('.select-time').each(function () {
+			laydate.render({
+				elem: this,
+				trigger: 'click',
+				done:function(){
+					var hours = leaveTime();
+					if(hours == 0){
+						$('#hours,#days').html('-');
 					}
-					$('#days').html('共'+days+'天，'+(hours%75)/10+'小时');
+					else{
+						$('#hours').html('共'+hours/10+'小时');
+						var days = 0;
+						if(hours>75){
+							days = parseInt(hours/75);
+						}
+						$('#days').html('共'+days+'天，'+(hours%75)/10+'小时');
+					}
+					$('[name="duration"]').val(hours/10);
 				}
-				$('[name="duration"]').val(hours/10);
-			}
+			});
 		});
 
-		//日期时间范围
-		laydate.render({
-			elem: '#end_time_a',
-			type: 'date',
-			format: 'yyyy-MM-dd',
-			showBottom: false,
-			done:function(){
-				var hours = leaveTime();
-				if(hours == 0){
-					$('#hours,#days').html('-');
-				}
-				else{
-					$('#hours').html('共'+hours/10+'小时');
-					var days = 0;
-					if(hours>=75){
-						days = parseInt(hours/75);
-					}
-					$('#days').html('共'+days+'天，'+(hours%75)/10+'小时');
-				}
-				$('[name="duration"]').val(hours/10);
+		form.on('select(time_b)', function(data){
+			var hours = leaveTime();
+			if(hours == 0){
+				$('#hours,#days').html('-');
 			}
+			else{
+				$('#hours').html('共'+hours/10+'小时');
+				var days = 0;
+				if(hours>=75){
+					days = parseInt(hours/75);
+				}
+				$('#days').html('共'+days+'天，'+(hours%75)/10+'小时');
+			}
+			$('[name="duration"]').val(hours/10);
 		});		
 	}
 </script>

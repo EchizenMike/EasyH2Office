@@ -17,57 +17,19 @@
 	<div class="layui-row layui-col-space12">
 		<div class="layui-col-md3">
 			<div class="layui-card">
-				<div class="layui-card-header" style="border-bottom:1px solid #eee;"><h3 class="h3-title">审批新申请</h3></div>		
-				<div class="layui-card-header"><strong>假勤</strong></div>
+				<div class="layui-card-header" style="border-bottom:1px solid #eee;"><h3 class="h3-title">审批新申请</h3></div>
+				{volist name="type" id="v" offset="0" length='5'}
+				<div class="layui-card-header"><strong>{$v.title}</strong></div>
 				<div class="square">
 					<div class="layui-row">
 						{volist name="list" id="vo"}
-							{eq name="vo.type" value="1"}
+							{eq name="vo.type" value="$v.id"}
 								<div class="layui-col-md4" data-type="{$vo.id}" title="{$vo.title}"><div><i class="iconfont {$vo.icon}"></i>{$vo.title}</div></div>	
 							{/eq}
 						{/volist}
 					</div>
 				</div>
-				<div class="layui-card-header"><strong>行政</strong></div>
-				<div class="square">
-					<div class="layui-row">
-						{volist name="list" id="vo"}
-							{eq name="vo.type" value="2"}
-								<div class="layui-col-md4" data-type="{$vo.id}" title="{$vo.title}"><div><i class="iconfont {$vo.icon}"></i>{$vo.title}</div></div>	
-							{/eq}
-						{/volist}
-					</div>
-				</div>
-				<div class="layui-card-header"><strong>财务</strong></div>
-				<div class="square">
-					<div class="layui-row">
-						{volist name="list" id="vo"}
-							{eq name="vo.type" value="3"}
-								<div class="layui-col-md4" data-type="{$vo.id}" title="{$vo.title}"><div><i class="iconfont {$vo.icon}"></i>{$vo.title}</div></div>	
-							{/eq}
-						{/volist}
-					</div>
-				</div>
-				<div class="layui-card-header"><strong>人事</strong></div>
-				<div class="square">
-					<div class="layui-row">
-						{volist name="list" id="vo"}
-							{eq name="vo.type" value="4"}
-								<div class="layui-col-md4" data-type="{$vo.id}" title="{$vo.title}"><div><i class="iconfont {$vo.icon}"></i>{$vo.title}</div></div>	
-							{/eq}
-						{/volist}
-					</div>
-				</div>
-				<div class="layui-card-header"><strong>其他</strong></div>
-				<div class="square">
-					<div class="layui-row">
-						{volist name="list" id="vo"}
-							{eq name="vo.type" value="5"}
-								<div class="layui-col-md4" data-type="{$vo.id}" title="{$vo.title}"><div><i class="iconfont {$vo.icon}"></i>{$vo.title}</div></div>	
-							{/eq}
-						{/volist}
-					</div>
-				</div>
+				{/volist}
 			</div>
 		</div>
 		<div class="layui-col-md9">

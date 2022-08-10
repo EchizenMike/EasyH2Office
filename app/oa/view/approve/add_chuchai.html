@@ -11,7 +11,7 @@
 		<tr>
 			<td class="layui-td-gray">开始时间<font>*</font></td>
 			<td>
-				<input id="start_time_a" name="start_time_a" autocomplete="off" class="layui-input" value="" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
+				<input id="start_time_a" name="start_time_a" autocomplete="off" class="layui-input select-time" value="" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
 			</td>
 			<td>
 				<select lay-filter="time_b" id="start_time_b" name="start_time_b">
@@ -43,7 +43,7 @@
 			</td>
 			<td class="layui-td-gray">结束时间<font>*</font></td>
 			<td>
-				<input id="end_time_a" name="end_time_a" autocomplete="off" class="layui-input" value="" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
+				<input id="end_time_a" name="end_time_a" autocomplete="off" class="layui-input select-time" value="" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
 			</td>
 			<td>
 				<input type="hidden" name="duration" value="">
@@ -99,7 +99,7 @@
 		<tr>
 			<td class="layui-td-gray">开始时间<font>*</font></td>
 			<td>
-				<input id="start_time_a" name="start_time_a" autocomplete="off" readonly class="layui-input" value="{$detail.start_time_a}" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
+				<input id="start_time_a" name="start_time_a" autocomplete="off" readonly class="layui-input select-time" value="{$detail.start_time_a}" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
 			</td>
 			<td>
 				<select lay-filter="time_b" id="start_time_b" name="start_time_b" lay-verify="required" lay-reqText="请选择具体时间">
@@ -131,7 +131,7 @@
 			</td>
 			<td class="layui-td-gray">结束时间<font>*</font></td>
 			<td>
-				<input id="end_time_a" name="end_time_a" autocomplete="off" readonly class="layui-input" value="{$detail.end_time_a}" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
+				<input id="end_time_a" name="end_time_a" autocomplete="off" readonly class="layui-input select-time" value="{$detail.end_time_a}" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
 			</td>
 			<td>
 				<input type="hidden" name="duration" value="{$detail.duration}">
@@ -212,19 +212,11 @@ const moduleInit = ['tool','employeepicker'];
 			employeepicker = layui.employeepicker,
 			laydate = layui.laydate;	
 		//日期时间范围
-		laydate.render({
-			elem: '#start_time_a',
-			type: 'date',
-			format: 'yyyy-MM-dd',
-			showBottom: false
-		});
-
-		//日期时间范围
-		laydate.render({
-			elem: '#end_time_a',
-			type: 'date',
-			format: 'yyyy-MM-dd',
-			showBottom: false
+		lay('.select-time').each(function () {
+			laydate.render({
+				elem: this,
+				trigger: 'click'
+			});
 		});
 		
 		if (typeof (flowStep) == "function") {
