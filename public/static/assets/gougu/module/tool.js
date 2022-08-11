@@ -30,8 +30,6 @@ layui.define([], function (exports) {
 							let op_width = obj.outerWidth();
 							obj.animate({ left: '+=' + op_width + 'px' }, 200, 'linear', function () {
 								$('body').removeClass('right-open');
-								//$('.layui-anim-rl').remove();
-								//$('.layui-layer-shade').remove();
 								layer.close(index);
 								if (layui.pageTable) {
 									layui.pageTable.resize();
@@ -52,8 +50,9 @@ layui.define([], function (exports) {
 				return false;
 			}
 			that.loading = true;
-			if (width == 0) {
-				width = window.innerWidth > 1280 ? '1200px' : '996px';
+			var sideWidth = window.innerWidth > 1280 ? '1200px' : '996px';
+			if (width && width > 0) {
+				sideWidth = width + 'px';
 			}
 			$.ajax({
 				url: url,
@@ -64,26 +63,35 @@ layui.define([], function (exports) {
 						layer.msg(res.msg);
 						return false;
 					}
-					var express = '<section id="expressLayer" class="express-box" style="width:' + width + '"><article id="articleLayer">' + res + '</article><div id="expressClose" class="express-close" title="关闭">关闭</div></section><div id="expressMask" class="express-mask"></div>';
+					var express = '<section id="expressLayer" class="express-box" style="width:' + sideWidth + '"><article id="articleLayer">' + res + '</article><div id="expressClose" class="express-close" title="关闭">关闭</div></section><div id="expressMask" class="express-mask"></div>';
 
 					$('body').append(express).addClass('right-open');
 					$('#expressMask').fadeIn(200);
 					$('#expressLayer').animate({ 'right': 0 }, 200, 'linear', function () {
-						openInit();
-					});
-
-					$('#expressClose').click(function () {
+						if (typeof (openInit) == "function") {
+							openInit();
+						}						
+					});					
+					that.loading = false;
+					
+					//关闭
+					$('body').on('click','.express-close', function () {
 						$('#expressMask').fadeOut(100);
 						$('body').removeClass('right-open');
-						$('#expressLayer').animate({ 'right': '-100%' }, 100, 'linear', function () {
+						let op_width = $('#expressLayer').outerWidth();
+						$('#expressLayer').animate({ left: '+=' + op_width + 'px' }, 200, 'linear', function () {
 							$('#expressLayer').remove();
 							$('#expressMask').remove();
+							if (layui.pageTable) {
+								layui.pageTable.resize();
+							}
 						})
 					})
 					$(window).resize(function () {
 						width = window.innerWidth > 1280 ? '1200' : '996';
 						$('#expressLayer').width(width);
-					})
+					})					
+					
 				}
 				, error: function (xhr, textstatus, thrown) {
 					console.log('错误');
@@ -267,6 +275,13 @@ layui.define([], function (exports) {
 		let url = $(this).data('href');
 		if (url && url !== '') {
 			tool.side(url);
+		}
+		return false;
+	});
+	$('body').on('click', '.open-a', function () {
+		let url = $(this).data('href');
+		if (url && url !== '') {
+			tool.open(url);
 		}
 		return false;
 	});

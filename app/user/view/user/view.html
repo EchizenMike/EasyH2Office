@@ -95,7 +95,7 @@
 	<table class="layui-table layui-table-form">
 		{volist name="role_rule" id="vo"}
 		<tr>
-			<td style="font-weight:800">
+			<td style="font-weight:800; text-align:center;">
 			  <input type="checkbox" disabled value="{$vo.id}" title="{$vo.title}" {eq name="$vo.checked" value="true" }checked{/eq}>
 			</td>
 			{notempty name="vo.children"}
