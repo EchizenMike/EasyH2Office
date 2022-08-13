@@ -42,14 +42,14 @@
 		<tr>
 			<td class="layui-td-gray">负责人</td>
 			<td>
+				<input type="text" name="director_name" placeholder="请选择" readonly class="layui-input picker-one" value="">
 				<input type="hidden" name="director_uid" readonly value="">
-				<input type="text" name="director_name" placeholder="请选择" readonly class="layui-input" value="">
 			</td>
 			{empty name="$project_id"}
 			<td class="layui-td-gray">协作人</td>
 			<td>
+				<input type="text" name="assist_admin_names" placeholder="请选择" readonly class="layui-input picker-more" value="">
 				<input type="hidden" name="assist_admin_ids" readonly value="">
-				<input type="text" name="assist_admin_names" placeholder="请选择" readonly class="layui-input" value="">
 			</td>
 			<td class="layui-td-gray">关联项目</td>
 			<td>
@@ -103,43 +103,6 @@
 		//日期范围
 		laydate.render({
 			elem: '#end_time'
-		});
-
-		//选择负责人弹窗	
-		$('body').on('click', '[name="director_name"]', function () {
-			var ids = $('[name="director_uid"]').val(), names = $('[name="director_name"]').val();
-			employeepicker.init({
-				ids: ids,
-				names: names,
-				type: 0,
-				department_url: "/api/index/get_department_tree",
-				employee_url: "/api/index/get_employee",
-				callback: function (ids, names, dids, departments) {
-					$('[name="director_uid"]').val(ids);
-					$('[name="director_name"]').val(names);
-				}
-			});
-		});
-
-
-		//选择协作人人弹窗	
-		$('body').on('click', '[name="assist_admin_names"]', function () {
-			var ids = $('[name="assist_admin_ids"]').val(), names = $('[name="assist_admin_names"]').val(), assist_admin_id_array = [], assist_admin_name_array = [];
-			if (ids.length > 0) {
-				assist_admin_id_array = ids.split(',');
-				assist_admin_name_array = names.split(',');
-			}
-			employeepicker.init({
-				ids: assist_admin_id_array,
-				names: assist_admin_name_array,
-				department_url: "/api/index/get_department_tree",
-				employee_url: "/api/index/get_employee",
-				type: 1,
-				callback: function (ids, names, dids, departments) {
-					$('[name="assist_admin_ids"]').val(ids);
-					$('[name="assist_admin_names"]').val(names);
-				}
-			});
 		});
 
 		//监听提交

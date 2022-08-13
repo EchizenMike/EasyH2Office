@@ -335,48 +335,6 @@ const moduleInit = ['tool','employeepicker'];
 			return false;
 		});
 		
-		//选择单个员工弹窗	
-		$('body').on('click','.picker-one',function () {
-			if($('[name="flow_id"]').val()==''){
-				layer.msg('请先选择审批流程');
-				return false;
-			}
-			let that = $(this);
-			let ids=that.next().val()+'',names = that.val()+'';
-			employeepicker.init({
-				ids:ids,
-				names:names,
-				type:0,
-				department_url: "/api/index/get_department_tree",
-				employee_url: "/api/index/get_employee",
-				callback:function(ids,names,dids,departments){
-					that.val(names);
-					that.next().val(ids);
-				}
-			});
-		});
-		
-		//选择多个员工弹窗	
-		$('body').on('click','.picker-more',function () {
-			let that = $(this);
-			let ids=that.next().val()+'',names = that.val()+'',ids_array=[],names_array=[];
-			if(ids.length>0){
-				ids_array=ids.split(',');
-				names_array=names.split(',');
-			}
-			employeepicker.init({
-				ids:ids_array,
-				names:names_array,
-				type:1,
-				department_url: "/api/index/get_department_tree",
-				employee_url: "/api/index/get_employee",
-				callback:function(ids,names,dids,departments){
-					that.val(names.join(','));
-					that.next().val(ids.join(','));
-				}
-			});
-		});
-		
 		form.on('select(flowtype)', function(data){
 			var check_type = data.elem[data.elem.selectedIndex].title;
 			var formHtml='<td class="layui-td-gray">审核人<font>*</font></td>\

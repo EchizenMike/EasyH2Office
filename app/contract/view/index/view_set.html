@@ -269,45 +269,6 @@ const moduleInit = ['tool','employeepicker'];
 			if(index == 1){
 				log(layui);	
 			}
-		});	
-	
-		//=================================================		
-		//选择单个员工弹窗	
-		$('body').on('click','.picker-one',function () {
-			let that = $(this);
-			let ids=that.next().val()+'',names = that.val()+'';
-			employeepicker.init({
-				ids:ids,
-				names:names,
-				type:0,
-				department_url: "/api/index/get_department_tree",
-				employee_url: "/api/index/get_employee",
-				callback:function(ids,names,dids,departments){
-					that.val(names);
-					that.next().val(ids);
-				}
-			});
-		});
-		
-		//选择多个员工弹窗	
-		$('body').on('click','.picker-more',function () {
-			let that = $(this);
-			let ids=that.next().val()+'',names = that.val()+'',ids_array=[],names_array=[];
-			if(ids.length>0){
-				ids_array=ids.split(',');
-				names_array=names.split(',');
-			}
-			employeepicker.init({
-				ids:ids_array,
-				names:names_array,
-				type:1,
-				department_url: "/api/index/get_department_tree",
-				employee_url: "/api/index/get_employee",
-				callback:function(ids,names,dids,departments){
-					that.val(names.join(','));
-					that.next().val(ids.join(','));
-				}
-			});
 		});
 		
 		$('body').on('click','[data-event="check"]',function(){

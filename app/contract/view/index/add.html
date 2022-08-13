@@ -117,17 +117,17 @@
 	  <tr>
         <td class="layui-td-gray-2">合同制定人<font>*</font></td>
         <td>
-          <input type="text" name="prepared_name" autocomplete="off" readonly placeholder="请选择合同制定人" class="layui-input">
+          <input type="text" name="prepared_name" autocomplete="off" readonly placeholder="请选择合同制定人" class="layui-input picker-one">
 		  <input type="hidden" name="prepared_uid" lay-verify="required" lay-reqText="请选择合同制定人">
         </td>
         <td class="layui-td-gray-2">合同保管人<font>*</font></td>
         <td>
-          <input type="text" name="keeper_name" autocomplete="off" readonly placeholder="请选择合同保管人" class="layui-input">
+          <input type="text" name="keeper_name" autocomplete="off" readonly placeholder="请选择合同保管人" class="layui-input picker-one">
 		  <input type="hidden" name="keeper_uid" lay-verify="required" lay-reqText="请选择合同保管人">
         </td>
 		<td class="layui-td-gray">合同共享人员</td>
         <td>
-			<input type="text" name="share_names" autocomplete="off" readonly placeholder="请选择共享人员" class="layui-input">
+			<input type="text" name="share_names" autocomplete="off" readonly placeholder="请选择共享人员" class="layui-input picker-more">
 			<input type="hidden" name="share_ids">
         </td>
       </tr>
@@ -181,59 +181,6 @@
 			});
 		});
 		
-		//选择合同制定人弹窗	
-		$('body').on('click','[name="prepared_name"]',function () {
-			var ids=$('[name="prepared_uid"]').val(),names=$('[name="prepared_name"]').val();
-			employeepicker.init({
-				ids:ids,
-				names:names,
-				type:0,
-				department_url: "/api/index/get_department_tree",
-				employee_url: "/api/index/get_employee",
-				callback:function(ids,names,dids,departments){
-					$('[name="prepared_uid"]').val(ids);
-					$('[name="prepared_name"]').val(names);
-				}
-			});
-		}); 
-		
-		//选择合同保管人弹窗	
-		$('body').on('click','[name="keeper_name"]',function () {
-			var ids=$('[name="keeper_uid"]').val(),names=$('[name="keeper_name"]').val();
-			employeepicker.init({
-				ids:ids,
-				names:names,
-				type:0,
-				department_url: "/api/index/get_department_tree",
-				employee_url: "/api/index/get_employee",
-				callback:function(ids,names,dids,departments){
-					$('[name="keeper_uid"]').val(ids);
-					$('[name="keeper_name"]').val(names);
-				}
-			});
-		});
-	
-	
-		//选择共享成员弹窗	
-		$('body').on('click','[name="share_names"]',function () {
-			var ids=$('[name="share_ids"]').val(),names=$(this).val(),share_ids_array=[],share_names_array=[];
-			if(ids.length>0){
-				share_ids_array=ids.split(',');
-				share_names_array=names.split(',');
-			}
-			employeepicker.init({
-				ids:share_ids_array,
-				names:share_names_array,
-				type:1,
-				department_url: "/api/index/get_department_tree",
-				employee_url: "/api/index/get_employee",
-				callback:function(ids,names,dids,departments){
-					$('[name="share_ids"]').val(ids);
-					$('[name="share_names"]').val(names);
-				}
-			});
-		});
-
 		//radio选择
 		form.on('radio(tax)', function(data){
 			if(data.value == 0){

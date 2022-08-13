@@ -34,7 +34,7 @@
 			<td class="layui-td-gray">权限人员<font>*</font>
 			</td>
 			<td colspan="3">
-				<input type="text" id="unames" name="unames" value="{$detail.unames}" readonly placeholder="请选择权限人员" autocomplete="off" class="layui-input">
+				<input type="text" id="unames" name="unames" value="{$detail.unames}" readonly placeholder="请选择权限人员" autocomplete="off" class="layui-input picker-more">
 				<input type="hidden" id="uids" name="uids" value="{$detail.uids}" lay-verify="required" lay-reqText="请选择权限人员">
 			</td>
 		</tr>
@@ -57,28 +57,7 @@
 <script>
 	const moduleInit = ['tool','employeepicker'];
 	function gouguInit() {
-		var form = layui.form, tool = layui.tool,employeepicker = layui.employeepicker;
-		
-		//选择共享成员弹窗	
-		$('body').on('click','#unames',function () {
-			var ids=$('#uids').val(),names=$(this).val(),share_ids_array=[],share_names_array=[];
-			if(ids.length>0){
-				share_ids_array=ids.split(',');
-				share_names_array=names.split(',');
-			}
-			employeepicker.init({
-				ids:share_ids_array,
-				names:share_names_array,
-				type:1,
-				department_url: "/api/index/get_department_tree",
-				employee_url: "/api/index/get_employee",
-				callback:function(ids,names,dids,departments){
-					$('#uids').val(ids);
-					$('#unames').val(names);
-				}
-			});
-		});
-		
+		var form = layui.form, tool = layui.tool;		
 		//监听提交
 		form.on('submit(webform)', function (data) {
 			let callback = function (e) {

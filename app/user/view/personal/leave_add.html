@@ -22,14 +22,14 @@
 			</td>
 			<td class="layui-td-gray-2">部门负责人<font>*</font></td>
 			<td>
-			<input type="text" name="lead_admin_name" autocomplete="off" lay-verify="required" placeholder="请选择部门负责人" lay-reqText="请选择部门负责人" readonly class="layui-input">
+			<input type="text" name="lead_admin_name" autocomplete="off" lay-verify="required" placeholder="请选择部门负责人" lay-reqText="请选择部门负责人" readonly class="layui-input picker-one">
 			<input type="hidden" name="lead_admin_id" autocomplete="off" value="0">
 			</td>
 		</tr>
 		<tr>
 			<td class="layui-td-gray">交接人员<font>*</font></td>
 			<td colspan="3">				
-				<input type="text" name="connect_names" autocomplete="off" lay-verify="required" placeholder="请选择交接人员" lay-reqText="请选择交接人员" readonly class="layui-input">
+				<input type="text" name="connect_names" autocomplete="off" lay-verify="required" placeholder="请选择交接人员" lay-reqText="请选择交接人员" readonly class="layui-input picker-more">
 				<input type="hidden" name="connect_uids" class="layui-input">
 			</td>
 		</tr>
@@ -59,14 +59,14 @@
 			</td>
 			<td class="layui-td-gray-2">部门负责人<font>*</font></td>
 			<td>
-			<input type="text" name="lead_admin_name" autocomplete="off" value="{$detail.lead_admin_name}" lay-verify="required" placeholder="请选择部门负责人" lay-reqText="请选择部门负责人" readonly class="layui-input">
+			<input type="text" name="lead_admin_name" autocomplete="off" value="{$detail.lead_admin_name}" lay-verify="required" placeholder="请选择部门负责人" lay-reqText="请选择部门负责人" readonly class="layui-input picker-one">
 			<input type="hidden" name="lead_admin_id" autocomplete="off" value="{$detail.lead_admin_id}">
 			</td>
 		</tr>
 		<tr>
 			<td class="layui-td-gray">交接人员<font>*</font></td>
 			<td colspan="3">				
-				<input type="text" name="connect_names" autocomplete="off" lay-verify="required" placeholder="请选择交接人员" lay-reqText="请选择交接人员" readonly class="layui-input" value="{$detail.connect_names}">
+				<input type="text" name="connect_names" autocomplete="off" lay-verify="required" placeholder="请选择交接人员" lay-reqText="请选择交接人员" readonly class="layui-input picker-more" value="{$detail.connect_names}">
 				<input type="hidden" name="connect_uids" class="layui-input" value="{$detail.connect_uids}">
 			</td>
 		</tr>
@@ -123,41 +123,6 @@
 				}
 			});
 		}); 
-
-		//监听部门负责人
-		$('body').on('click','[name="lead_admin_name"]',function () {
-			var ids=$('[name="lead_admin_id"]').val(),names=$('[name="lead_admin_name"]').val();
-			employeepicker.init({
-				ids:ids,
-				names:names,
-				department_url: "/api/index/get_department_tree",
-				employee_url: "/api/index/get_employee",
-				type:0,
-				callback:function(ids,names,dids,departments){
-					$('[name="lead_admin_id"]').val(ids);
-					$('[name="lead_admin_name"]').val(names);
-				}
-			});
-		}); 
-
-		//监听交接成员
-		$('body').on('click','[name="connect_names"]',function () {
-			var ids=$('[name="connect_uids"]').val(),names=$('[name="connect_names"]').val(),idsArray=[],namesArray=[];
-			if(ids!=''){
-				idsArray=ids.split(',');
-				namesArray=names.split(',');
-			}
-			employeepicker.init({
-				ids:idsArray,
-				names:namesArray,
-				department_url: "/api/index/get_department_tree",
-				employee_url: "/api/index/get_employee",
-				callback:function(ids,names){
-					$('[name="connect_uids"]').val(ids.join(',')),
-					$('[name="connect_names"]').val(names.join(','));
-				}
-			});
-		});
 
 		//监听提交
 		form.on('submit(webform)', function (data) {

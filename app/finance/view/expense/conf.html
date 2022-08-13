@@ -60,28 +60,7 @@
 <script>
 	const moduleInit = ['tool','employeepicker'];
 	function gouguInit() {
-		var form = layui.form, tool = layui.tool,employeepicker = layui.employeepicker;
-		
-		//选择多个员工弹窗	
-		$('body').on('click','.picker-more',function () {
-			let that = $(this);
-			let ids=that.next().val()+'',names = that.val()+'',ids_array=[],names_array=[];
-			if(ids.length>0){
-				ids_array=ids.split(',');
-				names_array=names.split(',');
-			}
-			employeepicker.init({
-				ids:ids_array,
-				names:names_array,
-				type:1,
-				department_url: "/api/index/get_department_tree",
-				employee_url: "/api/index/get_employee",
-				callback:function(ids,names,dids,departments){
-					that.val(names.join(','));
-					that.next().val(ids.join(','));
-				}
-			});
-		});
+		var form = layui.form, tool = layui.tool;
 		
 		//监听提交
 		form.on('submit(webform)', function (data) {

@@ -116,19 +116,6 @@ const moduleInit = ['tool','employeepicker'];
 				}
 			})	
 		
-		//选择人员		
-		$('.layui-form').on('click','[name="check_admin_name"]',function(){
-			employeepicker.init({
-				department_url: "/api/index/get_department_tree",
-				employee_url: "/api/index/get_employee",
-				type:0,
-				callback:function(ids,names){
-					$('[name="check_admin_ids"]').val(ids),
-					$('[name="check_admin_name"]').val(names);
-				}
-			});
-		})
-		
 		
 		//监听提交
 		$('#formBtn').on('click','span', function(data){

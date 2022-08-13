@@ -26,7 +26,7 @@
 				<input type="radio" name="check_node" lay-filter="check_node" value="1" title="审核结束">
 				<input type="radio" name="check_node" lay-filter="check_node" value="2" title="下一审批人">
 				<div class="layui-inline">
-				<input type="hidden" name="check_admin_ids" value=""><input type="text" name="check_admin_name" value="" autocomplete="off" placeholder="请选择下一审批人" lay-verify="required" lay-reqText="请选择下一审批人" class="layui-input">
+				<input type="text" name="check_admin_name" value="" autocomplete="off" placeholder="请选择下一审批人" lay-verify="required" lay-reqText="请选择下一审批人" class="layui-input picker-one"><input type="hidden" name="check_admin_ids" value="">
 				</div>				
 			</td>
 		</tr>
@@ -167,21 +167,7 @@
 						$('#flowList').append(flowHtml);					
 					}
 				}
-			})	 
-			
-			//选择人员		
-			$('.layui-form').on('click','[name="check_admin_name"]',function(){
-				employeepicker.init({
-					department_url: "/api/index/get_department_tree",
-					employee_url: "/api/index/get_employee",
-					type:0,
-					callback:function(ids,names){
-						$('[name="check_admin_ids"]').val(ids),
-						$('[name="check_admin_name"]').val(names);
-					}
-				});
 			})
-
 
 			//监听提交
 			$('#formBtn').on('click','span', function(data){
