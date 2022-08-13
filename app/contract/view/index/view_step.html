@@ -1,17 +1,9 @@
 	<table class="layui-table layui-table-form" style="margin-top:12px">		
-		{eq name="$detail.check_status" value="1"}
 		<tr>
 			<td class="layui-td-gray-2">当前审核人</td>
 			<td>{$detail.check_user}</td>
-			<td class="layui-td-gray">审核状态</td>
-			<td>
-				<span style="color:#4285f4">审批中</span>
-			</td>
-		</tr>
-		{/eq}
-		<tr>
-			<td class="layui-td-gray-2">抄送人</td>
-			<td colspan="3">{$detail.copy_user}</td>
+			<td class="layui-td-gray">抄送人</td>
+			<td>{$detail.copy_user}</td>
 		</tr>
 		<tr>
 			<td class="layui-td-gray">审批流程</td>

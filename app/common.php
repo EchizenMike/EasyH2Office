@@ -444,7 +444,7 @@ function get_file($id)
  * @param int    $param_id 操作类型
  * @param array  $param 提交的参数
  */
-function add_log($type, $param_id = '', $param = [],$subject='')
+function add_log($type, $param_id = '', $param = [] ,$subject='')
 {
 	$action = '未知操作';
 	$type_action = get_config('log.type_action');
