@@ -97,7 +97,7 @@ INSERT INTO `oa_admin_module` VALUES (2, '人事模块', 'user', 1, 1, 163956291
 INSERT INTO `oa_admin_module` VALUES (3, '行政模块', 'adm', 1, 1, 1639562910, 0);
 INSERT INTO `oa_admin_module` VALUES (4, '公告模块', 'note', 1, 1, 1639562910, 0);
 INSERT INTO `oa_admin_module` VALUES (5, 'OA模块', 'oa', 1, 1, 1639562910, 0);
-INSERT INTO `oa_admin_module` VALUES (6, '财务模块', 'finance', 2, 1, 1639562910, 0);
+INSERT INTO `oa_admin_module` VALUES (6, '财务模块', 'finance', 1, 1, 1639562910, 0);
 INSERT INTO `oa_admin_module` VALUES (7, '客户模块', 'customer', 2, 1, 1639562910, 0);
 INSERT INTO `oa_admin_module` VALUES (8, '合同模块', 'contract', 2, 1, 1656142368, 0);
 INSERT INTO `oa_admin_module` VALUES (9, '项目模块', 'project', 2, 1, 1656142368, 0);
