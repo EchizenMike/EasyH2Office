@@ -104,8 +104,8 @@
 					title: '提示'
 				}, function(index) {
 					let callback = function (e) {
-						layer.msg(res.msg);
-						if (res.code == 0) {
+						layer.msg(e.msg);
+						if (e.code == 0) {
 							obj.del();
 						}
 					}
