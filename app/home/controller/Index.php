@@ -29,15 +29,22 @@ class Index extends BaseController
                 $statistics['invoice_html_check'] = '';
             }
 
-            //发票待开具统计
-            $invoice_map_open[] = ['open_time', '=', 0];
-            $invoice_map_open[] = ['open_admin_id', '=', $admin_id];
-            $invoice_map_open[] = ['delete_time', '=', 0];
-            $invoice_count_open = Db::name('Invoice')->where($invoice_map_open)->count();
-            $statistics['invoice_html_open'] = '<a class="tab-a" data-title="待开具的发票" data-href="/finance/invoice/checkedlist">您有<font style="color:#FF0000">' . $invoice_count_open . '</font>条发票待开具</a>';
-            if ($invoice_count_open == 0) {
-                $statistics['invoice_html_open'] = '';
-            }
+			$map = [];
+			$map[] = ['name', '=', 'finance_admin'];
+			$map[] = ['', 'exp', Db::raw("FIND_IN_SET('{$admin_id}',conf_1)")];
+			$count = Db::name('DataAuth')->where($map)->count();
+			
+			$statistics['invoice_html_open'] = '';
+			if($count>0 ||$admin_id == 1){
+				//发票待开具统计
+				$invoice_map_open[] = ['open_time', '=', 0];
+				$invoice_map_open[] = ['check_status', '=', 2];
+				$invoice_map_open[] = ['delete_time', '=', 0];
+				$invoice_count_open = Db::name('Invoice')->where($invoice_map_open)->count();
+				if ($invoice_count_open > 0) {
+					$statistics['invoice_html_open'] = '<a class="tab-a" data-title="待开具的发票" data-href="/finance/invoice/checkedlist">您有<font style="color:#FF0000">' . $invoice_count_open . '</font>条发票待开具</a>';
+				}
+			}
 
             //待审核的报销统计
             $expense_map_check[] = ['check_status', '<', 2];
