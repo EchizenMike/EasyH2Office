@@ -32,7 +32,7 @@ class Contact extends BaseController
 			$uid = $this->uid;
 			$auth = isAuth($uid,'customer_admin');
 			if($auth==0){
-				$dids = get_department_son($this->did,0);
+				$dids = get_department_role($this->uid);
 				if(!empty($dids)){
 					$whereOr[] =['c.belong_did', 'in', $dids];
 				}

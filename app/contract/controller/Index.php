@@ -46,6 +46,10 @@ class Index extends BaseController
 				$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',a.share_ids)")];
 				$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',a.check_admin_ids)")];
 				$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',a.flow_admin_ids)")];
+				$dids = get_department_role($this->uid);
+				if(!empty($dids)){
+					$whereOr[] =['a.sign_did', 'in', $dids];
+				}
 			}
 			
             $model = new ContractList();
@@ -82,6 +86,10 @@ class Index extends BaseController
 			if($auth==0){
 				$whereOr[] =['a.admin_id|a.prepared_uid|a.sign_uid|a.keeper_uid', '=', $uid];
 				$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',a.share_ids)")];
+				$dids = get_department_role($this->uid);
+				if(!empty($dids)){
+					$whereOr[] =['a.sign_did', 'in', $dids];
+				}
 			}			
             $model = new ContractList();
 			$list = $model->get_list($param, $where, $whereOr);
@@ -192,22 +200,26 @@ class Index extends BaseController
 		$is_check_admin = 0;
 		$is_create_admin = 0;
 		$check_record = [];
-		$auth_array=[];
-		if(!empty($detail['share_ids'])){
-			$share_ids = explode(",",$detail['share_ids']);
-			$auth_array = array_merge($auth_array,$share_ids);
-		}
-		if(!empty($detail['check_admin_ids'])){
-			$check_admin_ids = explode(",",$detail['check_admin_ids']);
-			$auth_array = array_merge($auth_array,$check_admin_ids);
-		}
-		if(!empty($detail['flow_admin_ids'])){
-			$flow_admin_ids = explode(",",$detail['flow_admin_ids']);
-			$auth_array = array_merge($auth_array,$flow_admin_ids);
-		}		
-		array_push($auth_array,$detail['admin_id'],$detail['prepared_uid'],$detail['sign_uid'],$detail['keeper_uid']);
-		if($auth==0 && !in_array($this->uid,$auth_array)){
-			return view('../../base/view/common/roletemplate');
+		if($auth==0){
+			$auth_array=[];
+			if(!empty($detail['share_ids'])){
+				$share_ids = explode(",",$detail['share_ids']);
+				$auth_array = array_merge($auth_array,$share_ids);
+			}
+			if(!empty($detail['check_admin_ids'])){
+				$check_admin_ids = explode(",",$detail['check_admin_ids']);
+				$auth_array = array_merge($auth_array,$check_admin_ids);
+			}
+			if(!empty($detail['flow_admin_ids'])){
+				$flow_admin_ids = explode(",",$detail['flow_admin_ids']);
+				$auth_array = array_merge($auth_array,$flow_admin_ids);
+			}		
+			array_push($auth_array,$detail['admin_id'],$detail['prepared_uid'],$detail['sign_uid'],$detail['keeper_uid']);
+			//部门负责人
+			$dids = get_department_role($this->uid);
+			if(!in_array($this->uid,$auth_array) && !in_array($detail['sign_did'],$dids)){
+				return view('../../base/view/common/roletemplate');
+			}
 		}
 		
 		$detail['create_user'] = Db::name('Admin')->where(['id' => $detail['admin_id']])->value('name');

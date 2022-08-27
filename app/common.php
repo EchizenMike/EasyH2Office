@@ -216,13 +216,13 @@ function get_department_son($did = 0, $is_self = 1)
     $department_list = get_data_node($department, $did);
     $department_array = array_column($department_list, 'id');
     if ($is_self == 1) {
-        //包括自己在内
+        //包括自己部门在内
         $department_array[] = $did;
     }
     return $department_array;
 }
 
-//读取员工所在部门的负责人
+//读取员工所在部门的负责人（pid=1，上一级负责人）
 function get_department_leader($uid=0,$pid=0)
 {
 	$did = get_admin($uid)['did'];
@@ -239,6 +239,26 @@ function get_department_leader($uid=0,$pid=0)
 		}		
 	}    
     return $leader;
+}
+
+//读取部门负责人所在部门的数据权限【包括员工所在部门+其子部门】
+function get_department_role($uid = 0)
+{
+	$did = get_admin($uid)['did'];
+	//判断是否是部门负责人
+	$is_leader = Db::name('Department')->where(['id' => $did,'leader_id'=>$uid])->count();
+	if($is_leader=0){
+		return [];
+	}
+	else{
+		//获取子部门
+		$department = get_department();
+		$department_list = get_data_node($department, $did);
+		$department_array = array_column($department_list, 'id');
+		//包括自己部门在内
+		$department_array[] = $did;
+		return $department_array;
+	}
 }
 
 //读取职位

@@ -35,7 +35,7 @@ class Index extends BaseController
 			
 			$uid = $this->uid;
 			$auth = isAuth($uid,'customer_admin');
-			$dids = get_department_son($this->did,0);
+			$dids = get_department_role($this->uid);
 			if($auth==0){
 				if($tab==1){
 					$whereOr[] =['a.belong_uid', '=', $uid];
@@ -376,7 +376,8 @@ class Index extends BaseController
         $id = get_params("id");
 		//查看权限判断
 		$customer = customer_auth($this->uid,$id);
-        $detail = (new CustomerList())->detail($id);		
+		
+        $detail = (new CustomerList())->detail($id);				
 		$contact = Db::name('CustomerContact')->where(['is_default'=>1,'cid'=>$id])->find();
         View::assign('contact', $contact);
         View::assign('detail', $detail);

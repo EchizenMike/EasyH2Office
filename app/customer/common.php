@@ -17,27 +17,32 @@ function customer_auth($uid,$customer_id,$ajax=0,$level=0)
 	$customer =  Db::name('Customer')->where(['id' => $customer_id])->find();
 	//是否是客户管理员
     $auth = isAuth($uid,'customer_admin');
-	if($auth==1){
-		return $customer;
-	}
-	$auth_array=[];
 	if($customer['belong_uid']==0){
 		return $customer;
 	}
-	if(!empty($customer['share_ids']) && $level==0){
-		$auth_array = explode(",",$customer['share_ids']);
-	}		
-	array_push($auth_array,$customer['belong_uid']);	
-	if(!in_array($uid,$auth_array)){
-		if($ajax == 1){
-			to_assign(1,'无权限操作');
+	if($auth==1){
+		return $customer;
+	}
+	else if($auth==0){
+		$auth_array=[];
+		if(!empty($customer['share_ids'])){
+			$share_ids = explode(",",$customer['share_ids']);
+			$auth_array = array_merge($auth_array,$share_ids);
+		}	
+		array_push($auth_array,$customer['belong_uid']);
+		//部门负责人
+		$dids = get_department_role($uid);
+		if(!in_array($uid,$auth_array) && !in_array($customer['belong_did'],$dids)){
+			if($ajax == 1){
+				to_assign(1,'无权限操作');
+			}
+			else{
+				throw new \think\exception\HttpException(405, '无权限访问');
+			}
 		}
 		else{
-			throw new \think\exception\HttpException(405, '无权限访问');
-		}		
-	}
-	else{
-		return $customer;
+			return $customer;
+		}
 	}
 }
 
