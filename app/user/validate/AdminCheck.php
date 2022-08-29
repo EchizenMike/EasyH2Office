@@ -6,16 +6,22 @@
  */
 
 namespace app\user\validate;
-
+use think\facade\Db;
 use think\Validate;
 
 class AdminCheck extends Validate
 {
 	protected $regex = [ 'checkUser' => '/^[A-Za-z]{1}[A-Za-z0-9_-]{3,19}$/'];
+	// 自定义验证规则
+	protected function checkone($value,$rule,$data=[])
+	{
+		$count = Db::name('Admin')->where([['username','=',$data['username']],['id','<>',$data['id']],['status','>=',0]])->count();
+		return $count == 0 ? true : false;
+	}
 	
     protected $rule = [
         'name' => 'require|chs',
-        'username' => 'require|regex:checkUser|unique:admin',
+        'username' => 'require|regex:checkUser',
         'mobile' => 'require|mobile|unique:admin',
         'reg_pwd' => 'require|min:6',
         'did' => 'require',
@@ -33,7 +39,7 @@ class AdminCheck extends Validate
         'name.chs' => '员工姓名只能是汉字',
         'username.require' => '登录账号不能为空',
         'username.regex' => '登录账号必须是以字母开头，只能包含字母数字下划线和减号，4到20位',
-        'username.unique' => '同样的登录账号已经存在，建议增加数字，如：xxx123',
+        'username.checkone' => '同样的登录账号已经存在，建议增加数字，如：xxx123',
 		'mobile.require' => '手机不能为空',
         'mobile.mobile' => '手机格式错误',
 		'mobile.unique' => '同样的手机号码已经存在，请检查一下是否被离职或者禁用员工占用',

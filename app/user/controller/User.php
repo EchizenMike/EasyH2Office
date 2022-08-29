@@ -67,9 +67,10 @@ class User extends BaseController
             $username = $pinyin->name($param['name'], PINYIN_UMLAUT_V);
             $param['username'] = implode('', $username);
             if (!empty($param['id']) && $param['id'] > 0) {
-				$count = Db::name('Admin')->where([['username', 'like', $param['username'].'%'], ['id', '<>', $param['id']]])->count();
+				$count = Db::name('Admin')->where([['username','=',$param['username']],['id','<>',$param['id']],['status','>=',0]])->count();
 				if ($count > 0) {
-					$param['username'] = implode('', $username) . $count;
+					$count_e = Db::name('Admin')->where([['username', 'like', $param['username'].'%']])->count();
+					$param['username'] = implode('', $username) . $count_e;
 				}
                 try {
                     validate(AdminCheck::class)->scene('edit')->check($param);
