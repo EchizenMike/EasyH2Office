@@ -6,6 +6,20 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "26672775",
+      "name": "名称=锁定, 线面=off",
+      "font_class": "suozhu",
+      "unicode": "e65f",
+      "unicode_decimal": 58975
+    },
+    {
+      "icon_id": "26672776",
+      "name": "名称=开锁, 线面=off",
+      "font_class": "jiesuo",
+      "unicode": "e660",
+      "unicode_decimal": 58976
+    },
+    {
       "icon_id": "15014204",
       "name": "权限",
       "font_class": "quanxian",
