@@ -306,21 +306,25 @@ class Index extends BaseController
 			//日常审核
 			$detail = Db::name('Approve')->where(['id' => $id])->find();
 			$subject = '一个日常审批';
+			$msg_title_type = $detail['type'];
 		}
 		else if($type==2){
 			//报销审核
 			$detail = Db::name('Expense')->where(['id' => $id])->find();
 			$subject = '一个报销审批';
+			$msg_title_type = 22;
 		}
 		else if($type==3){
 			//发票审核
 			$detail = Db::name('Invoice')->where(['id' => $id])->find();
 			$subject = '一个发票审批';
+			$msg_title_type = 23;
 		}
 		else if($type==4){
 			//合同审核
 			$detail = Db::name('Contract')->where(['id' => $id])->find();
 			$subject = '一个合同审批';
+			$msg_title_type = 24;
 		}
 		if (empty($detail)){		
 			return to_assign(1,'审批数据错误');
@@ -446,7 +450,7 @@ class Index extends BaseController
 				$msg=[
 					'create_time'=>date('Y-m-d H:i:s',$detail['create_time']),
 					'action_id'=>$id,
-					'title' => Db::name('FlowType')->where('id',$checkData['type'])->value('title'),
+					'title' => Db::name('FlowType')->where('id',$msg_title_type)->value('title'),
 					'from_uid'=>$detail['admin_id']
 				];
 				if($param['check_status'] == 1){
@@ -522,7 +526,7 @@ class Index extends BaseController
 				$msg=[
 					'create_time'=>date('Y-m-d H:i:s',$detail['create_time']),
 					'action_id'=>$detail['id'],
-					'title' => Db::name('FlowType')->where('id',$checkData['type'])->value('title'),
+					'title' => Db::name('FlowType')->where('id',$msg_title_type)->value('title'),
 					'from_uid'=>$detail['admin_id']
 				];
 				$users = $detail['admin_id'];
