@@ -23,17 +23,17 @@
 
                 <div class="layui-layout-right">
                     <span class="gg-head-item gg-head-refresh">
-                        <a href="javascript:;" class="refreshThis" gg-event="refresh" title="刷新">
+                        <a href="javascript:;" class="refreshThis" gg-event="refresh" title="刷新页面">
                             <i class="layui-icon layui-icon-refresh"></i>
                         </a>
                     </span>
-                    <span class="gg-head-item gg-head-screen">
+                    <span class="gg-head-item gg-head-screen" title="切换全屏">
                         <a href="javascript:;" gg-event="screen" data-screen="full">
                             <i class="fullScreen layui-icon layui-icon-screen-full"></i>
                         </a>
                     </span>
 					<span class="gg-head-item gg-head-set">
-                        <a href="javascript:;" id="theme">
+                        <a href="javascript:;" id="theme" title="切换主题">
                             <i class="layui-icon layui-icon-set"></i>
                         </a>
                     </span>
@@ -151,6 +151,19 @@
 	var msgStatus=0,isClose=0,msgNum = 0;
 	const moduleInit = ['tool','admin'];
 	function gouguInit() {
+		let admin = layui.admin;
+		let tabs = admin.getCookie('gougutab');
+		if(tabs && tabs!=''){
+			let tab_parse = JSON.parse(tabs);
+			let tab_id = tab_parse.tab_id,tab_array = tab_parse.tab_array;
+			if(tab_array.length>0){
+				for(let a=0; a<tab_array.length;a++){
+					admin.tabAdd(tab_array[a].id, tab_array[a].url,tab_array[a].title);
+				}
+				admin.tabChange(tab_id);
+			}
+		}
+	
 		$('#GouguApp').on("click",'[gg-event="logout"]',function () {
 			layer.confirm('确认注销登录吗?', { icon: 7, title: '警告' }, function (index) {
 				//注销

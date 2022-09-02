@@ -74,7 +74,7 @@
 		<script type="text/javascript">
 			layui.use(['form'], function() {
 				var form = layui.form,
-					$ = layui.$;
+					$ = layui.$,
 					layer = layui.layer;
 				// 登录过期的时候，跳出ifram框架
 				if (top.location != self.location) top.location = self.location;
@@ -87,10 +87,13 @@
 						success: function(res) {
 							layer.tips(res.msg, '#login-submit');
 							if (res.code === 0) {
+								var date = new Date();
+								date.setTime(date.getTime() + (-1 * 24 * 60 * 60 * 1000));
+								var expires = "; expires=" + date.toGMTString();
+								document.cookie = "gougutab=''" + expires + "; path=/";
 								setTimeout(function() {
-								//	parent.document.location.reload();
 									parent.document.location.href="/";
-								}, 1500);
+								}, 1200);
 							} else {
 								$('[alt="captcha"]').click();
 							}

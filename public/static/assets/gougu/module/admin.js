@@ -17,6 +17,7 @@ layui.define(['element'], function (exports) {
 			}
 			element.tabAdd('gg-admin-tab', {
 				id: id,
+				url:url,
 				title: '<span class="gg-tab-active"></span>' + title,
 				content: '<iframe id="' + id + '" data-frameid="' + id + '" src="' + url + '" frameborder="0" align="left" width="100%" height="100%" scrolling="yes"></iframe>',
 			});
@@ -92,6 +93,51 @@ layui.define(['element'], function (exports) {
 				var src = parent.document.getElementById(id).contentWindow.location.href ? parent.document.getElementById(id).contentWindow.location.href : iframe.src;
 				document.getElementById(id).src = src;
 			}
+		},
+		tabCookie:function(){
+			let thetabs = $('#pageTabUl').find('li');
+			let tab_id = 0,tab_array=[];
+			$('#pageTabUl li').each(function(index,item){
+				let _id = $(item).attr('lay-id'),_url = $(item).attr('lay-url'),_title = $(item).text();
+				if(_id>0){
+					tab_array.push({'id':_id,'url':_url,'title':_title});
+				}
+				if($(item).hasClass('layui-this')){
+					tab_id = _id;
+				}				
+			})
+			if(tab_array.length>0){
+				let tabs_obj = {
+					'tab_id':tab_id,
+					'tab_array':tab_array
+				}
+				//console.log(tabs_obj);
+				tab.setCookie('gougutab',JSON.stringify(tabs_obj));
+			}
+			else{
+				tab.delCookie('gougutab');
+			}
+		},
+		setCookie: function (name, value, days) {
+			if (days) {
+				var date = new Date();
+				date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+				var expires = "; expires=" + date.toGMTString();
+			}
+			else {
+				var expires = "";
+			}
+			document.cookie = name + "=" + value + expires + "; path=/";
+		},
+		getCookie: function (name) {
+			var arr = document.cookie.match(new RegExp("(^| )" + name + "=([^;]*)(;|$)"));
+			if (arr != null) {
+				return unescape(arr[ 2 ]);
+			}
+			return null;
+		},
+		delCookie: function (name) {
+			this.setCookie(name, "", -1);
 		}
 	};
 	//切换tab
@@ -99,11 +145,13 @@ layui.define(['element'], function (exports) {
 		$('#GouguAppBody').find('.gg-tab-page').removeClass('layui-show');
 		$('#GouguAppBody').find('.gg-tab-page').eq(data.index).addClass('layui-show');
 		tab.tabRoll("auto", data.index);
+		tab.tabCookie();
 	});
 	//删除tab
 	element.on('tabDelete(gg-admin-tab)', function (data) {
 		$('#GouguAppBody').find('.gg-tab-page').eq(data.index).remove();
 		tab.tabRoll("auto", data.index);
+		tab.tabCookie();
 	});
 
 	//右滚动tab
