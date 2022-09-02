@@ -2,12 +2,6 @@
 <!-- 主体 -->
 {block name="body"}
 <div class="p-3">
-	<form class="layui-form gg-form-bar border-t border-x">
-		<div class="layui-input-inline" style="width:300px;">
-			<input type="text" name="keywords" placeholder="名称/备注" class="layui-input" autocomplete="off" />
-		</div>
-		<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform">提交搜索</button>
-	</form>
 	<table class="layui-hide" id="role" lay-filter="role"></table>
 </div>
 
@@ -32,7 +26,7 @@
 			elem: '#role',
 			toolbar: '#toolbarDemo',
 			url: "/home/role/index", //数据接口
-			page: true, //开启分页
+			page: false, //开启分页
 			limit: 20,
 			cols: [[ //表头
 				{ field: 'id', title: 'ID号', align: 'center', width: 80 }
@@ -74,15 +68,6 @@
 					layer.close(index);
 				});
 			}
-		});
-
-		//监听搜索提交
-		form.on('submit(webform)', function (data) {
-			layui.pageTable.reload({
-				where: { keywords: data.field.keywords },
-				page: { curr: 1 }
-			});
-			return false;
 		});
 	}
 
