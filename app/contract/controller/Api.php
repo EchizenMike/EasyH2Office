@@ -203,5 +203,40 @@ class Api extends BaseController
 		$content = $list->contract_log($param);
 		return to_assign(0, '', $content);
     }
+	
+	//获取客户列表
+	public function get_customer()
+    {
+        $param = get_params();
+		$where = array();
+		if (!empty($param['keywords'])) {
+			$where[] = ['id|name', 'like', '%' . $param['keywords'] . '%'];
+		}
+		$where[] = ['delete_time', '=', 0];
+		$uid = $this->uid;
+		$auth = isAuth($uid,'customer_admin');
+		$dids = get_department_role($this->uid);
+		if($auth==0){
+			$whereOr[] =['belong_uid', '=', $uid];	
+			if(!empty($dids)){
+				$whereOr[] =['belong_did', 'in', $dids];
+			}			
+			$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',share_ids)")];
+		}
+		$rows = empty($param['limit']) ? get_config('app . page_size') : $param['limit'];
+        $list = Db::name('Customer')->field('id,name,address')->order('id asc')->where($where)->paginate($rows, false)->each(function($item, $key){
+			$contact = Db::name('CustomerContact')->where(['cid'=>$item['id'],'is_default'=>1])->find();
+			if(!empty($contact)){
+				$item['contact_name'] = $contact['name'];
+				$item['contact_mobile'] = $contact['mobile'];
+			}
+			else{
+				$item['contact_name'] = '';
+				$item['contact_mobile'] = '';
+			}
+			return $item;
+		});
+        table_assign(0, '', $list);
+    }
 
 }

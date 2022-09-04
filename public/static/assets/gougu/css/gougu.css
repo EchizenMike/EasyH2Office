@@ -8,6 +8,8 @@
 .layui-card-title {font-size: 18px;font-weight: 600;padding: 12px 12px 0;}
 .layui-table, .layui-table-view{margin:0; background-color:#fff;}
 .layui-table td, .layui-table th{padding:8px;}
+.picker-table{padding:8px;}
+.picker-table .layui-table-cell {padding:4px; height: 32px;line-height: 24px;}
 .layui-table-cell{padding:6px;}
 .layui-table-box{background-color:#fff;}
 .layui-table-page{background-color:#fff;border-bottom:1px solid #f1f1f1;}

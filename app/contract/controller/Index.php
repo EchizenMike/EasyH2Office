@@ -169,6 +169,8 @@ class Index extends BaseController
             $id = isset($param['id']) ? $param['id'] : 0;
             $type = isset($param['type']) ? $param['type'] : 0;
             $pid = isset($param['pid']) ? $param['pid'] : 0;
+			$is_customer = Db::name('DataAuth')->where('name','contract_admin')->value('expected_1');
+            View::assign('is_customer', $is_customer);
             View::assign('id', $id);
             View::assign('type', $type);
             View::assign('pid', $pid);
