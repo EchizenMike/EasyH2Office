@@ -24,19 +24,19 @@
 		<tr>
 			<td class="layui-td-gray" style="vertical-align:top;">工作内容</td>
 			<td colspan="5">
-				{$detail.works}
+				{:nl2br($detail.works)}
 			</td>
 		</tr>
 		<tr>
 			<td class="layui-td-gray" style="vertical-align:top;">工作计划</td>
 			<td colspan="5">
-				{$detail.plans}
+				{:nl2br($detail.plans)}
 			</td>
 		</tr>
 		<tr>
 			<td class="layui-td-gray" style="vertical-align:top;">其他事项</td>
 			<td colspan="5">
-				{$detail.remark}
+				{:nl2br($detail.remark)}
 			</td>
 		</tr>
 		{notempty name="$detail.file_array"}

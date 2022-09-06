@@ -144,6 +144,9 @@ layui.define(['element'], function (exports) {
 	element.on('tab(gg-admin-tab)', function (data) {
 		$('#GouguAppBody').find('.gg-tab-page').removeClass('layui-show');
 		$('#GouguAppBody').find('.gg-tab-page').eq(data.index).addClass('layui-show');
+		if(data.index==0){
+			tab.refresh(0);
+		}
 		tab.tabRoll("auto", data.index);
 		tab.tabCookie();
 	});
