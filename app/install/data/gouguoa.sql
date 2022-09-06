@@ -44,6 +44,7 @@ CREATE TABLE `oa_admin`  (
   `last_login_time` int(11) NOT NULL DEFAULT 0 COMMENT '最后登录时间',
   `login_num` int(11) NOT NULL DEFAULT 0 COMMENT '登录次数',
   `last_login_ip` varchar(64) NOT NULL DEFAULT '' COMMENT '最后登录IP',
+  `is_lock` int(1) NOT NULL DEFAULT 0 COMMENT '是否锁屏:1是0否',
   `status` int(1) NOT NULL DEFAULT 1 COMMENT '状态：-1删除,0禁止登录,1正常,2离职',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `id`(`id`) USING BTREE
