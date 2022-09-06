@@ -1,7 +1,7 @@
 <?php
 /**
  * @copyright Copyright (c) 2021 勾股工作室
- * @license https://opensource.org/licenses/GPL-2.0
+ * @license https://opensource.org/licenses/GPL-3.0
  * @link https://www.gougucms.com
  */
 
@@ -31,7 +31,7 @@ class Index extends BaseController
             }
             $where[] = ['a.delete_time', '=', 0];
             $where[] = ['a.is_share', '=', 1];
-            $rows = empty($param['limit']) ? get_config('app . page_size') : $param['limit'];
+            $rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
             $content = ArticleList::where($where)
                 ->field('a.*,a.id as id,c.title as cate_title,a.title as title,d.title as department,u.name as user')
                 ->alias('a')
@@ -59,7 +59,7 @@ class Index extends BaseController
             }
             $where[] = ['a.delete_time', '=', 0];
             $where[] = ['a.uid', '=', $this->uid];
-            $rows = empty($param['limit']) ? get_config('app . page_size') : $param['limit'];
+            $rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
             $content = ArticleList::where($where)
                 ->field('a.*,a.id as id,c.title as cate_title,a.title as title')
                 ->alias('a')

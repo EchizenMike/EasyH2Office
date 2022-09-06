@@ -146,7 +146,7 @@ class ProjectLog extends Model
 		$where3[] = ['a.module', '=', 'document'];
         $where3[] = ['a.document_id', 'in', $document_ids];
         $page = intval($param['page']);
-        $rows = empty($param['limit']) ? get_config('app . page_size') : $param['limit'];
+        $rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
         $content = Db::name('ProjectLog')
             ->field('a.*,u.name,u.thumb')
             ->alias('a')

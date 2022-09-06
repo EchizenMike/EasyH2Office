@@ -223,7 +223,7 @@ class Api extends BaseController
 			}			
 			$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',share_ids)")];
 		}
-		$rows = empty($param['limit']) ? get_config('app . page_size') : $param['limit'];
+		$rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
         $list = Db::name('Customer')->field('id,name,address')->order('id asc')->where($where)->paginate($rows, false)->each(function($item, $key){
 			$contact = Db::name('CustomerContact')->where(['cid'=>$item['id'],'is_default'=>1])->find();
 			if(!empty($contact)){

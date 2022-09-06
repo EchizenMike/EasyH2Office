@@ -6,7 +6,7 @@ class Expense extends Model
 {
 	public function get_list($param = [],$where = [], $type='and')
     {
-        $rows = empty($param['limit']) ? get_config('app . page_size') : $param['limit'];
+        $rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
 		if($type == 'or'){
 			$expense = Expense::whereOr($where)
 				->order('id desc')

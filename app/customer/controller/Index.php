@@ -1,7 +1,7 @@
 <?php
 /**
  * @copyright Copyright (c) 2021 勾股工作室
- * @license https://opensource.org/licenses/GPL-2.0
+ * @license https://opensource.org/licenses/GPL-3.0
  * @link https://www.gougucms.com
  */
 
@@ -73,7 +73,7 @@ class Index extends BaseController
 				}
 			}
 			
-            $rows = empty($param['limit']) ? get_config('app . page_size') : $param['limit'];
+            $rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
             $content = CustomerList::where($where)
 				->where(function ($query) use($whereOr) {
 					$query->whereOr($whereOr);
@@ -127,7 +127,7 @@ class Index extends BaseController
             $where[] = ['a.delete_time', '=', 0];
             $where[] = ['a.belong_uid', '=', 0];
 			
-            $rows = empty($param['limit']) ? get_config('app . page_size') : $param['limit'];
+            $rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
             $content = CustomerList::where($where)
                 ->field('a.*,d.title as belong_department,g.title as grade,s.title as source,i.title as industry')
                 ->alias('a')
@@ -210,7 +210,7 @@ class Index extends BaseController
             $where[] = ['a.delete_time', '>', 0];
             $where[] = ['a.belong_uid', '=', 0];
 			
-            $rows = empty($param['limit']) ? get_config('app . page_size') : $param['limit'];
+            $rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
             $content = CustomerList::where($where)
                 ->field('a.*,d.title as belong_department,g.title as grade,s.title as source,i.title as industry')
                 ->alias('a')

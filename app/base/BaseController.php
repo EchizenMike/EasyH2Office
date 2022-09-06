@@ -1,7 +1,7 @@
 <?php
 /**
  * @copyright Copyright (c) 2021 勾股工作室
- * @license https://opensource.org/licenses/GPL-2.0
+ * @license https://opensource.org/licenses/GPL-3.0
  * @link https://www.gougucms.com
  */
 
@@ -89,12 +89,18 @@ abstract class BaseController
                 $this->uid = Session::get($session_admin)['id'];
                 $this->did = Session::get($session_admin)['did'];
                 View::assign('login_user', $this->uid);
+				$user = Db::name('Admin')->where(['id' => $this->uid])->find();
+				$is_lock = $user['is_lock'];
+				if($is_lock==1){
+					redirect('/home/login/lock.html')->send();
+					exit;
+				}
                 // 验证用户访问权限
                 if (($this->module == 'api') || ($this->module == 'message') || ($this->module == 'home' && $this->controller == 'index')) {
 					return true;
 				}
 				else{
-					$reg_pwd = Db::name('Admin')->where(['id' => $this->uid])->value('reg_pwd');
+					$reg_pwd = $user['reg_pwd'];
 					if($reg_pwd!==''){
 						redirect('/home/api/edit_password.html')->send();
 						exit;

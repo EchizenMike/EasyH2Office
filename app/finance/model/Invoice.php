@@ -7,7 +7,7 @@ class Invoice extends Model
 	//发票列表检索
 	public function get_list($param=[],$where = [], $type='and')
     {
-		$rows = empty($param['limit']) ? get_config('app . page_size') : $param['limit'];
+		$rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
 		if($type == 'or'){
 			$list = Invoice::field('i.*,a.name,d.title as department_name')
 				->alias('i')
@@ -65,7 +65,7 @@ class Invoice extends Model
 	//到账列表检索
     public function income_list($param = [], $where = [])
     {
-        $rows = empty($param['limit']) ? get_config('app . page_size') : $param['limit'];
+        $rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
         $list = Invoice::where($where)
             ->order('is_cash asc,create_time desc')
             ->paginate($rows, false, ['query' => $param])

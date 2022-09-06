@@ -1,7 +1,7 @@
 <?php
 /**
  * @copyright Copyright (c) 2021 勾股工作室
- * @license https://opensource.org/licenses/GPL-2.0
+ * @license https://opensource.org/licenses/GPL-3.0
  * @link https://www.gougucms.com
  */
 
@@ -36,7 +36,7 @@ class Plan extends BaseController
                 $where[] = ['a.admin_id', '=', $this->uid];
             }
             $where[] = ['a.delete_time', '=', 0];
-            $rows = empty($param['limit']) ? get_config('app . page_size') : $param['limit'];
+            $rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
             $plan = PlanList::where($where)
                 ->field('a.*,u.name as create_admin')
                 ->alias('a')

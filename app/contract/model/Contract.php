@@ -1,7 +1,7 @@
 <?php
 /**
  * @copyright Copyright (c) 2021 勾股工作室
- * @license https://opensource.org/licenses/GPL-2.0
+ * @license https://opensource.org/licenses/GPL-3.0
  * @link https://www.gougucms.com
  */
 
@@ -46,7 +46,7 @@ class Contract extends Model
 	//列表检索
     public function get_list($param = [], $where = [], $whereOr=[])
     {
-        $rows = empty($param['limit']) ? get_config('app . page_size') : $param['limit'];
+        $rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
         $list = self::where($where)
             ->where(function ($query) use($whereOr) {
 					$query->whereOr($whereOr);

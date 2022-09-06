@@ -1,7 +1,7 @@
 <?php
 /**
  * @copyright Copyright (c) 2021 勾股工作室
- * @license https://opensource.org/licenses/GPL-2.0
+ * @license https://opensource.org/licenses/GPL-3.0
  * @link https://www.gougucms.com
  */
 
@@ -28,7 +28,7 @@ class Personal extends BaseController
                 $where[] = ['u.name|p.remark|a.title|b.title','like', '%' . $param['keywords'] . '%'];
             }
             $where[] = ['p.status','=', 1];
-            $rows = empty($param['limit']) ? get_config('app . page_size') : $param['limit'];
+            $rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
             $list = DepartmentChange::where($where)
                 ->field('p.*,u.name as name,ad.name as admin,a.title as adepartment,b.title as bdepartment')
                 ->alias('p')
@@ -97,7 +97,7 @@ class Personal extends BaseController
                 $where['u.name|p.remark'] = ['like', '%' . $param['keywords'] . '%'];
             }
             $where['p.status'] = array('eq', 1);
-            $rows = empty($param['limit']) ? get_config('app . page_size') : $param['limit'];
+            $rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
             $list = PersonalQuit::where($where)
                 ->field('p.*,u.name as name,d.title as department,ps.title as position')
                 ->alias('p')

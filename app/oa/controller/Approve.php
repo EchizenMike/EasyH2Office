@@ -1,7 +1,7 @@
 <?php
 /**
  * @copyright Copyright (c) 2021 勾股工作室
- * @license https://opensource.org/licenses/GPL-2.0
+ * @license https://opensource.org/licenses/GPL-3.0
  * @link https://www.gougucms.com
  */
 
@@ -32,7 +32,7 @@ class Approve extends BaseController
 				}
             }
 			$where[] = ['admin_id','=',$this->uid];
-			$rows = empty($param['limit']) ? get_config('app . page_size') : $param['limit'];
+			$rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
             $list = Db::name('Approve')
 				->field('f.*,a.name,d.title as department_name,t.title as flow_type')
 				->alias('f')
@@ -72,7 +72,7 @@ class Approve extends BaseController
 			$map1[] = ['', 'exp', Db::raw("FIND_IN_SET('{$user_id}',check_admin_ids)")];
 			$map2[] = ['', 'exp', Db::raw("FIND_IN_SET('{$user_id}',flow_admin_ids)")];
 			
-			$rows = empty($param['limit']) ? get_config('app . page_size') : $param['limit'];
+			$rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
 			
 			if($status == 0){
 				$list = Db::name('Approve')
@@ -153,7 +153,7 @@ class Approve extends BaseController
 			$map = [];
 			$map[] = ['check_status', '=', 2];			
 			$map[] = ['', 'exp', Db::raw("FIND_IN_SET('{$user_id}',copy_uids)")];			
-			$rows = empty($param['limit']) ? get_config('app . page_size') : $param['limit'];			
+			$rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];			
 			$list = Db::name('Approve')
 				->field('f.*,a.name,d.title as department_name,t.title as flow_type')
 				->alias('f')

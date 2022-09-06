@@ -76,7 +76,7 @@ class ProjectTask extends Model
             $where[] = ['title|content', 'like', '%' . $param['keywords'] . '%'];
         }
         $where[] = ['delete_time', '=', 0];
-        $rows = empty($param['limit']) ? get_config('app . page_size') : $param['limit'];
+        $rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
         $list = Db::name('ProjectTask')->where(function ($query) use ($map1, $map2, $map3, $map4) {
             $query->where($map1)->whereor($map2)->whereor($map3)->whereor($map4);
         })->where($where)

@@ -1,7 +1,7 @@
 <?php
 /**
  * @copyright Copyright (c) 2021 勾股工作室
- * @license https://opensource.org/licenses/GPL-2.0
+ * @license https://opensource.org/licenses/GPL-3.0
  * @link https://www.gougucms.com
  */
 
@@ -28,7 +28,7 @@ class Index extends BaseController
                 $where[] = ['a.title|a.content', 'like', '%' . $param['keywords'] . '%'];
             }
             $where[] = ['a.status', '>=', 0];
-            $rows = empty($param['limit']) ? get_config('app . page_size') : $param['limit'];
+            $rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
             $note = NoteList::where($where)
                 ->field('a.*,c.title as cate_title')
                 ->alias('a')

@@ -51,7 +51,7 @@ class Api extends BaseController
 		$where = array();
 		$where[] = ['delete_time', '=', 0];
 		$where[] = ['cid', '=', $param['customer_id']];
-		$rows = empty($param['limit']) ? get_config('app . page_size') : $param['limit'];
+		$rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
 		$content = CustomerTrace::where($where)
 			->order('create_time desc')
             ->paginate($rows, false, ['query' => $param])
@@ -170,7 +170,7 @@ class Api extends BaseController
 		$where = array();
 		$where[] = ['delete_time', '=', 0];
 		$where[] = ['cid', '=', $param['customer_id']];
-		$rows = empty($param['limit']) ? get_config('app . page_size') : $param['limit'];
+		$rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
 		$content = CustomerChance::where($where)
 			->order('create_time desc')
             ->paginate($rows, false, ['query' => $param])
@@ -289,7 +289,7 @@ class Api extends BaseController
 		$where = array();
 		$where[] = ['delete_time', '=', 0];
 		$where[] = ['cid', '=', $param['customer_id']];
-        $rows = empty($param['limit']) ? get_config('app . page_size') : $param['limit'];
+        $rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
 		$content = CustomerContact::where($where)
 			->order('create_time desc')
             ->paginate($rows, false, ['query' => $param])

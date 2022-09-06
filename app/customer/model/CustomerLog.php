@@ -128,7 +128,7 @@ class CustomerLog extends Model
         $where4[] = ['a.chance_id', 'in', $chance_ids];
 		
         $page = intval($param['page']);
-        $rows = empty($param['limit']) ? get_config('app . page_size') : $param['limit'];
+        $rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
         $content = Db::name('CustomerLog')
             ->field('a.*,u.name,u.thumb')
             ->alias('a')

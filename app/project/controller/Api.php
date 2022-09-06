@@ -206,7 +206,7 @@ class Api extends BaseController
 			$where[] = ['a.tid', 'in', $task_ids];
 		}
 		$where[] = ['a.delete_time', '=', 0];
-		$rows = empty($param['limit']) ? get_config('app . page_size') : $param['limit'];
+		$rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
 		$list = ScheduleList::where($where)
 			->field('a.*,u.name,d.title as department,t.title as task,p.name as project,w.title as work_cate')
 			->alias('a')

@@ -57,7 +57,7 @@ class ContractLog extends Model
         $where = [];
         $where[] = ['a.contract_id', '=', $param['contract_id']];
         $page = intval($param['page']);
-        $rows = empty($param['limit']) ? get_config('app . page_size') : $param['limit'];
+        $rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
         $content = Db::name('ContractLog')
             ->field('a.*,u.name,u.thumb')
             ->alias('a')
