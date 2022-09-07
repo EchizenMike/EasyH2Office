@@ -31,6 +31,15 @@ class Index extends BaseController
 			if (!empty($param['status'])) {
                 $where[] = ['a.status', '=', $param['status']];
             }
+			if (!empty($param['grade_id'])) {
+                $where[] = ['a.grade_id', '=', $param['grade_id']];
+            }
+			if (!empty($param['source_id'])) {
+                $where[] = ['a.source_id', '=', $param['source_id']];
+            }
+			if (!empty($param['type'])) {
+                $where[] = ['a.intent_status', '=', $param['type']];
+            }
             $where[] = ['a.delete_time', '=', 0];
 			
 			$uid = $this->uid;
@@ -123,6 +132,12 @@ class Index extends BaseController
             }
 			if (!empty($param['status'])) {
                 $where[] = ['a.status', '=', $param['status']];
+            }
+			if (!empty($param['industry_id'])) {
+                $where[] = ['a.industry_id', '=', $param['industry_id']];
+            }
+			if (!empty($param['source_id'])) {
+                $where[] = ['a.source_id', '=', $param['source_id']];
             }
             $where[] = ['a.delete_time', '=', 0];
             $where[] = ['a.belong_uid', '=', 0];
