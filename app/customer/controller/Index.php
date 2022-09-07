@@ -26,7 +26,7 @@ class Index extends BaseController
             $where = array();
             $whereOr = array();
             if (!empty($param['keywords'])) {
-                $where[] = ['a.id|a.name|c.title', 'like', '%' . $param['keywords'] . '%'];
+                $where[] = ['a.id|a.name', 'like', '%' . $param['keywords'] . '%'];
             }
 			if (!empty($param['status'])) {
                 $where[] = ['a.status', '=', $param['status']];
@@ -119,7 +119,7 @@ class Index extends BaseController
             $param = get_params();
             $where = array();
             if (!empty($param['keywords'])) {
-                $where[] = ['a.id|a.name|c.title', 'like', '%' . $param['keywords'] . '%'];
+                $where[] = ['a.id|a.name', 'like', '%' . $param['keywords'] . '%'];
             }
 			if (!empty($param['status'])) {
                 $where[] = ['a.status', '=', $param['status']];
