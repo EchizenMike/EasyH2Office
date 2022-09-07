@@ -22,28 +22,51 @@ html{background-color:#fff;}
 	  <tr>
 		<td class="layui-td-gray">客户名称</td>
 		<td colspan="5">{$detail.name}</td>
-		<td class="layui-td-gray">客户来源</td>
+		<td class="layui-td-gray-2">录入人</td>
 		<td>
-			{volist name=":customer_source()" id="v"}
-				{eq name="$v.id" value="$detail.source_id" }{$v.title}{/eq}
-			{/volist}
+			{$detail.admin_name}
 		</td>
 	  </tr>
 	  <tr>
 		<td class="layui-td-gray">联系地址</td>
-		<td colspan="3">
+		<td colspan="5">
 			{$detail.address}
 		</td>
+		<td class="layui-td-gray">客户等级</td>
+		<td>
+			{volist name=":customer_grade()" id="v"}
+			{eq name="$v.id" value="$detail.grade_id"}{$v.title}{/eq}
+			{/volist}
+		</td>
+	  </tr>
+	  <tr>
 		<td class="layui-td-gray">所属行业</td>
 		<td>
 			{volist name=":get_industry()" id="v"}
 			{eq name="$v.id" value="$detail.industry_id"}{$v.title}{/eq}
 			{/volist}
 		</td>
-		<td class="layui-td-gray">客户等级</td>
+		<td class="layui-td-gray">意向状态</td>
 		<td>
-			{volist name=":customer_grade()" id="v"}
-			{eq name="$v.id" value="$detail.grade_id"}{$v.title}{/eq}
+			{eq name="$detail.intent_status" value="0"}-{/eq}
+			{eq name="$detail.intent_status" value="1"}意向不明{/eq}
+			{eq name="$detail.intent_status" value="2"}意向模糊{/eq}
+			{eq name="$detail.intent_status" value="3"}意向一般{/eq}
+			{eq name="$detail.intent_status" value="4"}意向强烈{/eq}
+			{eq name="$detail.intent_status" value="5"}已成交{/eq}
+		</td>
+		<td class="layui-td-gray">客户状态</td>
+		<td>
+			{eq name="$detail.status" value="0"}-{/eq}
+			{eq name="$detail.status" value="1"}新进客户{/eq}
+			{eq name="$detail.status" value="2"}跟进客户{/eq}
+			{eq name="$detail.status" value="3"}跟进客户{/eq}
+			{eq name="$detail.status" value="4"}流失客户{/eq}
+		</td>
+		<td class="layui-td-gray">客户来源</td>
+		<td>
+			{volist name=":customer_source()" id="v"}
+				{eq name="$v.id" value="$detail.source_id" }{$v.title}{/eq}
 			{/volist}
 		</td>
 	  </tr>
@@ -70,7 +93,7 @@ html{background-color:#fff;}
 		<td colspan="7">{$detail.remark}</td>
 	  </tr>
 	  <tr>
-		<td class="layui-td-gray-2">
+		<td class="layui-td-gray">
 			<div class="layui-input-inline">相关附件</div>
 			{eq name="$detail.status" value="1" }<div class="layui-input-inline"><button type="button" class="layui-btn layui-btn-xs" id="upFile"><i class="layui-icon"></i></button></div>{/eq}
 		</td>
@@ -95,7 +118,7 @@ html{background-color:#fff;}
 		<td colspan="8"><strong>首要联系人信息</strong></td>
 	  </tr>
 	  <tr>
-		<td class="layui-td-gray">联系人姓名</td>
+		<td class="layui-td-gray">姓名称呼</td>
 		<td>{$contact.name} </td>
 		<td class="layui-td-gray">手机号码</td>
 		<td>{$contact.mobile}</td>

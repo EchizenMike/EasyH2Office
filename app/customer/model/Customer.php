@@ -34,6 +34,7 @@ class Customer extends Model
         self::TWO => '意向模糊',
         self::THREE => '意向一般',
         self::FORE => '意向强烈',
+        self::FIVE => '已成交',
     ];
 	
 	public static $Type = [
@@ -74,6 +75,7 @@ class Customer extends Model
             $detail['create_time'] = date('Y-m-d', $detail['create_time']);
 			$detail['belong_department'] = Db::name('Department')->where(['id' => $detail['belong_did']])->value('title');
 			$detail['belong_name'] = Db::name('Admin')->where(['id' => $detail['belong_uid']])->value('name');
+			$detail['admin_name'] = Db::name('Admin')->where(['id' => $detail['admin_id']])->value('name');
 			
 			$share_names = Db::name('Admin')->where([['id','in',$detail['share_ids']]])->column('name');
 			$detail['share_names'] = implode(',',$share_names);

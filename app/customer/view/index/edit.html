@@ -19,9 +19,20 @@
       </tr>
       <tr>
         <td class="layui-td-gray">联系地址<font>*</font></td>
-        <td>
+        <td colspan="3">
           <input type="text" name="address" value="{$detail.address}" autocomplete="off" lay-verify="required" lay-reqText="请输入客户联系地址" placeholder="请输入客户联系地址" class="layui-input">
         </td>
+	    <td class="layui-td-gray">客户等级<font>*</font></td>
+        <td>
+          <select name="grade_id" lay-verify="required" lay-reqText="请选择客户等级">
+            <option value="">请选择客户等级</option>
+            {volist name=":customer_grade()" id="v"}
+            <option value="{$v.id}" {eq name="$v.id" value="$detail.grade_id"} selected{/eq}>{$v.title}</option>
+            {/volist}
+          </select>
+        </td>
+      </tr>
+	 <tr>
         <td class="layui-td-gray">所属行业<font>*</font></td>
         <td>
           <select name="industry_id" lay-verify="required" lay-reqText="请选择所属行业">
@@ -31,13 +42,25 @@
             {/volist}
           </select>
         </td>
-	    <td class="layui-td-gray">客户等级<font>*</font></td>
+	    <td class="layui-td-gray">意向状态</td>
         <td>
-          <select name="grade_id" lay-verify="required" lay-reqText="请选择客户等级">
-            <option value="">请选择客户等级</option>
-            {volist name=":customer_grade()" id="v"}
-            <option value="{$v.id}" {eq name="$v.id" value="$detail.grade_id"} selected{/eq}>{$v.title}</option>
-            {/volist}
+          <select name="intent_status">
+            <option value="">请选择客户意向状态</option>
+            <option value="1" {eq name="$detail.intent_status" value="1"} selected{/eq}>意向不明</option>
+			<option value="2" {eq name="$detail.intent_status" value="2"} selected{/eq}>意向模糊</option>
+			<option value="3" {eq name="$detail.intent_status" value="3"} selected{/eq}>意向一般</option>
+			<option value="4" {eq name="$detail.intent_status" value="4"} selected{/eq}>意向强烈</option>
+			<option value="5" {eq name="$detail.intent_status" value="5"} selected{/eq}>已成交</option>
+          </select>
+        </td>
+		<td class="layui-td-gray">客户状态</td>
+        <td>
+          <select name="status">
+            <option value="">请选择客户当前状态</option>
+				<option value="1" {eq name="$detail.status" value="1"} selected{/eq}>新进客户</option>
+				<option value="2" {eq name="$detail.status" value="2"} selected{/eq}>跟进客户</option>
+				<option value="3" {eq name="$detail.status" value="3"} selected{/eq}>跟进客户</option>
+				<option value="4" {eq name="$detail.status" value="4"} selected{/eq}>流失客户</option>
           </select>
         </td>
       </tr>
