@@ -14,7 +14,7 @@ use think\facade\View;
 
 class Api extends BaseController
 {
-	//获取项目概况数据
+	//获取合同协议
 	public function get_contract()
     {
         $param = get_params();
@@ -23,14 +23,17 @@ class Api extends BaseController
 			$where[] = ['id|name', 'like', '%' . $param['keywords'] . '%'];
 		}
 		$where[] = ['delete_time', '=', 0];
-        $list = Db::name('Contract')->field('id,name,sign_uid,sign_time')->order('end_time asc')->where($where)->select()->toArray();
-        if (!empty($list)) {
-            foreach ($list as $k => &$v) {
-                $v['sign_name'] = Db::name('Admin')->where('id',$v['sign_uid'])->value('name');
-                $v['sign_time'] = date('Y-m-d', $v['sign_time']);
-            }
-        }
-        to_assign(0, '', $list);
+		$rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
+        $list = Db::name('Contract')
+			->field('id,name,sign_uid,sign_time')
+			->order('end_time asc')
+			->where($where)
+			->paginate($rows, false)->each(function($item, $key){
+				$item['sign_name'] = Db::name('Admin')->where('id',$item['sign_uid'])->value('name');
+                $item['sign_time'] = date('Y-m-d', $item['sign_time']);
+				return $item;
+			});
+        table_assign(0, '', $list);
     }
 
     //添加附件

@@ -232,14 +232,16 @@
 		function selectCharge(type){
 			layer.open({
 				title:'选择母合同',
-				area:['680px','556px'],
+				area:['680px','580px'],
 				type:1,
-				content:'<div style="padding:12px 10px 0;">\
-				<form class="layui-form">\
-				<input type="text" name="keywords"  placeholder="合同名称" class="layui-input" autocomplete="off" style="max-width: 240px;display: inline-block;margin-right:10px; height:32px" />\
-				<button class="layui-btn layui-btn-sm layui-btn-danger" lay-submit="" lay-filter="submit_form">提交搜索</button>\
+				content:'<div class="picker-table">\
+				<form class="layui-form pb-2">\
+					<div class="layui-input-inline" style="width:500px;">\
+					<input type="text" name="keywords"  placeholder="合同名称" class="layui-input" autocomplete="off" />\
+					</div>\
+					<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="search_form">提交搜索</button>\
 				</form>\
-				<div id="boxcontract" class="pt-2"></div></div>',
+				<div id="boxcontract"></div></div>',
 				success:function(){
 					table_b=table.render({
 						elem: '#boxcontract'
