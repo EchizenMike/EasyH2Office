@@ -25,24 +25,23 @@
 			<td>{$detail.name}</td>
 		</tr>
 		<tr>
-			<td class="layui-td-gray-2">报销管理员<font>*</font>
-			</td>
+			<td class="layui-td-gray-2">报销管理员</td>
 			<td colspan="3">
-				<input type="text" name="unames" value="{$detail.unames}" readonly placeholder="请选择报销管理员" autocomplete="off" class="layui-input picker-more" lay-verify="required" lay-reqText="请选择报销管理员">
+				<input type="text" name="unames" value="{$detail.unames}" readonly placeholder="请选择报销管理员" autocomplete="off" class="layui-input picker-more">
 				<input type="hidden" id="uids" name="uids" value="{$detail.uids}">
 			</td>
 		</tr>
 		<tr>
-			<td class="layui-td-gray-2">发票管理员<font>*</font></td>
+			<td class="layui-td-gray-2">发票管理员</td>
 			<td colspan="3">
-			<input type="text" name="conf_unames_1" value="{$detail.conf_unames_1}" readonly placeholder="请选择发票管理员" autocomplete="off" class="layui-input picker-more"  lay-verify="required" lay-reqText="请选择发票管理员">
+			<input type="text" name="conf_unames_1" value="{$detail.conf_unames_1}" readonly placeholder="请选择发票管理员" autocomplete="off" class="layui-input picker-more">
 			<input type="hidden" name="conf_1" value="{$detail.conf_1}">
 			</td>
 		</tr>
 		<tr>
-			<td class="layui-td-gray-2">到账管理员<font>*</font></td>
+			<td class="layui-td-gray-2">到账管理员</td>
 			<td colspan="3">
-			<input type="text" name="conf_unames_2" value="{$detail.conf_unames_2}" readonly placeholder="请选择到账管理员" autocomplete="off" class="layui-input picker-more"  lay-verify="required" lay-reqText="请选择到账管理员">
+			<input type="text" name="conf_unames_2" value="{$detail.conf_unames_2}" readonly placeholder="请选择到账管理员" autocomplete="off" class="layui-input picker-more">
 			<input type="hidden" name="conf_2" value="{$detail.conf_2}">
 			</td>
 		</tr>

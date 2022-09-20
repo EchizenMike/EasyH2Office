@@ -170,7 +170,13 @@ class Index extends BaseController
             $type = isset($param['type']) ? $param['type'] : 0;
             $pid = isset($param['pid']) ? $param['pid'] : 0;
 			$is_customer = Db::name('DataAuth')->where('name','contract_admin')->value('expected_1');
+			$is_codeno = Db::name('DataAuth')->where('name','contract_admin')->value('expected_2');
+			$codeno='';
+			if($is_codeno==1){
+				$codeno = get_codeno(1);
+			}
             View::assign('is_customer', $is_customer);
+            View::assign('codeno', $codeno);
             View::assign('id', $id);
             View::assign('type', $type);
             View::assign('pid', $pid);

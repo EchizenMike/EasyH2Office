@@ -34,7 +34,7 @@
         </td>
         <td class="layui-td-gray">合同编号<font>*</font></td>
         <td>
-          <input type="text" name="code" autocomplete="off" lay-verify="required" lay-reqText="请输入合同编号" placeholder="请输入合同编号" class="layui-input">
+          <input type="text" name="code" value="{$codeno}" autocomplete="off" {notempty name="$codeno"}readonly{/notempty} lay-verify="required" lay-reqText="请输入合同编号" placeholder="请输入合同编号" class="layui-input">
         </td>
 	    <td class="layui-td-gray">合同类别<font>*</font></td>
         <td>

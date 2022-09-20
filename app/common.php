@@ -631,6 +631,15 @@ function send_email($to, $subject = '', $content = '')
         return false;
     }
 }
+
+/**
+ * 生成时间编号
+ * $prefix前缀
+ */
+function get_codeno($prefix=1){
+    $no    =   $prefix . date('ymdHis') . rand(10,99);
+    return $no;
+}
 /**
  * 截取文章摘要
  *  @return bool

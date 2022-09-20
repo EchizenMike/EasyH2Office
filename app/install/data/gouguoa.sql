@@ -420,7 +420,7 @@ CREATE TABLE `oa_data_auth`  (
 -- ----------------------------
 INSERT INTO `oa_data_auth` VALUES (1, '财务管理员','finance_admin','拥有该权限的员工开具发票、报销打款、财务到账。', 'finance', '',0,0,0,'','','',1656143065, 0);
 INSERT INTO `oa_data_auth` VALUES (2, '客户管理员','customer_admin','拥有该权限的员工可以查看、转移所有客户。', 'customer', '',10,0,0,'','','',1656143065, 0);
-INSERT INTO `oa_data_auth` VALUES (3, '合同管理员','contract_admin','拥有该权限的员工可以查看、编辑、作废、中止所有合同。', 'contract', '',0,0,0,'','','',1656143065, 0);
+INSERT INTO `oa_data_auth` VALUES (3, '合同管理员','contract_admin','拥有该权限的员工可以查看、编辑、作废、中止所有合同。', 'contract', '',1,1,0,'','','',1656143065, 0);
 INSERT INTO `oa_data_auth` VALUES (4, '项目管理员','project_admin','拥有该权限的员工可以查看所有项目。', 'project', '',0,0,0,'立项阶段|实施阶段|验收阶段|交付阶段','','',1656143065, 0);
 
 -- ----------------------------
@@ -1002,6 +1002,7 @@ CREATE TABLE `oa_note_cate`  (
 -- ----------------------------
 INSERT INTO `oa_note_cate` VALUES (1, 0, 1, '普通公告', 1637984265, 1637984299);
 INSERT INTO `oa_note_cate` VALUES (2, 0, 2, '紧急公告', 1637984283, 1637984310);
+INSERT INTO `oa_note_cate` VALUES (3, 0, 3, '防疫公告', 1637984283, 1637984310);
 
 -- ----------------------------
 -- Table structure for oa_note

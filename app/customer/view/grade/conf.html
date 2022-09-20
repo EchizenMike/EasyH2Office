@@ -27,11 +27,10 @@
 			<td><input type="text" name="expected_1" value="{$detail.expected_1}" lay-verify="required|number" lay-reqText="请输入每天获取公客数" placeholder="每天每人可获取公客数" autocomplete="off" class="layui-input"></td>
 		</tr>
 		<tr>
-			<td class="layui-td-gray">权限人员<font>*</font>
-			</td>
+			<td class="layui-td-gray">权限人员</td>
 			<td colspan="5">
 				<input type="text" id="unames" name="unames" value="{$detail.unames}" readonly placeholder="请选择权限人员" autocomplete="off" class="layui-input picker-more">
-				<input type="hidden" id="uids" name="uids" value="{$detail.uids}" lay-verify="required" lay-reqText="请选择权限人员">
+				<input type="hidden" id="uids" name="uids" value="{$detail.uids}">
 			</td>
 		</tr>
 		<tr>
