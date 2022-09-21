@@ -247,7 +247,7 @@ function get_department_role($uid = 0)
 	$did = get_admin($uid)['did'];
 	//判断是否是部门负责人
 	$is_leader = Db::name('Department')->where(['id' => $did,'leader_id'=>$uid])->count();
-	if($is_leader=0){
+	if($is_leader==0){
 		return [];
 	}
 	else{

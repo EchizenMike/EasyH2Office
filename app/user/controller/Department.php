@@ -70,7 +70,13 @@ class Department extends BaseController
             $department = set_recursion(get_department());
             if ($id > 0) {
                 $detail = Db::name('Department')->where(['id' => $id])->find();
-                $users = Db::name('Admin')->where(['did' => $id, 'status' => 1])->select();
+				//获取子部门
+				$department = get_department();
+				$department_list = get_data_node($department, $id);
+				$department_array = array_column($department_list, 'id');
+				//包括自己部门在内
+				$department_array[] = $id;
+                $users = Db::name('Admin')->where([['did','in',$department_array], ['status','=',1]])->select();
                 View::assign('users', $users);
                 View::assign('detail', $detail);
             }

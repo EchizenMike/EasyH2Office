@@ -147,14 +147,49 @@ class Index extends BaseController
 		
         $module = Db::name('AdminModule')->column('name');
         if (in_array('customer', $module)) {
-            $customerCount = Db::name('Customer')->where([['delete_time', '=', 0]])->count();
+			
+			$whereCustomer = array();
+			$whereCustomerOr = array();
+			$uid = $this->uid;
+			$dids = get_department_role($uid);
+			
+			$whereCustomer[] = ['delete_time', '=', 0];
+			$whereCustomerOr[] =['belong_uid', '=', $uid];	
+			if(!empty($dids)){
+				$whereCustomerOr[] =['belong_did', 'in', $dids];
+			}			
+			$whereCustomerOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',share_ids)")];
+			
+            $customerCount = Db::name('Customer')->where($whereCustomer)
+			->where(function ($query) use($whereCustomerOr) {
+					$query->whereOr($whereCustomerOr);
+				})
+			->count();
             $total[] = array(
                 'name' => '客户',
                 'num' => $customerCount,
             );
         }
         if (in_array('contract', $module)) {
-            $contractCount = Db::name('Contract')->where([['delete_time', '=', 0]])->count();
+			$whereContract = array();
+			$whereContractOr = array();
+			$uid = $this->uid;
+			
+			$whereContract[] = ['delete_time', '=', 0];
+			$whereContractOr[] =['admin_id|prepared_uid|sign_uid|keeper_uid', '=', $uid];
+			$whereContractOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',share_ids)")];
+			$whereContractOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',check_admin_ids)")];
+			$whereContractOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',flow_admin_ids)")];
+			$dids = get_department_role($uid);
+			if(!empty($dids)){
+				$whereContractOr[] =['sign_did', 'in', $dids];
+			}
+			
+            $contractCount = Db::name('Contract')->where($whereContract)
+			->where(function ($query) use($whereContractOr) {
+					$query->whereOr($whereContractOr);
+				})
+			->count();
             $total[] = array(
                 'name' => '合同',
                 'num' => $contractCount,
@@ -162,8 +197,26 @@ class Index extends BaseController
 			$handle['contract'] = Db::name('Contract')->where([['', 'exp', Db::raw("FIND_IN_SET('{$this->uid}',check_admin_ids)")],['delete_time', '=', 0]])->count();
         }
         if (in_array('project', $module)) {
-            $projectCount = Db::name('Project')->where([['delete_time', '=', 0]])->count();
-            $taskCount = Db::name('ProjectTask')->where([['delete_time', '=', 0]])->count();
+			
+			$project_ids = Db::name('ProjectUser')->where(['uid' => $this->uid, 'delete_time' => 0])->column('project_id');
+			$whereProject = [];
+			$whereProject[] = ['delete_time', '=', 0];
+			$whereProject[] = ['id', 'in', $project_ids];			
+            $projectCount = Db::name('Project')->where($whereProject)->count();
+			
+			$map1 = [];
+			$map2 = [];
+			$map3 = [];
+			$map4 = [];
+			$uid = $this->uid;
+			$map1[] = ['admin_id', '=', $uid];
+            $map2[] = ['director_uid', '=', $uid];
+            $map3[] = ['', 'exp', Db::raw("FIND_IN_SET({$uid},assist_admin_ids)")];
+            $map4[] = ['project_id', 'in', $project_ids];
+            $taskCount = Db::name('ProjectTask')->where([['delete_time', '=', 0]])->where(function ($query) use ($map1, $map2, $map3, $map4) {
+				$query->where($map1)->whereor($map2)->whereor($map3)->whereor($map4);
+			})->count();
+			
             $total[] = array(
                 'name' => '项目',
                 'num' => $projectCount,
@@ -175,7 +228,7 @@ class Index extends BaseController
 			$handle['task'] = Db::name('ProjectTask')->where([['director_uid', '=', $this->uid],['delete_time', '=', 0]])->count();
         }
         if (in_array('article', $module)) {
-            $articleCount = Db::name('Article')->where([['delete_time', '=', 0]])->count();
+            $articleCount = Db::name('Article')->where([['delete_time', '=', 0],['uid', '=', $this->uid]])->count();
             $total[] = array(
                 'name' => '文章',
                 'num' => $articleCount,
