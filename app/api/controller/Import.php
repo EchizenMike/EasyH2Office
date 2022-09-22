@@ -41,6 +41,16 @@ class Import extends BaseController
         $Avatar->Free();
         return $path;
     }
+	
+    //登录名校验
+    public function check_name($name,$arr)
+    {
+        if(in_array($name,$arr)){
+			$name = $this->check_name($name.'1',$arr);
+		}
+		return $name;       
+    }
+	
 	//导入员工
 	public function import_admin(){
         // 获取表单上传文件
@@ -82,6 +92,7 @@ class Import extends BaseController
 			$type_array=['未知','正式','试用','实习'];
 			$mobile_array = Db::name('Admin')->where([['status','>=',0]])->column('mobile');
 			$email_array = Db::name('Admin')->where([['status','>=',0]])->column('email');
+			$username_array = Db::name('Admin')->where([['status','>=',0]])->column('username');
 			$department_array = Db::name('Department')->where(['status' => 1])->column('title', 'id');
 			$position_array = Db::name('Position')->where(['status' => 1])->column('title', 'id');
             //循环读取excel表格，整合成数组。如果是不指定key的二维，就用$data[i][j]表示。
@@ -98,7 +109,8 @@ class Import extends BaseController
 				$department = arraySearch($department_array,$objPHPExcel->getActiveSheet()->getCell("E" . $j)->getValue());
 				$position = arraySearch($position_array,$objPHPExcel->getActiveSheet()->getCell("f" . $j)->getValue());
 				$type = arraySearch($type_array,$objPHPExcel->getActiveSheet()->getCell("G" . $j)->getValue());
-				$username = $pinyin->name($name,PINYIN_UMLAUT_V);
+				$pinyinname = $pinyin->name($name,PINYIN_UMLAUT_V);
+				$username = implode('', $pinyinname);
 				
 				$mobile = $objPHPExcel->getActiveSheet()->getCell("B" . $j)->getValue();
 				$email = $objPHPExcel->getActiveSheet()->getCell("C" . $j)->getValue();
@@ -158,7 +170,7 @@ class Import extends BaseController
                     'position_id' => $position,
                     'type' => $type,
 					'entry_time' => Shared::excelToTimestamp($objPHPExcel->getActiveSheet()->getCell("H" . $j)->getValue(),'Asia/Shanghai'),
-					'username' => implode('', $username),
+					'username' => $this->check_name($username,$username_array),
                     'salt' => $salt,
 					'pwd' => set_password($reg_pwd, $salt),
                     'reg_pwd' => $reg_pwd,
