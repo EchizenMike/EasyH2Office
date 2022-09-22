@@ -28,6 +28,7 @@
         "topthink/think-captcha": "^3.0",
         "phpmailer/phpmailer": "^6.6",
         "firebase/php-jwt": "6.1.2",
+        "phpoffice/phpspreadsheet": "1.19",
         "overtrue/pinyin": "^4.0"
     },
     "require-dev": {

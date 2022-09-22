@@ -661,6 +661,25 @@ function get_desc_content($content, $count)
     return $res;
 }
 
+//查找数组索引
+function arraySearch($array, $searchFor) {
+    foreach($array as $key => $value) {
+		if(is_array($value)){
+			foreach($value as $key1 => $value1) {
+				if($value1 == $searchFor) {
+					return array("index" => $key, "key" => $key1);
+				}
+			}
+		}
+		else{
+			if($value == $searchFor) {
+				return $key;
+			}
+		}
+    } 
+    return false;
+}
+
 /**
  * PHP去除空格
  * @param string $str 字符串
