@@ -53,6 +53,9 @@ class Index extends BaseController
 					if(!empty($dids)){
 						$whereOr[] =['a.belong_did', 'in', $dids];
 					}
+					else{
+						$whereOr[] =['a.belong_did', '=', 0];
+					}
 				}
 				else if($tab==3){
 					$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',a.share_ids)")];
