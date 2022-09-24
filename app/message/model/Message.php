@@ -35,7 +35,7 @@ class Message extends Model
     ];
 	
     //获取消息列表
-    public function get_list($param = [],$map = [], $uid)
+    public function get_list($param = [],$map = [], $uid=0)
     {
         $rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
         //垃圾箱列表特殊处理
