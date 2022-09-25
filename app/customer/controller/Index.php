@@ -44,7 +44,7 @@ class Index extends BaseController
 			
 			$uid = $this->uid;
 			$auth = isAuth($uid,'customer_admin');
-			$dids = get_department_role($this->uid);
+			$dids = get_department_role($uid);
 			if($auth==0){
 				if($tab==1){
 					$whereOr[] =['a.belong_uid', '=', $uid];
@@ -55,6 +55,7 @@ class Index extends BaseController
 					}
 					else{
 						$whereOr[] =['a.belong_did', '=', 0];
+						$where[] =['a.belong_uid', '>', 0];
 					}
 				}
 				else if($tab==3){
@@ -75,6 +76,10 @@ class Index extends BaseController
 				else if($tab==2){
 					if(!empty($dids)){
 						$whereOr[] =['a.belong_did', 'in', $dids];
+					}
+					else{
+						$whereOr[] =['a.belong_did', '=', 0];
+						$where[] =['a.belong_uid', '>', 0];
 					}
 				}
 				else if($tab==3){
@@ -372,10 +377,11 @@ class Index extends BaseController
             }
         } else {
 			if (!empty($param['id']) && $param['id'] > 0) {
-				$id = get_params("id");
+				$sea = isset($param['sea']) ? $param['sea'] : 0;
 				//查看权限判断
-				$customer = customer_auth($this->uid,$id);
-				$detail = (new CustomerList())->detail($id);
+				$customer = customer_auth($this->uid,$param['id']);
+				$detail = (new CustomerList())->detail($param['id']);
+				View::assign('sea', $sea);
 				View::assign('detail', $detail);
 				return view('edit');
 			}
@@ -397,6 +403,9 @@ class Index extends BaseController
 		
         $detail = (new CustomerList())->detail($id);				
 		$contact = Db::name('CustomerContact')->where(['is_default'=>1,'cid'=>$id])->find();
+		//是否是客户管理员
+		$auth = isAuth($this->uid,'customer_admin');
+        View::assign('auth', $auth);
         View::assign('contact', $contact);
         View::assign('detail', $detail);
         return view();
