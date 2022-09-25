@@ -85,6 +85,10 @@ class Contact extends BaseController
                     // 验证失败 输出错误信息
                     return to_assign(1, $e->getError());
                 }
+				$count= Db::name('CustomerContact')->where(['cid' => $param['cid'],'delete_time' => 0])->count();
+				if($count == 0){
+					$param['is_default'] = 1;	
+				}
                 $param['admin_id'] = $this->uid;
                 $param['create_time'] = time();
                 $insertId = Db::name('CustomerContact')->strict(false)->field(true)->insertGetId($param);
