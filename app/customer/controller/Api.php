@@ -80,7 +80,7 @@ class Api extends BaseController
             if (!empty($param['id']) && $param['id'] > 0) {
                 $param['update_time'] = time();
 				$old = CustomerTrace::where(['id' => $param['id']])->find();
-				if($this->uid!=$old['admin_id']){
+				if($this->uid!=$old['admin_id'] && get_user_role($this->uid,$old['admin_id'])==0){
 					return to_assign(1, "只有所属员工才有权限操作");
 				}
 				$res = CustomerTrace::strict(false)->field(true)->update($param);
@@ -199,7 +199,7 @@ class Api extends BaseController
             if (!empty($param['id']) && $param['id'] > 0) {
                 $param['update_time'] = time();
 				$old = CustomerChance::where(['id' => $param['id']])->find();
-				if($this->uid!=$old['admin_id']){
+				if($this->uid!=$old['admin_id'] && get_user_role($this->uid,$old['admin_id'])==0){
 					return to_assign(1, "只有所属员工才有权限操作");
 				}
 				$res = CustomerChance::strict(false)->field(true)->update($param);

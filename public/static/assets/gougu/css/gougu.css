@@ -22,6 +22,7 @@
 .layui-btn-primary:hover{border-color:#3c9cff;color:#3c9cff}
 .layui-btn-group .layui-btn-primary:hover{color:#3c9cff}
 .layui-btn-reset {height: 38px;background-color: #fff; line-height: 38px; border: 1px solid transparent;padding: 0 12px; white-space: nowrap; color: #767a82;font-size: 14px;cursor: pointer;vertical-align: middle;}
+.layui-btn-reset:hover{color: #333333;}
 .layui-laypage .layui-laypage-curr .layui-laypage-em{background-color: #47B347;}
 
 .layui-tab-brief>.layui-tab-title .layui-this{color:#187FDD}
