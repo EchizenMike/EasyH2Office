@@ -25,7 +25,7 @@ class Contact extends BaseController
             $where = array();
             $whereOr = array();
             if (!empty($param['keywords'])) {
-                $where[] = ['a.id|a.name', 'like', '%' . $param['keywords'] . '%'];
+                $where[] = ['a.id|a.name|a.mobile|c.name', 'like', '%' . $param['keywords'] . '%'];
             }
             $where[] = ['a.delete_time', '=', 0];
 			

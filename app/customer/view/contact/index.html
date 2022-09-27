@@ -2,6 +2,13 @@
 <!-- 主体 -->
 {block name="body"}
 <div class="p-3">
+	<form class="layui-form gg-form-bar border-x border-t">
+		<div class="layui-input-inline" style="width:300px;">
+			<input type="hidden" name="tab" value="0" />
+			<input type="text" name="keywords" placeholder="输入关键字" class="layui-input" autocomplete="off" />
+		</div>
+		<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform">提交搜索</button>
+	</form>
     <table class="layui-hide" id="test" lay-filter="test"></table>
 </div>
 {/block}
@@ -83,6 +90,19 @@
 						layer.close(index);
 					});
 				}
+			});
+			
+			//监听搜索提交
+			form.on('submit(webform)', function(data) {
+				layui.pageTable.reload({
+					where: {
+						keywords: data.field.keywords
+					},
+					page: {
+						curr: 1
+					}
+				});
+				return false;
 			});
 		}
 	</script>
