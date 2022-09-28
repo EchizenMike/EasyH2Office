@@ -85,10 +85,11 @@ class Plan extends BaseController
             ->field('id,title,type,remind_type,start_time,end_time')
             ->select()->toArray();
             $events = [];
-            $color_array=['#393D49','#FF5722','#FFB800','#1E9FFF','#12bb37','#696969'];
+            $bg_array=['#ECECEC','#FFD3D3','#F6F6C7','#D7EBFF','#CCEBCC','#E9E9CB'];
+            $border_array=['#CCCCCC','#FF9999','#E8E89B','#99CCFF','#99CC99','#CCCC99'];
             foreach ($schedule as $k => $v) {
-                $v['backgroundColor'] = $color_array[$v['type']];
-                $v['borderColor'] = $color_array[$v['type']];
+                $v['backgroundColor'] = $bg_array[$v['type']];
+                $v['borderColor'] = $border_array[$v['type']];
                 $v['title'] = $v['title'];
                 $v['start'] = date('Y-m-d H:i', $v['start_time']);
                 $v['end'] = date('Y-m-d H:i', $v['end_time']);
