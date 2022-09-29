@@ -65,7 +65,7 @@ BOSS角色：suhaizhen     123456
 ~~~
 服务器运行环境要求：
 ~~~
-    PHP >= 7.1  
+    PHP >= 7.2  
     Mysql >= 5.5.0 (需支持innodb引擎)  
     Apache 或 Nginx  
     PDO PHP Extension  
@@ -82,11 +82,11 @@ BOSS角色：suhaizhen     123456
 
 Linux下，勾股OA的安装请使用以下命令进行安装。  
 
-第一步：克隆勾股CMS到你本地  
+第一步：克隆勾股OA到你本地  
     git clone https://gitee.com/gougucms/office.git
 
 第二步：进入目录  
-    cd gouguoa  
+    cd gouguoa（文件所在根目录）  
     
 第三步：下载PHP依赖包
     
@@ -137,9 +137,11 @@ composer install
 
 4.  如果composer install失败，请尝试在命令行进行切换配置到国内源，命令如下composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/。
 
-5.  访问 http://www.yoursite.com/install/index ，请注意查看伪静态请配置是否设置了thinkphp规则。
+5.  访问 http://www.你的域名.com/install/index ，请注意查看伪静态请配置是否设置了thinkphp规则。
 
-6.  如果遇到无法解决的问题请到QQ群：24641076 反馈交流， **需要提供部署安装、系统升级服务的，请联系我们** 。
+6.  如果遇到无法解决的问题请到QQ群：24641076 反馈交流 。
+
+7、 **📢如果需要提供安装服务，请搜索微信号：hdm588，添加好友，注意备注[安装勾股系统]。开源不易，该服务需友情赞赏💰99元。** 
 
 ### 🖼️ 截图预览
 |页面截图      |    部分截图|
