@@ -189,7 +189,7 @@ INSERT INTO `oa_admin_rule` VALUES (47, 45, 'home/cate/subject_check', '设置',
 
 INSERT INTO `oa_admin_rule` VALUES (48, 2, 'home/cate/industry_cate', '行业类型', '行业类型', 'home', '', 1, 1, 1, 0, 0);
 INSERT INTO `oa_admin_rule` VALUES (49, 48, 'home/cate/industry_cate_add', '新建/编辑', '行业类型', 'home', '', 2, 1, 1, 0, 0);
-INSERT INTO `oa_admin_rule` VALUES (50, 48, 'home/cate/services_cate_check', '设置', '行业类型', 'home', '', 2, 1, 1, 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (50, 48, 'home/cate/industry_cate_check', '设置', '行业类型', 'home', '', 2, 1, 1, 0, 0);
 
 INSERT INTO `oa_admin_rule` VALUES (51, 2, 'home/cate/work_cate', '工作类别', '工作类别', 'home', '', 1, 1, 1, 0, 0);
 INSERT INTO `oa_admin_rule` VALUES (52, 51, 'home/cate/work_cate_add', '新建/编辑', '工作类别', 'home', '', 2, 1, 1, 0, 0);
