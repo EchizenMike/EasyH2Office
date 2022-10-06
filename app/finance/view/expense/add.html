@@ -345,6 +345,11 @@ const moduleInit = ['tool','employeepicker'];
 							, { field: 'title', title: '项目名称' }
 						]]
 					});
+					//项目搜索提交
+					form.on('submit(search_form)', function (data) {
+						projectTable.reload({ where: { keywords: data.field.keywords }, page: { curr: 1 } });
+						return false;
+					});
 				},
 				btn: ['确定'],
 				yes: function () {
@@ -362,11 +367,6 @@ const moduleInit = ['tool','employeepicker'];
 				}
 			})
 		}
-		//项目搜索提交
-		form.on('submit(search_form)', function (data) {
-			projectTable.reload({ where: { keywords: data.field.keywords }, page: { curr: 1 } });
-			return false;
-		});
 		
 		//监听提交
 		form.on('submit(webform)', function(data){

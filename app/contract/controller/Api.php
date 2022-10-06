@@ -19,15 +19,30 @@ class Api extends BaseController
     {
         $param = get_params();
 		$where = array();
+		$whereOr = array();
 		if (!empty($param['keywords'])) {
 			$where[] = ['id|name', 'like', '%' . $param['keywords'] . '%'];
 		}
 		$where[] = ['delete_time', '=', 0];
+		$where[] = ['check_status', '=', 2];
+		$uid = $this->uid;
+		$auth = isAuth($uid,'contract');
+		if($auth==0){
+			$whereOr[] =['admin_id|prepared_uid|sign_uid|keeper_uid', '=', $uid];
+			$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',share_ids)")];
+			$dids = get_department_role($this->uid);
+			if(!empty($dids)){
+				$whereOr[] =['sign_did', 'in', $dids];
+			}
+		}
 		$rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
         $list = Db::name('Contract')
 			->field('id,name,sign_uid,sign_time')
 			->order('end_time asc')
 			->where($where)
+			->where(function ($query) use($whereOr) {
+					$query->whereOr($whereOr);
+			})
 			->paginate($rows, false)->each(function($item, $key){
 				$item['sign_name'] = Db::name('Admin')->where('id',$item['sign_uid'])->value('name');
                 $item['sign_time'] = date('Y-m-d', $item['sign_time']);

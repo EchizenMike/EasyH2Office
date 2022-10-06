@@ -101,6 +101,12 @@
 			<td class="layui-td-gray">地址</td>
 			<td colspan="3">{$detail.invoice_address}</td>
 		</tr>
+		{if condition="$detail.contract_id > 0"}
+		<tr>
+		<td class="layui-td-gray">关联的合同</td>
+			<td colspan="5">{$detail.contract_name}</td>
+		</tr>
+		{/if}
 		{notempty name="$detail.remark"}
 		<tr>
 			<td class="layui-td-gray">备注信息</td>

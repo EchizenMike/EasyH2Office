@@ -93,6 +93,12 @@ class Invoice extends Model
                 $detail['open_time'] = '-';
                 $detail['open_admin'] = '-';
             }
+			if ($detail['contract_id'] > 0) {
+				$detail['contract_name'] = Db::name('Contract')->where(['id' => $detail['contract_id']])->value('name');
+            }
+            else{
+                $detail['contract_name'] = '';
+            }			
         }
         return $detail;
     }
