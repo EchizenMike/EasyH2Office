@@ -42,6 +42,13 @@
 			</td>
 		</tr>
 		<tr>
+		<td class="layui-td-gray">关联的项目</td>
+			<td colspan="5">
+				<input type="text" class="layui-input project-picker" name="ptname" placeholder="请选择需要关联的项目" readonly value="">		
+				<input type="hidden" class="layui-input" name="ptid" value="0">		
+			</td>
+		</tr>
+		<tr>
 			<td class="layui-td-gray">报销选项<font>*</font></td>
 			<td colspan="5">				
 				<table id="interfix" class="layui-table layui-table-min">
@@ -122,6 +129,13 @@
 			<td class="layui-td-gray">入账月份<font>*</font></td>
 			<td>
 				<input type="text" class="layui-input" id="income_month" name="income_month" lay-verify="required" placeholder="请选择入账月份" lay-reqText="请选择入账月份" readonly value="{$expense.income_month}">	
+			</td>
+		</tr>
+		<tr>
+		<td class="layui-td-gray">关联的项目</td>
+			<td colspan="5">
+				<input type="text" class="layui-input project-picker" name="ptname" placeholder="请选择需要关联的项目" readonly value="{$expense.ptname}">		
+				<input type="hidden" class="layui-input" name="ptid" value="{$expense.ptid}">		
 			</td>
 		</tr>
 		<tr>
@@ -242,11 +256,7 @@ Array.prototype.remove = function (val) {
 
 const moduleInit = ['tool','employeepicker'];
 	function gouguInit() {
-		var form = layui.form,
-			upload = layui.upload,
-			tool=layui.tool,
-			employeepicker = layui.employeepicker,
-			laydate = layui.laydate;	
+		var form = layui.form,upload = layui.upload,tool=layui.tool,table=layui.table,employeepicker = layui.employeepicker,laydate = layui.laydate;	
 
 		laydate.render({
 			elem: '#income_month',
@@ -305,6 +315,58 @@ const moduleInit = ['tool','employeepicker'];
 			}
 		});
 		
+		//选择关联项目	
+		$('.project-picker').on('click', function () {
+			selectProject();
+		});
+		var projectTable;
+		function selectProject() {
+			layer.open({
+				title: '选择项目',
+				area: ['600px', '580px'],
+				type: 1,
+				content: '<div class="picker-table">\
+					<form class="layui-form pb-2">\
+						<div class="layui-input-inline" style="width:480px;">\
+						<input type="text" name="keywords"  placeholder="项目名称" class="layui-input" autocomplete="off" />\
+						</div>\
+						<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="search_form">提交搜索</button>\
+				  	</form>\
+					<div id="projectTable"></div></div>',
+				success: function () {
+					projectTable = table.render({
+						elem: '#projectTable'
+						, url: '/project/api/get_project'
+						, page: true //开启分页
+						, limit: 10
+						, cols: [[
+							{ type: 'radio', title: '选择' }
+							, { field: 'id', width: 100, title: '编号', align: 'center' }
+							, { field: 'title', title: '项目名称' }
+						]]
+					});
+				},
+				btn: ['确定'],
+				yes: function () {
+					var checkStatus = table.checkStatus(projectTable.config.id);
+					var data = checkStatus.data;
+					if (data.length > 0) {
+						$('[name="ptname"]').val(data[0].title);
+						$('[name="ptid"]').val(data[0].id);
+						layer.closeAll();
+					}
+					else {
+						layer.msg('请先选择项目');
+						return false;
+					}
+				}
+			})
+		}
+		//项目搜索提交
+		form.on('submit(search_form)', function (data) {
+			projectTable.reload({ where: { keywords: data.field.keywords }, page: { curr: 1 } });
+			return false;
+		});
 		
 		//监听提交
 		form.on('submit(webform)', function(data){

@@ -64,6 +64,12 @@ class Expense extends Model
             else{
                 $expense['pay_time'] = '-';
             }
+			if ($expense['ptid'] > 0) {
+                $expense['ptname'] = Db::name('Project')->where(['id' => $expense['ptid']])->value('name');
+            }
+            else{
+                $expense['ptname'] = '';
+            }
             $expense['list'] = Db::name('ExpenseInterfix')
                 ->field('a.*,c.title as cate_title')
                 ->alias('a')

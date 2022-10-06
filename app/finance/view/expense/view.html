@@ -66,6 +66,12 @@
 			<td class="layui-td-gray-2">原始单据日期</td>
 			<td>{$detail.expense_time}</td>
 		</tr>
+		{if condition="$detail.ptid > 0"}
+		<tr>
+		<td class="layui-td-gray">关联的项目</td>
+			<td colspan="5">{$detail.ptname}</td>
+		</tr>
+		{/if}
 		<tr>
 			<td class="layui-td-gray">报销人</td>
 			<td>{$detail.create_user}</td>

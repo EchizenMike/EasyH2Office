@@ -522,10 +522,24 @@ class Api extends BaseController
     //获取项目列表
     public function get_project()
     {
-        $where = [];
-        $where[] = ['delete_time', '=', 0];
-        $project = Db::name('Project')->field('id,name as title')->where($where)->select();
-        return to_assign(0, '', $project);
+		$param = get_params();
+		$project_ids = Db::name('ProjectUser')->where(['uid' => $this->uid, 'delete_time' => 0])->column('project_id');
+		$rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
+		
+		$auth = isAuth($this->uid,'contract_admin');
+		$where = [];
+		$where[] = ['delete_time', '=', 0];
+		if(isset($param['keywords'])){
+			$where[] = ['name', 'like', '%'.$param['keywords'].'%'];
+		}		
+		if($auth == 0){
+			$where[] = ['id', 'in', $project_ids];
+		}	
+		$list = ProjectList::field('id,name as title')
+			->where($where)
+			->order('id desc')
+			->paginate($rows, false, ['query' => $param]);
+		return table_assign(0, '', $list);
     }
 	
 	//编辑阶段

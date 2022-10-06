@@ -370,12 +370,7 @@
 			}
 			if (name == "project_id") {
 				if (admin_id == login_user) {
-					loading = true;
-					tool.get("/project/api/get_project", {}, function (res) {
-						let data = res.data;
-						loading = false;
-						edit.dropdown(id, name, real_txt, data, editPost, 1);
-					});
+					edit.select_table(id, name, real_txt, "/project/api/get_project", editPost, 1);
 				} else {
 					layer.msg('您没权限修改，请联系创建人或负责人修改');
 				}
