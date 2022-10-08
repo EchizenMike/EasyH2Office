@@ -257,7 +257,7 @@
 					});	
 
 					//搜索提交
-					form.on('submit(submit_form)', function(data){
+					form.on('submit(search_form)', function(data){
 						table_b.reload({where:{keywords:data.field.keywords},page:{curr:1}});
 						return false;
 					});		  
