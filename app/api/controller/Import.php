@@ -10,6 +10,7 @@ namespace app\api\controller;
 use app\api\BaseController;
 use think\facade\Db;
 use app\user\model\Admin;
+use app\customer\model\Customer;
 use avatars\MDAvatars;
 use Overtrue\Pinyin\Pinyin;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -180,6 +181,117 @@ class Import extends BaseController
            //dd($data);exit;
             // 批量添加数据
             if ((new Admin())->saveAll($data)) {
+                return to_assign(0, '导入成功');
+            }
+			else{
+				return to_assign(1, '导入失败，请检查excel文件再试');
+			}
+        } catch (\think\exception\ValidateException $e) {
+			return to_assign(1, $e->getMessage());
+        }
+    }
+	
+	//导入客户
+	public function import_customer(){
+        // 获取表单上传文件
+        $file[]= request()->file('file');
+		if($this->uid>1){
+			return to_assign(1,'该操作只能是超级管理员有权限操作');
+		}
+        try {
+            // 验证文件大小，名称等是否正确
+            validate(['file' => 'filesize:51200|fileExt:xls,xlsx'])->check($file);
+			// 日期前綴
+			 $dataPath = date('Ym');
+			 $md5 = $file[0]->hash('md5');
+			 $savename = \think\facade\Filesystem::disk('public')->putFile($dataPath, $file[0], function () use ($md5) {
+				 return $md5;
+			 });
+            $fileExtendName = substr(strrchr($savename, '.'), 1);
+            // 有Xls和Xlsx格式两种
+            if ($fileExtendName == 'xlsx') {
+                $objReader = IOFactory::createReader('Xlsx');
+            } else {
+                $objReader = IOFactory::createReader('Xls');
+            }
+            $objReader->setReadDataOnly(TRUE);
+			$path = get_config('filesystem.disks.public.url');
+            // 读取文件，tp6默认上传的文件，在runtime的相应目录下，可根据实际情况自己更改
+            $objPHPExcel = $objReader->load('.'.$path . '/' .$savename);
+            //$objPHPExcel = $objReader->load('./storage/202209/d11544d20b3ca1c1a5f8ce799c3b2433.xlsx');
+            $sheet = $objPHPExcel->getSheet(0);   //excel中的第一张sheet
+            $highestRow = $sheet->getHighestRow();       // 取得总行数
+            $highestColumn = $sheet->getHighestColumn();   // 取得总列数
+            Coordinate::columnIndexFromString($highestColumn);
+            $lines = $highestRow - 1;
+            if ($lines <= 0) {
+				return to_assign(1, '数据不能为空');
+                exit();
+            }
+			$source_array = Db::name('CustomerSource')->where(['status' => 1])->column('title', 'id');
+			$grade_array = Db::name('CustomerGrade')->where(['status' => 1])->column('title', 'id');
+			$industry_array = Db::name('Industry')->where(['status' => 1])->column('title', 'id');
+					
+            //循环读取excel表格，整合成数组。如果是不指定key的二维，就用$data[i][j]表示。
+            for ($j = 3; $j <= $highestRow; $j++) {
+				$name = $objPHPExcel->getActiveSheet()->getCell("A" . $j)->getValue();
+				if(empty($name)){
+					continue;
+				}
+
+				$source_id = arraySearch($source_array,$objPHPExcel->getActiveSheet()->getCell("B" . $j)->getValue());
+				$grade_id = arraySearch($grade_array,$objPHPExcel->getActiveSheet()->getCell("C" . $j)->getValue());
+				$industry_id = arraySearch($industry_array,$objPHPExcel->getActiveSheet()->getCell("D" . $j)->getValue());				
+				
+				$tax_num = $objPHPExcel->getActiveSheet()->getCell("E" . $j)->getValue();
+				$bank = $objPHPExcel->getActiveSheet()->getCell("F" . $j)->getValue();
+				$bank_sn = $objPHPExcel->getActiveSheet()->getCell("G" . $j)->getValue();
+				$file_check['bank_sn'] = $bank_sn;
+				$bank_no = $objPHPExcel->getActiveSheet()->getCell("H" . $j)->getValue();				
+				$cperson_mobile = $objPHPExcel->getActiveSheet()->getCell("I" . $j)->getValue();				
+				$address = $objPHPExcel->getActiveSheet()->getCell("J" . $j)->getValue();
+				$content = $objPHPExcel->getActiveSheet()->getCell("K" . $j)->getValue();
+				$market = $objPHPExcel->getActiveSheet()->getCell("L" . $j)->getValue();
+				if(empty($source_id)){
+					return to_assign(1, '第'.($j - 2).'行的客户来源错误');
+				}
+				if(empty($grade_id)){
+					return to_assign(1, '第'.($j - 2).'行的客户等级错误');
+				}
+				if(empty($industry_id)){
+					return to_assign(1, '第'.($j - 2).'行的所属行业错误');
+				}
+				$validate_bank = \think\facade\Validate::rule([
+					'bank_sn' => 'number',
+				]);
+				if(!empty($bank_sn)){
+					if (!$validate_bank->check($file_check)) {
+						return to_assign(1, '第'.($j - 2).'行的银行卡账号'.$validate->getError());
+					}
+				}
+				else{
+					$bank_sn='';
+				}
+                $data[$j - 3] = [		
+                    'name' => $name,
+                    'source_id' => $source_id,
+                    'grade_id' => $grade_id,
+                    'industry_id' => $industry_id,
+                    'tax_num' => $tax_num,
+                    'bank' => $bank,
+                    'bank_sn' => $bank_sn,
+                    'bank_no' => $bank_no,
+					'cperson_mobile' => $cperson_mobile,
+					'address' => $address,
+                    'content' => $content,
+					'market' => $market,
+                    'admin_id' => $this->uid,
+                    'create_time' => time()
+                ];
+            }
+           //dd($data);exit;
+            // 批量添加数据
+            if ((new Customer())->saveAll($data)) {
                 return to_assign(0, '导入成功');
             }
 			else{

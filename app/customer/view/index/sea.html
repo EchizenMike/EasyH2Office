@@ -1,4 +1,12 @@
 {extend name="../../base/view/common/base" /}
+{block name="style"}
+  <style>	
+	.gougu-upload-files{background-color: #ffffff; border:1px solid #e4e7ed;color: #c0c4cc;cursor: not-allowed; padding:0 12px; width:180px; box-sizing: border-box; display: inline-block; font-size: inherit; height: 38px; line-height: 35px; margin-right:8px; border-radius:2px;}
+	.gougu-upload-tips{color:#969696}
+	.layui-form-item{margin-bottom:8px;}
+	.layui-input-block{min-height:24px;}
+  </style>
+{/block}
 <!-- 主体 -->
 {block name="body"}
 <div class="p-3">
@@ -29,7 +37,8 @@
 
 <script type="text/html" id="toolbarDemo">
 <div class="layui-btn-container">
-   <span class="layui-btn layui-btn-normal layui-btn-sm" title="添加客户" lay-event="add">+ 添加公海客户</span>
+   <button class="layui-btn layui-btn-sm" title="添加客户" lay-event="add">+ 添加公海客户</button>
+   <button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="import"><i class="layui-icon">&#xe66f;</i>批量导入</button>
 </div>
 </script>
 {/block}
@@ -40,7 +49,7 @@
 <script>
 	const moduleInit = ['tool','employeepicker'];
 	function gouguInit() {
-		var table = layui.table, tool = layui.tool ,form = layui.form, employeepicker = layui.employeepicker;
+		var table = layui.table, tool = layui.tool ,form = layui.form, employeepicker = layui.employeepicker,upload=layui.upload;
 		layui.pageTable = table.render({
 			elem: '#test',
 			title: '客户列表',
@@ -93,14 +102,15 @@
 						field: 'right',
 						fixed:'right',
 						title: '操作',
-						width: 168,
+						width: 200,
 						align: 'center',
 						templet: function (d) {
 							var html = '<div class="layui-btn-group">';
+							var btn='<span class="layui-btn layui-btn-xs" lay-event="edit">编辑</span>';
 							var btn0='<span class="layui-btn layui-btn-normal layui-btn-xs" lay-event="distribute">分配</span>';
 							var btn1='<span class="layui-btn layui-btn-xs" lay-event="get">领取</span>';
 							var btn2='<span class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">转入废弃池</span>';
-							return html+btn0+btn1+btn2+'</div>';
+							return html+btn+btn0+btn1+btn2+'</div>';
 						}						
 					}
 				]
@@ -113,13 +123,107 @@
 				tool.side("/customer/index/add?sea=1");
 				return;
 			}
+			if (obj.event === 'import') {
+				uploadImport();	
+				return;				
+			}
 		});
+		
+		let uploadFiles;
+		function clearFile() {
+			for (let x in uploadFiles) {
+				delete uploadFiles[x];
+			}
+			$('#gougu-upload-choosed').html('');
+		}
+		function uploadImport(){
+			layer.open({
+				'title':'批量导入客户',
+				'type':1,
+				'area': ['640px', '320px'],
+				'content':'<div class="layui-form p-3">\
+						<div id="uploadType1">\
+							<div class="layui-form-item">\
+								<label class="layui-form-label">文件：</label>\
+								<div class="layui-input-block">\
+									<span class="gougu-upload-files">.xls,.xlsx</span><button type="button" class="layui-btn layui-btn-normal" id="uploadSelect">选择文件</button><a href="/static/home/file/勾股OA客户导入模板.xlsx" class="layui-btn ml-4">Execl表格模板下载</a>\
+								</div>\
+							</div>\
+							<div class="layui-form-item">\
+								<label class="layui-form-label"></label>\
+								<div class="layui-input-block">\
+									<span class="gougu-upload-tips">1、只有超级管理员才能进行批量导入操作；<br>2、只能上传 .xls、.xlsx文件；<br>3、数据请勿放在合并的单元格中；<br>4、文件大小请勿超过2MB，导入数据不能超过3000条</span>\
+								</div>\
+							</div>\
+							<div class="layui-form-item">\
+								<label class="layui-form-label"></label>\
+								<div class="layui-input-block green" id="gougu-upload-choosed"></div>\
+							</div>\
+							<div class="layui-form-item">\
+								<label class="layui-form-label"></label>\
+								<div class="layui-input-block red" id="gougu-upload-note"></div>\
+							</div>\
+							<div class="layui-form-item layui-form-item-sm">\
+								<label class="layui-form-label"></label>\
+								<div class="layui-input-block">\
+									<button type="button" class="layui-btn" id="uploadAjax">上传并导入</button>\
+								</div>\
+							</div>\
+						</div> \
+				</div>',
+				success: function(layero, idx){
+					form.render();
+					//选文件
+					let uploadImport = upload.render({
+						elem: '#uploadSelect'
+						,url: '/api/import/import_customer'
+						,auto: false
+						,accept: 'file' //普通文件
+						,exts: 'xls|xlsx' //只允许上传文件格式
+						,bindAction: '#uploadAjax'
+						,choose: function(obj){
+							uploadFiles = obj.pushFile();
+							// 清空,防止多次上传
+							clearFile();
+							obj.preview(function(index, file, result){
+								obj.pushFile();// 再添加
+								$('#gougu-upload-choosed').html('已选择：'+file.name);
+							});
+						}
+						,before: function(obj){
+						}
+						,progress: function(n, elem, e){
+							$('#gougu-upload-note').html('文件上转中...');
+							if(n==100){
+								$('#gougu-upload-note').html('数据导入中...');
+							}
+						}
+						,error: function(index, upload){
+							clearFile();
+							$('#gougu-upload-note').html('数据导入失败，请关闭重试');
+						}
+						,done: function(res, index, upload){
+							clearFile();
+							layer.msg(res.msg);
+							$('#gougu-upload-note').html(res.msg);
+							if(res.code==0){
+								layer.close(idx);
+								layui.pageTable.reload();
+							}						
+						}
+					});
+				}
+			});	
+		}
 		
 		//监听行工具事件
 		table.on('tool(test)', function(obj) {
 			var data = obj.data;
 			if(obj.event === 'view'){
 				tool.side('/customer/index/view?id='+data.id);
+			}
+			if(obj.event === 'edit'){
+				tool.side('/customer/index/add?sea=1&id='+data.id);
 			}
 			if (obj.event === 'distribute') {
 				//选择归属人人弹窗	

@@ -64,6 +64,7 @@
           </select>
         </td>
       </tr>
+	  {eq name="$sea" value="0"}
 	  <tr>
         <td class="layui-td-gray">归属员工<font>*</font></td>
         <td>
@@ -81,6 +82,7 @@
 			<input type="hidden" name="share_ids" value="{$detail.share_ids}">
         </td>
       </tr>
+	  {/eq}
 	  <tr>
 		<td class="layui-td-gray" style="vertical-align:top">客户介绍<font>*</font></td>
         <td colspan="5">

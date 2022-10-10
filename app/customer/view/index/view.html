@@ -114,6 +114,7 @@ html{background-color:#fff;}
 			</div>
 		</td>
 	   </tr>
+	  {notempty name="$contact"}
 	  <tr>
 		<td colspan="8"><strong>首要联系人信息</strong></td>
 	  </tr>
@@ -127,6 +128,7 @@ html{background-color:#fff;}
 		<td class="layui-td-gray">微信号码</td>
 		<td>{$contact.wechat}</td>
 		</tr>
+	 {/notempty}
 	{notempty name="$detail.trace"}
 	  <tr>
 		<td colspan="8"><strong>最近沟通记录</strong></td>
