@@ -531,7 +531,7 @@ class Expense extends BaseController
         if ($expense['check_status'] == 5) {
             return to_assign(1, "已打款的报销记录不能删除");
         }
-        $data['delete'] = time();
+        $data['delete_time'] = time();
         $data['id'] = $id;
         if (Db::name('expense')->update($data) !== false) {
             add_log('delete', $id);
