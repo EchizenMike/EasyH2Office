@@ -9,9 +9,15 @@ layui.define([], function (exports) {
 				return false;
 			}
 			that.loading = true;
-			var sideWidth = window.innerWidth > 1280 ? '1200px' : '996px';
+			var countWidth = window.innerWidth-(window.innerWidth*0.5)+456;
+			if(window.innerWidth<=1000){
+				countWidth = 750;
+			}
 			if (width && width > 0) {
 				sideWidth = width + 'px';
+			}
+			else{
+				sideWidth = countWidth + 'px';
 			}
 			layer.open({
 				type: 2,
@@ -37,8 +43,11 @@ layui.define([], function (exports) {
 							})
 						})
 						$(window).resize(function () {
-							width = window.innerWidth > 1280 ? '1200' : '996';
-							obj.width(width);
+							var resizeWidth = window.innerWidth-(window.innerWidth*0.5)+456;
+							if(window.innerWidth<=1000){
+								resizeWidth = 750;
+							}
+							obj.width(resizeWidth);
 						})
 					}
 			})
@@ -50,9 +59,15 @@ layui.define([], function (exports) {
 				return false;
 			}
 			that.loading = true;
-			var sideWidth = window.innerWidth > 1280 ? '1200px' : '996px';
+			var countWidth = window.innerWidth-(window.innerWidth*0.5)+456;
+			if(window.innerWidth<=1000){
+				countWidth = 750;
+			}
 			if (width && width > 0) {
 				sideWidth = width + 'px';
+			}
+			else{
+				sideWidth = countWidth + 'px';
 			}
 			$.ajax({
 				url: url,
@@ -88,8 +103,11 @@ layui.define([], function (exports) {
 						})
 					})
 					$(window).resize(function () {
-						width = window.innerWidth > 1280 ? '1200' : '996';
-						$('#expressLayer').width(width);
+						var resizeWidth = window.innerWidth-(window.innerWidth*0.5)+456;
+						if(window.innerWidth<=1000){
+							resizeWidth = 750;
+						}
+						$('#expressLayer').width(resizeWidth);
 					})					
 					
 				}
