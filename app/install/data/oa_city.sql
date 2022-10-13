@@ -1,6 +1,6 @@
 
 -- ----------------------------
--- Table structure for oa_city
+-- Table structure for oa_city（省市区）
 -- ----------------------------
 DROP TABLE IF EXISTS `oa_city`;
 CREATE TABLE `oa_city`  (

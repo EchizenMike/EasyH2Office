@@ -37,6 +37,11 @@ class Cate extends BaseController
 						$value['type_name'] = $val['title'];						
 					}
 				}
+				$value['department']='全公司';
+				if($value['department_ids']!=''){
+					$department = Db::name('Department')->whereIn('id',$value['department_ids'])->column('title');
+					$value['department'] = implode(',',$department);
+				}
 			}
             return to_assign(0, '', $cate);
         } else {

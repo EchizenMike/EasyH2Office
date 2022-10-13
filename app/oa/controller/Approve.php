@@ -53,7 +53,22 @@ class Approve extends BaseController
 				});
             return table_assign(0, '', $list);
         } else {
-			$list = Db::name('FlowType')->where(['status'=>1])->select()->toArray();			
+			$uid = $this->uid;
+			$department = $this->did;
+			if($uid==1){
+				$list = Db::name('FlowType')->where(['status'=>1])->select()->toArray();
+			}
+			else{
+				$map1 = [];
+				$map2 = [];
+				$map1[] = ['status', '=', 1];
+				$map1[] = ['department_ids', '=', ''];
+
+				$map2[] = ['status', '=', 1];
+				$map2[] = ['', 'exp', Db::raw("FIND_IN_SET('{$department}',department_ids)")];
+				
+				$list = Db::name('FlowType')->whereOr([$map1,$map2])->select()->toArray();
+			}			
 			View::assign('list', $list);
 			View::assign('type', get_config('approve.type'));
             return view();

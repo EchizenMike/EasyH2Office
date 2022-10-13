@@ -27,13 +27,14 @@
 			,cellMinWidth: 120
 			,cols: [[
 				{field:'id',width:80, title: 'ID号', align:'center'}
-				,{field:'title',title: '审批类型名称'}
-				,{field:'name',title: '审批类型标识'}
-				,{field:'icon',title: '审批类型图标',templet: function(d){
+				,{field:'title',title: '名称',width:120}
+				,{field:'department',title: '应用部门'}
+				,{field:'name',title: '标识',width:150}
+				,{field:'icon',title: '图标',width:220,templet: function(d){
 					var html='<strong class="iconfont '+d.icon+'"></strong> '+d.icon;
 					return html;
 				}}
-				,{field:'type_name', title: '所属分类',width:100,align:'center'}
+				,{field:'type_name', title: '所属分类',width:90,align:'center'}
 				,{field:'status', title: '状态',width:80,align:'center',templet: function(d){
 					var html1='<span class="green">正常</span>';
 					var html2='<span class="yellow">禁用</span>';

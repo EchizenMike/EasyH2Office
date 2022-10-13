@@ -278,7 +278,6 @@ class Index extends BaseController
     {
         if (request()->isAjax()) {
             $param = get_params();
-            //set_system_config('other','theme',$param['theme']);
 			Db::name('Admin')->where('id',$this->uid)->update(['theme'=>$param['theme']]);
             return to_assign();
         }
