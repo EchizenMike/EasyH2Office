@@ -428,7 +428,7 @@ class Invoice extends BaseController
     public function delete()
     {
         $id = get_params("id");
-        $status = InvoiceList::where(['id' => $param['id']])->value('check_status');
+        $status = InvoiceList::where(['id' => $id)->value('check_status');
         if ($status == 2) {
             return to_assign(1, "已审核的发票不能删除");
         }
