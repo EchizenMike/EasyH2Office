@@ -225,7 +225,7 @@ class Index extends BaseController
                 'name' => '任务',
                 'num' => $taskCount,
             );
-			$handle['task'] = Db::name('ProjectTask')->where([['director_uid', '=', $this->uid],['delete_time', '=', 0]])->count();
+			$handle['task'] = Db::name('ProjectTask')->where([['director_uid', '=', $this->uid],['flow_status', '<', 3],['delete_time', '=', 0]])->count();
         }
         if (in_array('article', $module)) {
             $articleCount = Db::name('Article')->where([['delete_time', '=', 0],['uid', '=', $this->uid]])->count();
