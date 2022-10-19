@@ -125,8 +125,11 @@ class Contact extends BaseController
     {
 		if (request()->isDelete()) {
 			$param = get_params();
-			$admin_id = Db::name('CustomerContact')->where(['id' => $param['id']])->value('admin_id');
-			if($admin_id != $this->uid){
+			$contact = Db::name('CustomerContact')->where(['id' => $param['id']])->find();
+			if($contact['is_default'] == 1){
+				return to_assign(1, '客户的首要联系人不能删除');
+			}
+			if($contact['admin_id'] != $this->uid){
 				return to_assign(1, '你不是该联系人的创建人，无权限删除');
 			}
             $param['delete_time'] = time();

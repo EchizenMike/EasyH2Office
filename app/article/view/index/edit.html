@@ -125,7 +125,7 @@ const moduleInit = ['tool','tagpicker','tinymce'];
     form.on('submit(webform)', function (data) {
       data.field.content = tinyMCE.editors['container'].getContent();
 			if (data.field.content == '') {
-				layer.msg('请先完善公告内容');
+				layer.msg('请先完善文章只是内容');
 				return false;
 			}
       let callback = function (e) {
