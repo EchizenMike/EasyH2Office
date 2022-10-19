@@ -146,6 +146,14 @@ class Api extends BaseController
 					'create_time' => time()
 				);	
 				$aid = Db::name('FlowRecord')->strict(false)->field(true)->insertGetId($checkData);
+				//发送消息通知
+				$msg=[
+					'from_uid'=>$this->uid,
+					'title'=>'合同',
+					'action_id'=>$param['id']
+				];
+				$users = $param['check_admin_ids'];
+				sendMessage($users,51,$msg);
 			}
 			if($param['check_status'] == 3){
 				$param['check_uid'] = $this->uid;
