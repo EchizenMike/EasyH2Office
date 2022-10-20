@@ -460,6 +460,7 @@ CREATE TABLE `oa_department`  (
   `pid` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '上级部门id',
   `leader_id` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '部门负责人ID',
   `phone` varchar(60) NOT NULL DEFAULT '' COMMENT '部门联系电话',
+  `sort` int(11) NOT NULL DEFAULT 0 COMMENT '排序：越大越靠前',
   `remark` varchar(1000) NULL DEFAULT '' COMMENT '备注',
   `status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '状态：-1删除 0禁用 1启用',
   `create_time` int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',

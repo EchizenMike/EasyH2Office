@@ -21,8 +21,12 @@
 			</td>
 		</tr>
 		<tr>
+			<td class="layui-td-gray">排序<font>*</font></td>
+			<td>
+				<input type="text" name="sort" lay-verify="required|number" value="0" autocomplete="off" placeholder="请输入排序" lay-reqText="请输入排序" class="layui-input">
+			</td>
 			<td class="layui-td-gray-2">部门联系电话</td>
-			<td colspan="3">
+			<td>
 				<input type="text" name="phone" placeholder="请输入部门联系电话，可空" autocomplete="off" class="layui-input">
 			</td>
 		</tr>
@@ -43,6 +47,10 @@
 					{/volist}
 				</select>
 			</td>
+			<td class="layui-td-gray">排序<font>*</font></td>
+			<td>
+				<input type="text" name="sort" lay-verify="required|number" value="{$detail.sort}" autocomplete="off" placeholder="请输入排序" lay-reqText="请输入排序" class="layui-input">
+			</td>
 		</tr>
 		<tr>
 			<td class="layui-td-gray-2">部门负责人</td>
@@ -55,7 +63,7 @@
 				</select>
 			</td>
 			<td class="layui-td-gray-2">部门联系电话</td>
-			<td>
+			<td colspan="3">
 				<input type="text" name="phone" value="{$detail.phone}" placeholder="请输入部门联系电话，可空" autocomplete="off" class="layui-input">
 			</td>
 		</tr>

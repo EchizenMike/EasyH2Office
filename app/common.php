@@ -205,7 +205,7 @@ function check_auth($rule, $uid)
 //读取部门列表
 function get_department()
 {
-    $department = Db::name('Department')->where(['status' => 1])->select()->toArray();
+    $department = Db::name('Department')->order('sort desc,id asc')->where(['status' => 1])->select()->toArray();
     return $department;
 }
 
