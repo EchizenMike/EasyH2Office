@@ -230,9 +230,10 @@
 				let callback = function (e) {
 					layer.closeAll();
 					layer.msg(e.msg);
-					setTimeout(function () {
-						location.reload();
-					}, 1000)
+					parent.layui.taskTable.reload();
+					if (e.code == 0) {
+						parent.layui.tool.close(1000);
+					}
 				}
 				let postData = { "id": detail_id };
 				tool.delete("/project/task/delete", postData, callback);
