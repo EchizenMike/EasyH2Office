@@ -323,7 +323,7 @@ function get_type_department_flows($type=6,$department=0)
  * @param  $flow_id 审批流程id
  * @return
  */
-function set_flow($flow_id,$check_admin_ids='')
+function set_flow($flow_id,$check_admin_ids,$uid)
 {
     $flow_detail = Db::name('Flow')->where('id',$flow_id)->find();
     $check_type = $flow_detail['check_type'];
@@ -331,7 +331,7 @@ function set_flow($flow_id,$check_admin_ids='')
     if ($check_type == 1) {
         if($flow[0]['flow_type'] == 1){
             //部门负责人
-            $leader = get_department_leader($this->uid);
+            $leader = get_department_leader($uid);
             if($leader == 0){
                 return to_assign(1,'审批流程设置有问题：当前部门负责人还未设置，请联系HR或者管理员');
             }
@@ -341,7 +341,7 @@ function set_flow($flow_id,$check_admin_ids='')
         }
         else if($flow[0]['flow_type'] == 2){
             //上级部门负责人
-            $leader = get_department_leader($this->uid,1);
+            $leader = get_department_leader($uid,1);
             if($leader == 0){
                 return to_assign(1,'审批流程设置有问题：上级部门负责人还未设置，请联系HR或者管理员');
             }
