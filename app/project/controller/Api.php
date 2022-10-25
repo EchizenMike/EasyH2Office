@@ -526,7 +526,7 @@ class Api extends BaseController
 		$project_ids = Db::name('ProjectUser')->where(['uid' => $this->uid, 'delete_time' => 0])->column('project_id');
 		$rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
 		
-		$auth = isAuth($this->uid,'contract_admin');
+		$auth = isAuth($this->uid,'project_admin');
 		$where = [];
 		$where[] = ['delete_time', '=', 0];
 		if(isset($param['keywords'])){

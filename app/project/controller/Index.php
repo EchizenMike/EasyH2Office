@@ -41,7 +41,7 @@ class Index extends BaseController
             $project_ids = Db::name('ProjectUser')->where(['uid' => $this->uid, 'delete_time' => 0])->column('project_id');
             $rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
 			
-			$auth = isAuth($this->uid,'contract_admin');
+			$auth = isAuth($this->uid,'project_admin');
 			$where = [];
 			$where[] = ['delete_time', '=', 0];
 			if($auth == 0){
@@ -327,7 +327,7 @@ class Index extends BaseController
             if ($detail['admin_id'] == $this->uid) {
                 $role = 2; //创建人
             }
-			$auth = isAuth($this->uid,'contract_admin');
+			$auth = isAuth($this->uid,'project_admin');
 			if ($auth == 1) {
                 $role = 3; //项目管理员
             }
