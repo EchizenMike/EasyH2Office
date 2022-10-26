@@ -52,7 +52,7 @@
 <script type="text/html" id="thumb">
 	<img src="{{d.thumb}}" width="30" height="30" />
 </script>
-<script type="text/html" id="toolbarDemo">
+<script type="text/html" id="toolbara">
 	<div class="layui-btn-container">
 		<button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="add"><i class="layui-icon">&#xe61f;</i>添加员工</button>
 		<button class="layui-btn layui-btn-danger layui-btn-sm" lay-event="disable"><i class="layui-icon">&#x1006;</i>禁止登录</button>
@@ -184,7 +184,7 @@
 		layui.pageTable = table.render({
 			elem: '#test',
 			title: '员工列表',
-			toolbar: '#toolbarDemo',
+			toolbar: '#toolbara',
 			url: "/user/user/index", //数据接口				
 			page: true, //开启分页
 			limit: 20,
@@ -327,38 +327,51 @@
 				uploadImport();	
 				return;				
 			}
-			if(data.length==0){
-				layer.msg('请选择要操作的员工');
-				return false;
-			}
+
 			var uidArray=[],msg='是否执行该操作？',type=0;
 			for(var i=0;i<data.length;i++){
 				uidArray.push(data[i].id);
 			}
-			switch(obj.event){
-				case 'disable':
-					msg = '您确定要把选中的员工设为禁止登录？';
-					type = 0;
-				break;
-				case 'recovery':
-					msg = '您确定要把选中的员工恢复正常？';
-					type = 1;
-				break;
-			};
-			
-			layer.confirm(msg, {
-				icon: 3,
-				title: '提示'
-			}, function (index) {
-				let callback = function (e) {
-					layer.msg(e.msg);
-					if (e.code == 0) {
-						layui.pageTable.reload();
-					}
+			if (obj.event === 'disable') {
+				if(data.length==0){
+					layer.msg('请选择要操作的员工');
+					return false;
 				}
-				tool.post("/user/user/set", {ids: uidArray.join(','),type:type}, callback);
-				layer.close(index);
-			});
+				layer.confirm('您确定要把选中的员工设为禁止登录?', {
+					icon: 3,
+					title: '提示'
+				}, function (index) {
+					let callback = function (e) {
+						layer.msg(e.msg);
+						if (e.code == 0) {
+							layui.pageTable.reload();
+						}
+					}
+					tool.post("/user/user/set", {ids: uidArray.join(','),type:0}, callback);
+					layer.close(index);
+				});
+			}
+			
+			if (obj.event === 'recovery') {
+				if(data.length==0){
+					layer.msg('请选择要操作的员工');
+					return false;
+				}
+				layer.confirm('您确定要把选中的员工恢复正常?', {
+					icon: 3,
+					title: '提示'
+				}, function (index) {
+					let callback = function (e) {
+						layer.msg(e.msg);
+						if (e.code == 0) {
+							layui.pageTable.reload();
+						}
+					}
+					tool.post("/user/user/set", {ids: uidArray.join(','),type:1}, callback);
+					layer.close(index);
+				});
+			}
+			
 		});
 
 
