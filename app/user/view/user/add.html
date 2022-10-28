@@ -220,6 +220,10 @@
 
 		//监听提交
 		form.on('submit(webform)', function(data){
+			if(!data.field.sex){
+				layer.msg('请选择员工性别');
+				return false;
+			}
 			let callback = function (e) {
 				layer.msg(e.msg);
 				if (e.code == 0) {
