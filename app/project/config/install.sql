@@ -189,4 +189,4 @@ CREATE TABLE `oa_project_log`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COMMENT = '项目任务操作记录表';
 
 
-INSERT INTO `oa_data_auth` VALUES ((SELECT MAX(id) +1  FROM `oa_data_auth` a), '项目管理员','project_admin','拥有该权限的员工可以查看所有项目。', 'contract', '',0,0,0,'立项阶段|实施阶段|验收阶段|交付阶段','','',1656143065, 0);
+INSERT INTO `oa_data_auth` VALUES ((SELECT MAX(id) +1  FROM `oa_data_auth` a), '项目管理员','project_admin','拥有该权限的员工可以查看所有项目。', 'project', '',0,0,0,'立项阶段|实施阶段|验收阶段|交付阶段','','',1656143065, 0);

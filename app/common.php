@@ -94,6 +94,14 @@ function isTemplate($url='')
     return $isTemplate;
 }
 
+//判断模块是否存在
+function isModule($name)
+{
+	$map = [];
+	$map[] = ['name', '=', $name];
+    $count = Db::name('AdminModule')->where($map)->count();
+    return $count;
+}
 //是否是某数据权限,count>1即有权限
 function isAuth($uid,$name)
 {

@@ -48,7 +48,12 @@
 	  <tr>
         <td class="layui-td-gray">客户名称<span style="font-size:12px;">(甲方)</span><font>*</font></td>
         <td>
-          <input type="text" name="customer" {eq name="$is_customer" value="1"}readonly{/eq} value="{$detail.customer}" autocomplete="off" lay-verify="required" lay-reqText="请输入客户名称" placeholder="请输入客户名称" class="layui-input {eq name="$is_customer" value="1"}customer-picker{/eq}">
+			{if condition="(isModule('customer') > 0) AND ($is_customer == 1)"}
+			<input type="text" name="customer" value="{$detail.customer}" autocomplete="off" readonly lay-verify="required" lay-reqText="请输入客户名称" placeholder="请输入客户名称" class="layui-input customer-picker">				
+			{else/}
+			<input type="text" name="customer" value="{$detail.customer}" autocomplete="off" lay-verify="required" lay-reqText="请输入客户名称" placeholder="请输入客户名称" class="layui-input">				
+			{/if}
+			<input type="hidden" name="customer_id" value="{$detail.customer_id}">
         </td>
         <td class="layui-td-gray">签约客户代表</td>
         <td>

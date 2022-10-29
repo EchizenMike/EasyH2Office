@@ -50,11 +50,19 @@
         <td class="layui-td-gray">客户名称<span style="font-size:12px;">(甲方)</span><font>*</font></td>
         <td>
 			{gt name="$pid" value="0"}
-			 <input type="text" name="customer" autocomplete="off" value="{$p_contract.customer}" readonly lay-verify="required" lay-reqText="请输入客户名称" placeholder="请输入客户名称" class="layui-input">
+			<input type="text" name="customer" autocomplete="off" value="{$p_contract.customer}" readonly lay-verify="required" lay-reqText="请输入客户名称" placeholder="请输入客户名称" class="layui-input">
+			<input type="hidden" name="customer_id" value="{$p_contract.id}">
 			{else/}
-			 <input type="text" name="customer" autocomplete="off" {eq name="$is_customer" value="1"}readonly{/eq} lay-verify="required" lay-reqText="请输入客户名称" placeholder="请输入客户名称" class="layui-input {eq name="$is_customer" value="1"}customer-picker{/eq}">
+			
+				{if condition="(isModule('customer') > 0) AND ($is_customer == 1)"}
+				<input type="text" name="customer" autocomplete="off" readonly lay-verify="required" lay-reqText="请输入客户名称" placeholder="请输入客户名称" class="layui-input customer-picker">
+				
+				{else/}
+				<input type="text" name="customer" autocomplete="off" lay-verify="required" lay-reqText="请输入客户名称" placeholder="请输入客户名称" class="layui-input">
+				
+				{/if}
+				<input type="hidden" name="customer_id" value="0">
 			{/gt}
-			 <input type="hidden" name="customer_id" value="0">
 			
         </td>
         <td class="layui-td-gray">签约客户代表<font>*</font></td>
