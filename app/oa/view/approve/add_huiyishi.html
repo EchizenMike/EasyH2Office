@@ -20,68 +20,18 @@
 			</td>
 			<td class="layui-td-gray">开始时间<font>*</font></td>
 			<td>
-				<input id="start_time_a" name="start_time_a" autocomplete="off" class="layui-input" value="" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
+				<input id="start_time_a" name="start_time_a" autocomplete="off" class="layui-input select-time" value="" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
 			</td>
 			<td>
-				<select lay-filter="time_b" id="start_time_b" name="start_time_b">
-					<option value="">--请选择--</option>
-					<option value="08:00">08:00</option>
-					<option value="08:30">08:30</option>
-					<option value="09:00">09:00</option>
-					<option value="09:30">09:30</option>
-					<option value="10:00">10:00</option>
-					<option value="10:30">10:30</option>
-					<option value="11:00">11:00</option>
-					<option value="11:30">11:30</option>
-					<option value="12:00">12:00</option>
-					<option value="13:30">13:30</option>
-					<option value="14:00">14:00</option>
-					<option value="14:30">14:30</option>
-					<option value="15:00">15:00</option>
-					<option value="15:30">15:30</option>
-					<option value="16:00">16:00</option>
-					<option value="16:30">16:30</option>
-					<option value="17:00">17:00</option>
-					<option value="17:30">17:30</option>
-					<option value="18:00">18:00</option>
-					<option value="18:30">18:30</option>
-					<option value="19:00">19:00</option>
-					<option value="19:30">19:30</option>
-					<option value="20:00">20:00</option>
-				</select>
+				<input id="start_time_b" name="start_time_b" autocomplete="off" class="layui-input select-datetime" value="" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
 			</td>
 			<td class="layui-td-gray">结束时间<font>*</font></td>
 			<td>
-				<input id="end_time_a" name="end_time_a" autocomplete="off" class="layui-input" value="" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
+				<input id="end_time_a" name="end_time_a" autocomplete="off" class="layui-input select-time" value="" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
 			</td>
 			<td>
 				<input type="hidden" name="duration" value="">
-				<select lay-filter="time_b" id="end_time_b" name="end_time_b">
-					<option value="">--请选择--</option>
-					<option value="08:00">08:00</option>
-					<option value="08:30">08:30</option>
-					<option value="09:00">09:00</option>
-					<option value="09:30">09:30</option>
-					<option value="10:00">10:00</option>
-					<option value="10:30">10:30</option>
-					<option value="11:00">11:00</option>
-					<option value="11:30">11:30</option>
-					<option value="12:00">12:00</option>
-					<option value="13:30">13:30</option>
-					<option value="14:00">14:00</option>
-					<option value="14:30">14:30</option>
-					<option value="15:00">15:00</option>
-					<option value="15:30">15:30</option>
-					<option value="16:00">16:00</option>
-					<option value="16:30">16:30</option>
-					<option value="17:00">17:00</option>
-					<option value="17:30">17:30</option>
-					<option value="18:00">18:00</option>
-					<option value="18:30">18:30</option>
-					<option value="19:00">19:00</option>
-					<option value="19:30">19:30</option>
-					<option value="20:00">20:00</option>
-				</select>
+				<input id="end_time_b" name="end_time_b" autocomplete="off" class="layui-input select-datetime" value="" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
 			</td>
 		</tr>
 		<tr>
@@ -105,68 +55,18 @@
 			</td>
 			<td class="layui-td-gray">开始时间<font>*</font></td>
 			<td>
-				<input id="start_time_a" name="start_time_a" autocomplete="off" readonly class="layui-input" value="{$detail.start_time_a}" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
+				<input id="start_time_a" name="start_time_a" autocomplete="off" class="layui-input select-time" value="{$detail.start_time_a}" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
 			</td>
 			<td>
-				<select lay-filter="time_b" id="start_time_b" name="start_time_b" lay-verify="required" lay-reqText="请选择具体时间">
-					<option value="">--请选择--</option>
-					<option value="08:00" {eq name="$detail.start_time_b" value="08:00"}selected=""{/eq}>08:00</option>
-					<option value="08:30" {eq name="$detail.start_time_b" value="08:30"}selected=""{/eq}>08:30</option>
-					<option value="09:00" {eq name="$detail.start_time_b" value="09:00"}selected=""{/eq}>09:00</option>
-					<option value="09:30" {eq name="$detail.start_time_b" value="09:30"}selected=""{/eq}>09:30</option>
-					<option value="10:00" {eq name="$detail.start_time_b" value="10:00"}selected=""{/eq}>10:00</option>
-					<option value="10:30" {eq name="$detail.start_time_b" value="10:30"}selected=""{/eq}>10:30</option>
-					<option value="11:00" {eq name="$detail.start_time_b" value="11:00"}selected=""{/eq}>11:00</option>
-					<option value="11:30" {eq name="$detail.start_time_b" value="11:30"}selected=""{/eq}>11:30</option>
-					<option value="12:00" {eq name="$detail.start_time_b" value="12:00"}selected=""{/eq}>12:00</option>
-					<option value="13:30" {eq name="$detail.start_time_b" value="13:30"}selected=""{/eq}>13:30</option>
-					<option value="14:00" {eq name="$detail.start_time_b" value="14:00"}selected=""{/eq}>14:00</option>
-					<option value="14:30" {eq name="$detail.start_time_b" value="14:30"}selected=""{/eq}>14:30</option>
-					<option value="15:00" {eq name="$detail.start_time_b" value="15:00"}selected=""{/eq}>15:00</option>
-					<option value="15:30" {eq name="$detail.start_time_b" value="15:30"}selected=""{/eq}>15:30</option>
-					<option value="16:00" {eq name="$detail.start_time_b" value="16:00"}selected=""{/eq}>16:00</option>
-					<option value="16:30" {eq name="$detail.start_time_b" value="16:30"}selected=""{/eq}>16:30</option>
-					<option value="17:00" {eq name="$detail.start_time_b" value="17:00"}selected=""{/eq}>17:00</option>
-					<option value="17:30" {eq name="$detail.start_time_b" value="17:30"}selected=""{/eq}>17:30</option>
-					<option value="18:00" {eq name="$detail.start_time_b" value="18:00"}selected=""{/eq}>18:00</option>
-					<option value="18:30" {eq name="$detail.start_time_b" value="18:30"}selected=""{/eq}>18:30</option>
-					<option value="19:00" {eq name="$detail.start_time_b" value="19:00"}selected=""{/eq}>19:00</option>
-					<option value="19:30" {eq name="$detail.start_time_b" value="19:30"}selected=""{/eq}>19:30</option>
-					<option value="20:00" {eq name="$detail.start_time_b" value="18:00"}selected=""{/eq}>20:00</option>
-				</select>
+				<input id="start_time_b" name="start_time_b" autocomplete="off" class="layui-input select-datetime" value="{$detail.start_time_b}" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
 			</td>
 			<td class="layui-td-gray">结束时间<font>*</font></td>
 			<td>
-				<input id="end_time_a" name="end_time_a" autocomplete="off" readonly class="layui-input" value="{$detail.end_time_a}" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
+				<input id="end_time_a" name="end_time_a" autocomplete="off" class="layui-input select-time" value="{$detail.end_time_a}" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
 			</td>
 			<td>
 				<input type="hidden" name="duration" value="{$detail.duration}">
-				<select lay-filter="time_b" id="end_time_b" name="end_time_b" lay-verify="required" lay-reqText="请选择具体时间">
-					<option value="">--请选择--</option>
-					<option value="08:00" {eq name="$detail.end_time_b" value="08:00"}selected=""{/eq}>08:00</option>
-					<option value="08:30" {eq name="$detail.end_time_b" value="08:30"}selected=""{/eq}>08:30</option>
-					<option value="09:00" {eq name="$detail.end_time_b" value="09:00"}selected=""{/eq}>09:00</option>
-					<option value="09:30" {eq name="$detail.end_time_b" value="09:30"}selected=""{/eq}>09:30</option>
-					<option value="10:00" {eq name="$detail.end_time_b" value="10:00"}selected=""{/eq}>10:00</option>
-					<option value="10:30" {eq name="$detail.end_time_b" value="10:30"}selected=""{/eq}>10:30</option>
-					<option value="11:00" {eq name="$detail.end_time_b" value="11:00"}selected=""{/eq}>11:00</option>
-					<option value="11:30" {eq name="$detail.end_time_b" value="11:30"}selected=""{/eq}>11:30</option>
-					<option value="12:00" {eq name="$detail.end_time_b" value="12:00"}selected=""{/eq}>12:00</option>
-					<option value="13:30" {eq name="$detail.end_time_b" value="13:30"}selected=""{/eq}>13:30</option>
-					<option value="14:00" {eq name="$detail.end_time_b" value="14:00"}selected=""{/eq}>14:00</option>
-					<option value="14:30" {eq name="$detail.end_time_b" value="14:30"}selected=""{/eq}>14:30</option>
-					<option value="15:00" {eq name="$detail.end_time_b" value="15:00"}selected=""{/eq}>15:00</option>
-					<option value="15:30" {eq name="$detail.end_time_b" value="15:30"}selected=""{/eq}>15:30</option>
-					<option value="16:00" {eq name="$detail.end_time_b" value="16:00"}selected=""{/eq}>16:00</option>
-					<option value="16:30" {eq name="$detail.end_time_b" value="16:30"}selected=""{/eq}>16:30</option>
-					<option value="17:00" {eq name="$detail.end_time_b" value="17:00"}selected=""{/eq}>17:00</option>
-					<option value="17:30" {eq name="$detail.end_time_b" value="17:30"}selected=""{/eq}>17:30</option>
-					<option value="18:00" {eq name="$detail.end_time_b" value="18:00"}selected=""{/eq}>18:00</option>
-					<option value="18:30" {eq name="$detail.end_time_b" value="18:30"}selected=""{/eq}>18:30</option>
-					<option value="19:00" {eq name="$detail.end_time_b" value="19:00"}selected=""{/eq}>19:00</option>
-					<option value="19:30" {eq name="$detail.end_time_b" value="19:30"}selected=""{/eq}>19:30</option>
-					<option value="20:00" {eq name="$detail.end_time_b" value="18:00"}selected=""{/eq}>20:00</option>
-				</select>
+				<input id="end_time_b" name="end_time_b" autocomplete="off" class="layui-input select-datetime" value="{$detail.end_time_b}" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
 			</td>
 		</tr>
 		<tr>
@@ -206,6 +106,32 @@ const moduleInit = ['tool','employeepicker'];
 			format: 'yyyy-MM-dd',
 			showBottom: false
 		});
+		
+		//选择具体时间
+		lay('.select-datetime').each(function () {
+			laydate.render({
+				elem: this,
+				trigger: 'click',
+				type: 'time',
+				format: 'HH:mm',
+				btns: ['clear', 'confirm'],
+				ready: function (date) {
+				   var dom = $(".laydate-time-list").children("li");
+				   for (var i = 0; i < dom.length; i++) {
+					   if (i == 2 || i == 5) {
+						   $(dom[i]).remove();
+					   } else if(i==1||i==4) {
+						   var li = $(dom[i]).children("ol").children("li")
+						   for (var j = 0; j < li.length; j++) {
+							   if ($(li[j]).text() != 00 && $(li[j]).text()!=30) {
+								   $(li[j]).remove();
+							   }
+						   }
+					   }
+					}
+				}
+			});
+		});	
 	}
 </script>
 {/block}
