@@ -23,6 +23,7 @@ class AdminCheck extends Validate
         'name' => 'require|chs',
         'username' => 'require|regex:checkUser',
         'mobile' => 'require|mobile|unique:admin',
+        'email' => 'require|email|unique:admin',
         'reg_pwd' => 'require|min:6',
         'did' => 'require',
         'position_id' => 'require',
@@ -43,6 +44,9 @@ class AdminCheck extends Validate
 		'mobile.require' => '手机不能为空',
         'mobile.mobile' => '手机格式错误',
 		'mobile.unique' => '同样的手机号码已经存在，请检查一下是否被离职或者禁用员工占用',
+		'email.require' => '邮箱不能为空',
+        'email.email' => '邮箱格式错误',
+		'email.unique' => '同样的邮箱已经存在，请检查一下是否被离职或者禁用员工占用',
         'reg_pwd.require' => '密码不能为空',
         'reg_pwd.min' => '密码至少要6个字符',
 		'did.require' => '请选择所在部门',
@@ -58,8 +62,8 @@ class AdminCheck extends Validate
     ];
 
     protected $scene = [
-        'add' => ['name', 'username', 'mobile','reg_pwd', 'did', 'position_id', 'type', 'entry_time'],
-        'edit' => ['name', 'username', 'mobile', 'did', 'position_id', 'entry_time', 'id'],
+        'add' => ['name', 'username', 'mobile','email','reg_pwd', 'did', 'position_id', 'type', 'entry_time'],
+        'edit' => ['name', 'username', 'mobile','email', 'did', 'position_id', 'entry_time', 'id'],
         'editPwd' => ['old_pwd', 'pwd'],
     ];
 
