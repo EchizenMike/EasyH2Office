@@ -36,6 +36,10 @@ class Project extends Model
             $detail['users'] = Db::name('ProjectUser')->where(['delete_time' => 0,'project_id'=>$id])->count();
             $detail['comments'] = Db::name('ProjectComment')->where([['module','=','project'],['topic_id','=',$detail['id']],['delete_time','=',0]])->count();
 			$detail['logs'] = Db::name('ProjectLog')->where(['module' => 'project', 'project_id' => $detail['id']])->count();
+			$detail['contract']='';
+			if($detail['contract_id']>0){
+				$detail['contract'] = Db::name('Contract')->where(['id' => $detail['contract_id']])->value('name');
+			}
         }
         return $detail;
     }

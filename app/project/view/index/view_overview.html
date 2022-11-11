@@ -15,6 +15,11 @@
 			<i class="iconfont icon-wodedianping" title="修改计划开始日期" 	data-name="start_time"></i> 至&nbsp;&nbsp;&nbsp;&nbsp; <span id="end_time_{$detail.id}"
 				data-val="">{$detail.end_time_str}</span><i class="iconfont icon-wodedianping"
 				title="修改计划结束日期" data-name="end_time"></i>
+			{gt name=":isModule('contract')" value="0"}
+				<span class="gray" style="margin-left:32px">关联合同：</span>
+				<span id="content_{$detail.id}" data-val="{$detail.contract_id}">{$detail.contract}</span>
+				<i class="iconfont icon-wodedianping" title="编辑" data-id="{$detail.id}" data-name="contract_id"></i>
+			{/gt}
 		</div>
 		<div class="py-1">
 			<span class="gray">项目简介：</span>
@@ -257,7 +262,7 @@
 </div>
 <script>
 function overview(){
-	let form = layui.form,tool = layui.tool, comment = layui.oaComment, edit = layui.oaEdit,upload = layui.upload;
+	let form = layui.form,tool = layui.tool,table = layui.table, comment = layui.oaComment, edit = layui.oaEdit,upload = layui.upload;
 	$('.hover-edit').hover(function () {
 		$(this).addClass('hover-on');
 	}, function () {
@@ -308,6 +313,62 @@ function overview(){
 		}
 		if (name == "content") {
 			edit.textarea(id, name, real_txt, editPost);
+		}
+		if (name == "contract_id") {
+			layer.open({
+				title: '选择合同',
+				area: ['600px', '580px'],
+				type: 1,
+				content: '<div class="picker-table">\
+					<form class="layui-form pb-2">\
+						<div class="layui-input-inline" style="width:480px;">\
+						<input type="text" name="keywords"  placeholder="合同名称" class="layui-input" autocomplete="off" />\
+						</div>\
+						<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="search_form">提交搜索</button>\
+					</form>\
+					<div id="contractTable"></div></div>',
+				success: function () {
+					contractTable = table.render({
+						elem: '#contractTable'
+						, url: '/contract/api/get_contract'
+						, page: true //开启分页
+						, limit: 10
+						, cols: [[
+							{ type: 'radio', title: '选择' }
+							, { field: 'id', width: 100, title: '编号', align: 'center' }
+							, { field: 'name', title: '合同名称' }
+						]]
+					});
+					//项目搜索提交
+					form.on('submit(search_form)', function (data) {
+						contractTable.reload({ where: { keywords: data.field.keywords }, page: { curr: 1 } });
+						return false;
+					});
+				},
+				btn: ['确定'],
+				btnAlign: 'c',
+				yes: function () {
+					var checkStatus = table.checkStatus(contractTable.config.id);
+					var data = checkStatus.data;
+					if (data.length > 0) {
+						let callback = function (e) {
+							layer.closeAll();
+							layer.msg(e.msg);
+							if (e.code == 0) {
+								setTimeout(function () {
+									location.reload();
+								}, 1000)
+							}
+						}
+						let postData = { id: id, contract_id:data[0].id, customer_id:data[0].customer_id };
+						tool.post("/project/index/edit", postData, callback);
+					}
+					else {
+						layer.msg('请先选择合同');
+						return false;
+					}
+				}
+			})
 		}
 	}	
 

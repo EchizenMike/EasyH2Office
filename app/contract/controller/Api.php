@@ -37,7 +37,7 @@ class Api extends BaseController
 		}
 		$rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
         $list = Db::name('Contract')
-			->field('id,name,sign_uid,sign_time')
+			->field('id,name,customer_id,sign_uid,sign_time')
 			->order('end_time asc')
 			->where($where)
 			->where(function ($query) use($whereOr) {

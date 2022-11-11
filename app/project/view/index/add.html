@@ -40,6 +40,16 @@
 				<input type="hidden" id="team_admin_ids" name="team_admin_ids" class="layui-input" value="">
 			</td>
 		</tr>
+		{gt name=":isModule('contract')" value="0"}
+		<tr>
+			<td class="layui-td-gray">关联合同</td>
+			<td colspan="8">
+				<input type="text" class="layui-input contract-picker" name="contract_name" placeholder="请选择需要关联的合同" readonly value="">		
+				<input type="hidden" class="layui-input" name="contract_id" value="0">		
+				<input type="hidden" class="layui-input" name="customer_id" value="0">		
+			</td>
+		</tr>
+		{/gt}
 		<tr>
 			<td class="layui-td-gray">项目简介<span style="color: red">*</span></td>
 			<td colspan="3">
@@ -135,7 +145,7 @@
 			</td>
 		</tr>
 	</table>
-	<div style="padding: 10px 0">
+	<div class="pt-3">
 		<input type="hidden" name="id" value="0" />
 		<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform">立即提交</button>
 		<button type="reset" class="layui-btn layui-btn-primary">重置</button>
@@ -149,7 +159,7 @@
 <script>
 	const moduleInit = ['tool','employeepicker'];
 	function gouguInit() {
-		var form = layui.form,tool = layui.tool,laydate = layui.laydate,employeepicker = layui.employeepicker;	
+		var form = layui.form,tool = layui.tool,table = layui.table,laydate = layui.laydate,employeepicker = layui.employeepicker;	
 		//日期范围
 		laydate.render({
 			elem: '#date',
@@ -164,6 +174,61 @@
 				trigger: 'click'
 			});
 		});
+		
+		//选择关联合同	
+		$('.contract-picker').on('click', function () {
+			contractProject();
+		});
+		var contractTable;
+		function contractProject() {
+			layer.open({
+				title: '选择合同',
+				area: ['600px', '580px'],
+				type: 1,
+				content: '<div class="picker-table">\
+					<form class="layui-form pb-2">\
+						<div class="layui-input-inline" style="width:480px;">\
+						<input type="text" name="keywords"  placeholder="合同名称" class="layui-input" autocomplete="off" />\
+						</div>\
+						<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="search_form">提交搜索</button>\
+					</form>\
+					<div id="contractTable"></div></div>',
+				success: function () {
+					contractTable = table.render({
+						elem: '#contractTable'
+						, url: '/contract/api/get_contract'
+						, page: true //开启分页
+						, limit: 10
+						, cols: [[
+							{ type: 'radio', title: '选择' }
+							, { field: 'id', width: 100, title: '编号', align: 'center' }
+							, { field: 'name', title: '合同名称' }
+						]]
+					});
+					//项目搜索提交
+					form.on('submit(search_form)', function (data) {
+						contractTable.reload({ where: { keywords: data.field.keywords }, page: { curr: 1 } });
+						return false;
+					});
+				},
+				btn: ['确定'],
+				btnAlign: 'c',
+				yes: function () {
+					var checkStatus = table.checkStatus(contractTable.config.id);
+					var data = checkStatus.data;
+					if (data.length > 0) {
+						$('[name="contract_name"]').val(data[0].name);
+						$('[name="contract_id"]').val(data[0].id);
+						$('[name="customer_id"]').val(data[0].customer_id);
+						layer.closeAll();
+					}
+					else {
+						layer.msg('请先选择合同');
+						return false;
+					}
+				}
+			})
+		}
     
 		
 		$('.add-flow').on('click',function(){

@@ -22,10 +22,12 @@ class ProjectLog extends Model
                 'end_time' => array('icon' => 'icon-kaoshijihua', 'title' => '预计结束时间'),
                 'name' => array('icon' => 'icon-wodedianping', 'title' => '标题'),
                 'status' => array('icon' => 'icon-wodedianping', 'title' => '状态'),
-                'content' => array('icon' => 'icon-wodedianping', 'title' => '项目描述'),
-                'file' => array('icon' => 'icon-sucaiziyuan', 'title' => '项目文件'),
-                'link' => array('icon' => 'icon-sucaiziyuan', 'title' => '项目链接'),
-                'user' => array('icon' => 'icon-xueshengzhuce', 'title' => '项目成员'),
+                'content' => array('icon' => 'icon-wodedianping', 'title' => '描述'),
+                'file' => array('icon' => 'icon-sucaiziyuan', 'title' => '文件'),
+                'contract_id' => array('icon' => 'icon-hetongguanli', 'title' => '合同'),
+                'customer_id' => array('icon' => 'icon-jiaoshiguanli', 'title' => '客户'),
+                'link' => array('icon' => 'icon-sucaiziyuan', 'title' => '链接'),
+                'user' => array('icon' => 'icon-xueshengzhuce', 'title' => '成员'),
                 'new' => array('icon' => 'icon-zidingyishezhi', 'title' => '项目'),
                 'delete' => array('icon' => 'icon-shanchu', 'title' => '项目'),
             ]],
@@ -174,6 +176,9 @@ class ProjectLog extends Model
                 if ($v['old_content'] == '') {
                     $v['old_content'] = '未设置';
                 }
+				else{
+					$v['old_content'] = date('Y-m-d', (int) $v['old_content']);
+				}
                 $v['new_content'] = date('Y-m-d', (int) $v['new_content']);
             }
             if (strpos($v['field'], '_uid') !== false) {
@@ -190,6 +195,14 @@ class ProjectLog extends Model
             if ($v['field'] == 'cate') {
                 $v['old_content'] = Db::name('WorkCate')->where(['id' => $v['old_content']])->value('title');
                 $v['new_content'] = Db::name('WorkCate')->where(['id' => $v['new_content']])->value('title');
+            }
+			if ($v['field'] == 'contract_id') {
+                $v['old_content'] = Db::name('Contract')->where(['id' => $v['old_content']])->value('name');
+                $v['new_content'] = Db::name('Contract')->where(['id' => $v['new_content']])->value('name');
+            }
+			if ($v['field'] == 'customer_id') {
+                $v['old_content'] = Db::name('Customer')->where(['id' => $v['old_content']])->value('name');
+                $v['new_content'] = Db::name('Customer')->where(['id' => $v['new_content']])->value('name');
             }
             if ($v['field'] == 'done_ratio') {
                 $v['old_content'] = $v['old_content'] . '%';
