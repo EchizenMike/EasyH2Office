@@ -97,7 +97,7 @@ class Index extends BaseController
                             $keywordArray = explode(',', $param['keyword_names']);
                             $res_keyword = (new ArticleList())->insertKeyword($keywordArray, $aid);
                         } else {
-                            $res_keyword == true;
+                            $res_keyword = true;
                         }
                         if ($res_keyword !== false) {
                             add_log('edit', $param['id'], $param);
@@ -132,7 +132,7 @@ class Index extends BaseController
                             $keywordArray = explode(',', $param['keyword_names']);
                             $res_keyword = (new ArticleList())->insertKeyword($keywordArray, $aid);
                         } else {
-                            $res_keyword == true;
+                            $res_keyword = true;
                         }
                         if ($res_keyword !== false) {
                             add_log('add', $aid, $param);
