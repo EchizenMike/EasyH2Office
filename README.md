@@ -12,7 +12,7 @@
 2. [开源项目系列：勾股DEV —— 项目研发管理系统](https://gitee.com/gougucms/dev)
 3. [开源项目系列：勾股CMS —— CMS内容管理系统框架](https://gitee.com/gougucms/gougucms)
 4. [开源项目系列：勾股BLOG —— 个人&工作室博客系统](https://gitee.com/gougucms/blog)
-5. [开源项目系列：勾股Admin —— 基于Layui的Web UI解决方案。](https://gitee.com/gouguopen/guoguadmin.gitv)
+5. [开源项目系列：勾股Admin —— 基于Layui的Web UI解决方案](https://gitee.com/gouguopen/guoguadmin)
 
 
 ### 📋 系统介绍
