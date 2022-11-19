@@ -86,7 +86,7 @@ class Invoice extends Model
 			$detail['create_user'] = Db::name('Admin')->where(['id' => $detail['admin_id']])->value('name');
             $detail['department'] = Db::name('Department')->where(['id' => $detail['did']])->value('title');
             if ($detail['open_time'] > 0) {
-                $detail['open_time'] = empty($detail['open_time']) ? '0' : date('Y-m-d H:i', $detail['open_time']);
+                $detail['open_time'] = empty($detail['open_time']) ? '0' : date('Y-m-d', $detail['open_time']);
 				$detail['open_admin'] = Db::name('Admin')->where(['id' => $detail['open_admin_id']])->value('name');
             }
             else{

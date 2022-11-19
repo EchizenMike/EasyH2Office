@@ -37,6 +37,12 @@ CREATE TABLE `oa_admin`  (
   `did` int(11) NOT NULL DEFAULT 0 COMMENT '部门id',
   `position_id` int(11) NOT NULL DEFAULT 0 COMMENT '职位id',
   `type` int(1) NOT NULL DEFAULT 0 COMMENT '员工类型：0未设置,1正式,2试用,3实习',
+  `age` int(3) NOT NULL DEFAULT 0 COMMENT '年龄';
+  `native_place` varchar(255) NOT NULL DEFAULT '' COMMENT '籍贯';
+  `idcard` varchar(255) NOT NULL DEFAULT '' COMMENT '身份证';  
+  `education` varchar(255) NOT NULL DEFAULT '' COMMENT '学历';
+  `bank_account` varchar(255) NOT NULL DEFAULT '' COMMENT '银行账号';
+  `bank_info` varchar(255) NOT NULL DEFAULT '' COMMENT '银行卡信息';
   `desc` text NULL COMMENT '员工个人简介',
   `entry_time` int(11) NOT NULL DEFAULT 0 COMMENT '员工入职日期',
   `create_time` int(11) NOT NULL DEFAULT 0 COMMENT '注册时间',
@@ -45,7 +51,7 @@ CREATE TABLE `oa_admin`  (
   `login_num` int(11) NOT NULL DEFAULT 0 COMMENT '登录次数',
   `last_login_ip` varchar(64) NOT NULL DEFAULT '' COMMENT '最后登录IP',
   `is_lock` int(1) NOT NULL DEFAULT 0 COMMENT '是否锁屏:1是0否',
-  `status` int(1) NOT NULL DEFAULT 1 COMMENT '状态：-1删除,0禁止登录,1正常,2离职',
+  `status` int(1) NOT NULL DEFAULT 1 COMMENT '状态：-1删除,0禁止登录,1正常,2离职',  
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `id`(`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COMMENT = '员工表';
@@ -862,9 +868,9 @@ DROP TABLE IF EXISTS `oa_invoice`;
 CREATE TABLE `oa_invoice`  (
   `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `code` varchar(100) NOT NULL DEFAULT '' COMMENT '发票号码',
-  `customer_id` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '关联客户ID,预设数据',
-  `contract_id` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '预定字段:关联合同协议ID',
-  `project_id` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '预定字段:关联项目ID',
+  `customer_id` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '关联客户ID',
+  `contract_id` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '关联合同协议ID',
+  `project_id` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '关联项目ID',
   `cash_type` tinyint(1) UNSIGNED NULL DEFAULT 1 COMMENT '付款方式：1现金 2转账 3微信支付 4支付宝 5信用卡 6支票 7其他',
   `is_cash` tinyint(1) UNSIGNED NULL DEFAULT 0 COMMENT '是否到账：0未到账 1部分到账 2全部到账',
   `amount` decimal(15, 2) NULL DEFAULT 0.00 COMMENT '发票金额',
@@ -891,6 +897,7 @@ CREATE TABLE `oa_invoice`  (
   `flow_admin_ids` varchar(500) NOT NULL DEFAULT '' COMMENT '历史审批人ID，如:1,2,3',
   `copy_uids` varchar(500) NOT NULL DEFAULT '' COMMENT '抄送人ID，如:1,2,3',
   `file_ids` varchar(500) NOT NULL DEFAULT '' COMMENT '附件ID，如:1,2,3',
+  `other_file_ids` varchar(500) NOT NULL DEFAULT '' COMMENT '其他附件ID，如:1,2,3',
   `check_status` tinyint(4) NOT NULL DEFAULT 0 COMMENT '状态 0待审核,1审核中,2审核通过,3审核不通过,4已撤销,5已开具,10已作废',
   `last_admin_id` varchar(200) NOT NULL DEFAULT '0' COMMENT '上一审批人',
   `check_remark` text NULL COMMENT '撤销的理由',

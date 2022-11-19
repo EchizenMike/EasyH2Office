@@ -78,8 +78,10 @@ class Api extends BaseController
                 $param['check_status'] = 5;
                 $param['open_admin_id'] = $this->uid;
             }
-			$param['open_time'] = isset($param['open_time']) ? strtotime(urldecode($param['open_time'])) : 0;
-            $res = Invoice::where('id', $param['id'])->strict(false)->field('code,check_status,open_time,open_admin_id,delivery')->update($param);
+			if(isset($param['open_time'])){
+				$param['open_time'] = strtotime(urldecode($param['open_time']));
+			}
+            $res = Invoice::where('id', $param['id'])->strict(false)->field('code,check_status,open_time,open_admin_id,delivery,other_file_ids')->update($param);
             if ($res !== false) {
 				add_log('open', $param['id'],$param,'发票');
                 return to_assign();

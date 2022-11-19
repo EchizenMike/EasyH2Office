@@ -378,6 +378,11 @@ class Invoice extends BaseController
 			$fileArray = Db::name('File')->where('id','in',$detail['file_ids'])->select();
 			$detail['fileArray'] = $fileArray;
 		}
+		
+		if($detail['other_file_ids'] !=''){
+			$fileArrayOther = Db::name('File')->where('id','in',$detail['other_file_ids'])->select();
+			$detail['fileArrayOther'] = $fileArrayOther;
+		}
 
 		$is_check_admin = 0;
 		$is_create_admin = 0;
