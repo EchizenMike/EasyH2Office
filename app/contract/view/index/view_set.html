@@ -140,28 +140,26 @@ html{background-color:#fff;}
 				<td colspan="7">{$detail.remark}</td>
 			  </tr>
 			  {/notempty}
-			  <tr>
-				<td class="layui-td-gray">
-					<div class="layui-input-inline">合同附件</div>
-					{eq name="$detail.check_status" value="1" }<div class="layui-input-inline"><button type="button" class="layui-btn layui-btn-xs" id="upFile"><i class="layui-icon"></i></button></div>{/eq}
-				</td>
-				<td colspan="7" style="line-height:inherit">
-					<div id="fileList">
-					{volist name="$detail.file_array" id="vo"}
-					<div class="layui-col-md4" id="file_{$vo.id}">
-						<div class="file-card">
-							<i class="file-icon iconfont icon-renwuguanli"></i>
-							<div class="file-title">{$vo.name}</div>
-							<div class="file-tool">
-								<a href="{$vo.filepath}" download="{$vo.name}" title="下载查看" target="_blank"><i class="iconfont icon-shujudaoru blue"></i></a>
-								<i class="btn-delete iconfont icon-shanchu red" data-id="{$vo.id}" title="删除"></i>
+				{notempty name="$detail.file_ids"}
+				<tr>
+					<td class="layui-td-gray">相关附件</td>
+					<td colspan="7" style="line-height:inherit">
+						<div class="layui-row">
+							{volist name="$detail.fileArray" id="vo"}
+							<div class="layui-col-md4">
+								<div class="file-card">
+									<i class="file-icon iconfont icon-renwuguanli"></i>
+									<div class="file-title file-title-view">{$vo.name}</div>
+									<div class="file-tool">
+										<a href="{$vo.filepath}" download="{$vo.name}" target="_blank" title="下载查看"><i class="iconfont icon-shujudaoru blue"></i></a>
+									</div>
+								</div>
 							</div>
+							{/volist}
 						</div>
-					</div>
-					{/volist}
-					</div>
-				</td>
-			   </tr>
+					</td>
+				</tr>
+				{/notempty}
 			  <tr>
 				<td colspan="8"><strong>签订信息</strong></td>
 			  </tr>
@@ -180,7 +178,7 @@ html{background-color:#fff;}
 				<td>{$detail.keeper_name}{gt name="$auth" value="0"}<span id="keeper" data-ids="{$detail.keeper_uid}" data-names="{$detail.keeper_name}" class="layui-btn layui-btn-xs layui-btn-normal ml-1">更改</span>{/gt}</td>
 				<td class="layui-td-gray">合同共享人员</td>
 				<td colspan="5">{$detail.share_names}{gt name="$auth" value="0"}<span id="shares" data-ids="{$detail.share_ids}" data-names="{$detail.share_names}" class="layui-btn layui-btn-xs layui-btn-normal ml-1">更改</span>{/gt}</td>
-			  </tr>	
+			  </tr>			  
 			  <tr>
 				<td colspan="8"><strong>审核信息</strong></td>
 			  </tr>
@@ -235,7 +233,7 @@ html{background-color:#fff;}
 				</tr>
 				{/eq}
 			</table>
-			<div class="py-4">
+			<div class="pt-3">
 				{eq name="$is_create_admin" value = "1"}
 				<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform">提交审核</button>
 				<a class="layui-btn" href="/contract/index/add/id/{$detail.id}">编辑合同</a>
@@ -454,55 +452,6 @@ const moduleInit = ['tool','employeepicker'];
 					tool.post("/contract/index/add", {'id':contract_id,'share_ids':ids.join(','),'scene':'change'}, callback);
 				}
 			});
-		});
-		
-		
-		//删除附件
-		$('#fileList').on('click', '.btn-delete', function () {
-			var _id = $(this).data('id');
-			layer.confirm('确定要删除该附件吗?', {
-				icon: 3,
-				title: '提示'
-			}, function(index) {
-				let callback = function (e) {
-					layer.msg(e.msg);
-					if (e.code == 0) {						
-						$('#file_' + _id).remove();
-					}
-				}
-				tool.delete("/contract/api/delete_file", {id: _id}, callback);
-				layer.close(index);
-			});
-		})
-		//多附件上传
-		upload.render({
-			elem: '#upFile'
-			,url: "/api/index/upload"
-			,multiple: true
-			,accept: 'file' //普通文件
-    		,exts: 'png|jpg|gif|jpeg|doc|docx|ppt|pptx|xls|xlsx|pdf|txt|zip|rar|7z' //只允许上传文件格式
-			,done: function(res){
-				if (res.code == 0) {					
-					let callback = function (e) {
-						layer.msg(e.msg);
-						let temp = `<div class="layui-col-md4" id="file_${e.data}">
-								<div class="file-card">
-									<i class="file-icon iconfont icon-renwuguanli"></i>
-									<div class="file-title">${res.data.name}</div>
-									<div class="file-tool">
-										<a href="${res.data.filepath}" download="${res.data.name}" title="下载查看" target="_blank"><i class="iconfont icon-shujudaoru blue"></i></a>
-										<i class="btn-delete layui-icon layui-icon-delete" data-id="${e.data}" style="color: #FF5722;" title="删除"></i>
-									</div>
-								</div>
-							</div>`;
-						$('#fileList').append(temp);
-					}
-					tool.post("/contract/api/add_file", {'contract_id':contract_id,'file_id':res.data.id,'file_name':res.data.name}, callback);
-				}
-				else{
-					layer.msg(res.msg);
-				}
-			}
 		});
 	}
 

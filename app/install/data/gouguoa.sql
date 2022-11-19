@@ -1581,6 +1581,7 @@ CREATE TABLE `oa_contract`  (
   `sign_uid` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '合同签订人',
   `keeper_uid` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '合同保管人', 
   `share_ids` varchar(500) NOT NULL DEFAULT '' COMMENT '共享人员，如:1,2,3',
+  `file_ids` varchar(500) NOT NULL DEFAULT '' COMMENT '相关附件，如:1,2,3',
   `sign_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '合同签订时间',
   `sign_did` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '合同签订部门',
   `cost` decimal(15, 2) NOT NULL DEFAULT 0.00 COMMENT '合同金额',

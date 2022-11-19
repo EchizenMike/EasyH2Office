@@ -45,6 +45,7 @@ class ContractLog extends Model
 			'check_status' => '状态',
 			'status' => '状态',
 			'archive_status' => '归档状态',
+			'file_ids' => '合同附件',
 			'file' => '合同附件',
 			'remark' => '备注信息',
 			'new' => '新增',

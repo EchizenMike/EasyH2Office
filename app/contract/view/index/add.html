@@ -111,37 +111,49 @@
 	  <tr>
         <td class="layui-td-gray-2">合同签订人<font>*</font></td>
         <td>
-          <input type="text" name="sign_name" autocomplete="off" readonly placeholder="请选择合同签订人" class="layui-input">
-          <input type="hidden" name="sign_uid" lay-verify="required" lay-reqText="请选择合同签订人">
-          <input type="hidden" name="sign_did">
+			<div class="layui-input-inline" style="width:50%;">
+			  <input type="text" name="sign_name" autocomplete="off" readonly lay-verify="required" lay-reqText="请选择合同签订人" placeholder="请选择合同签订人" class="layui-input">
+			</div>
+			<div class="layui-input-inline gray" style="width:42%;" id="sign_department"></div>
+			<input type="hidden" name="sign_uid">
+			<input type="hidden" name="sign_did">
         </td>
 		<td class="layui-td-gray-2">合同签订时间<font>*</font></td>
         <td>
 			<input type="text" name="sign_time" readonly lay-verify="required" lay-reqText="请选择合同签订日期" placeholder="请选择合同签订日期" class="layui-input select-time">
         </td>
-        <td class="layui-td-gray-2">合同签订部门</td>
-        <td>
-          <input type="text" name="sign_department" autocomplete="off" readonly class="layui-input">
-        </td>
-      </tr>
-	  <tr>
         <td class="layui-td-gray-2">合同制定人<font>*</font></td>
         <td>
           <input type="text" name="prepared_name" autocomplete="off" readonly placeholder="请选择合同制定人" class="layui-input picker-one">
 		  <input type="hidden" name="prepared_uid" lay-verify="required" lay-reqText="请选择合同制定人">
         </td>
+      </tr>
+	  <tr>
         <td class="layui-td-gray-2">合同保管人<font>*</font></td>
         <td>
           <input type="text" name="keeper_name" autocomplete="off" readonly placeholder="请选择合同保管人" class="layui-input picker-one">
 		  <input type="hidden" name="keeper_uid" lay-verify="required" lay-reqText="请选择合同保管人">
         </td>
 		<td class="layui-td-gray">合同共享人员</td>
-        <td>
+        <td colspan="3">
 			<input type="text" name="share_names" autocomplete="off" readonly placeholder="请选择共享人员" class="layui-input picker-more">
 			<input type="hidden" name="share_ids">
         </td>
       </tr>
 	   <tr>
+		<td colspan="6"><strong>相关附件</strong></td>
+	  </tr>
+      <tr>
+		<td class="layui-td-gray">
+			<button type="button" class="layui-btn layui-btn-sm" id="uploadBtn"><i class="layui-icon"></i>附件上传</button>
+		</td>
+		<td colspan="5" style="line-height:inherit">
+			<div class="layui-row" id="fileBox">
+				<input type="hidden" id="fileBoxInput" name="file_ids" value="">
+			</div>
+		</td>
+      </tr>
+	  <tr>
 		<td colspan="6"><strong>备注信息</strong></td>
 	  </tr>
       <tr>
@@ -162,15 +174,31 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
-	const moduleInit = ['tool','employeepicker'];
+	const moduleInit = ['tool','employeepicker','oaTool'];
 	function gouguInit() {
-		var form = layui.form,tool=layui.tool,table = layui.table,laydate = layui.laydate,employeepicker = layui.employeepicker;
+		var form = layui.form,tool=layui.tool,table = layui.table,laydate = layui.laydate,oaTool = layui.oaTool, employeepicker = layui.employeepicker;
 		//日期
 		lay('.select-time').each(function () {
 			laydate.render({
 				elem: this,
 				trigger: 'click'
 			});
+		});
+		
+		//相关附件上传
+		oaTool.addFile();
+		
+		//选择关联的客户	
+		$('.customer-picker').on('click', function () {
+			let that = $(this);
+			let callback = function(data){
+				$('[name="customer_id"]').val(data.id);
+				$('[name="customer"]').val(data.name);
+				$('[name="customer_name"]').val(data.contact_name);
+				$('[name="customer_mobile"]').val(data.contact_mobile);
+				$('[name="customer_address"]').val(data.address);
+			}
+			oaTool.customerPicker(callback);
 		});
 		
 		//选择合同签订人弹窗	
@@ -186,7 +214,7 @@
 					$('[name="sign_uid"]').val(ids);
 					$('[name="sign_name"]').val(names);
 					$('[name="sign_did"]').val(dids);
-					$('[name="sign_department"]').val(departments);
+					$('#sign_department').html('部门：'+departments);
 				}
 			});
 		});
@@ -223,63 +251,6 @@
 			tool.post("/contract/index/add", data.field, callback);
 			return false;
 		});
-		
-		//选择关联的客户	
-		$('.customer-picker').on('click', function () {
-			selectCustomer();
-		});
-		var customeTable;
-		function selectCustomer() {
-			layer.open({
-				title: '选择客户',
-				area: ['600px', '580px'],
-				type: 1,
-				content: '<div class="picker-table">\
-					<form class="layui-form pb-2">\
-						<div class="layui-input-inline" style="width:480px;">\
-						<input type="text" name="keywords"  placeholder="客户名称" class="layui-input" autocomplete="off" />\
-						</div>\
-						<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="search_form">提交搜索</button>\
-				  	</form>\
-					<div id="customerTable"></div></div>',
-				success: function () {
-					customeTable = table.render({
-						elem: '#customerTable'
-						, url: '/contract/api/get_customer'
-						, page: true //开启分页
-						, limit: 10
-						, cols: [[
-							{ type: 'radio', title: '选择' }
-							, { field: 'id', width: 100, title: '编号', align: 'center' }
-							, { field: 'name', title: '客户名称' }
-						]]
-					});
-				},
-				btn: ['确定'],
-				yes: function () {
-					var checkStatus = table.checkStatus(customeTable.config.id);
-					var data = checkStatus.data;
-					if (data.length > 0) {
-						$('[name="customer_id"]').val(data[0].id);
-						$('[name="customer"]').val(data[0].name);
-						$('[name="customer_name"]').val(data[0].contact_name);
-						$('[name="customer_mobile"]').val(data[0].contact_mobile);
-						$('[name="customer_address"]').val(data[0].address);
-						layer.closeAll();
-					}
-					else {
-						layer.msg('请先选择客户');
-						return false;
-					}
-				}
-			})
-		}
-		//客户搜索提交
-		form.on('submit(search_form)', function (data) {
-			customeTable.reload({ where: { keywords: data.field.keywords }, page: { curr: 1 } });
-			return false;
-		});
-
 	}
 </script>
 {/block}

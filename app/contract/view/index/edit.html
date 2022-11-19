@@ -102,35 +102,61 @@
 	  <tr>
         <td class="layui-td-gray-2">合同签订人<font>*</font></td>
         <td>
-          <input type="text" name="sign_name" value="{$detail.sign_name}" autocomplete="off" readonly placeholder="请选择合同签订人" class="layui-input">
-          <input type="hidden" name="sign_uid" value="{$detail.sign_uid}" lay-verify="required" lay-reqText="请选择合同签订人">
-          <input type="hidden" name="sign_did" value="{$detail.sign_did}">
+			<div class="layui-input-inline" style="width:50%;">
+			  <input type="text" name="sign_name" value="{$detail.sign_name}" autocomplete="off" readonly lay-verify="required" lay-reqText="请选择合同签订人" placeholder="请选择合同签订人" class="layui-input">
+			</div>
+			<div class="layui-input-inline gray" style="width:42%;" id="sign_department">部门：{$detail.sign_department}</div>
+			<input type="hidden" name="sign_uid" value="{$detail.sign_uid}">
+			<input type="hidden" name="sign_did" value="{$detail.sign_did}">
         </td>
 		<td class="layui-td-gray-2">合同签订时间<font>*</font></td>
         <td>
 			<input type="text" name="sign_time" value="{$detail.sign_time}" readonly lay-verify="required" lay-reqText="请选择合同签订日期" placeholder="请选择合同签订日期" class="layui-input select-time">
         </td>
-        <td class="layui-td-gray-2">合同签订部门</td>
-        <td>
-          <input type="text" name="sign_department" value="{$detail.sign_department}" autocomplete="off" readonly class="layui-input">
-        </td>
-      </tr>
-	  <tr>
         <td class="layui-td-gray-2">合同制定人<font>*</font></td>
         <td>
           <input type="text" name="prepared_name" value="{$detail.prepared_name}" autocomplete="off" readonly placeholder="请选择合同制定人" class="layui-input picker-one">
 		  <input type="hidden" name="prepared_uid" value="{$detail.prepared_uid}" lay-verify="required" lay-reqText="请选择合同制定人">
         </td>
+      </tr>
+	  <tr>
         <td class="layui-td-gray-2">合同保管人<font>*</font></td>
         <td>
           <input type="text" name="keeper_name" value="{$detail.keeper_name}" autocomplete="off" readonly placeholder="请选择合同保管人" class="layui-input picker-one">
 		  <input type="hidden" name="keeper_uid" value="{$detail.keeper_uid}" lay-verify="required" lay-reqText="请选择合同保管人">
         </td>
 		<td class="layui-td-gray">合同共享人员</td>
-        <td>
+         <td colspan="3">
 			<input type="text" name="share_names" value="{$detail.share_names}" autocomplete="off" readonly placeholder="请选择共享人员" class="layui-input picker-more">
 			<input type="hidden" name="share_ids" value="{$detail.share_ids}">
         </td>
+      </tr>
+	   <tr>
+		<td colspan="6"><strong>相关附件</strong></td>
+	  </tr>
+      <tr>
+		<td class="layui-td-gray">
+			<button type="button" class="layui-btn layui-btn-sm" id="uploadBtn"><i class="layui-icon"></i>附件上传</button>
+		</td>
+		<td colspan="5" style="line-height:inherit">
+			<div class="layui-row" id="fileBox">
+				<input type="hidden" id="fileBoxInput" name="file_ids" value="{$detail.file_ids}">
+				{notempty name="$detail.file_ids"}
+				{volist name="$detail.fileArray" id="vo"}
+				<div class="layui-col-md4" id="fileItem{$vo.id}">
+					<div class="file-card">
+						<i class="file-icon iconfont icon-renwuguanli"></i>
+						<div class="file-title">{$vo.name}</div>
+						<div class="file-tool">
+							<a href="{$vo.filepath}" download="{$vo.name}" target="_blank" title="下载查看"><i class="iconfont icon-shujudaoru blue"></i></a>
+							<i class="btn-delete iconfont icon-shanchu red" data-id="{$vo.id}" title="删除"></i>
+						</div>
+					</div>
+				</div>
+				{/volist}
+				{/notempty}
+			</div>
+		</td>
       </tr>
 	   <tr>
 		<td colspan="6"><strong>备注信息</strong></td>
@@ -154,15 +180,31 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
-	const moduleInit = ['tool','employeepicker'];
+	const moduleInit = ['tool','employeepicker','oaTool'];
 	function gouguInit() {
-		var form = layui.form,tool=layui.tool,table = layui.table,laydate = layui.laydate,employeepicker = layui.employeepicker;
+		var form = layui.form,tool=layui.tool,table = layui.table,laydate = layui.laydate,oaTool = layui.oaTool, employeepicker = layui.employeepicker;
 		//日期
 		lay('.select-time').each(function () {
 			laydate.render({
 				elem: this,
 				trigger: 'click'
 			});
+		});
+		
+		//相关附件上传
+		oaTool.addFile();
+		
+		//选择关联的客户	
+		$('.customer-picker').on('click', function () {
+			let that = $(this);
+			let callback = function(data){
+				$('[name="customer_id"]').val(data.id);
+				$('[name="customer"]').val(data.name);
+				$('[name="customer_name"]').val(data.contact_name);
+				$('[name="customer_mobile"]').val(data.contact_mobile);
+				$('[name="customer_address"]').val(data.address);
+			}
+			oaTool.customerPicker(callback);
 		});
 		
 		//选择合同签订人弹窗	

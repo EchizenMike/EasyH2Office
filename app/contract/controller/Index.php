@@ -264,6 +264,15 @@ class Index extends BaseController
 			$is_create_admin = 1;
 		}
 		
+		$file_array_other = Db::name('ContractFile')
+			->field('cf.id,f.filepath,f.name,f.filesize,f.fileext')
+			->alias('cf')
+			->join('File f', 'f.id = cf.file_id', 'LEFT')
+			->order('cf.create_time asc')
+			->where(array('cf.contract_id' => $id, 'cf.delete_time' => 0))
+			->select()->toArray();
+		$detail['file_array_other'] = $file_array_other;
+		
 		$check_record = Db::name('FlowRecord')->field('f.*,a.name,a.thumb')
 			->alias('f')
 			->join('Admin a', 'a.id = f.check_user_id', 'left')
@@ -283,6 +292,7 @@ class Index extends BaseController
 				$vv['status_str'] = '撤销';
 			}
 		}
+		
 		View::assign('is_check_admin', $is_check_admin);
 		View::assign('is_create_admin', $is_create_admin);
 		View::assign('check_record', $check_record);

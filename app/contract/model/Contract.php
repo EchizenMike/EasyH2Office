@@ -77,15 +77,7 @@ class Contract extends Model
     public function detail($id)
     {
         $detail = self::where(['id' => $id])->find();
-        if (!empty($detail)) {
-			$file_array = Db::name('ContractFile')
-				->field('cf.id,f.filepath,f.name,f.filesize,f.fileext')
-				->alias('cf')
-				->join('File f', 'f.id = cf.file_id', 'LEFT')
-				->order('cf.create_time asc')
-				->where(array('cf.contract_id' => $id, 'cf.delete_time' => 0))
-				->select()->toArray();
-				
+        if (!empty($detail)) {				
 			$detail['status_name'] = self::$Status[(int) $detail['check_status']];	
 			$detail['archive_status_name'] = self::$ArchiveStatus[(int) $detail['archive_status']];	
 			$detail['sign_time'] = date('Y-m-d', $detail['sign_time']);
@@ -125,7 +117,11 @@ class Contract extends Model
 			if($detail['pid']>0){
 				$detail['pname'] = self::where(['id' => $detail['pid']])->value('name');
 			}
-			$detail['file_array'] = $file_array;
+			
+			if($detail['file_ids'] !=''){
+				$fileArray = Db::name('File')->where('id','in',$detail['file_ids'])->select();
+				$detail['fileArray'] = $fileArray;
+			}
         }
         return $detail;
     }
