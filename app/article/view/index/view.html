@@ -43,6 +43,22 @@
 	<div class="text-detial-content">
 	{$detail.content|raw}
 	</div>
+	{notempty name="$detail.file_ids"}
+	<h3 class="py-3">相关附件</h3>
+	<div class="layui-row" id="fileBox">
+		{volist name="$detail.fileArray" id="vo"}
+		<div class="layui-col-md4" id="fileItem{$vo.id}">
+			<div class="file-card">
+				<i class="file-icon iconfont icon-renwuguanli"></i>
+				<div class="file-title file-title-view">{$vo.name}</div>
+				<div class="file-tool">
+					<a href="{$vo.filepath}" download="{$vo.name}" target="_blank" title="下载查看"><i class="iconfont icon-shujudaoru blue"></i></a>
+				</div>
+			</div>
+		</div>
+		{/volist}
+	</div>
+	{/notempty}
 </div>
 {/block}
 <!-- /主体 -->

@@ -22,7 +22,10 @@ class Index extends BaseController
     {
         if (request()->isAjax()) {
             $param = get_params();
+			$uid = $this->uid;
+			$did = $this->did;
             $where = array();
+            $whereOr = array();
             if (!empty($param['keywords'])) {
                 $where[] = ['a.id|a.title|a.keywords|a.desc|a.content|c.title', 'like', '%' . $param['keywords'] . '%'];
             }
@@ -30,9 +33,16 @@ class Index extends BaseController
                 $where[] = ['a.cate_id', '=', $param['cate_id']];
             }
             $where[] = ['a.delete_time', '=', 0];
-            $where[] = ['a.is_share', '=', 1];
+			
+            $whereOr[] = ['a.is_share', '=', 1];			
+			$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$did}',a.share_dids)")];
+			$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',a.share_uids)")];			
+			
             $rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
             $content = ArticleList::where($where)
+				->where(function ($query) use($whereOr) {
+					$query->whereOr($whereOr);
+				})
                 ->field('a.*,a.id as id,c.title as cate_title,a.title as title,d.title as department,u.name as user')
                 ->alias('a')
                 ->join('article_cate c', 'a.cate_id = c.id')
@@ -156,6 +166,20 @@ class Index extends BaseController
             View::assign('id', $id);
             if ($id > 0) {
                 $article = (new ArticleList())->detail($id);
+				if($article['file_ids'] !=''){
+					$fileArray = Db::name('File')->where('id','in',$article['file_ids'])->select();
+					$article['fileArray'] = $fileArray;
+				}
+				$article['share_depaments'] = '';
+				if($article['share_dids'] !=''){
+					$depamentArray = Db::name('Department')->where('id','in',$article['share_dids'])->column('title');
+					$article['share_depaments'] = implode(',',$depamentArray);
+				}
+				$article['share_names'] = '';
+				if($article['share_uids'] !=''){
+					$uidArray = Db::name('Admin')->where('id','in',$article['share_uids'])->column('name');
+					$article['share_names'] = implode(',',$uidArray);
+				}
                 View::assign('article', $article);
                 return view('edit');
             }
@@ -167,8 +191,25 @@ class Index extends BaseController
     public function view()
     {
         $id = get_params("id");
+		$uid=$this->uid;
+		$did=$this->did;
         $detail = (new ArticleList())->detail($id);
+		$share_uids = [];
+		if(!empty($detail['share_uids'])){
+			$share_uids = explode(',', $detail['share_uids']);
+		}
+		$share_dids = [];
+		if(!empty($detail['share_dids'])){
+			$share_uids = explode(',', $detail['share_dids']);
+		}
+		if($detail['uid'] !=$uid && !in_array($uid,$share_uids) && !in_array($did,$share_dids) && $detail['is_share'] !=1){
+			throw new \think\exception\HttpException(405, '无权限访问');
+		}
 		$detail['cate_title'] = Db::name('ArticleCate')->where(['id' => $detail['cate_id']])->value('title');
+		if($detail['file_ids'] !=''){
+			$fileArray = Db::name('File')->where('id','in',$detail['file_ids'])->select();
+			$detail['fileArray'] = $fileArray;
+		}
         // read 字段加 1
         Db::name('article')->where('id', $id)->inc('read')->update();
         View::assign('detail', $detail);

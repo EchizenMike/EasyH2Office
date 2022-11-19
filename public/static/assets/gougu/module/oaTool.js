@@ -125,6 +125,79 @@ layui.define(['tool'], function (exports) {
 				}
 			});
 		},
+		//选择部门	
+		departmentPicker:function(type,callback){				
+			let select_type = type==1?'radio':'checkbox',departmentTable;
+			layer.open({
+				type:1,
+				title:'选择部门',
+				area:['500px','536px'],
+				content:`<div style="width:468px; height:420px; padding:12px;">
+						<div id="departmentBox"></div>
+					</div>`,
+				success:function(){
+					departmentTable=table.render({
+						elem: '#departmentBox'
+						,url: "/api/index/get_department"
+						,page: false //开启分页
+						,cols: [[
+						   {type:select_type,title: '选择'}
+						  ,{field:'id', width:80, title: '编号', align:'center'}
+						  ,{field:'title',title: '部门名称'}
+						]]
+					});
+				},
+				btn: ['确定'],
+				btnAlign:'c',
+				yes: function(){
+					var checkStatus = table.checkStatus(departmentTable.config.id);
+					var data = checkStatus.data;
+					if(data.length>0){
+						callback(data);
+						layer.closeAll();
+					}else{
+						layer.msg('请选择部门');
+						return;
+					}
+				}
+			})	
+		},
+		//选择岗位	
+		positionPicker:function(type,callback){	
+			let select_type = type==1?'radio':'checkbox',positionTable;
+			layer.open({
+				title:'选择岗位',
+				type:1,
+				area:['390px','436px'],
+				content:'<div style="padding:12px"><div id="positionBox"></div></div>',
+				success:function(){
+					positionTable=table.render({
+						elem: '#positionBox'
+						,url: "/api/index/get_position"
+						,page: false //开启分页
+						,cols: [[
+						   {type:select_type,title: '选择'}
+						  ,{field:'id', width:80, title: '编号', align:'center'}
+						  ,{field:'name',title: '岗位名称'}
+						]]
+					});			
+				},
+				btn: ['确定'],
+				btnAlign:'c',
+				yes: function(){
+					var checkStatus = table.checkStatus(positionTable.config.id);
+					var data = checkStatus.data;
+					if(data.length>0){
+						callback(data);
+						layer.closeAll();
+					}else{
+						layer.msg('请选择岗位');
+						return;
+					}
+				}
+			})		
+		},		
+		//选择客户
 		customerPicker:function(callback){
 			var customeTable;
 			layer.open({
@@ -173,6 +246,7 @@ layui.define(['tool'], function (exports) {
 				}
 			})
 		},
+		//选择合同
 		contractPicker:function(callback){
 			var contractTable;
 			layer.open({
@@ -182,7 +256,7 @@ layui.define(['tool'], function (exports) {
 				content: '<div class="picker-table">\
 					<form class="layui-form pb-2">\
 						<div class="layui-input-inline" style="width:480px;">\
-						<input type="text" name="keywords"  placeholder="合同名称" class="layui-input" autocomplete="off" />\
+						<input type="text" name="keywords" placeholder="合同名称" class="layui-input" autocomplete="off" />\
 						</div>\
 						<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="search_contract">提交搜索</button>\
 					</form>\
@@ -223,13 +297,56 @@ layui.define(['tool'], function (exports) {
 		}
 	};
 	
+	//选择部门	
+	$('body').on('click','.picker-depament',function () {
+		let that = $(this);
+		let callback = function(data){
+			that.val(data[0].title);
+			that.next().val(data[0].id);
+		}
+		obj.departmentPicker(1,callback);
+	});
+	$('body').on('click','.picker-depaments',function () {
+		let that = $(this),ids = [],names=[];
+		let callback = function(data){
+			for ( var i = 0; i <data.length; i++){
+				ids.push(data[i].id);
+				names.push(data[i].title);
+			}
+			that.val(names.join(','));
+			that.next().val(ids.join(','));
+		}
+		obj.departmentPicker(2,callback);
+	});
 	
+	//选择岗位	
+	$('body').on('click','.picker-position',function () {
+		let that = $(this);
+		let callback = function(data){
+			that.val(data[0].name);
+			that.next().val(data[0].id);
+		}
+		obj.positionPicker(1,callback);
+	});
+	$('body').on('click','.picker-positions',function () {
+		let that = $(this),ids = [],names=[];
+		let callback = function(data){
+			for ( var i = 0; i <data.length; i++){
+				ids.push(data[i].id);
+				names.push(data[i].name);
+			}
+			that.val(names.join(','));
+			that.next().val(ids.join(','));
+		}
+		obj.positionPicker(2,callback);
+	});
+
 	//选择客户	
 	$('body').on('click','.picker-customer',function () {
 		let that = $(this);
 		let callback = function(data){
 			that.val(data.name);
-			that.next.val(data.id);
+			that.next().val(data.id);
 		}
 		obj.customerPicker(callback);
 	});

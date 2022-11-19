@@ -38,8 +38,10 @@
       <tr>
         <td class="layui-td-gray">是否共享<font>*</font></td>
         <td>
-          <input type="radio" name="is_share" value="1" title="是" {eq name="$article.is_share" value="1" }checked{/eq}>
-          <input type="radio" name="is_share" value="0" title="否" {eq name="$article.is_share" value="0" }checked{/eq}>
+			<input type="radio" name="is_share" lay-filter="type" value="0" title="私有" {eq name="$article.is_share" value="0" }checked{/eq}>
+			<input type="radio" name="is_share" lay-filter="type" value="1" title="所有人" {eq name="$article.is_share" value="1" }checked{/eq}>
+			<input type="radio" name="is_share" lay-filter="type" value="2" title="部门" {eq name="$article.is_share" value="2" }checked{/eq}>
+			<input type="radio" name="is_share" lay-filter="type" value="3" title="部分人员" {eq name="$article.is_share" value="3" }checked{/eq}>
         </td>
         <td class="layui-td-gray" style="width:50px">状态</td>
         <td>
@@ -51,6 +53,47 @@
           <input type="text" name="sort" placeholder="请输入排序，数字" autocomplete="off" class="layui-input" value="{$article.sort}">
         </td>
       </tr>
+		<tr id="depament" style="{$article.is_share == 2?'':'display:none'}">
+			<td class="layui-td-gray">共享部门<font>*</font></td>
+			<td colspan="5">
+				<input type="text" name="share_depaments" value="{$article.share_depaments}" placeholder="请选择共享部门" readonly class="layui-input picker-depaments">
+				<input type="hidden" name="share_dids" value="{$article.share_dids}">
+			</td>
+		</tr>
+		<tr id="person" style="{$article.is_share == 3?'':'display:none'}">
+			<td class="layui-td-gray">共享人员<font>*</font></td>
+			<td colspan="5">
+				<input type="text" name="share_names" value="{$article.share_names}" placeholder="请选择共享人员" readonly class="layui-input picker-more">
+				<input type="hidden" name="share_uids" value="{$article.share_uids}">
+			</td>
+		</tr>
+	  	<tr>
+			<td class="layui-td-gray-2">
+				<div class="layui-input-inline">关联附件</div>
+				<div class="layui-input-inline">
+					<button type="button" class="layui-btn layui-btn-xs" id="uploadBtn"><i class="layui-icon"></i></button>
+				</div>
+			</td>
+			<td colspan="5" style="line-height:inherit">
+				<div class="layui-row" id="fileBox">
+					<input type="hidden" id="fileBoxInput" name="file_ids" value="{$article.file_ids}">
+					{notempty name="$article.file_ids"}
+					{volist name="$article.fileArray" id="vo"}
+					<div class="layui-col-md4" id="fileItem{$vo.id}">
+						<div class="file-card">
+							<i class="file-icon iconfont icon-renwuguanli"></i>
+							<div class="file-title">{$vo.name}</div>
+							<div class="file-tool">
+								<a href="{$vo.filepath}" download="{$vo.name}" target="_blank" title="下载查看"><i class="iconfont icon-shujudaoru blue"></i></a>
+								<i class="btn-delete iconfont icon-shanchu red" data-id="{$vo.id}" title="删除"></i>
+							</div>
+						</div>
+					</div>
+					{/volist}
+					{/notempty}
+				</div>
+			</td>
+		</tr>
       <tr>
         <td class="layui-td-gray" style="vertical-align:top;">文章摘要</td>
         <td colspan="3">
@@ -87,17 +130,38 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
-const moduleInit = ['tool','tagpicker','tinymce'];
-	function gouguInit() {
-		var form = layui.form,tool=layui.tool, tagspicker = layui.tagpicker, upload = layui.upload;
+const moduleInit = ['tool','employeepicker','oaTool','tagpicker','tinymce'];
+function gouguInit() {
+	var form = layui.form,tool=layui.tool,oaTool = layui.oaTool, tagspicker = layui.tagpicker, upload = layui.upload;
+	
+	//选择共享类型
+	form.on('radio(type)', function (data) {
+		if(data.value==2){
+			$('#person').hide();
+			$('#depament').show();
+		}
+		else if(data.value==3){
+			$('#person').show();
+			$('#depament').hide();
+		}
+		else{
+			$('#person').hide();
+			$('#depament').hide();
+		}
+	});
+	
     //编辑器初始化
-		var editor = layui.tinymce;
-		var edit = editor.render({
-			selector: "#container",
-			images_upload_url: '/api/index/upload/sourse/tinymce',//图片上传接口
-			height: 500
-		});
+	var editor = layui.tinymce;
+	var edit = editor.render({
+		selector: "#container",
+		images_upload_url: '/api/index/upload/sourse/tinymce',//图片上传接口
+		height: 500
+	});
 
+	//相关附件上传
+	oaTool.addFile();	
+	
+	//tag选择
 	var tags = new tagspicker({
 		'url': "/api/index/get_keyword_cate",
 		'target': 'keyword_name',
@@ -109,29 +173,49 @@ const moduleInit = ['tool','tagpicker','tinymce'];
 
     //封面上传
     var uploadInst = upload.render({
-			elem: '#test1',
-			url: "/api/index/upload",
-			done: function (res) {
-				layer.msg(res.msg);
-				if (res.code == 0) {
-					//上传成功
-					$('#demo1 input').attr('value', res.data.id);
-					$('#demo1 img').attr('src', res.data.filepath);
-				}
+		elem: '#test1',
+		url: "/api/index/upload",
+		done: function (res) {
+			layer.msg(res.msg);
+			if (res.code == 0) {
+				//上传成功
+				$('#demo1 input').attr('value', res.data.id);
+				$('#demo1 img').attr('src', res.data.filepath);
 			}
+		}
     });
 
     //监听提交
     form.on('submit(webform)', function (data) {
-      data.field.content = tinyMCE.editors['container'].getContent();
-			if (data.field.content == '') {
-				layer.msg('请先完善文章只是内容');
+		data.field.content = tinyMCE.editors['container'].getContent();
+		if (data.field.content == '') {
+			layer.msg('请先完善文章的内容');
+			return false;
+		}
+		
+		if(data.field.is_share == 0 || data.field.is_share == 1){
+			data.field.share_dids = '';
+			data.field.share_uids = '';
+		}
+		else if(data.field.is_share == 2){
+			data.field.share_uids = '';
+			if(data.field.share_dids==''){
+				layer.msg('请先选择共享的部门');
 				return false;
 			}
-      let callback = function (e) {
+		}
+		else if(data.field.is_share == 3){
+			data.field.share_dids = '';
+			if(data.field.share_uids==''){
+				layer.msg('请先选择共享的员工');
+				return false;
+			}
+		}
+		
+		let callback = function (e) {
 			layer.msg(e.msg);
 			if (e.code == 0) {
-				parent.layui.tool.close(1000);
+				tool.sideClose(1000);
 			}
 		}
 		tool.post("/article/index/add", data.field, callback);

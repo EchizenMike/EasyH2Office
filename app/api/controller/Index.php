@@ -146,6 +146,13 @@ class Index extends BaseController
         }
     }
 
+    //获取部门
+    public function get_department()
+    {
+        $department = get_department();
+        return to_assign(0, '', $department);
+    }
+
     //获取部门树形节点列表
     public function get_department_tree()
     {
