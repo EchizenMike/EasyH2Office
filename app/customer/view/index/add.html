@@ -45,9 +45,12 @@
 	  <tr>
         <td class="layui-td-gray">归属员工<font>*</font></td>
         <td>
-          <input type="text" name="belong_name" value="{$userinfo.name}" autocomplete="off" readonly placeholder="请选择客户归属人" class="layui-input">
-          <input type="hidden" name="belong_uid" value="{$userinfo.id}" lay-verify="required" lay-reqText="请选择客户归属人">
-          <input type="hidden" name="belong_did" value="{$userinfo.did}">
+			<div class="layui-input-inline" style="width:50%;">
+				<input type="text" name="belong_name" value="{$userinfo.name}" autocomplete="off" readonly  lay-verify="required" lay-reqText="请选择客户归属人" placeholder="请选择客户归属人" class="layui-input">
+			</div>
+			<div class="layui-input-inline gray" style="width:42%;">部门：<span id="department_name">{$userinfo.department}</span></div>
+			<input type="hidden" name="belong_uid" value="{$userinfo.id}">
+			<input type="hidden" name="belong_did" value="{$userinfo.did}">
         </td>
         <td class="layui-td-gray">归属部门</td>
         <td>
@@ -82,20 +85,25 @@
         </td>
 		<td class="layui-td-gray">联系电话<font>*</font></td>
         <td>
-			<input type="text" name="c_mobile" autocomplete="off" lay-verify="required" lay-reqText="请输入联系人电话" placeholder="请输入联系人电话" class="layui-input">
+			<input type="text" name="c_mobile" autocomplete="off" lay-verify="required|mobile" lay-reqText="请输入联系人电话" placeholder="请输入联系人电话" class="layui-input">
         </td>
+		<td class="layui-td-gray">性别<font>*</font></td>
+        <td>
+			<input type="radio" name="c_sex" value="1" title="男">
+			<input type="radio" name="c_sex" value="2" title="女" >
+        </td>
+	  </tr>
+	  <tr>
 		<td class="layui-td-gray">微 信 号</td>
         <td>
 			<input type="text" name="c_wechat" autocomplete="off" placeholder="请输入联系人微信号" class="layui-input">
         </td>
-	  </tr>
-	  <tr>
 		<td class="layui-td-gray">QQ号码</td>
         <td>
 			<input type="text" name="c_qq" autocomplete="off" placeholder="请输入联系人QQ号码" class="layui-input">
         </td>
 		<td class="layui-td-gray">电子邮箱</td>
-        <td colspan="3">
+        <td>
 			<input type="text" name="c_email" autocomplete="off" placeholder="请输入联系人电子邮箱" class="layui-input">
         </td>
       </tr>
@@ -137,7 +145,7 @@
 					$('[name="belong_uid"]').val(ids);
 					$('[name="belong_name"]').val(names);
 					$('[name="belong_did"]').val(dids);
-					$('[name="belong_department"]').val(departments);
+					$('#department_name').html(departments);
 				}
 			});
 		});	
@@ -147,8 +155,12 @@
 			let callback = function (e) {
 				layer.msg(e.msg);
 				if (e.code == 0) {
-					parent.layui.tool.close(1000);
+					tool.sideClose(1000);
 				}
+			}
+			if(!data.field.c_sex){
+				layer.msg('请选择首要联系的性别');
+				return false;
 			}
 			tool.post("/customer/index/add", data.field, callback);
 			return false;

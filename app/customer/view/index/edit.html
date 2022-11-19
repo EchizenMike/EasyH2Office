@@ -68,16 +68,15 @@
 	  <tr>
         <td class="layui-td-gray">归属员工<font>*</font></td>
         <td>
-          <input type="text" name="belong_name" value="{$detail.belong_name}" autocomplete="off" readonly placeholder="请选择客户归属人" class="layui-input">
-          <input type="hidden" name="belong_uid" value="{$detail.belong_uid}" lay-verify="required" lay-reqText="请选择客户归属人">
+			<div class="layui-input-inline" style="width:50%;">
+				<input type="text" name="belong_name" value="{$detail.belong_name}" autocomplete="off" readonly lay-verify="required" lay-reqText="请选择客户归属人" placeholder="请选择客户归属人" class="layui-input">
+			</div>
+			<div class="layui-input-inline gray" style="width:42%;">部门：<span id="department_name">{$detail.belong_department}</span></div>
+          <input type="hidden" name="belong_uid" value="{$detail.belong_uid}">
           <input type="hidden" name="belong_did" value="{$detail.belong_did}">
         </td>
-        <td class="layui-td-gray">归属部门</td>
-        <td>
-          <input type="text" name="belong_department" value="{$detail.belong_department}" autocomplete="off" readonly class="layui-input">
-        </td>
 		<td class="layui-td-gray">共享员工</td>
-        <td>
+         <td colspan="3">
 			<input type="text" name="share_names" value="{$detail.share_names}" autocomplete="off" readonly placeholder="请选择共享人员" class="layui-input picker-more">
 			<input type="hidden" name="share_ids" value="{$detail.share_ids}">
         </td>
@@ -132,7 +131,7 @@
 					$('[name="belong_uid"]').val(ids);
 					$('[name="belong_name"]').val(names);
 					$('[name="belong_did"]').val(dids);
-					$('[name="belong_department"]').val(departments);
+					$('#department_name').html(departments);
 				}
 			});
 		});	
@@ -142,7 +141,7 @@
 			let callback = function (e) {
 				layer.msg(e.msg);
 				if (e.code == 0) {
-					parent.layui.tool.close(1000);
+					tool.sideClose(1000);
 				}
 			}
 			tool.post("/customer/index/add", data.field, callback);

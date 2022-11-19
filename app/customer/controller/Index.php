@@ -350,6 +350,7 @@ class Index extends BaseController
 				$contact = [
 					'name' => $param['c_name'],
 					'mobile' => $param['c_mobile'],
+					'sex' => $param['c_sex'],
 					'qq' => $param['c_qq'],
 					'wechat' => $param['c_wechat'],
 					'email' => $param['c_email'],
