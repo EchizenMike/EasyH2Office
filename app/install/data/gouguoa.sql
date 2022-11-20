@@ -37,12 +37,12 @@ CREATE TABLE `oa_admin`  (
   `did` int(11) NOT NULL DEFAULT 0 COMMENT '部门id',
   `position_id` int(11) NOT NULL DEFAULT 0 COMMENT '职位id',
   `type` int(1) NOT NULL DEFAULT 0 COMMENT '员工类型：0未设置,1正式,2试用,3实习',
-  `age` int(3) NOT NULL DEFAULT 0 COMMENT '年龄';
-  `native_place` varchar(255) NOT NULL DEFAULT '' COMMENT '籍贯';
-  `idcard` varchar(255) NOT NULL DEFAULT '' COMMENT '身份证';  
-  `education` varchar(255) NOT NULL DEFAULT '' COMMENT '学历';
-  `bank_account` varchar(255) NOT NULL DEFAULT '' COMMENT '银行账号';
-  `bank_info` varchar(255) NOT NULL DEFAULT '' COMMENT '银行卡信息';
+  `age` int(3) NOT NULL DEFAULT 0 COMMENT '年龄',
+  `native_place` varchar(255) NOT NULL DEFAULT '' COMMENT '籍贯',
+  `idcard` varchar(255) NOT NULL DEFAULT '' COMMENT '身份证',  
+  `education` varchar(255) NOT NULL DEFAULT '' COMMENT '学历',
+  `bank_account` varchar(255) NOT NULL DEFAULT '' COMMENT '银行账号',
+  `bank_info` varchar(255) NOT NULL DEFAULT '' COMMENT '银行卡信息',
   `desc` text NULL COMMENT '员工个人简介',
   `entry_time` int(11) NOT NULL DEFAULT 0 COMMENT '员工入职日期',
   `create_time` int(11) NOT NULL DEFAULT 0 COMMENT '注册时间',
