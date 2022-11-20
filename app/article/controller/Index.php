@@ -200,7 +200,7 @@ class Index extends BaseController
 		}
 		$share_dids = [];
 		if(!empty($detail['share_dids'])){
-			$share_uids = explode(',', $detail['share_dids']);
+			$share_dids = explode(',', $detail['share_dids']);
 		}
 		if($detail['uid'] !=$uid && !in_array($uid,$share_uids) && !in_array($did,$share_dids) && $detail['is_share'] !=1){
 			throw new \think\exception\HttpException(405, '无权限访问');
