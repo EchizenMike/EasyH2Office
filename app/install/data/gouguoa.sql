@@ -380,6 +380,7 @@ INSERT INTO `oa_admin_rule` VALUES (195, 194, 'article/index/add', '新建/编�
 INSERT INTO `oa_admin_rule` VALUES (196, 194, 'article/index/view', '查看', '知识文章', 'article', '', 2, 0, 1, 1656143065, 0);
 INSERT INTO `oa_admin_rule` VALUES (197, 194, 'article/index/delete', '删除', '知识文章', 'article', '', 2, 0, 1, 1656143065, 0);
 
+
 -- ----------------------------
 -- Table structure for oa_admin_group
 -- ----------------------------
@@ -417,9 +418,13 @@ CREATE TABLE `oa_data_auth`  (
   `expected_1` int(11) NOT NULL DEFAULT 0 COMMENT '预备字段1，可作为预备权限的控制',
   `expected_2` int(11) NOT NULL DEFAULT 0 COMMENT '预备字段2，可作为预备权限的控制',
   `expected_3` int(11) NOT NULL DEFAULT 0 COMMENT '预备字段3，可作为预备权限的控制',
+  `expected_4` int(11) NOT NULL DEFAULT 0 COMMENT '预备字段4，可作为预备权限的控制',
+  `expected_5` int(11) NOT NULL DEFAULT 0 COMMENT '预备字段5，可作为预备权限的控制',
   `conf_1` text NULL COMMENT '配置字段1，可作为预配置内容',
   `conf_2` text NULL COMMENT '配置字段2，可作为预配置内容',
   `conf_3` text NULL COMMENT '配置字段3，可作为预配置内容',
+  `conf_4` text NULL COMMENT '配置字段4，可作为预配置内容',
+  `conf_5` text NULL COMMENT '配置字段5，可作为预配置内容',
   `create_time` int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
   `update_time` int(11) NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
@@ -428,10 +433,10 @@ CREATE TABLE `oa_data_auth`  (
 -- ----------------------------
 -- Records of  oa_data_auth
 -- ----------------------------
-INSERT INTO `oa_data_auth` VALUES (1, '财务管理员','finance_admin','拥有该权限的员工开具发票、报销打款、财务到账。', 'finance', '',0,0,0,'','','',1656143065, 0);
-INSERT INTO `oa_data_auth` VALUES (2, '客户管理员','customer_admin','拥有该权限的员工可以查看、转移所有客户。', 'customer', '',10,0,0,'','','',1656143065, 0);
-INSERT INTO `oa_data_auth` VALUES (3, '合同管理员','contract_admin','拥有该权限的员工可以查看、编辑、作废、中止所有合同。', 'contract', '',1,1,0,'','','',1656143065, 0);
-INSERT INTO `oa_data_auth` VALUES (4, '项目管理员','project_admin','拥有该权限的员工可以查看所有项目。', 'project', '',0,0,0,'立项阶段|实施阶段|验收阶段|交付阶段','','',1656143065, 0);
+INSERT INTO `oa_data_auth` VALUES (1, '财务管理员','finance_admin','拥有该权限的员工开具发票、报销打款、财务到账。', 'finance', '',0,0,0,0,0,'','','','','',1656143065, 0);
+INSERT INTO `oa_data_auth` VALUES (2, '客户管理员','customer_admin','拥有该权限的员工可以查看、转移所有客户。', 'customer', '',0,0,0,0,0,'','','','','',1656143065, 0);
+INSERT INTO `oa_data_auth` VALUES (3, '合同管理员','contract_admin','拥有该权限的员工可以查看、编辑、作废、中止所有合同。', 'contract', '',0,0,0,0,0,'','','','','',1656143065, 0);
+INSERT INTO `oa_data_auth` VALUES (4, '项目管理员','project_admin','拥有该权限的员工可以查看所有项目。', 'project', '',0,0,0,0,0,'立项阶段|实施阶段|验收阶段|交付阶段','','','','',1656143065, 0);
 
 -- ----------------------------
 -- Table structure for oa_config
