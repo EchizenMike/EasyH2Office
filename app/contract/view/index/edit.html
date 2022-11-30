@@ -257,62 +257,6 @@
 			tool.post("/contract/index/add", data.field, callback);
 			return false;
 		});
-		
-		//选择关联的客户	
-		$('.customer-picker').on('click', function () {
-			selectCustomer();
-		});
-		var customeTable;
-		function selectCustomer() {
-			layer.open({
-				title: '选择客户',
-				area: ['600px', '580px'],
-				type: 1,
-				content: '<div class="picker-table">\
-					<form class="layui-form pb-2">\
-						<div class="layui-input-inline" style="width:480px;">\
-						<input type="text" name="keywords"  placeholder="客户名称" class="layui-input" autocomplete="off" />\
-						</div>\
-						<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="search_form">提交搜索</button>\
-				  	</form>\
-					<div id="customerTable"></div></div>',
-				success: function () {
-					customeTable = table.render({
-						elem: '#customerTable'
-						, url: '/contract/api/get_customer'
-						, page: true //开启分页
-						, limit: 10
-						, cols: [[
-							{ type: 'radio', title: '选择' }
-							, { field: 'id', width: 100, title: '编号', align: 'center' }
-							, { field: 'name', title: '客户名称' }
-						]]
-					});
-				},
-				btn: ['确定'],
-				yes: function () {
-					var checkStatus = table.checkStatus(customeTable.config.id);
-					var data = checkStatus.data;
-					if (data.length > 0) {
-						$('[name="customer_id"]').val(data[0].id);
-						$('[name="customer"]').val(data[0].name);
-						$('[name="customer_name"]').val(data[0].contact_name);
-						$('[name="customer_mobile"]').val(data[0].contact_mobile);
-						$('[name="customer_address"]').val(data[0].address);
-						layer.closeAll();
-					}
-					else {
-						layer.msg('请先选择客户');
-						return false;
-					}
-				}
-			})
-		}
-		//客户搜索提交
-		form.on('submit(search_form)', function (data) {
-			customeTable.reload({ where: { keywords: data.field.keywords }, page: { curr: 1 } });
-			return false;
-		});
 
 	}
 </script>

@@ -357,7 +357,7 @@ layui.define(['tool'], function (exports) {
 		let that = $(this);
 		let callback = function(data){
 			that.val(data.name);
-			that.next.val(data.id);
+			that.next().val(data.id);
 		}
 		obj.contractPicker(callback);
 	});
