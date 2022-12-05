@@ -163,9 +163,11 @@
 			let tab_id = tab_parse.tab_id,tab_array = tab_parse.tab_array;
 			if(tab_array.length>0){
 				for(let a=0; a<tab_array.length;a++){
-					admin.tabAdd(tab_array[a].id, tab_array[a].url,tab_array[a].title);
+					admin.tabTem(tab_array[a].id, tab_array[a].url,tab_array[a].title);
 				}
-				admin.tabChange(tab_id);
+				if(tab_id>0){
+					admin.tabChange(tab_id);
+				}
 			}
 		}
 	

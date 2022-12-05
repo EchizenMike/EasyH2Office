@@ -6,6 +6,14 @@ layui.define(['element'], function (exports) {
 		* @url,tab页面地址
 		* @name,tab页面标题，
 		*/
+		tabTem: function (id, url, title) {
+			element.tabAdd('gg-admin-tab', {
+				id: id,
+				url:url,
+				title: '<span class="gg-tab-active"></span>' + title
+			});
+			$('#GouguAppBody').append('<div class="gg-tab-page" title="'+title+'" id="tabItem' + id + '" data-id="' + id + '" data-url="' + url + '"></div>');
+		},
 		tabAdd: function (id, url, title) {
 			var thetabs = $('#pageTabUl').find('li');
 			if (thetabs.length > 12) {
@@ -18,10 +26,9 @@ layui.define(['element'], function (exports) {
 			element.tabAdd('gg-admin-tab', {
 				id: id,
 				url:url,
-				title: '<span class="gg-tab-active"></span>' + title,
-				content: '<iframe id="' + id + '" data-frameid="' + id + '" src="' + url + '" frameborder="0" align="left" width="100%" height="100%" scrolling="yes"></iframe>',
+				title: '<span class="gg-tab-active"></span>' + title
 			});
-			$('#GouguAppBody').append('<div class="gg-tab-page" title="'+title+'" id="tabItem' + id + '"><iframe id="' + id + '" data-frameid="' + id + '" src="' + url + '" frameborder="0" align="left" width="100%" height="100%" scrolling="yes"></iframe></div>');
+			$('#GouguAppBody').append('<div class="gg-tab-page" title="'+title+'" id="tabItem' + id + '" data-id="' + id + '"><iframe id="' + id + '" data-frameid="' + id + '" src="' + url + '" frameborder="0" align="left" width="100%" height="100%" scrolling="yes"></iframe></div>');
 			this.tabChange(id);
 		},
 		//从子页面打开新的Tab页面，防止id重复，使用时间戳作为唯一标识
@@ -142,8 +149,14 @@ layui.define(['element'], function (exports) {
 	};
 	//切换tab
 	element.on('tab(gg-admin-tab)', function (data) {
+		let thisPage = $('#GouguAppBody').find('.gg-tab-page').eq(data.index);
+		if(thisPage.find('iframe').length==0){
+			let id = thisPage.data('id');
+			let url = thisPage.data('url');
+			thisPage.html('<iframe id="' + id + '" data-frameid="' + id + '" src="' + url + '" frameborder="0" align="left" width="100%" height="100%" scrolling="yes"></iframe>');
+		}
 		$('#GouguAppBody').find('.gg-tab-page').removeClass('layui-show');
-		$('#GouguAppBody').find('.gg-tab-page').eq(data.index).addClass('layui-show');
+		thisPage.addClass('layui-show');
 		if(data.index==0){
 			tab.refresh(0);
 		}
