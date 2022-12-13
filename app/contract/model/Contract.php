@@ -65,6 +65,7 @@ class Contract extends Model
 				$item->type_name = self::$Type[(int)$item->type_a];
 				$item->status_name = self::$Status[(int)$item->check_status];
 				$item->chack_status_name = self::$Status[(int) $item->CheckStatus];
+                $item->delay = countDays(date("Y-m-d"),date('Y-m-d', $item->end_time));
 				if($item->cost == 0){
 					$item->cost = '-';
 				}

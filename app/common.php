@@ -1510,10 +1510,7 @@ function advancedDate($type)
 }
 
 /**
- * 间隔时间段格式化
- * @param int $time 时间戳
- * @param string $format 格式 【d：显示到天 i显示到分钟 s显示到秒】
- * @return string
+ * 计算按天数
  */
 function countDays($a, $b = 0)
 {

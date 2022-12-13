@@ -94,6 +94,21 @@
 							return html;
 						}
 					},{
+						field: 'interval_time',
+						title: '合同有效时间',
+						align: 'center',
+						width: 248,
+						templet: function (d) {
+						var html = d.interval_time;
+						if (d.delay > 0 && d.delay < 30) {
+							html += '<span class="red ml-1" style="font-size:12px;">' + d.delay + '天后到期</span>';
+						}
+						if (d.delay == 0) {
+							html += '<span class="red ml-1" style="font-size:12px;">已过期</span>';
+						}
+						return html;
+					}
+					},{
 						field: 'cost',
 						title: '合同金额/元',
 						align: 'right',
