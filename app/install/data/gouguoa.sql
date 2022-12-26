@@ -1926,3 +1926,20 @@ INSERT INTO `oa_article_keywords` VALUES (1, 1, 1, 1, 1638093082);
 INSERT INTO `oa_article_keywords` VALUES (2, 2, 2, 1, 1638093082);
 INSERT INTO `oa_article_keywords` VALUES (3, 3, 3, 3, 1638093082);
 INSERT INTO `oa_article_keywords` VALUES (4, 4, 4, 4, 1638093082);
+
+-- ----------------------------
+-- Table structure for oa_article_comment
+-- ----------------------------
+DROP TABLE IF EXISTS `oa_article_comment`;
+CREATE TABLE `oa_article_comment`  (
+  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `article_id` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '关联知识文章id',
+  `pid` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '回复内容id',
+  `padmin_id` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '回复内容用户id',
+  `admin_id` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建人',
+  `content` text NULL COMMENT '评论内容',
+  `create_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '添加时间',
+  `update_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '修改时间',
+  `delete_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '删除时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1000 COMMENT = '知识评论表' ROW_FORMAT = Compact;

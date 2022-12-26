@@ -210,6 +210,25 @@ class Index extends BaseController
 			$fileArray = Db::name('File')->where('id','in',$detail['file_ids'])->select();
 			$detail['fileArray'] = $fileArray;
 		}
+		
+		$comment = Db::name('ArticleComment')
+			->field('a.*,u.name,u.thumb')
+			->alias('a')
+			->join('Admin u', 'u.id = a.admin_id')
+			->order('a.create_time desc')
+			->where(['a.article_id'=>$detail['id'],'a.delete_time' => 0])
+			->select()->toArray();
+		foreach ($comment as $k => &$v) {
+			$v['times'] = time_trans($v['create_time']);
+			$v['create_time'] = date('Y-m-d H:i:s',$v['create_time']);
+			if($v['update_time']>0){
+				$v['update_time'] = '，最后编辑时间:'.time_trans($v['update_time']);
+			}
+			else{
+				$v['update_time'] = '';
+			}
+		}	
+		$detail['comment']	= $comment;
         // read 字段加 1
         Db::name('article')->where('id', $id)->inc('read')->update();
         View::assign('detail', $detail);
