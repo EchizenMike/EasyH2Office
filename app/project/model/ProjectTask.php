@@ -93,6 +93,11 @@ class ProjectTask extends Model
                 } else {
                     $item['assist_admin_names'] = implode(',', $assist_admin_names);
                 }
+				if ($item['project_id'] == 0) {
+                    $item['project_name'] = '-';
+                } else {
+                    $item['project_name'] = Db::name('Project')->where(['id' => $item['project_id']])->value('name');
+                }
                 $item['end_time'] = date('Y-m-d', $item['end_time']);
                 $item['delay'] = 0;
                 if ($item['over_time'] > 0 && $item['flow_status'] < 4) {
