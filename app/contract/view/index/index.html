@@ -2,7 +2,7 @@
 <!-- 主体 -->
 {block name="body"}
 <div class="p-3">
-	<form class="layui-form gg-form-bar border-x border-t">
+	<form class="layui-form gg-form-bar border-x border-t" lay-filter="barsearchform">
 		<div class="layui-input-inline" style="width:150px;">
 			<select name="cate_id">
 				<option value="">请选择合同类别</option>
@@ -56,6 +56,7 @@
 			elem: '#test',
 			title: '合同列表',
 			toolbar: '#toolbarDemo',
+			defaultToolbar:['filter', {title:'导出EXCEL',layEvent: 'LAYTABLE_EXCEL',icon: 'layui-icon-export'}],	
 			url: "/contract/index/index", //数据接口
 			cellMinWidth: 320,
 			page: true, //开启分页
@@ -155,6 +156,18 @@
 		table.on('toolbar(test)', function(obj){
 			if (obj.event === 'add') {
 				selectType();
+				return;
+			}
+			if(obj.event === 'LAYTABLE_EXCEL'){
+				var formSelect = form.val('barsearchform');
+				formSelect.limit=99999;
+				$.ajax({
+					url: '/contract/index/index',
+					data: formSelect,
+					success:function(res){
+						table.exportFile('test', res.data,'xls');
+					}
+				});
 				return;
 			}
 		});
