@@ -10,7 +10,7 @@
 {block name="body"}
 <div id="taskList" class="p-3">
 	<div class="gg-form-bar border-t border-x">
-		<form id="taskForm" class="layui-form">
+		<form id="taskForm" class="layui-form" lay-filter="barsearchform">
 			<div class="layui-input-inline" style="width:100px;">
 				<select name="flow_status" lay-filter="status">
 					<option value="">任务状态</option>
@@ -80,7 +80,8 @@
 			elem: '#task',
 			title: '任务列表',
 			toolbar: '#toolbarDemo',
-			cellMinWidth: 200,
+			defaultToolbar:['filter', {title:'导出EXCEL',layEvent: 'LAYTABLE_EXCEL',icon: 'layui-icon-export'}],
+			cellMinWidth: 80,
 			url: "/project/task/index", //数据接口
 			page: true, //开启分页
 			limit: 20,
@@ -144,12 +145,22 @@
 		
 		//触发事件
 		table.on('toolbar(task)', function(obj){
-		  var checkStatus = table.checkStatus(obj.config.id);
-		  switch(obj.event){
-			case 'add':
-			  tool.side('/project/task/add');
-			break;
-		  };
+			if(obj.event === 'LAYTABLE_EXCEL'){
+				var formSelect = form.val('barsearchform');
+				formSelect.limit=99999;
+				$.ajax({
+					url: '/project/task/index',
+					data: formSelect,
+					success:function(res){
+						table.exportFile('task', res.data,'xls');
+					}
+				});
+				return;
+			}
+			else if(obj.event === 'add'){
+				tool.side('/project/task/add');
+				return;
+			}
 		});
 
 		//查看模式

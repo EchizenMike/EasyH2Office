@@ -21,8 +21,9 @@
 		layui.pageTable = table.render({
 			elem: '#projectList',
 			toolbar: '#toolbarDemo',
+			defaultToolbar:['filter', {title:'导出EXCEL',layEvent: 'LAYTABLE_EXCEL',icon: 'layui-icon-export'}],
 			title: '项目列表',
-			cellMinWidth: 220,
+			cellMinWidth: 80,
 			page: true, //开启分页
 			limit: 20,
 			height: 'full-24',
@@ -59,12 +60,20 @@
 
 		//触发事件
 		table.on('toolbar(project)', function(obj){
-		  var checkStatus = table.checkStatus(obj.config.id);
-		  switch(obj.event){
-			case 'add':
-			  tool.side('/project/index/add');
-			break;
-		  };
+			if(obj.event === 'LAYTABLE_EXCEL'){
+				$.ajax({
+					url: '/project/index/index',
+					data: {limit:99999},
+					success:function(res){
+						table.exportFile('projectList', res.data,'xls');
+					}
+				});
+				return;
+			}
+			else if(obj.event === 'add'){
+				tool.side('/project/index/add');
+				return;
+			}
 		});
 	}		
 </script>

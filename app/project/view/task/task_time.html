@@ -7,7 +7,7 @@
 <!-- 主体 -->
 {block name="body"}
 <div class="p-3">
-	<form class="layui-form gg-form-bar border-x border-t">
+	<form class="layui-form gg-form-bar border-x border-t" lay-filter="barsearchform">
 		<div id="barDate" class="layui-input-inline">
 			<div class="layui-input-inline" style="width:120px;">
 				<input type="text" class="layui-input" id="start_time" placeholder="选择时间区间" readonly name="start_time">
@@ -79,11 +79,13 @@
 		layui.scheduleTable = table.render({
 			elem: '#test'
 			,toolbar: '#toolbarDemo'
+			,defaultToolbar:['filter', {title:'导出EXCEL',layEvent: 'LAYTABLE_EXCEL',icon: 'layui-icon-export'}]
 			,title:'工时列表'
 			,url: "/project/task/task_time"
 			,page: true //开启分页
 			,limit: 20
 			,cellMinWidth: 80
+			,height: 'full-88'
 			,cols: [[ //表头
 				{field: 'id', title: '序号',fixed: 'left', width:80, align:'center'}
 				,{field: 'labor_type_string', title: '工作类型', align:'center',width:90,templet:function(d){
@@ -118,6 +120,22 @@
 					return html;
 				}}
 			]]
+		});
+		
+				//触发事件
+		table.on('toolbar(test)', function(obj){
+			if(obj.event === 'LAYTABLE_EXCEL'){
+				var formSelect = form.val('barsearchform');
+				formSelect.limit=99999;
+				$.ajax({
+					url: '/project/task/task_time',
+					data: formSelect,
+					success:function(res){
+						table.exportFile('test', res.data,'xls');
+					}
+				});
+				return;
+			}
 		});
 
 		//更改工时
