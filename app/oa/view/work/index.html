@@ -10,7 +10,7 @@
 	  </ul>
 	  <div class="layui-tab-content" style="padding:0">
 		<div class="layui-tab-item layui-show">
-			<form class="layui-form gg-form-bar border-x border-t">
+			<form class="layui-form gg-form-bar border-x border-t" lay-filter="barsearchform">
 				<div class="layui-inline" id="date">
 					<div class="layui-input-inline" style="width:112px">
 					  <input type="text" autocomplete="off" id="start_time" name="start_time" class="layui-input" placeholder="接收开始日期">
@@ -33,7 +33,7 @@
 			<table class="layui-hide" id="test" lay-filter="test"></table>
 		</div>
 		<div class="layui-tab-item">
-			<form class="layui-form gg-form-bar border-x border-t">
+			<form class="layui-form gg-form-bar border-x border-t" lay-filter="barsearchform2">>
 				<div class="layui-inline" id="date1">
 					<div class="layui-input-inline" style="width:112px">
 					  <input type="text" autocomplete="off" id="start_time1" name="start_time" class="layui-input" placeholder="接收开始日期">
@@ -100,6 +100,7 @@
 		layui.pageTable = table.render({
 			elem: '#test',
 			toolbar: '#toolbarDemo',
+			defaultToolbar:['filter', {title:'导出EXCEL',layEvent: 'LAYTABLE_EXCEL',icon: 'layui-icon-export'}],
 			title:'工作汇报列表',
 			url: "/oa/work/index", //数据接口
 			where:{'send':1},
@@ -151,6 +152,19 @@
 			if(obj.event === 'add'){
 				addNew();
 				return;
+			}
+			if(obj.event === 'LAYTABLE_EXCEL'){
+				var formSelect = form.val('barsearchform');
+				formSelect.limit=99999;
+				formSelect.send=1;
+				$.ajax({
+					url: '/oa/work/index',
+					data: formSelect,
+					success:function(res){
+						table.exportFile('test', res.data,'xls');
+					}
+				});
+				return;
 			}			
 		});
 		 
@@ -171,6 +185,7 @@
 		layui.pageTable1 = table.render({
 			elem: '#test1',
 			toolbar: '#toolbarDemo',
+			defaultToolbar:['filter', {title:'导出EXCEL',layEvent: 'LAYTABLE_EXCEL',icon: 'layui-icon-export'}],
 			title:'工作汇报列表',
 			url: "/oa/work/index", //数据接口
 			where:{'send':0},
@@ -233,7 +248,20 @@
 			if(obj.event === 'add'){
 				addNew();
 				return;
-			}	
+			}
+			if(obj.event === 'LAYTABLE_EXCEL'){
+				var formSelect = form.val('barsearchform1');
+				formSelect.limit=99999;
+				formSelect.send=0;
+				$.ajax({
+					url: '/oa/work/index',
+					data: formSelect,
+					success:function(res){
+						table.exportFile('test1', res.data,'xls');
+					}
+				});
+				return;
+			}			
 		});
 		
 		function addNew(){

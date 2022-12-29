@@ -24,7 +24,7 @@
 		<div id="depament"></div>
 	</div>
 	<div class="body-table" style="margin-left:228px;">
-		<form class="layui-form gg-form-bar border-t border-x" lay-filter="seachform">
+		<form class="layui-form gg-form-bar border-t border-x" lay-filter="barsearchform">
 			<div class="layui-input-inline" style="width:136px">
 				<select name="status">
 					<option value="">选择员工状态</option>
@@ -320,9 +320,8 @@
 		table.on('toolbar(test)', function(obj){
 			var checkStatus = table.checkStatus(obj.config.id); //获取选中行状态
 			var data = checkStatus.data;
-			console.log(obj.event);
 			if(obj.event === 'LAYTABLE_EXCEL'){
-				var formSelect = form.val('seachform');
+				var formSelect = form.val('barsearchform');
 				formSelect.limit=99999;
 				$.ajax({
 					url: '/user/user/index',
