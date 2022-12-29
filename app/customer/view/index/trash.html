@@ -37,8 +37,9 @@
 		var table = layui.table, tool = layui.tool ,form = layui.form;
 		layui.pageTable = table.render({
 			elem: '#test',
-			title: '客户列表',
+			title: '废弃客户列表',
 			toolbar: '#toolbarDemo',
+			defaultToolbar: false,
 			url: "/customer/index/trash", //数据接口
 			cellMinWidth: 240,
 			page: true, //开启分页

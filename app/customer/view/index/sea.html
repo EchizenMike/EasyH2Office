@@ -52,7 +52,8 @@
 		var table = layui.table, tool = layui.tool ,form = layui.form, employeepicker = layui.employeepicker,upload=layui.upload;
 		layui.pageTable = table.render({
 			elem: '#test',
-			title: '客户列表',
+			title: '公海客户列表',
+			defaultToolbar: false,
 			toolbar: '#toolbarDemo',
 			url: "/customer/index/sea", //数据接口
 			cellMinWidth: 240,
