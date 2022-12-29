@@ -39,7 +39,9 @@ class Role extends BaseController
         $param = get_params();
         if (request()->isAjax()) {
             $ruleData = isset($param['rule']) ? $param['rule'] : 0;
+            $layoutData = isset($param['layout']) ? $param['layout'] : 0;
             $param['rules'] = implode(',', $ruleData);
+            $param['layouts'] = implode(',', $layoutData);
             if (!empty($param['id']) && $param['id'] > 0) {
                 try {
                     validate(GroupCheck::class)->scene('edit')->check($param);
@@ -69,15 +71,29 @@ class Role extends BaseController
         } else {
             $id = isset($param['id']) ? $param['id'] : 0;
             $rule = admin_rule();
+			$layouts = get_config('layout');
             if ($id > 0) {
                 $rules = admin_group_info($id);
                 $role_rule = create_tree_list(0, $rule, $rules);
-                $role = Db::name('AdminGroup')->where(['id' => $id])->find();
+                $role = Db::name('AdminGroup')->where(['id' => $id])->find();				
+
+				$layout_selected = explode(',', $role['layouts']);
+				foreach ($layouts as $key =>&$vo) {
+					if (!empty($layout_selected) and in_array($vo['id'], $layout_selected)) {
+						$vo['checked'] = true;
+					} else {
+						$vo['checked'] = false;
+					}
+				}
                 View::assign('role', $role);
             } else {
                 $role_rule = create_tree_list(0, $rule, []);
+				foreach ($layouts as $key =>&$vo) {
+					$vo['checked'] = false;
+				}
             }
-            View::assign('role_rule', $role_rule);
+            View::assign('role_rule', $role_rule);			
+            View::assign('layout', $layouts);
             View::assign('id', $id);
             return view();
         }

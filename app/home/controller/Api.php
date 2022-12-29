@@ -133,8 +133,12 @@ class api extends BaseController
         $data_first = Db::name('AdminLog')->field('create_time')->whereBetween('create_time', "$begin_first,$end_first")->select();
         $data_second = Db::name('AdminLog')->field('create_time')->whereBetween('create_time', "$begin_second,$end_second")->select();
         $data_three = Db::name('AdminLog')->field('create_time')->whereBetween('create_time', "$begin_three,$end_first")->select();
-		
-		//获取员工活跃数据
+        return to_assign(0, '', ['data_first' => hour_document($data_first), 'data_second' => hour_document($data_second), 'data_three' => date_document($data_three)]);
+    }
+	
+	//获取员工活跃数据
+    public function get_view_log()
+    {		
         $times = strtotime("-30 day");
         $where = [];
         $where[] = ['uid','<>',1];
@@ -154,7 +158,7 @@ class api extends BaseController
         array_multisort($counts, SORT_DESC, $logs);
         //攫取前10
         $data_logs = array_slice($logs, 0, 10);
-        return to_assign(0, '', ['data_first' => hour_document($data_first), 'data_second' => hour_document($data_second), 'data_three' => date_document($data_three),'data_logs' => $data_logs]);
+        return to_assign(0, '', ['data_logs' => $data_logs]);
     }
 
     //修改个人信息

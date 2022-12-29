@@ -91,14 +91,8 @@ class Index extends BaseController
                 \think\facade\Cache::tag('adminMenu')->set('menu' . $admin['id'], $list);
             }
             View::assign('menu', $list);
-			//View::assign('theme', get_system_config('other','theme'));
 			$user = Db::name('Admin')->where('id',$this->uid)->find();
-			if(isset($user['theme'])){
-				View::assign('theme',$user['theme']);
-			}
-			else{
-				View::assign('theme', 'black');
-			}
+			View::assign('theme',$user['theme']);
             return View();
         }
     }
@@ -234,6 +228,23 @@ class Index extends BaseController
                 'num' => $articleCount,
             );
         }
+		
+		$admin = get_login_admin();
+			$adminGroup = Db::name('PositionGroup')->where(['pid' => $admin['position_id']])->column('group_id');
+            $adminLayout = Db::name('AdminGroup')->where('id', 'in', $adminGroup)->column('layouts');
+            $adminLayouts = [];
+			foreach ($adminLayout as $k => $v) {
+				$v = explode(',', $v);
+				$adminLayouts = array_merge($adminLayouts, $v);
+			}
+			$layouts = get_config('layout');
+			$layout_selected = [];
+			foreach ($layouts as $key =>$vo) {
+				if (!empty($adminLayouts) and in_array($vo['id'], $adminLayouts)) {
+					$layout_selected[] = $vo;
+				}
+			}
+			View::assign('layout_selected',$layout_selected);
         View::assign('total', $total);
         View::assign('handle', $handle);
         View::assign('install', $install);

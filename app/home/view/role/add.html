@@ -78,6 +78,16 @@
 			</td>
 		</tr>
 		<tr>
+			<td class="layui-td-gray" style="vertical-align: top;">首页展示模块</td>
+			<td colspan="3">
+				{volist name="layout" id="vo"}
+					<div class="layui-input-inline" style="margin-right:10px;">
+						<input type="checkbox" data-rule="{$vo.id}" name="layout[]" value="{$vo.id}" lay-skin="primary" title="{$vo.title}" {eq name="$vo.checked" value="true" }checked{/eq}>
+					</div>
+				{/volist}
+			</td>
+		</tr>
+		<tr>
 			<td class="layui-td-gray" style="vertical-align: top;">备注内容</td>
 			<td colspan="3">
 				<textarea name="desc" placeholder="请输入备注" class="layui-textarea">{notempty name="$role.desc" }{$role.desc}{/notempty}</textarea>
