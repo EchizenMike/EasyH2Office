@@ -2,7 +2,7 @@
 <!-- 主体 -->
 {block name="body"}
 <div class="p-3">
-	<form class="layui-form gg-form-bar border-x border-t">
+	<form class="layui-form gg-form-bar border-x border-t" lay-filter="barsearchform">
 		<div id="barDate" class="layui-input-inline">
 			<div class="layui-input-inline" style="width:110px;">
 				<input type="text" class="layui-input" id="start_time" placeholder="选择时间区间" readonly name="start_time">
@@ -52,8 +52,9 @@
 
 		layui.pageTable = table.render({
 			elem: '#test',
-			title: '报销管理列表',
+			title: '报销打款列表',
 			toolbar: '#toolbarDemo',
+			defaultToolbar:['filter', {title:'导出EXCEL',layEvent: 'LAYTABLE_EXCEL',icon: 'layui-icon-export'}],
 			url: "/finance/expense/checkedlist", //数据接口	
 			cellMinWidth: 100,			
 			page: true, //开启分页
@@ -151,6 +152,22 @@
 					}
 				]
 			]
+		});
+		
+		//表头工具栏事件
+		table.on('toolbar(test)', function(obj){
+			if(obj.event === 'LAYTABLE_EXCEL'){
+				var formSelect = form.val('barsearchform');
+				formSelect.limit=99999;
+				$.ajax({
+					url: '/finance/expense/checkedlist',
+					data: formSelect,
+					success:function(res){
+						table.exportFile('test', res.data,'xls');
+					}
+				});
+				return;
+			}
 		});
 
 		//监听行工具事件
