@@ -20,7 +20,7 @@
 		<div id="depament"></div>
 	</div>
 	<div class="body-table" style="margin-left:228px;">
-		<form class="layui-form gg-form-bar border-t border-x">
+		<form class="layui-form gg-form-bar border-t border-x" lay-filter="barsearchform">
 			<div class="layui-input-inline" style="width:136px">
 				<select name="status">
 					<option value="">选择员工状态</option>
@@ -75,8 +75,9 @@
 		
 		layui.pageTable = table.render({
 			elem: '#test',
-			title: '员工列表',
+			title: '通讯录',
 			toolbar: '#toolbarDemo',
+			defaultToolbar:['filter', {title:'导出EXCEL',layEvent: 'LAYTABLE_EXCEL',icon: 'layui-icon-export'}],
 			url: "/home/index/mail_list", //数据接口				
 			page: true, //开启分页
 			limit: 20,
@@ -150,6 +151,24 @@
 					}
 				]
 			]
+		});
+		
+		//表头工具栏事件
+		table.on('toolbar(test)', function(obj){
+			var checkStatus = table.checkStatus(obj.config.id); //获取选中行状态
+			var data = checkStatus.data;
+			if(obj.event === 'LAYTABLE_EXCEL'){
+				var formSelect = form.val('barsearchform');
+				formSelect.limit=99999;
+				$.ajax({
+					url: '/home/index/mail_list',
+					data: formSelect,
+					success:function(res){
+						table.exportFile('test', res.data,'xls');
+					}
+				});
+				return;
+			}
 		});
 
 		//监听搜索提交
