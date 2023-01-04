@@ -196,6 +196,29 @@ class Index extends BaseController
         return to_assign(0, '', $employee);
     }
 	
+    //获取所有员工
+    public function get_personnel()
+    {       
+		$param = get_params();
+		$where[] = ['a.status', '=', 1];
+		$where[] = ['a.id', '>', 1];
+		if (!empty($param['keywords'])) {
+			$where[] = ['a.name', 'like', '%' . $param['keywords'] . '%'];
+		}
+		if(!empty($param['ids'])){
+			$where[] = ['a.id', 'notin', $param['ids']];
+		}
+		$rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
+        $list = Db::name('admin')
+            ->field('a.id,a.did,a.position_id,a.mobile,a.name,a.nickname,a.sex,a.status,a.thumb,a.username,d.title as department')
+            ->alias('a')
+            ->join('Department d', 'a.did = d.id')
+            ->where($where)
+			->order('a.id desc')
+			->paginate($rows, false, ['query' => $param]);
+		return table_assign(0, '', $list);
+    }
+	
     //获取部门所有员工
     public function get_employee_select()
     {

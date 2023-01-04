@@ -62,6 +62,7 @@ return [
 		'apply'      => '申请',
 		'check'      => '审核通过',
 		'refue'      => '审核拒绝',
+		'grant'      => '授予',
 		'back'       => '撤销',
 		'topay'      => '打款',
 		'open'       => '开具',
