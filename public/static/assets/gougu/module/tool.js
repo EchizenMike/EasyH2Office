@@ -240,9 +240,9 @@ layui.define([], function (exports) {
 				console.log('父页面没引用tool模块');
 			}		
 		},
-		tabAdd:function(url,title){
+		tabAdd:function(url,title,id){
 			if(parent.layui.admin){
-				parent.layui.admin.sonAdd(url,title);
+				parent.layui.admin.sonAdd(url,title,id);
 			}
 			else{
 				console.log('父页面没引用admin模块');
@@ -281,14 +281,20 @@ layui.define([], function (exports) {
 			}			
 		}
 	};
+	
 	$('body').on('click', '.tab-a', function () {
+        let id = $(this).data('id');
 		let url = $(this).data('href');
 		let title = $(this).data('title');
 		if (url && url !== '') {
-			tool.tabAdd(url,title);
+			if (typeof(id) == "undefined" || id == '') {
+				id = Date.now();
+			}
+			tool.tabAdd(url,title,id);
 		}
 		return false;
 	});
+	
 	$('body').on('click', '.side-a', function () {
 		let url = $(this).data('href');
 		if (url && url !== '') {

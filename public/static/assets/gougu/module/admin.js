@@ -31,9 +31,11 @@ layui.define(['element'], function (exports) {
 			$('#GouguAppBody').append('<div class="gg-tab-page" title="'+title+'" id="tabItem' + id + '" data-id="' + id + '"><iframe id="' + id + '" data-frameid="' + id + '" src="' + url + '" frameborder="0" align="left" width="100%" height="100%" scrolling="yes"></iframe></div>');
 			this.tabChange(id);
 		},
-		//从子页面打开新的Tab页面，防止id重复，使用时间戳作为唯一标识
-		sonAdd: function (url, title) {
-			let id = Date.now();
+		//从子页面打开新的Tab页面，如果为传入id,防止id重复，使用时间戳作为唯一标识
+		sonAdd: function (url, title, id) {
+			if (typeof(id) == "undefined") {
+			  	id = Date.now();
+			}
 			this.tabAdd( id, url,title);
 		},
 		//根据传入的id传入到指定的tab项，并滚动定位
