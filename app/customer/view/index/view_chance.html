@@ -15,7 +15,7 @@ function chance(){
 	parent.layui.chanceTable = table.render({
 		elem: '#chance',
 		title: '销售机会列表',
-		cellMinWidth:240,
+		cellMinWidth:80,
 		url: "/customer/api/get_chance",
 		where:{'customer_id':customer_id},
 		page: true, //开启分页

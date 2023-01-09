@@ -12,7 +12,7 @@ function project_schedule(){
 	layui.scheduleTable = table.render({
 		elem: '#scheduleApi',
 		title: '工作记录列表',
-		cellMinWidth: 200,
+		cellMinWidth: 80,
 		url: "/oa/schedule/index", //数据接口
 		where: { 'tid': project_id },
 		page: true, //开启分页

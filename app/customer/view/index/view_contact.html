@@ -15,7 +15,7 @@ function contact(){
 	parent.layui.contactTable = table.render({
 		elem: '#contact',
 		title: '联系人列表',
-		cellMinWidth:180,
+		cellMinWidth:80,
 		url: "/customer/api/get_contact",
 		where:{'customer_id':customer_id},
 		page: true, //开启分页
