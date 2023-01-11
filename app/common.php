@@ -280,8 +280,30 @@ function get_user_role($leader_id=0,$uid = 0)
 	//包括自己部门在内
 	$department_array[] = $did;
 	//判断是否是部门负责人
-	$is_leader = Db::name('Department')->where([['id','in',$did,'leader_id'=>$leader_id]])->count();
+	$is_leader = Db::name('Department')->where([['id','in',$did],['leader_id','=',$leader_id]])->count();
 	return $is_leader;
+}
+
+//读取根据uid返回所在部门和所管理的子部门did
+function get_user_dids($uid = 0)
+{
+	$did = get_admin($uid)['did'];
+	$department_array = [];
+	//判断是否是部门负责人
+	$is_leader = Db::name('Department')->where(['id'=>$did,'leader_id'=>$uid])->count();
+	if($is_leader > 0 || $uid == 1){
+		//获取子部门
+		$department = get_department();
+		$department_list = get_data_node($department, $did);
+		$department_array = array_column($department_list, 'id');
+		//包括自己部门在内
+		$department_array[] = $did;
+	}
+	else{
+		//包括自己部门在内
+		$department_array[] = $did;
+	}
+	return $department_array;
 }
 
 //读取职位
