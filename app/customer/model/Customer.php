@@ -12,6 +12,7 @@ use think\Model;
 
 class Customer extends Model
 {
+	protected $autoWriteTimestamp=false;
 	const ZERO = 0;
     const ONE = 1;
     const TWO = 2;
@@ -26,7 +27,8 @@ class Customer extends Model
         self::ONE => '新进客户',
         self::TWO => '跟进客户',
         self::THREE => '正式客户',
-        self::FORE => '流失客户'
+        self::FORE => '流失客户',
+		self::FIVE => '已成交客户',
     ];
 	public static $IntentStatus = [
         self::ZERO => '未设置',
