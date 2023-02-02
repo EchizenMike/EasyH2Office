@@ -50,7 +50,6 @@
 			<option value="2" {eq name="$detail.intent_status" value="2"} selected{/eq}>意向模糊</option>
 			<option value="3" {eq name="$detail.intent_status" value="3"} selected{/eq}>意向一般</option>
 			<option value="4" {eq name="$detail.intent_status" value="4"} selected{/eq}>意向强烈</option>
-			<option value="5" {eq name="$detail.intent_status" value="5"} selected{/eq}>已成交</option>
           </select>
         </td>
 		<td class="layui-td-gray">客户状态</td>
@@ -59,8 +58,9 @@
             <option value="">请选择客户当前状态</option>
 				<option value="1" {eq name="$detail.status" value="1"} selected{/eq}>新进客户</option>
 				<option value="2" {eq name="$detail.status" value="2"} selected{/eq}>跟进客户</option>
-				<option value="3" {eq name="$detail.status" value="3"} selected{/eq}>跟进客户</option>
+				<option value="3" {eq name="$detail.status" value="3"} selected{/eq}>正式客户</option>
 				<option value="4" {eq name="$detail.status" value="4"} selected{/eq}>流失客户</option>
+				<option value="5" {eq name="$detail.status" value="5"} selected{/eq}>已成交客户</option>
           </select>
         </td>
       </tr>
