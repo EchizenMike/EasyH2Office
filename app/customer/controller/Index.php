@@ -44,49 +44,54 @@ class Index extends BaseController
 			
 			$uid = $this->uid;
 			$auth = isAuth($uid,'customer_admin');
-			$dids = get_department_role($uid);
-			if($auth==0){
-				if($tab==1){
-					$whereOr[] =['a.belong_uid', '=', $uid];
-				}
-				else if($tab==2){
-					if(!empty($dids)){
-						$whereOr[] =['a.belong_did', 'in', $dids];
-					}
-					else{
-						$whereOr[] =['a.belong_did', '=', 0];
-						$where[] =['a.belong_uid', '>', 0];
-					}
-				}
-				else if($tab==3){
-					$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',a.share_ids)")];
-				}
-				else{
-					$whereOr[] =['a.belong_uid', '=', $uid];	
-					if(!empty($dids)){
-						$whereOr[] =['a.belong_did', 'in', $dids];
-					}			
-					$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',a.share_ids)")];
-				}
+			if (!empty($param['uid']) && $auth == 1) {
+				$where[] =['a.belong_uid', '=', $param['uid']];	
 			}
-			else if($auth==1){
-				if($tab==1){
-					$whereOr[] =['a.belong_uid', '=', $uid];
-				}
-				else if($tab==2){
-					if(!empty($dids)){
-						$whereOr[] =['a.belong_did', 'in', $dids];
+			else{
+				$dids = get_department_role($uid);
+				if($auth == 0){
+					if($tab == 1){
+						$whereOr[] =['a.belong_uid', '=', $uid];
+					}
+					else if($tab == 2){
+						if(!empty($dids)){
+							$whereOr[] =['a.belong_did', 'in', $dids];
+						}
+						else{
+							$whereOr[] =['a.belong_did', '=', 0];
+							$where[] =['a.belong_uid', '>', 0];
+						}
+					}
+					else if($tab == 3){
+						$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',a.share_ids)")];
 					}
 					else{
-						$whereOr[] =['a.belong_did', '=', 0];
-						$where[] =['a.belong_uid', '>', 0];
+						$whereOr[] =['a.belong_uid', '=', $uid];	
+						if(!empty($dids)){
+							$whereOr[] =['a.belong_did', 'in', $dids];
+						}			
+						$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',a.share_ids)")];
 					}
 				}
-				else if($tab==3){
-					$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',a.share_ids)")];
-				}
-				else{
-					$whereOr[] =['a.belong_uid', '>', 0];
+				else if($auth ==1 ){
+					if($tab == 1){
+						$whereOr[] =['a.belong_uid', '=', $uid];
+					}
+					else if($tab == 2){
+						if(!empty($dids)){
+							$whereOr[] =['a.belong_did', 'in', $dids];
+						}
+						else{
+							$whereOr[] =['a.belong_did', '=', 0];
+							$where[] =['a.belong_uid', '>', 0];
+						}
+					}
+					else if($tab == 3){
+						$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',a.share_ids)")];
+					}
+					else{
+						$whereOr[] =['a.belong_uid', '>', 0];
+					}
 				}
 			}
 			
@@ -105,7 +110,13 @@ class Index extends BaseController
                 ->paginate($rows, false, ['query' => $param])
 				->each(function ($item, $key) {
                     $item->belong_name = Db::name('Admin')->where(['id' => $item->belong_uid])->value('name');
-                    $item->create_time = date('Y-m-d H:i:s', (int) $item->create_time);
+					$item->create_time = date('Y-m-d H:i', $item->create_time);
+					if($item->update_time == 0){
+						$item->update_time='-';
+					}
+					else{
+						$item->update_time = date('Y-m-d H:i', $item->update_time);
+					}
                     $item->intent_status_name = CustomerList::$IntentStatus[(int) $item->intent_status];
                     $item->status_name = CustomerList::$Status[(int) $item->status];
 					$contact = Db::name('CustomerContact')->where(['is_default'=>1,'cid' => $item->id])->find();
@@ -125,6 +136,9 @@ class Index extends BaseController
 				});
             return table_assign(0, '', $content);
         } else {
+			$uid = $this->uid;
+			$auth = isAuth($uid,'customer_admin');
+			View::assign('auth', $auth);
             return view();
         }
     }
@@ -162,7 +176,13 @@ class Index extends BaseController
                 ->paginate($rows, false, ['query' => $param])
 				->each(function ($item, $key) {
                     $item->belong_name = Db::name('Admin')->where(['id' => $item->belong_uid])->value('name');
-                    $item->create_time = date('Y-m-d H:i:s', (int) $item->create_time);
+                    $item->create_time = date('Y-m-d H:i', $item->create_time);
+					if($item->update_time == 0){
+						$item->update_time='-';
+					}
+					else{
+						$item->update_time = date('Y-m-d H:i', $item->update_time);
+					}
                     $item->intent_status_name = CustomerList::$IntentStatus[(int) $item->intent_status];
                     $item->status_name = CustomerList::$Status[(int) $item->status];
 					$contact = Db::name('CustomerContact')->where(['is_default'=>1,'cid' => $item->id])->find();
@@ -245,7 +265,13 @@ class Index extends BaseController
                 ->paginate($rows, false, ['query' => $param])
 				->each(function ($item, $key) {
                     $item->belong_name = Db::name('Admin')->where(['id' => $item->belong_uid])->value('name');
-                    $item->create_time = date('Y-m-d H:i:s', (int) $item->create_time);
+                    $item->create_time = date('Y-m-d H:i', $item->create_time);
+					if($item->update_time == 0){
+						$item->update_time='-';
+					}
+					else{
+						$item->update_time = date('Y-m-d H:i', $item->update_time);
+					}
                     $item->intent_status_name = CustomerList::$IntentStatus[(int) $item->intent_status];
                     $item->status_name = CustomerList::$Status[(int) $item->status];
 					$contact = Db::name('CustomerContact')->where(['is_default'=>1,'cid' => $item->id])->find();

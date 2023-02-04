@@ -12,7 +12,7 @@
 			</ul>
 		</div>
 	</div>
-	<form class="layui-form gg-form-bar border-x" lay-filter="barsearchform">
+	<form class="layui-form gg-form-bar border-x" lay-filter="barsearchform" id="barsearchform">
 		<div class="layui-input-inline" style="width:150px;">
 			<select name="grade_id">
 				<option value="">请选择客户等级</option>
@@ -48,11 +48,18 @@
 				<option value="5">已成交客户</option>
 			</select>
 		</div>
+		{eq name="$auth" value="1"}
+		<div class="layui-input-inline" style="width:120px;">
+			<input type="text" name="username"  placeholder="选择所属员工" class="layui-input" readonly data-event="select"/>
+			<input type="text" name="uid" value="" style="display:none" />	
+		</div>
+		{/eq}
 		<div class="layui-input-inline" style="width:240px;">
 			<input type="hidden" name="tab" value="0" />
 			<input type="text" name="keywords" placeholder="输入关键字" class="layui-input" autocomplete="off" />
 		</div>
 		<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform">提交搜索</button>
+		<button type="reset" class="layui-btn layui-btn-reset" lay-filter="clear">清空</button>
 	</form>
 	<table class="layui-hide" id="test" lay-filter="test"></table>
 </div>
@@ -68,9 +75,34 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
-	const moduleInit = ['tool'];
+	const moduleInit = ['tool','employeepicker'];
 	function gouguInit() {
-		var table = layui.table, tool = layui.tool ,form = layui.form, element = layui.element;
+		var table = layui.table, tool = layui.tool ,form = layui.form, element = layui.element, employeepicker = layui.employeepicker;
+		
+		// 选择员工
+		$('body').on('click','[data-event="select"]',function(){
+			var that = $(this);
+			var names = that.val(), ids = $('[name="uid"]').val();
+			employeepicker.init({
+				ids: ids,
+				names: names,
+				type: 0,
+				department_url: "/api/index/get_department_tree",
+				employee_url: "/api/index/get_employee",
+				callback: function (ids, names, dids, departments) {
+					$('[name="uid"]').val(ids);
+					that.val(names);
+					$('[lay-filter="webform"]').click();
+				}
+			})
+		});
+		
+		$('[lay-filter="clear"]').on('click',function(){
+			setTimeout(function(){
+				$('[lay-filter="webform"]').click();
+			},10)			
+		})
+		
 		layui.pageTable = table.render({
 			elem: '#test',
 			title: '客户列表',
@@ -124,6 +156,16 @@
 						align: 'center',
 						width: 90
 					},{
+						field: 'create_time',
+						title: '创建时间',
+						align: 'center',
+						width: 136
+					},{
+						field: 'update_time',
+						title: '最后编辑时间',
+						align: 'center',
+						width: 136
+					},{
 						field: 'source',
 						title: '来源渠道',
 						align: 'center',
@@ -167,6 +209,7 @@
 		
 		element.on('tab(tab)', function(data){
 			$('[name="tab"]').val(data.index);
+			$("#barsearchform")[0].reset();
 			layui.pageTable.reload({where:{tab:data.index},page:{curr:1}});
 			return false;
 		});
@@ -224,7 +267,8 @@
 					grade_id: data.field.grade_id,
 					source_id: data.field.source_id,
 					type: data.field.type,
-					status: data.field.status
+					status: data.field.status,
+					uid: data.field.uid
 				},
 				page: {
 					curr: 1

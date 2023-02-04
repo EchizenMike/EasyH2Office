@@ -56,8 +56,8 @@
 .layui-data-none{padding:12px 0; color:#969696; text-align:center; font-size:12px;}
 .gougu-data-none{background:url(../images/data-none.png) no-repeat center center; background-size:auto 80%;}
 
-html {background-color: #FAFAFA; color: #162a48}
-html,body{height:100%;}
+html {background-color: #FAFAFA; color: #162a48;}
+html,body{height:100%;scrollbar-width: thin;}
 body.right-open{overflow:hidden;}
 .bg-white{background-color:#fff;}
 a.tab-a,a.open-a,a.link-a,a.right-a,a.side-a{color:#187FDD; cursor:pointer;}

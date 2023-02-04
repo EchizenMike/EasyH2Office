@@ -10,7 +10,10 @@
 	<table class="layui-table layui-table-form">
 		<tr>
 			<td class="layui-td-gray">员工姓名<font>*</font></td>
-			<td colspan="2"><input type="text" name="name" value="" autocomplete="off" placeholder="请输入员工姓名" lay-verify="required" lay-reqText="请输入员工姓名" class="layui-input"></td>
+			<td colspan="2">
+				<input type="text" name="name" value="" autocomplete="off" readonly placeholder="请输入员工姓名" lay-verify="required" lay-reqText="请输入员工姓名" class="layui-input picker-one">
+				<input type="hidden" name="uid">
+			</td>
 			<td class="layui-td-gray">入职日期<font>*</font></td>
 			<td colspan="2">
 				<input id="detail_time" name="detail_time" autocomplete="off" class="layui-input" value="" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
@@ -83,7 +86,10 @@
 	<table class="layui-table layui-table-form">
 		<tr>
 			<td class="layui-td-gray">员工姓名<font>*</font></td>
-			<td colspan="2"><input type="text" name="name" value="{$detail.name}" autocomplete="off" placeholder="请输入员工姓名" lay-verify="required" lay-reqText="请输入员工姓名" class="layui-input"></td>
+			<td colspan="2">
+				<input type="text" name="name" value="{$detail.name}" autocomplete="off" readonly placeholder="请输入员工姓名" lay-verify="required" lay-reqText="请输入员工姓名" class="layui-input picker-one">
+				<input type="hidden" name="uid">
+			</td>
 			<td class="layui-td-gray">入职日期<font>*</font></td>
 			<td colspan="2">
 				<input id="detail_time" name="detail_time" autocomplete="off" class="layui-input" value="{$detail.detail_time}" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
