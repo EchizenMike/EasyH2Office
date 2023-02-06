@@ -1196,16 +1196,49 @@ function time_format($time = NULL, $format = 'Y-m-d H:i:s')
 }
 
 /**
+ * 将秒数转换为时间 (小时、分、秒）
+ * @param
+ */
+function getTimeBySec($time,$second=true)
+{
+    if (is_numeric($time)) {
+        $value = array(
+            "hours" => 0,
+            "minutes" => 0, "seconds" => 0,
+        );
+		$t='';
+        if ($time >= 3600) {
+            $value["hours"] = floor($time / 3600);
+            $time = ($time % 3600);
+            $t .= $value["hours"] . "小时";
+        }
+        if ($time >= 60) {
+            $value["minutes"] = floor($time / 60);
+            $time = ($time % 60);
+            $t .= $value["minutes"] . "分钟";
+        }
+        if ($time > 0 && $time < 60 && $second==true) {
+            $value["seconds"] = floor($time);
+            $t .= $value["seconds"] . "秒";
+        }
+        return $t;
+    } else {
+        return (bool)FALSE;
+    }
+}
+
+/**
  * 将秒数转换为时间 (年、天、小时、分、秒）
  * @param
  */
-function getTimeBySec($time)
+function getDateBySec($time,$second=false)
 {
     if (is_numeric($time)) {
         $value = array(
             "years" => 0, "days" => 0, "hours" => 0,
             "minutes" => 0, "seconds" => 0,
         );
+		$t='';
         if ($time >= 31556926) {
             $value["years"] = floor($time / 31556926);
             $time = ($time % 31556926);
@@ -1226,7 +1259,7 @@ function getTimeBySec($time)
             $time = ($time % 60);
             $t .= $value["minutes"] . "分钟";
         }
-        if ($time < 60) {
+        if ($time < 60 && $second==true) {
             $value["seconds"] = floor($time);
             $t .= $value["seconds"] . "秒";
         }

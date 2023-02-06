@@ -17,7 +17,7 @@ function project_user(){
 	layui.userTable = table.render({
 		elem: '#user',
 		title: '项目成员列表',
-		cellMinWidth: 120,
+		cellMinWidth: 80,
 		toolbar: '#toolbaruser',
 		url: "/project/api/project_user", //数据接口
 		where: { 'tid': project_id },
