@@ -15,6 +15,7 @@ class ProjectDocument extends Model
     //列表
     function list($param) {
         $where = array();
+        $whereOr  = array();
         $map1 = [];
         $map2 = [];
         if (!empty($param['project_id'])) {
@@ -23,13 +24,13 @@ class ProjectDocument extends Model
             $project_ids = Db::name('ProjectUser')->where(['uid' => $param['uid'], 'delete_time' => 0])->column('project_id');
             $map1[] = ['admin_id', '=', $param['uid']];
             $map2[] = ['project_id', 'in', $project_ids];
+			$whereOr =[$map1,$map2];
         }
         if (!empty($param['keywords'])) {
             $where[] = ['title|content', 'like', '%' . $param['keywords'] . '%'];
         }
         $where[] = ['delete_time', '=', 0];
 		
-		$whereOr =[$map1,$map2];
         $rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
         $list = Db::name('ProjectDocument')
 			->where(function ($query) use ($whereOr) {
