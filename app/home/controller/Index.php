@@ -86,7 +86,7 @@ class Index extends BaseController
                     $v = explode(',', $v);
                     $adminMenus = array_merge($adminMenus, $v);
                 }
-                $menu = Db::name('AdminRule')->where(['menu' => 1, 'status' => 1])->where('id', 'in', $adminMenus)->order('sort asc')->select()->toArray();
+                $menu = Db::name('AdminRule')->where(['menu' => 1, 'status' => 1])->where('id', 'in', $adminMenus)->order('sort asc,id asc')->select()->toArray();
                 $list = list_to_tree($menu);
                 \think\facade\Cache::tag('adminMenu')->set('menu' . $admin['id'], $list);
             }
@@ -198,6 +198,7 @@ class Index extends BaseController
 			$whereProject[] = ['id', 'in', $project_ids];			
             $projectCount = Db::name('Project')->where($whereProject)->count();
 			
+			$whereOr = array();
 			$map1 = [];
 			$map2 = [];
 			$map3 = [];
@@ -207,9 +208,14 @@ class Index extends BaseController
             $map2[] = ['director_uid', '=', $uid];
             $map3[] = ['', 'exp', Db::raw("FIND_IN_SET({$uid},assist_admin_ids)")];
             $map4[] = ['project_id', 'in', $project_ids];
-            $taskCount = Db::name('ProjectTask')->where([['delete_time', '=', 0]])->where(function ($query) use ($map1, $map2, $map3, $map4) {
-				$query->where($map1)->whereor($map2)->whereor($map3)->whereor($map4);
-			})->count();
+			
+			$whereOr =[$map1,$map2,$map3,$map4];
+            $taskCount = Db::name('ProjectTask')
+				->where(function ($query) use ($whereOr) {
+					if (!empty($whereOr))
+						$query->whereOr($whereOr);
+					})
+				->where([['delete_time', '=', 0]])->count();
 			
             $total[] = array(
                 'name' => '项目',

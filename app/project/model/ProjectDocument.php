@@ -28,10 +28,15 @@ class ProjectDocument extends Model
             $where[] = ['title|content', 'like', '%' . $param['keywords'] . '%'];
         }
         $where[] = ['delete_time', '=', 0];
+		
+		$whereOr =[$map1,$map2];
         $rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
-        $list = Db::name('ProjectDocument')->where(function ($query) use ($map1, $map2) {
-            $query->where($map1)->whereor($map2);
-        })->where($where)
+        $list = Db::name('ProjectDocument')
+			->where(function ($query) use ($whereOr) {
+				if (!empty($whereOr))
+					$query->whereOr($whereOr);
+				})
+			->where($where)
             ->withoutField('content,md_content')
             ->order('id desc')
             ->paginate($rows, false, ['query' => $param])

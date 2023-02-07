@@ -91,6 +91,7 @@ class api extends BaseController
 		$res['data'] = [];
 		if($exist){
 			$where = array();
+			$whereOr = array();
 			$map1 = [];
 			$map2 = [];
 			$map3 = [];
@@ -98,11 +99,14 @@ class api extends BaseController
 			$map2[] = ['director_uid', '=', $this->uid];
 			$map3[] = ['', 'exp', Db::raw("FIND_IN_SET({$this->uid},assist_admin_ids)")];
 
+			$whereOr =[$map1,$map2,$map3];
 			$where[] = ['delete_time', '=', 0];
-			$list = Db::name('ProjectTask')->where($where)
-				->where(function ($query) use ($map1, $map2, $map3) {
-					$query->where($map1)->whereor($map2)->whereor($map3);
-				})
+			$list = Db::name('ProjectTask')
+				->where(function ($query) use ($whereOr) {
+					if (!empty($whereOr))
+						$query->whereOr($whereOr);
+					})
+				->where($where)
 				->withoutField('content,md_content')
 				->order('flow_status asc')
 				->order('id desc')

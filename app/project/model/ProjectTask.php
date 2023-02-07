@@ -44,6 +44,7 @@ class ProjectTask extends Model
     //列表
     function list($param) {
         $where = array();
+        $whereOr = array();
         $map1 = [];
         $map2 = [];
         $map3 = [];
@@ -56,6 +57,7 @@ class ProjectTask extends Model
             $map2[] = ['director_uid', '=', $param['uid']];
             $map3[] = ['', 'exp', Db::raw("FIND_IN_SET({$param['uid']},assist_admin_ids)")];
             $map4[] = ['project_id', 'in', $project_ids];
+			$whereOr =[$map1,$map2,$map3,$map4];
         }
         if (!empty($param['type'])) {
             $where[] = ['type', '=', $param['type']];
@@ -76,10 +78,14 @@ class ProjectTask extends Model
             $where[] = ['title|content', 'like', '%' . $param['keywords'] . '%'];
         }
         $where[] = ['delete_time', '=', 0];
+		
         $rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
-        $list = Db::name('ProjectTask')->where(function ($query) use ($map1, $map2, $map3, $map4) {
-            $query->where($map1)->whereor($map2)->whereor($map3)->whereor($map4);
-        })->where($where)
+        $list = Db::name('ProjectTask')
+			->where(function ($query) use ($whereOr) {
+				if (!empty($whereOr))
+					$query->whereOr($whereOr);
+				})
+			->where($where)
             ->withoutField('content,md_content')
             ->order('flow_status asc')
             ->order('id desc')
