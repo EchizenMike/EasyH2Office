@@ -220,7 +220,7 @@
 				url: "/home/index/index",
 				type:'post',
 				success:function(e){
-					if(e.code==0 && e.data!=''){
+					if(e.code==0 && e.data!==''){
 						if(e.data.msg_num>0){
 							$('#msgNum').show().find('span').html(e.data.msg_num);
 						}
