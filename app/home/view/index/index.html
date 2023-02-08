@@ -227,7 +227,7 @@
 						else{
 							$('#msgNum').hide().find('span').html(0);
 						}
-						if(isClose==0){
+						if(isClose==0&&e.data&&e.data.length){
 							var html = '<ul id="messageul" style="line-height:24px;">';						
 							$.each(e.data, function(key, value) {
 								if(key!='msg_num'){
