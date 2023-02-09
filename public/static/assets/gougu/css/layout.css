@@ -23,7 +23,8 @@
 .gg-layout .layui-logo a {color: #f1f1f1; text-align:center;}
 
 .layui-side-menu {box-shadow: 1px 0 2px 0 rgba(0, 0, 0, .05);background-color: #001529; color: #fff}
-.layui-side-menu .layui-side-scroll {width: 100%}
+.layui-side-menu .layui-side-scroll {width: 100%;}
+.layui-side-menu .layui-side-scroll.no-scroll{overflow-y:hidden;}
 .layui-side-menu .layui-nav {width: 200px; margin-top: 50px; background: 0 0}
 .layui-side-menu .layui-nav .layui-nav-item a {height: 40px;line-height: 40px; padding-left: 44px; padding-right: 20px}
 .layui-side-menu .layui-nav .layui-nav-item>a {padding-top: 2px;padding-bottom: 2px}
@@ -62,9 +63,25 @@
 .layui-side-white .layui-nav-tree .layui-this,
 .layui-side-white .layui-nav-tree .layui-this>a,
 .layui-side-white .layui-nav-tree .layui-this>a:hover {background-color: #ECF6FF;color: #187FDD;}
-
 .layui-side-white .layui-nav-tree .layui-nav-child dd a:hover{background-color:#ffffff;color: #187FDD;}
 .layui-side-white .layui-nav-tree .layui-nav-bar{background-color: #187FDD;width:3px;left:inherit;right:0}
+
+
+.layui-side-blue{background-color:#192A5E; color: #C5C9D2}
+.layui-side-blue .layui-logo {background-color: #122150;border-bottom: 1px solid #122150;}
+.layui-side-blue .layui-nav .layui-nav-item a{color: #C5C9D2}
+.layui-side-blue .layui-nav .layui-nav-item .iconfont{font-weight:600;}
+.layui-side-blue .layui-nav-itemed>.layui-nav-child{background-color:#122150!important;}
+.layui-side-blue .layui-nav-itemed>a,
+.layui-side-blue .layui-nav-tree .layui-nav-title a,
+.layui-side-blue .layui-nav-tree .layui-nav-title a:hover{color:#C5C9D2!important;}
+.layui-side-blue .layui-nav-tree .layui-nav-child dd.layui-this,
+.layui-side-blue .layui-nav-tree .layui-nav-child dd.layui-this a,
+.layui-side-blue .layui-nav-tree .layui-this,
+.layui-side-blue .layui-nav-tree .layui-this>a,
+.layui-side-blue .layui-nav-tree .layui-this>a:hover {background-color: #3c508c;color: #fff;}
+.layui-side-blue .layui-nav-tree .layui-nav-child dd a:hover{background-color:#2b3e79;color: #C5C9D2;}
+.layui-side-blue .layui-nav-tree .layui-nav-bar{background-color: #122150;width:3px;left:inherit;right:0}
 
 .page-tabs{ position: fixed;top: 50px;right: 0; z-index: 999; height: 40px; line-height: 40px; padding: 0 80px 0 40px; background-color: #fff;box-sizing: border-box; box-shadow: 0 1px 20px 0 rgba(0, 0, 0, 8%)}
 .page-tabs,
