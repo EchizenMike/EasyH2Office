@@ -72,8 +72,8 @@ class Index extends BaseController
                         $item->tasks_pensent = "100％";
                     }
 					
-					if($item->status == 2){
-						$step = Db::name('Step')->where(['action_id' => $item->id,'sort'=>$item->step_sort,'type'=>2,'delete_time'=>0])->find();
+					$step = Db::name('Step')->where(['action_id' => $item->id,'sort'=>$item->step_sort,'type'=>2,'delete_time'=>0])->find();
+					if(!empty($step)){
 						$item->step_user = Db::name('Admin')->where(['id'=>$step['flow_uid']])->value('name');
 						$item->step = $step['flow_name'] . '-' . $item->step_user;
 					}
