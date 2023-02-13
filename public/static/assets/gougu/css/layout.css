@@ -83,7 +83,7 @@
 .layui-side-blue .layui-nav-tree .layui-nav-child dd a:hover{background-color:#2b3e79;color: #C5C9D2;}
 .layui-side-blue .layui-nav-tree .layui-nav-bar{background-color: #122150;width:3px;left:inherit;right:0}
 
-.page-tabs{ position: fixed;top: 50px;right: 0; z-index: 999; height: 40px; line-height: 40px; padding: 0 80px 0 40px; background-color: #fff;box-sizing: border-box; box-shadow: 0 1px 20px 0 rgba(0, 0, 0, 8%)}
+.page-tabs{ position: fixed;top: 50px;right: 0; z-index: 999; height: 40px; line-height: 40px; padding: 0 80px 0 40px; background-color: #fff;box-sizing: border-box; box-shadow: 0 1px 3px rgb(0 0 0 / 10%);}
 .page-tabs,
 .gg-layout .layui-body,
 .gg-layout .layui-footer,
@@ -201,16 +201,16 @@
     display: block;
 }
 
-.gg-tab-page.layui-show {animation:moveTop .8s;-webkit-animation:moveTop .8s;animation-fill-mode:both;-webkit-animation-fill-mode:both;position:relative;height:100%;-webkit-overflow-scrolling:touch;}
-@keyframes moveTop {0% {opacity:0;-webkit-transform:translateY(20px);-ms-transform:translateY(30px);transform:translateY(20px);}
+.gg-tab-page.layui-show {animation:moveTop .4s;-webkit-animation:moveTop .4s;animation-fill-mode:both;-webkit-animation-fill-mode:both;position:relative;height:100%;-webkit-overflow-scrolling:touch;}
+@keyframes moveTop {0% {opacity:0;-webkit-transform:translateY(20px);-ms-transform:translateY(20px);transform:translateY(20px);}
     100% {opacity:1;-webkit-transform:translateY(0);-ms-transform:translateY(0);transform:translateY(0);}
 }
 @-o-keyframes moveTop {0% {opacity:0;-webkit-transform:translateY(20px);-ms-transform:translateY(20px);transform:translateY(20px);}
     100% {opacity:1;-webkit-transform:translateY(0);-ms-transform:translateY(0);transform:translateY(0);}
 }
-@-moz-keyframes moveTop {0% {opacity:0;-webkit-transform:translateY(30px);-ms-transform:translateY(20px);transform:translateY(20px);}
+@-moz-keyframes moveTop {0% {opacity:0;-webkit-transform:translateY(20px);-ms-transform:translateY(20px);transform:translateY(20px);}
     100% {opacity:1;-webkit-transform:translateY(0);-ms-transform:translateY(0);transform:translateY(0);}
 }
-@-webkit-keyframes moveTop {0% {opacity:0;-webkit-transform:translateY(30px);-ms-transform:translateY(20px);transform:translateY(20px);}
+@-webkit-keyframes moveTop {0% {opacity:0;-webkit-transform:translateY(20px);-ms-transform:translateY(20px);transform:translateY(20px);}
     100% {opacity:1;-webkit-transform:translateY(0);-ms-transform:translateY(0);transform:translateY(0);}
 }

@@ -6,7 +6,6 @@
 .layui-card-header {position: relative; padding:0 12px;}
 .layui-card-header .layui-icon,.layui-card-header .pull-right{line-height: initial; position: absolute;right: 12px;top: 50%; margin-top: -9px}
 .layui-card-title {font-size: 18px;font-weight: 600;padding: 12px 12px 0;}
-.layui-table, .layui-table-view{margin:0; background-color:#fff;}
 .layui-table td, .layui-table th{padding:8px;}
 .picker-table{padding:8px;}
 .picker-table .layui-table-cell {padding:4px; height: 32px;line-height: 24px;}
@@ -35,8 +34,10 @@
 .layui-form-2 .layui-form-label{width:112px;}
 .layui-form-2 .layui-input-block{margin-left:130px;}
 
+.layui-table-view{margin:0;}
+.layui-table-view .layui-table th{background-color:#f8f8f8;}
 .layui-table-form tbody tr:hover{background-color: #fff;}
-.layui-td-gray,.layui-td-gray-2,.layui-td-gray-3,.layui-td-gray-4{color:#909399; width:68px; text-align:right; background-color:#f7f7f7;}
+.layui-td-gray,.layui-td-gray-2,.layui-td-gray-3,.layui-td-gray-4{color:#909399; width:68px; text-align:right; background-color:#fafafa;}
 .layui-td-gray-2{width:96px;}
 .layui-td-gray-3{width:126px;}
 .layui-td-gray-4{width:152px;}
@@ -56,7 +57,7 @@
 .layui-data-none{padding:12px 0; color:#969696; text-align:center; font-size:12px;}
 .gougu-data-none{background:url(../images/data-none.png) no-repeat center center; background-size:auto 80%;}
 
-html {background-color: #FAFAFA; color: #162a48;}
+html {background-color: #fafafa; color: #162a48;}
 html,body{height:100%;scrollbar-width: thin;}
 body.right-open{overflow:hidden;}
 .bg-white{background-color:#fff;}
