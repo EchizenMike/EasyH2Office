@@ -84,8 +84,24 @@ class Approve extends BaseController
 			//查询条件
 			$map1 = [];
 			$map2 = [];
-			$map1[] = ['', 'exp', Db::raw("FIND_IN_SET('{$user_id}',check_admin_ids)")];
-			$map2[] = ['', 'exp', Db::raw("FIND_IN_SET('{$user_id}',flow_admin_ids)")];
+			$map1[] = ['', 'exp', Db::raw("FIND_IN_SET('{$user_id}',f.check_admin_ids)")];
+			$map2[] = ['', 'exp', Db::raw("FIND_IN_SET('{$user_id}',f.flow_admin_ids)")];
+			
+			if (!empty($param['type'])) {
+                $map1[] = ['f.type', '=', $param['type']];
+                $map2[] = ['f.type', '=', $param['type']];
+            }
+			if (!empty($param['uid'])) {
+                $map1[] = ['f.admin_id', '=', $param['uid']];
+                $map2[] = ['f.admin_id', '=', $param['uid']];
+            }
+			//按时间检索
+            $start_time = isset($param['start_time']) ? strtotime($param['start_time']) : 0;
+            $end_time = isset($param['end_time']) ? strtotime($param['end_time']) : 0;
+			if ($start_time > 0 && $end_time > 0) {
+				$map1[] = ['f.create_time', 'between', [$start_time, $end_time]];
+				$map2[] = ['f.create_time', 'between', [$start_time, $end_time]];
+			}
 			
 			$rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
 			
@@ -155,6 +171,8 @@ class Approve extends BaseController
             }	
             return table_assign(0, '', $list);
         } else {
+			$type = Db::name('FlowType')->whereOr('status',1)->select()->toArray();
+			View::assign('type', $type);
             return view();
         }
     }
@@ -166,8 +184,21 @@ class Approve extends BaseController
 			$user_id = $this->uid;
 			//查询条件
 			$map = [];
-			$map[] = ['check_status', '=', 2];			
-			$map[] = ['', 'exp', Db::raw("FIND_IN_SET('{$user_id}',copy_uids)")];			
+			$map[] = ['f.check_status', '=', 2];			
+			$map[] = ['', 'exp', Db::raw("FIND_IN_SET('{$user_id}',f.copy_uids)")];	
+			if (!empty($param['type'])) {
+                $map[] = ['f.type', '=', $param['type']];
+            }
+			if (!empty($param['uid'])) {
+                $map[] = ['f.admin_id', '=', $param['uid']];
+            }
+			//按时间检索
+            $start_time = isset($param['start_time']) ? strtotime($param['start_time']) : 0;
+            $end_time = isset($param['end_time']) ? strtotime($param['end_time']) : 0;
+			if ($start_time > 0 && $end_time > 0) {
+				$map[] = ['f.create_time', 'between', [$start_time, $end_time]];
+			}
+			
 			$rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];			
 			$list = Db::name('Approve')
 				->field('f.*,a.name,d.title as department_name,t.title as flow_type')
@@ -190,6 +221,8 @@ class Approve extends BaseController
 				});
             return table_assign(0, '', $list);
         } else {
+			$type = Db::name('FlowType')->whereOr('status',1)->select()->toArray();
+			View::assign('type', $type);
             return view();
         }
     }

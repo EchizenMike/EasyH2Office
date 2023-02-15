@@ -1,7 +1,32 @@
 {extend name="../../base/view/common/base" /}
 <!-- 主体 -->
 {block name="body"}
-<div class="p-3">	
+<div class="p-3">
+	<form class="layui-form gg-form-bar border-x" lay-filter="barsearchform" id="barsearchform">
+		<div class="layui-input-inline" style="width:150px;">
+			<select name="type">
+				<option value="">选择审批类别</option>
+				{volist name="type" id="vo"}
+				<option value="{$vo.id}">{$vo.title}</option>
+				{/volist}
+			</select>
+		</div>
+		<div class="layui-input-inline" style="width:150px;">
+			<input type="text" name="username"  placeholder="选择申请人" class="layui-input picker-one" readonly>
+			<input type="text" name="uid" value="" style="display:none" />	
+		</div>
+		<div id="barDate" class="layui-input-inline">
+			<div class="layui-input-inline" style="width:120px;">
+				<input type="text" class="layui-input" id="start_time" placeholder="申请时间区间" readonly name="start_time">
+			</div>
+			~
+			<div class="layui-input-inline" style="width:120px;">
+				<input type="text" class="layui-input" id="end_time" placeholder="申请时间区间" readonly name="end_time">
+			</div>
+		</div>
+		<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform">提交搜索</button>
+		<button type="reset" class="layui-btn layui-btn-reset" lay-filter="clear">清空</button>
+	</form>
 	<table class="layui-hide" id="test" lay-filter="test"></table>
 </div>
 <script type="text/html" id="toolbarDemo">
@@ -13,9 +38,38 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
-	const moduleInit = ['tool'];
+	const moduleInit = ['tool','employeepicker'];
 	function gouguInit() {
-		var table = layui.table, tool = layui.tool;			
+		var form = layui.form,table = layui.table, tool = layui.tool ,element=layui.element,laydate = layui.laydate;
+			
+		$('[lay-filter="clear"]').on('click',function(){
+			setTimeout(function(){
+				$('[lay-filter="webform"]').click();
+			},10)			
+		});
+		  
+		//日期范围
+		laydate.render({
+			elem: '#barDate',
+			range: ['#start_time', '#end_time']
+		});
+			
+		//监听搜索提交
+		form.on('submit(webform)', function(data) {
+			layui.pageTable.reload({
+				where: {
+					status: data.field.tab,
+					type: data.field.type,
+					start_time:data.field.start_time,
+					end_time:data.field.end_time,
+					uid: data.field.uid
+				},
+				page: {
+					curr: 1
+				}
+			});
+			return false;
+		});		
 		layui.pageTable = table.render({
 			elem: '#test'
 			,toolbar: '#toolbarDemo'
