@@ -15,7 +15,8 @@ layui.define([], function (exports) {
 				exclude: ".noExl",
 				exclude_img: false,
 				exclude_links: false,
-				exclude_inputs: false
+				exclude_inputs: false,
+				preserveColors:true
 			});
 		}
 	}
@@ -25,9 +26,10 @@ layui.define([], function (exports) {
 				url: modPath + '/table2excel.js' ,
 				dataType: 'script',
 				cache: true,
-				async: false,
+				async: false
 			});
 		}
 	}
+	loadScript();
 	exports(MOD_NAME, excel);
 });
