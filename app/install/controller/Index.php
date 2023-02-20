@@ -78,9 +78,17 @@ class Index
             // 验证失败 输出错误信息
             return to_assign(1, $e->getError());
         }
-        $dbName = $data['DB_NAME'];
-        // 连接数据库
-        $link = @new mysqli("{$data['DB_HOST']}:{$data['DB_PORT']}", $data['DB_USER'], $data['DB_PWD']);
+        $dbName = $data['DB_NAME'];		
+		//验证表是否存在		
+		try {
+			// 连接数据库
+			$link = @new mysqli("{$data['DB_HOST']}:{$data['DB_PORT']}", $data['DB_USER'], $data['DB_PWD']);
+		} catch (\Exception $e) {
+			// 这是进行异常捕获,创建数据库
+			$error = $e->getMessage();
+			return to_assign(1, '数据库链接失败:' . $error);die;
+		}
+
         // 获取错误信息
         $error = $link->connect_error;
         if (!is_null($error)) {
@@ -93,12 +101,22 @@ class Index
         if ($link->server_info < 5.0) {
             return to_assign(1, '请将您的mysql升级到5.0以上');die;
         }
-        // 创建数据库并选中
-        if (!$link->select_db($dbName)) {
-            //创建数据库
-            $sql    = "CREATE DATABASE IF NOT EXISTS `{$dbName}` DEFAULT CHARACTER SET utf8mb4";
+		//验证表是否存在		
+		try {
+			// 这里是主体代码
+			$isDB=$link->query('SHOW TABLES LIKE '."'".$dbName."'");
+			if(!$isDB){
+				//创建数据库并选中
+				$sql    = "CREATE DATABASE IF NOT EXISTS `{$dbName}` DEFAULT CHARACTER SET utf8mb4";
+				$link->query($sql);
+			}
+		} catch (\Exception $e) {
+			// 这是进行异常捕获,创建数据库并选中
+			$error = $e->getMessage();
+			$sql    = "CREATE DATABASE IF NOT EXISTS `{$dbName}` DEFAULT CHARACTER SET utf8mb4";
             $link->query($sql);
-        }
+		}
+		
         $link->select_db($dbName);
         // 导入sql数据并创建表
         $oa_sql = file_get_contents(CMS_ROOT . '/app/install/data/gouguoa.sql');
