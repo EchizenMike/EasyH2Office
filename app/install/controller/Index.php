@@ -98,9 +98,6 @@ class Index
         }
         // 设置字符集
         $link->query("SET NAMES 'utf8mb4'");
-        if ($link->server_info < 5.0) {
-            return to_assign(1, '请将您的mysql升级到5.0以上');die;
-        }
 		//验证表是否存在		
 		try {
 			// 这里是主体代码
