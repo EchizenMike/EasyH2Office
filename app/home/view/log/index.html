@@ -4,7 +4,7 @@
 <div class="p-3">
 	<form class="layui-form gg-form-bar border-t border-x">
 		<div class="layui-input-inline" style="width:300px;">
-			<input type="text" name="keywords" placeholder="昵称/操作数据id/操作描述" class="layui-input" autocomplete="off" />
+			<input type="text" name="keywords" placeholder="昵称/操作数据id" class="layui-input" autocomplete="off" />
 		</div>
 		<div class="layui-input-inline">
 			<select name="action">
@@ -46,17 +46,16 @@
 						width: 80
 					}, {
 						field: 'content',
-						title: '操作描述'
+						title: '操作描述',
+						width: 200
 					}, {
 						field: 'param_id',
 						title: '操作数据ID',
 						align: 'center',
 						width: 100
 					},{
-						field: 'name',
-						title: '操作用户',
-						align: 'center',
-						width: 100
+						field: 'param',
+						title: '操作详细数据信息',
 					}, {
 						field: 'ip',
 						title: 'IP地址',

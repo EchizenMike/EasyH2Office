@@ -10,6 +10,9 @@ declare (strict_types = 1);
 namespace app\home\controller;
 
 use app\base\BaseController;
+use app\home\model\AdminLog;
+use app\user\validate\AdminCheck;
+use think\exception\ValidateException;
 use think\facade\Db;
 use think\facade\View;
 
@@ -75,9 +78,9 @@ class Index extends BaseController
             }
             return to_assign(0, 'ok', $statistics);
         } else {
-            $admin = get_login_admin();
-            if (get_cache('menu' . $admin['id'])) {
-                $list = get_cache('menu' . $admin['id']);
+            $admin = Db::name('Admin')->where('id',$this->uid)->find();
+            if (get_cache('menu' . $this->uid)) {
+                $list = get_cache('menu' . $this->uid);
             } else {
                 $adminGroup = Db::name('PositionGroup')->where(['pid' => $admin['position_id']])->column('group_id');
                 $adminMenu = Db::name('AdminGroup')->where('id', 'in', $adminGroup)->column('rules');
@@ -88,11 +91,10 @@ class Index extends BaseController
                 }
                 $menu = Db::name('AdminRule')->where(['menu' => 1, 'status' => 1])->where('id', 'in', $adminMenus)->order('sort asc,id asc')->select()->toArray();
                 $list = list_to_tree($menu);
-                \think\facade\Cache::tag('adminMenu')->set('menu' . $admin['id'], $list);
+                \think\facade\Cache::tag('adminMenu')->set('menu' . $this->uid, $list);
             }
             View::assign('menu', $list);
-			$user = Db::name('Admin')->where('id',$this->uid)->find();
-			View::assign('theme',$user['theme']);
+			View::assign('theme',$admin['theme']);
             return View();
         }
     }
@@ -235,22 +237,22 @@ class Index extends BaseController
             );
         }
 		
-		$admin = get_login_admin();
-			$adminGroup = Db::name('PositionGroup')->where(['pid' => $admin['position_id']])->column('group_id');
-            $adminLayout = Db::name('AdminGroup')->where('id', 'in', $adminGroup)->column('layouts');
-            $adminLayouts = [];
-			foreach ($adminLayout as $k => $v) {
-				$v = explode(',', $v);
-				$adminLayouts = array_merge($adminLayouts, $v);
+		$position_id = Db::name('Admin')->where('id',$this->uid)->value('position_id');
+		$adminGroup = Db::name('PositionGroup')->where(['pid' => $position_id])->column('group_id');
+		$adminLayout = Db::name('AdminGroup')->where('id', 'in', $adminGroup)->column('layouts');
+		$adminLayouts = [];
+		foreach ($adminLayout as $k => $v) {
+			$v = explode(',', $v);
+			$adminLayouts = array_merge($adminLayouts, $v);
+		}
+		$layouts = get_config('layout');
+		$layout_selected = [];
+		foreach ($layouts as $key =>$vo) {
+			if (!empty($adminLayouts) and in_array($vo['id'], $adminLayouts)) {
+				$layout_selected[] = $vo;
 			}
-			$layouts = get_config('layout');
-			$layout_selected = [];
-			foreach ($layouts as $key =>$vo) {
-				if (!empty($adminLayouts) and in_array($vo['id'], $adminLayouts)) {
-					$layout_selected[] = $vo;
-				}
-			}
-			View::assign('layout_selected',$layout_selected);
+		}
+		View::assign('layout_selected',$layout_selected);
         View::assign('total', $total);
         View::assign('handle', $handle);
         View::assign('install', $install);
@@ -288,6 +290,71 @@ class Index extends BaseController
         } else {
             return view();
         }
+    }
+	
+
+    //修改个人信息
+    public function edit_personal()
+    {
+		if (request()->isAjax()) {
+            $param = get_params();
+            $uid = $this->uid;
+            Db::name('Admin')->where(['id' => $uid])->strict(false)->field(true)->update($param);
+            return to_assign();
+        }
+		else{
+			View::assign('admin',get_admin($this->uid));
+			return view();
+		}
+    }
+
+    //修改密码
+    public function edit_password()
+    {
+		if (request()->isAjax()) {
+            $param = get_params();
+            try {
+                validate(AdminCheck::class)->scene('editPwd')->check($param);
+            } catch (ValidateException $e) {
+                // 验证失败 输出错误信息
+                return to_assign(1, $e->getError());
+            }
+            $uid = $this->uid;
+			
+			$admin = Db::name('Admin')->where(['id' => $uid])->find();
+			$old_psw = set_password($param['old_pwd'], $admin['salt']);
+			if ($admin['pwd'] != $old_psw) {
+				return to_assign(1, '旧密码错误');
+			}
+
+			$salt = set_salt(20);
+			$new_pwd = set_password($param['pwd'], $salt);
+			$data = [
+				'reg_pwd' => '',
+				'salt' => $salt,
+				'pwd' => $new_pwd,
+				'update_time' => time(),
+			];
+            Db::name('Admin')->where(['id' => $uid])->strict(false)->field(true)->update($data);
+            return to_assign();
+        }
+		else{
+			View::assign('admin',get_admin($this->uid));
+			return view();
+		}
+    }
+	
+    //系统操作日志
+    public function log_list()
+    {
+		if (request()->isAjax()) {
+			$param = get_params();
+			$log = new AdminLog();
+			$content = $log->get_log_list($param);
+			return table_assign(0, '', $content);
+		}else{
+			return view();
+		}
     }
 	
 	//设置theme

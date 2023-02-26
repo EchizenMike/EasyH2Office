@@ -415,7 +415,7 @@ class Index extends BaseController
 			else{
 				$sea = isset($param['sea']) ? $param['sea'] : 0;
 				View::assign('sea', $sea);
-				View::assign('userinfo', get_login_admin());
+				View::assign('userinfo', get_admin($this->uid));
 				return view();
 			}
         }

@@ -191,7 +191,7 @@ const moduleInit = ['tool','formSelects','employeepicker'];
 		var form = layui.form,tool=layui.tool, table = layui.table, employeepicker = layui.employeepicker,dtree = layui.dtree,upload = layui.upload;
 		//监听发送
 		form.on('submit(webform)', function(data){
-			if(data.field.uids==login_user){
+			if(data.field.uids==login_admin){
 				layer.msg('接收人不能是自己');
 				return false;
 			}

@@ -97,10 +97,10 @@ abstract class BaseController
         $session_admin = get_config('app.session_admin');
         if (!Session::has($session_admin)) {
             $this->apiError('请先登录');
-        } else {
-            $this->uid = Session::get($session_admin)['id'];
-            View::assign('login_user', $this->uid);
         }
+		else{
+            $this->uid = Session::get($session_admin);
+		}
     }
     /**
      * Api处理成功结果返回方法

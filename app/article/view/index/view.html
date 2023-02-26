@@ -68,7 +68,7 @@
 			<img src="{$vo.thumb}" alt="{vo.name}" class="comment-img">
 		</div>
 		<div style="margin-left:128px;">
-			<p class="comment-tips">发表于：{$vo.create_time}{$vo.update_time} {eq name="$vo.admin_id" value="$login_user"} <button class="layui-btn layui-btn-xs layui-btn-danger layui-del" data-cid="{$vo.id}">删除</button>{/eq}</p>
+			<p class="comment-tips">发表于：{$vo.create_time}{$vo.update_time} {eq name="$vo.admin_id" value="$login_admin"} <button class="layui-btn layui-btn-xs layui-btn-danger layui-del" data-cid="{$vo.id}">删除</button>{/eq}</p>
 			<div class="py-2">{$vo.content|raw}</div>
 		</div>
 	</div>

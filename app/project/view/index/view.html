@@ -70,7 +70,7 @@
 			<span class="mx-2">{$detail.admin_name}</span>
 			<span class="gray">创建于{$detail.times}<span id="editTips">{gt name="$detail.update_time"
 					value="0"}，最近更新于 {:time_trans($detail.update_time)}{/gt}</span></span>
-			{eq name="$detail.admin_id" value="$login_user"}
+			{eq name="$detail.admin_id" value="$login_admin"}
 			<span class="layui-btn layui-btn-xs layui-btn-danger ml-4" id="delProject"><i
 					class="layui-icon">&#xe640;</i>删除</span>
 			{/eq}

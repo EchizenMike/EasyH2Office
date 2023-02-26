@@ -32,7 +32,7 @@
 			<span class="layui-badge layui-bg-gray">#P{$detail.id}</span>
 			<span class="mx-2">{$detail.admin_name}</span>
 			<span class="gray">创建于{$detail.times}<span id="editTips">{gt name="$detail.update_time" value="0"}，最近更新于 {:time_trans($detail.update_time)}{/gt}</span></span>
-			{eq name="$detail.admin_id" value="$login_user"}
+			{eq name="$detail.admin_id" value="$login_admin"}
 			<span class="layui-btn layui-btn-xs layui-btn-danger ml-4" id="delBtn"><i class="layui-icon">&#xe640;</i>删除</span>
 			{/eq}
 		</div>
@@ -232,7 +232,7 @@
 					layer.msg(e.msg);
 					parent.layui.taskTable.reload();
 					if (e.code == 0) {
-						parent.layui.tool.close(1000);
+						tool.sideClose(1000);
 					}
 				}
 				let postData = { "id": detail_id };
@@ -269,7 +269,7 @@
 		$('#flieList').on('click', '.file-delete', function () {
 			let id = $(this).data('id');
 			let uid = $(this).data('uid');
-			if (uid != login_user) {
+			if (uid != login_admin) {
 				layer.msg('你不是该文件的上传人，无权限删除');
 				return false;
 			}
@@ -346,7 +346,7 @@
 				edit.text(id, name, real_txt, editPost);
 			}
 			if (name == "end_time") {
-				if (admin_id == login_user) {
+				if (admin_id == login_admin) {
 					edit.date(id, name, real_txt, editPost);
 				} else {
 					layer.msg('您没权限修改，请联系创建人修改');
@@ -370,7 +370,7 @@
 				});
 			}
 			if (name == "project_id") {
-				if (admin_id == login_user) {
+				if (admin_id == login_admin) {
 					edit.select_table(id, name, real_txt, "/project/api/get_project", editPost, 1);
 				} else {
 					layer.msg('您没权限修改，请联系创建人或负责人修改');

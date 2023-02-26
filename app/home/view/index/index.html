@@ -53,12 +53,12 @@
                         <ul class="layui-nav">
                             <li class="layui-nav-item">
                                 <a href="javascript:;">
-									<img src="{:get_login_admin('thumb')}" onerror="javascript:this.src='{__IMG__}/nonepic360x360.jpg';this.onerror=null;">
-                                    <cite>{:get_login_admin('nickname')}</cite>
+									<img src="{$login_admin.thumb}" onerror="javascript:this.src='{__IMG__}/nonepic360x360.jpg';this.onerror=null;">
+                                    <cite>{$login_admin.nickname}</cite>
                                 </a>
                                 <dl class="layui-nav-child" style="text-align: center; cursor: pointer;">
-                                    <dd><a data-href="/home/api/edit_personal" data-id="0101" data-title="基本资料" class="side-menu-item">基本资料</a></dd>
-                                    <dd><a data-href="/home/api/edit_password" data-id="0102" data-title="修改密码" class="side-menu-item">修改密码</a></dd>
+                                    <dd><a data-href="/home/index/edit_personal" data-id="0101" data-title="基本资料" class="side-menu-item">基本资料</a></dd>
+                                    <dd><a data-href="/home/index/edit_password" data-id="0102" data-title="修改密码" class="side-menu-item">修改密码</a></dd>
                                     <hr>
                                     <dd gg-event="logout"><a>退出</a></dd>
                                 </dl>

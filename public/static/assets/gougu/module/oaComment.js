@@ -118,7 +118,7 @@ layui.define(['tool'], function (exports) {
 						if (item.padmin_id > 0) {
 							pAdmin = '<span class="blue">@' + item.pname + '</span>';
 						}
-						if (item.admin_id == login_user) {
+						if (item.admin_id == login_admin) {
 							ops = '<a class="mr-4" data-event="edit" data-id="' + item.id + '">编辑</a><a class="mr-4" data-event="del" data-id="' + item.id + '">删除</a>';
 						}
 						itemComment += `

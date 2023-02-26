@@ -90,7 +90,7 @@
 				layer.msg(e.msg);
 				parent.layui.documentTable.reload();
 				if (e.code == 0) {
-					parent.layui.tool.close(1000);
+					tool.sideClose(1000);
 				}
 			}
 			tool.post("/project/document/add", data.field, callback);

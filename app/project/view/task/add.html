@@ -116,7 +116,7 @@
 				layer.msg(e.msg);
 				parent.layui.taskTable.reload();
 				if (e.code == 0) {
-					parent.layui.tool.close(1000);
+					tool.sideClose(1000);
 				}
 			}
 			tool.post("/project/task/add", data.field, callback);

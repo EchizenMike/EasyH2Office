@@ -63,20 +63,15 @@ DROP TABLE IF EXISTS `oa_admin_log`;
 CREATE TABLE `oa_admin_log`  (
   `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `uid` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '用户ID',
-  `name` varchar(255) NOT NULL DEFAULT '' COMMENT '姓名',
   `type` varchar(80) NOT NULL DEFAULT '' COMMENT '操作类型',
   `action` varchar(80) NOT NULL DEFAULT '' COMMENT '操作动作',
   `subject` varchar(80) NOT NULL DEFAULT '' COMMENT '操作主体',
-  `title` varchar(255) NOT NULL DEFAULT '' COMMENT '操作标题',
-  `content` text NULL COMMENT '操作描述',
   `module` varchar(32) NOT NULL DEFAULT '' COMMENT '模块',
   `controller` varchar(32) NOT NULL DEFAULT '' COMMENT '控制器',
   `function` varchar(32) NOT NULL DEFAULT '' COMMENT '方法',
-  `rule_menu` varchar(255) NOT NULL DEFAULT '' COMMENT '节点权限路径',
   `ip` varchar(64) NOT NULL DEFAULT '' COMMENT '登录ip',
   `param_id` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '操作数据id',
   `param` text NULL COMMENT '参数json格式',
-  `status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '0删除 1正常',
   `create_time` int(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COMMENT = '员工操作日志表';

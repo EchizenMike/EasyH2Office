@@ -173,27 +173,6 @@ function get_admin($id)
     return $admin;
 }
 
-//获取当前登录用户的信息
-function get_login_admin($key = '')
-{
-    $session_admin = get_config('app.session_admin');
-    if (\think\facade\Session::has($session_admin)) {
-        $gougu_admin = \think\facade\Session::get($session_admin);
-        $admin = get_admin($gougu_admin['id']);
-        if (!empty($key)) {
-            if (isset($admin[$key])) {
-                return $admin[$key];
-            } else {
-                return '';
-            }
-        } else {
-            return $admin;
-        }
-    } else {
-        return '';
-    }
-}
-
 /**
  * 节点权限判断
  * @rule String
@@ -423,6 +402,31 @@ function get_flow($uid,$flows)
     return $res;
 }
 
+
+/**
+ * 隐藏电话号码中间4位和邮箱
+ */
+function hidetel($phone)
+{
+	//隐藏邮箱
+	if (strpos($phone, '@')) {
+		$email_array = explode("@", $phone);
+		$prevfix = (strlen($email_array[0]) < 4) ? "" : substr($phone, 0, 3); //邮箱前缀
+		$count = 0;
+		$str = preg_replace('/([\d\w+_-]{0,100})@/', '***@', $phone, -1, $count);
+		$rs = $prevfix . $str;
+		return $rs;
+	} else {
+		//隐藏联系方式中间4位
+		$Istelephone = preg_match('/(0[0-9]{2,3}[\-]?[2-9][0-9]{6,7}[\-]?[0-9]?)/i', $phone); //固定电话
+		if ($Istelephone) {
+			return preg_replace('/(0[0-9]{2,3}[\-]?[2-9])[0-9]{3,4}([0-9]{3}[\-]?[0-9]?)/i', '$1****$2', $phone);
+		} else {
+			return preg_replace('/(1[0-9]{1}[0-9])[0-9]{4}([0-9]{4})/i', '$1****$2', $phone);
+		}
+	}
+}
+
 //读取报销类型
 function get_expense_cate()
 {
@@ -504,58 +508,149 @@ function get_file($id)
 }
 
 /**
- * 员工操作日志
- * @param string $type 操作类型 login add edit view delete
- * @param int    $param_id 操作类型
- * @param array  $param 提交的参数
+ * 间隔时间段格式化
+ * @param int $time 时间戳
+ * @param string $format 格式 【d：显示到天 i显示到分钟 s显示到秒】
+ * @return string
  */
+function time_trans($time, $format = 'd')
+{
+	$now = time();
+	$diff = $now - $time;
+	if ($diff < 60) {
+		return '1分钟前';
+	} else if ($diff < 3600) {
+		return floor($diff / 60) . '分钟前';
+	} else if ($diff < 86400) {
+		return floor($diff / 3600) . '小时前';
+	}
+	$yes_start_time = strtotime(date('Y-m-d 00:00:00', strtotime('-1 days'))); //昨天开始时间
+	$yes_end_time = strtotime(date('Y-m-d 23:59:59', strtotime('-1 days'))); //昨天结束时间
+	$two_end_time = strtotime(date('Y-m-d 23:59:59', strtotime('-2 days'))); //2天前结束时间
+	$three_end_time = strtotime(date('Y-m-d 23:59:59', strtotime('-3 days'))); //3天前结束时间
+	$four_end_time = strtotime(date('Y-m-d 23:59:59', strtotime('-4 days'))); //4天前结束时间
+	$five_end_time = strtotime(date('Y-m-d 23:59:59', strtotime('-5 days'))); //5天前结束时间
+	$six_end_time = strtotime(date('Y-m-d 23:59:59', strtotime('-6 days'))); //6天前结束时间
+	$seven_end_time = strtotime(date('Y-m-d 23:59:59', strtotime('-7 days'))); //7天前结束时间
+
+	if ($time > $yes_start_time && $time < $yes_end_time) {
+		return '昨天';
+	}
+
+	if ($time > $yes_start_time && $time < $two_end_time) {
+		return '1天前';
+	}
+
+	if ($time > $yes_start_time && $time < $three_end_time) {
+		return '2天前';
+	}
+
+	if ($time > $yes_start_time && $time < $four_end_time) {
+		return '3天前';
+	}
+
+	if ($time > $yes_start_time && $time < $five_end_time) {
+		return '4天前';
+	}
+
+	if ($time > $yes_start_time && $time < $six_end_time) {
+		return '5天前';
+	}
+
+	if ($time > $yes_start_time && $time < $seven_end_time) {
+		return '6天前';
+	}
+
+	switch ($format) {
+		case 'd':
+			$show_time = date('Y-m-d', $time);
+			break;
+		case 'i':
+			$show_time = date('Y-m-d H:i', $time);
+			break;
+		case 's':
+			$show_time = date('Y-m-d H:i:s', $time);
+			break;
+	}
+	return $show_time;
+}
+
+/**
+ * 计算按天数
+ */
+function countDays($a, $b = 0)
+{
+	if ($b == 0) {
+		$b = date("Y-m-d");
+	}
+	$date_1 = $a;
+	$date_2 = $b;
+	$d1 = strtotime($date_1);
+	$d2 = strtotime($date_2);
+	$days = round(($d2 - $d1) / 3600 / 24);
+	if ($days > 0) {
+		return $days;
+	} else {
+		return 0;
+	}
+}
+
+
+/**
+ * fullcalendar日历控件方法1
+ */
+function parseDateTime($string, $timeZone=null) {
+  $date = new DateTime(
+	$string,
+	$timeZone ? $timeZone : new DateTimeZone('UTC')
+  );
+  if ($timeZone) {
+	$date->setTimezone($timeZone);
+  }
+  return $date;
+}
+
+/**
+ * fullcalendar日历控件方法2
+ */
+function stripTime($datetime) {
+  return new DateTime($datetime->format('Y-m-d'));
+}
+
+
 function add_log($type, $param_id = '', $param = [] ,$subject='')
 {
-	$action = '未知操作';
+	$title = '操作';
+	$session_admin = get_config('app.session_admin');
+	$uid = \think\facade\Session::get($session_admin);
 	$type_action = get_config('log.type_action');
 	if($type_action[$type]){
-		$action = $type_action[$type];
+		$title = $type_action[$type];
 	}
-    if ($type == 'login') {
-        $login_admin = Db::name('Admin')->where(array('id' => $param_id))->find();
-    } else {
-        $session_admin = get_config('app.session_admin');
-        $login_admin = \think\facade\Session::get($session_admin);
-    }
-    $data = [];
-    $data['uid'] = $login_admin['id'];
-    $data['name'] = $login_admin['name'];
-    $data['type'] = $type;
-    $data['action'] = $action;
-    $data['param_id'] = $param_id;
-    $data['param'] = json_encode($param);
-    $data['module'] = strtolower(app('http')->getName());
-    $data['controller'] = strtolower(app('request')->controller());
-    $data['function'] = strtolower(app('request')->action());
-    $parameter = $data['module'] . '/' . $data['controller'] . '/' . $data['function'];
-    $rule_menu = Db::name('AdminRule')->where(array('src' => $parameter))->find();
-	if($rule_menu){
-		$data['title'] = $rule_menu['title'];
-		$data['subject'] = $rule_menu['name'];
-	}
-    elseif($type == 'upload'){
-		$data['title'] = $param['name'];
-		$data['subject'] = '文件';
+	$data = [
+		'uid' => $uid,
+		'type' => $type,
+		'action' => $title,
+		'param_id' => $param_id,
+		'param' => json_encode($param),
+		'module' => strtolower(app('http')->getName()),
+		'controller' => strtolower(app('request')->controller()),
+		'function' => strtolower(app('request')->action()),
+		'ip' => app('request')->ip(),
+		'create_time' => time(),
+		'subject' => '系统'
+	];
+	if($subject!=''){
+		$data['subject'] =$subject;
 	}
 	else{
-		$data['title'] = '';
-		if($subject!=''){
-			$data['subject'] =$subject;
+		$rule = $data['module'] . '/' . $data['controller'] . '/' . $data['function'];
+		$rule_menu = Db::name('AdminRule')->where(array('src' => $rule))->find();
+		if($rule_menu){
+			$data['subject'] = $rule_menu['name'];
 		}
-		else{
-			$data['subject'] ='系统';
-		}		
 	}
-    $content = $login_admin['name'] . '在' . date('Y-m-d H:i:s') . $data['action'] . '了' . $data['subject'];
-    $data['content'] = $content;
-    $data['ip'] = app('request')->ip();
-    $data['create_time'] = time();
-    Db::name('AdminLog')->strict(false)->field(true)->insert($data);
+	Db::name('AdminLog')->strict(false)->field(true)->insert($data);
 }
 
 /**
@@ -983,10 +1078,11 @@ function date_document($arrData)
  * @param    array      $options
  * @return   json
  */
-function to_assign($code = 0, $msg = "操作成功", $data = [], $url = '', $httpCode = 200, $header = [], $options = [])
+function to_assign($code = 0, $msg = "操作成功", $data = [], $action = '', $url = '', $httpCode = 200, $header = [], $options = [])
 {
     $res = ['code' => $code];
     $res['msg'] = $msg;
+    $res['action'] = $action;
     $res['url'] = $url;
     if (is_object($data)) {
         $data = $data->toArray();
@@ -1148,37 +1244,6 @@ function sort_select($select = array(), $field, $order = 1)
 }
 
 /**
- * fullcalendar日历控件方法1
- */
-function parseDateTime($string, $timeZone=null) {
-  $date = new DateTime(
-    $string,
-    $timeZone ? $timeZone : new DateTimeZone('UTC')
-  );
-  if ($timeZone) {
-    $date->setTimezone($timeZone);
-  }
-  return $date;
-}
-
-/**
- * fullcalendar日历控件方法2
- */
-function stripTime($datetime) {
-  return new DateTime($datetime->format('Y-m-d'));
-}
-
-/**
- * 根据时间戳获取星期几
- * @param $time 要转换的时间戳
- */
-function getTimeWeek($time, $i = 0)
-{
-    $weekarray = array("日", "一", "二", "三", "四", "五", "六");
-    $oneD = 24 * 60 * 60;
-    return "星期" . $weekarray[date("w", $time + $oneD * $i)];
-}
-/**
  * 时间戳格式化
  * @param int    $time
  * @param string $format 默认'Y-m-d H:i'，x代表毫秒
@@ -1195,462 +1260,6 @@ function time_format($time = NULL, $format = 'Y-m-d H:i:s')
     return $time != '' ? str_replace('x', $sec, date($format, intval($usec))) : '';
 }
 
-/**
- * 将秒数转换为时间 (小时、分、秒）
- * @param
- */
-function getTimeBySec($time,$second=true)
-{
-    if (is_numeric($time)) {
-        $value = array(
-            "hours" => 0,
-            "minutes" => 0, "seconds" => 0,
-        );
-		$t='';
-        if ($time >= 3600) {
-            $value["hours"] = floor($time / 3600);
-            $time = ($time % 3600);
-            $t .= $value["hours"] . "小时";
-        }
-        if ($time >= 60) {
-            $value["minutes"] = floor($time / 60);
-            $time = ($time % 60);
-            $t .= $value["minutes"] . "分钟";
-        }
-        if ($time > 0 && $time < 60 && $second==true) {
-            $value["seconds"] = floor($time);
-            $t .= $value["seconds"] . "秒";
-        }
-        return $t;
-    } else {
-        return (bool)FALSE;
-    }
-}
-
-/**
- * 将秒数转换为时间 (年、天、小时、分、秒）
- * @param
- */
-function getDateBySec($time,$second=false)
-{
-    if (is_numeric($time)) {
-        $value = array(
-            "years" => 0, "days" => 0, "hours" => 0,
-            "minutes" => 0, "seconds" => 0,
-        );
-		$t='';
-        if ($time >= 31556926) {
-            $value["years"] = floor($time / 31556926);
-            $time = ($time % 31556926);
-            $t .= $value["years"] . "年";
-        }
-        if ($time >= 86400) {
-            $value["days"] = floor($time / 86400);
-            $time = ($time % 86400);
-            $t .= $value["days"] . "天";
-        }
-        if ($time >= 3600) {
-            $value["hours"] = floor($time / 3600);
-            $time = ($time % 3600);
-            $t .= $value["hours"] . "小时";
-        }
-        if ($time >= 60) {
-            $value["minutes"] = floor($time / 60);
-            $time = ($time % 60);
-            $t .= $value["minutes"] . "分钟";
-        }
-        if ($time < 60 && $second==true) {
-            $value["seconds"] = floor($time);
-            $t .= $value["seconds"] . "秒";
-        }
-        return $t;
-    } else {
-        return (bool)FALSE;
-    }
-}
-
-/*
- *根据年月计算有几天
- */
-function getmonthByYM($param)
-{
-    $month = $param['month'] ? $param['month'] : date('m', time());
-    $year = $param['year'] ? $param['year'] : date('Y', time());
-    if (in_array($month, array('1', '3', '5', '7', '8', '01', '03', '05', '07', '08', '10', '12'))) {
-        $days = '31';
-    } elseif ($month == 2) {
-        if ($year % 400 == 0 || ($year % 4 == 0 && $year % 100 !== 0)) {
-            //判断是否是闰年  
-            $days = '29';
-        } else {
-            $days = '28';
-        }
-    } else {
-        $days = '30';
-    }
-    return $days;
-}
-
-/**
- * 根据时间戳计算当月天数
- * @param
- */
-function getmonthdays($time)
-{
-    $month = date('m', $time);
-    $year = date('Y', $time);
-    if (in_array($month, array('1', '3', '5', '7', '8', '01', '03', '05', '07', '08', '10', '12'))) {
-        $days = '31';
-    } elseif ($month == 2) {
-        if ($year % 400 == 0 || ($year % 4 == 0 && $year % 100 !== 0)) {
-            //判断是否是闰年  
-            $days = '29';
-        } else {
-            $days = '28';
-        }
-    } else {
-        $days = '30';
-    }
-    return $days;
-}
-
-/**
- * 生成从开始时间到结束时间的日期数组
- * @param type，默认时间戳格式
- * @param type = 1 时，date格式
- * @param type = 2 时，获取每日开始、结束时间
- */
-function dateList($start, $end, $type = 0)
-{
-    if (!is_numeric($start) || !is_numeric($end) || ($end <= $start)) return '';
-    $i = 0;
-    //从开始日期到结束日期的每日时间戳数组
-    $d = array();
-    if ($type == 1) {
-        while ($start <= $end) {
-            $d[$i] = date('Y-m-d', $start);
-            $start = $start + 86400;
-            $i++;
-        }
-    } else {
-        while ($start <= $end) {
-            $d[$i] = $start;
-            $start = $start + 86400;
-            $i++;
-        }
-    }
-    if ($type == 2) {
-        $list = array();
-        foreach ($d as $k => $v) {
-            $list[$k] = getDateRange($v);
-        }
-        return $list;
-    } else {
-        return $d;
-    }
-}
-
-/**
- * 获取指定日期开始时间与结束时间
- */
-function getDateRange($timestamp)
-{
-    $ret = array();
-    $ret['sdate'] = strtotime(date('Y-m-d', $timestamp));
-    $ret['edate'] = strtotime(date('Y-m-d', $timestamp)) + 86400;
-    return $ret;
-}
-
-/**
- * 生成从开始月份到结束月份的月份数组
- * @param int $start 开始时间戳
- * @param int $end 结束时间戳
- */
-function monthList($start, $end)
-{
-    if (!is_numeric($start) || !is_numeric($end) || ($end <= $start)) return '';
-    $start = date('Y-m', $start);
-    $end = date('Y-m', $end);
-    //转为时间戳
-    $start = strtotime($start . '-01');
-    $end = strtotime($end . '-01');
-    $i = 0;
-    $d = array();
-    while ($start <= $end) {
-        //这里累加每个月的的总秒数 计算公式：上一月1号的时间戳秒数减去当前月的时间戳秒数
-        $d[$i] = $start;
-        $start += strtotime('+1 month', $start) - $start;
-        $i++;
-    }
-    return $d;
-}
-
-/**
- * 等于（时间段）数据处理
- *
- * @param $type
- * @return array
- * @since 2021-06-11
- * @author fanqi
- */
-function advancedDate($type)
-{
-    // 本年度
-    if ($type == 'year') {
-        $arrTime = DataTime::year();
-        $start_time = date('Y-m-d 00:00:00', $arrTime[0]);
-        $end_time = date('Y-m-d 23:59:59', $arrTime[1]);
-    }
-
-    // 上一年度
-    if ($type == 'lastYear') {
-        $start_time = date('Y-m-d 00:00:00', strtotime(date('Y-m-d') . '-1 year'));
-        $end_time = date('Y-m-d 23:59:59', strtotime(date('Y-m-d') . '-1 year'));
-    }
-
-    // 下一年度
-    if ($type == 'nextYear') {
-        $start_time = date('Y-m-d 00:00:00', strtotime(date('Y-m-d') . '+1 year'));
-        $end_time = date('Y-m-d 23:59:59', strtotime(date('Y-m-d') . '+1 year'));
-    }
-
-    // 上半年
-    if ($type == 'firstHalfYear') {
-        $start_time = date('Y-01-01 00:00:00');
-        $end_time = date('Y-06-30 23:59:59');
-    }
-
-    // 下半年
-    if ($type == 'nextHalfYear') {
-        $start_time = date('Y-07-01 00:00:00');
-        $end_time = date('Y-12-31 23:59:59');
-    }
-
-    // 本季度
-    if ($type == 'quarter') {
-        $season = ceil((date('n')) / 3);
-        $start_time = date('Y-m-d H:i:s', mktime(0, 0, 0, $season * 3 - 3 + 1, 1, date('Y')));
-        $end_time = date('Y-m-d H:i:s', mktime(23, 59, 59, $season * 3, date('t', mktime(0, 0, 0, $season * 3, 1, date("Y"))), date('Y')));
-    }
-
-    // 上一季度
-    if ($type == 'lastQuarter') {
-        $season = ceil((date('n')) / 3) - 1;
-        $start_time = date('Y-m-d H:i:s', mktime(0, 0, 0, $season * 3 - 3 + 1, 1, date('Y')));
-        $end_time = date('Y-m-d H:i:s', mktime(23, 59, 59, $season * 3, date('t', mktime(0, 0, 0, $season * 3, 1, date("Y"))), date('Y')));
-    }
-
-    // 下一季度
-    if ($type == 'nextQuarter') {
-        $season = ceil((date('n')) / 3);
-        $start_time = date('Y-m-d H:i:s', mktime(0, 0, 0, $season * 3 + 1, 1, date('Y')));
-        $end_time = date('Y-m-d H:i:s', mktime(23, 59, 59, $season * 3 + 3, date('t', mktime(0, 0, 0, $season * 3, 1, date("Y"))), date('Y')));
-    }
-
-    // 本月
-    if ($type == 'month') {
-        $start_time = date('Y-m-01 00:00:00');
-        $end_time = date('Y-m-31 23:59:59');
-    }
-
-    // 上月
-    if ($type == 'lastMonth') {
-        $start_time = date('Y-m-01 00:00:00', strtotime(date('Y-m-d') . '-1 month'));
-        $end_time = date('Y-m-31 23:59:59', strtotime(date('Y-m-d') . '-1 month'));
-    }
-
-    // 下月
-    if ($type == 'nextMonth') {
-        $start_time = date('Y-m-01 00:00:00', strtotime(date('Y-m-d') . '+1 month'));
-        $end_time = date('Y-m-31 23:59:59', strtotime(date('Y-m-d') . '+1 month'));
-    }
-
-    // 本周
-    if ($type == 'week') {
-        $start_time = date('Y-m-d 00:00:00', mktime(0, 0, 0, date('m'), date('d') - date('w') + 1, date('Y')));
-        $end_time = date('Y-m-d 23:59:59', mktime(23, 59, 59, date('m'), date('d') - date('w') + 7, date('Y')));
-    }
-
-    // 上周
-    if ($type == 'lastWeek') {
-        $date = date("Y-m-d");
-        $w = date("w", strtotime($date));
-        $d = $w ? $w - 1 : 6;
-        $start = date("Y-m-d", strtotime($date . " - " . $d . " days"));
-        $start_time = date('Y-m-d', strtotime($start . " - 7 days"));
-        $end_time = date('Y-m-d', strtotime($start . " - 1 days"));
-    }
-
-    // 下周
-    if ($type == 'nextWeek') {
-        $date = date("Y-m-d");
-        $w = date("w", strtotime($date));
-        $d = $w ? $w - 1 : 6;
-        $start = date("Y-m-d", strtotime($date . " - " . $d . " days"));
-        $start_time = date('Y-m-d', strtotime($start . " + 7 days"));
-        $end_time = date('Y-m-d', strtotime($start . " + 13 days"));
-    }
-
-    // 今天
-    if ($type == 'today') {
-        $start_time = date('Y-m-d 00:00:00');
-        $end_time = date('Y-m-d 23:59:59');
-    }
-
-    // 昨天
-    if ($type == 'yesterday') {
-        $start_time = date('Y-m-d 00:00:00', strtotime(date('Y-m-d') . '-1 day'));
-        $end_time = date('Y-m-d 23:59:59', strtotime(date('Y-m-d') . '-1 day'));
-    }
-
-    // 明天
-    if ($type == 'tomorrow') {
-        $start_time = date('Y-m-d 00:00:00', strtotime(date('Y-m-d') . '+1 day'));
-        $end_time = date('Y-m-d 23:59:59', strtotime(date('Y-m-d') . '+1 day'));
-    }
-
-    // 过去3天
-    if ($type == 'previous3day') {
-        $start_time = date('Y-m-d 00:00:00', strtotime(date('Y-m-d') . '-3 day'));
-        $end_time = date('Y-m-d 23:59:59', strtotime(date('Y-m-d') . '-1 day'));
-    }
-
-    // 过去5天
-    if ($type == 'previous5day') {
-        $start_time = date('Y-m-d 00:00:00', strtotime(date('Y-m-d') . '-5 day'));
-        $end_time = date('Y-m-d 23:59:59', strtotime(date('Y-m-d') . '-1 day'));
-    }
-
-    // 过去7天
-    if ($type == 'previous7day') {
-        $start_time = date('Y-m-d 00:00:00', strtotime(date('Y-m-d') . '-7 day'));
-        $end_time = date('Y-m-d 23:59:59', strtotime(date('Y-m-d') . '-1 day'));
-    }
-    // 过去10天
-    if ($type == 'previous10day') {
-        $start_time = date('Y-m-d 00:00:00', strtotime(date('Y-m-d') . '-10 day'));
-        $end_time = date('Y-m-d 23:59:59', strtotime(date('Y-m-d') . '-1 day'));
-    }
-    // 过去30天
-    if ($type == 'previous30day') {
-        $start_time = date('Y-m-d 00:00:00', strtotime(date('Y-m-d') . '-30 day'));
-        $end_time = date('Y-m-d 23:59:59', strtotime(date('Y-m-d') . '-1 day'));
-    }
-    // 未来3天
-    if ($type == 'future3day') {
-        $start_time = date('Y-m-d 00:00:00', strtotime(date('Y-m-d') . '+1 day'));
-        $end_time = date('Y-m-d 23:59:59', strtotime(date('Y-m-d') . '+3 day'));
-    }
-    // 未来5天
-    if ($type == 'future5day') {
-        $start_time = date('Y-m-d 00:00:00', strtotime(date('Y-m-d') . '+1 day'));
-        $end_time = date('Y-m-d 23:59:59', strtotime(date('Y-m-d') . '+5 day'));
-    }
-    // 未来7天
-    if ($type == 'future7day') {
-        $start_time = date('Y-m-d 00:00:00', strtotime(date('Y-m-d') . '+1 day'));
-        $end_time = date('Y-m-d 23:59:59', strtotime(date('Y-m-d') . '+7 day'));
-    }
-    // 未来10天
-    if ($type == 'future10day') {
-        $start_time = date('Y-m-d 00:00:00', strtotime(date('Y-m-d') . '+1 day'));
-        $end_time = date('Y-m-d 23:59:59', strtotime(date('Y-m-d') . '+10 day'));
-    }
-    // 未来30天
-    if ($type == 'future30day') {
-        $start_time = date('Y-m-d 00:00:00', strtotime(date('Y-m-d') . '+1 day'));
-        $end_time = date('Y-m-d 23:59:59', strtotime(date('Y-m-d') . '+30 day'));
-    }
-    return [$start_time,$end_time];
-}
-
-/**
- * 计算按天数
- */
-function countDays($a, $b = 0)
-{
-    if ($b == 0) {
-        $b = date("Y-m-d");
-    }
-    $date_1 = $a;
-    $date_2 = $b;
-    $d1 = strtotime($date_1);
-    $d2 = strtotime($date_2);
-    $days = round(($d2 - $d1) / 3600 / 24);
-    if ($days > 0) {
-        return $days;
-    } else {
-        return 0;
-    }
-}
-
-/**
- * 间隔时间段格式化
- * @param int $time 时间戳
- * @param string $format 格式 【d：显示到天 i显示到分钟 s显示到秒】
- * @return string
- */
-function time_trans($time, $format = 'd')
-{
-    $now = time();
-    $diff = $now - $time;
-    if ($diff < 60) {
-        return '1分钟前';
-    } else if ($diff < 3600) {
-        return floor($diff / 60) . '分钟前';
-    } else if ($diff < 86400) {
-        return floor($diff / 3600) . '小时前';
-    }
-    $yes_start_time = strtotime(date('Y-m-d 00:00:00', strtotime('-1 days'))); //昨天开始时间
-    $yes_end_time = strtotime(date('Y-m-d 23:59:59', strtotime('-1 days'))); //昨天结束时间
-    $two_end_time = strtotime(date('Y-m-d 23:59:59', strtotime('-2 days'))); //2天前结束时间
-    $three_end_time = strtotime(date('Y-m-d 23:59:59', strtotime('-3 days'))); //3天前结束时间
-    $four_end_time = strtotime(date('Y-m-d 23:59:59', strtotime('-4 days'))); //4天前结束时间
-    $five_end_time = strtotime(date('Y-m-d 23:59:59', strtotime('-5 days'))); //5天前结束时间
-    $six_end_time = strtotime(date('Y-m-d 23:59:59', strtotime('-6 days'))); //6天前结束时间
-    $seven_end_time = strtotime(date('Y-m-d 23:59:59', strtotime('-7 days'))); //7天前结束时间
-
-    if ($time > $yes_start_time && $time < $yes_end_time) {
-        return '昨天';
-    }
-
-    if ($time > $yes_start_time && $time < $two_end_time) {
-        return '1天前';
-    }
-
-    if ($time > $yes_start_time && $time < $three_end_time) {
-        return '2天前';
-    }
-
-    if ($time > $yes_start_time && $time < $four_end_time) {
-        return '3天前';
-    }
-
-    if ($time > $yes_start_time && $time < $five_end_time) {
-        return '4天前';
-    }
-
-    if ($time > $yes_start_time && $time < $six_end_time) {
-        return '5天前';
-    }
-
-    if ($time > $yes_start_time && $time < $seven_end_time) {
-        return '6天前';
-    }
-
-    switch ($format) {
-        case 'd':
-            $show_time = date('Y-m-d', $time);
-            break;
-        case 'i':
-            $show_time = date('Y-m-d H:i', $time);
-            break;
-        case 's':
-            $show_time = date('Y-m-d H:i:s', $time);
-            break;
-    }
-    return $show_time;
-}
 
 
 /**

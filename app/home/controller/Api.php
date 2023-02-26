@@ -8,11 +8,7 @@ declare (strict_types = 1);
 namespace app\home\controller;
 
 use app\api\BaseController;
-use app\home\model\AdminLog;
-use app\user\validate\AdminCheck;
-use think\exception\ValidateException;
 use think\facade\Db;
-use think\facade\Session;
 
 class api extends BaseController
 {
@@ -147,13 +143,13 @@ class api extends BaseController
         $where = [];
         $where[] = ['uid','<>',1];
         $where[] = ['create_time', '>', $times];
-        $content = Db::name('AdminLog')->field("id,uid,name")->where($where)->select();
+        $list = Db::name('AdminLog')->field("id,uid")->where($where)->select();
         $logs = array();
-        foreach ($content as $index => $value) {
+        foreach ($list as $key => $value) {
             $uid = $value['uid'];
             if (empty($logs[$uid])) {
                 $logs[$uid]['count'] = 1;
-                $logs[$uid]['name'] = $value['name'];
+                $logs[$uid]['name'] = Db::name('Admin')->where('id',$uid)->value('name');
             } else {
                 $logs[$uid]['count'] += 1;
             }
@@ -163,76 +159,6 @@ class api extends BaseController
         //攫取前10
         $data_logs = array_slice($logs, 0, 10);
         return to_assign(0, '', ['data_logs' => $data_logs]);
-    }
-
-    //修改个人信息
-    public function edit_personal()
-    {
-		if (request()->isAjax()) {
-            $param = get_params();
-            $uid = $this->uid;
-            Db::name('Admin')->where(['id' => $uid])->strict(false)->field(true)->update($param);
-            $session_admin = get_config('app.session_admin');
-            Session::set($session_admin, Db::name('admin')->find($uid));
-            return to_assign();
-        }
-		else{
-			return view('user@user/edit_personal', [
-				'admin' => get_admin($this->uid),
-			]);
-		}
-    }
-
-    //修改密码
-    public function edit_password()
-    {
-		if (request()->isAjax()) {
-            $param = get_params();
-            try {
-                validate(AdminCheck::class)->scene('editPwd')->check($param);
-            } catch (ValidateException $e) {
-                // 验证失败 输出错误信息
-                return to_assign(1, $e->getError());
-            }
-            $uid = $this->uid;
-			
-			$admin = Db::name('Admin')->where(['id' => $uid])->find();
-			$old_psw = set_password($param['old_pwd'], $admin['salt']);
-			if ($admin['pwd'] != $old_psw) {
-				return to_assign(1, '旧密码错误');
-			}
-
-			$salt = set_salt(20);
-			$new_pwd = set_password($param['pwd'], $salt);
-			$data = [
-				'reg_pwd' => '',
-				'salt' => $salt,
-				'pwd' => $new_pwd,
-				'update_time' => time(),
-			];
-            Db::name('Admin')->where(['id' => $uid])->strict(false)->field(true)->update($data);
-            $session_admin = get_config('app.session_admin');
-            Session::set($session_admin, Db::name('admin')->find($uid));
-            return to_assign();
-        }
-		else{
-			return view('user@user/edit_password', [
-				'admin' => get_admin($this->uid),
-			]);
-		}
-    }
-	
-    //系统操作日志
-    public function log_list()
-    {
-		if (request()->isAjax()) {
-			$param = get_params();
-			$log = new AdminLog();
-			$content = $log->get_log_list($param);
-			return table_assign(0, '', $content);
-		}else{
-			return view('home@log/log_list');
-		}
     }
 
 }

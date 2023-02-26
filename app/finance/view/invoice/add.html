@@ -267,7 +267,7 @@ function gouguInit() {
 			success:function(e){
 				layer.msg(e.msg);
 				if (e.code == 0) {
-					parent.layui.tool.close(1000);
+					tool.sideClose(1000);
 				}
 			}
 		})

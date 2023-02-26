@@ -1,5 +1,5 @@
 <div class="layui-card">
-	<div class="layui-card-header"><h3>员工动态</h3><a data-title="员工动态" data-href="/home/api/log_list" class="pull-right tab-a">更多</a></div>
+	<div class="layui-card-header"><h3>员工动态</h3><a data-title="员工动态" data-href="/home/index/log_list" class="pull-right tab-a">更多</a></div>
 	<div class="layui-card-body">
 		<ul class="layui-timeline" id="logs"></ul>
 	</div>
@@ -8,7 +8,7 @@
 //动态
 function layoutAction() {
 	$.ajax({
-		url: "/home/api/log_list",
+		url: "/home/index/log_list",
 		type: 'get',
 		data: {
 			page: 1,

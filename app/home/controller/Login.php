@@ -54,11 +54,21 @@ class Login
         ];
         Db::name('admin')->where(['id' => $admin['id']])->update($data);
         $session_admin = get_config('app.session_admin');
-        Session::set($session_admin, $admin);
+        Session::set($session_admin, $admin['id']);
         $token = make_token();
         set_cache($token, $admin, 7200);
         $admin['token'] = $token;
-        add_log('login', $admin['id'], $data);
+		$logdata = [
+			'uid' => $admin['id'],
+            'type' => 'login',
+            'action' => '登录',
+            'subject' => '系统',
+			'param_id'=>$admin['id'],
+			'param'=>'[]',
+            'ip' => request()->ip(),
+			'create_time' => time()
+        ];
+		Db::name('AdminLog')->strict(false)->field(true)->insert($logdata);
         return to_assign(0, '登录成功', ['uid' => $admin['id']]);
     }
 
