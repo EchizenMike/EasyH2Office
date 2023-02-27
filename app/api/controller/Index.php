@@ -83,7 +83,7 @@ class Index extends BaseController
          $data['action'] = app('request')->action();
          $data['uploadip'] = app('request')->ip();
          $data['create_time'] = time();
-         $data['user_id'] = this->uid;
+         $data['user_id'] = $this->uid;
          if ($data['module'] = 'admin') {
              //通过后台上传的文件直接审核通过
              $data['status'] = 1;
