@@ -210,7 +210,7 @@ class Index extends BaseController
 				$section = explode('|', $section_conf);
 			}			
             View::assign('section', $section);
-            View::assign('user_info', $login_admin);
+            View::assign('user_info', get_admin($this->uid));
             View::assign('id', $id);
             return view();
         }
