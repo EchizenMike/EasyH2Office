@@ -138,7 +138,7 @@ class Index
         $password = set_password($password, $salt);
         $now_time = time();
 
-        $create_admin_sql = "INSERT INTO " . $data['DB_PREFIX'] . "admin " .
+        $create_admin_sql = "INSERT INTO " . $data['DB_PREFIX'] . "admin" .
             "(username,salt,pwd,name,nickname,position_id,did,sex,mobile,email,type,thumb,entry_time,create_time,update_time)"
             . "VALUES "
             . "('$username','$salt','$password','$name','$nickname',1,1,1,'13800138000','gouguoa@gougucms.com',1,'$thumb','$now_time','$now_time','$now_time')";

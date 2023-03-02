@@ -97,7 +97,7 @@ class Index extends BaseController
          $res['filename'] = $data['filename'];
          $res['filesize'] = $data['filesize'];
          $res['fileext'] = $data['fileext'];
-         add_log('upload', $data['user_id'], $data);
+         add_log('upload', $data['user_id'], $data,'文件');
          if($sourse == 'editormd'){
              //editormd编辑器上传返回
              return json(['success'=>1,'message'=>'上传成功','url'=>$data['filepath']]);
