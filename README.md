@@ -64,12 +64,12 @@ BOSS角色：suhaizhen     123456
 服务器最低配置：
 ~~~
     1核CPU (建议2核+)
-    1G内存 (建议4G+)
+    2G内存 (建议4G+)
     1M带宽 (建议3M+)
 ~~~
 服务器运行环境要求：
 ~~~
-    PHP >= 7.4
+    PHP >= 7.3
     Mysql >= 5.5.0 (需支持innodb引擎)  
     Apache 或 Nginx  
     PDO PHP Extension  
@@ -84,7 +84,7 @@ BOSS角色：suhaizhen     123456
 
 推荐使用命令行安装，因为采用命令行安装的方式可以和勾股OA随时保持更新同步。使用命令行安装请提前准备好`Git`、`Composer`。
 
-**勾股CMS的安装步骤，以下加粗的内容需要特别留意：**
+**勾股OA的安装步骤，以下加粗的内容需要特别留意：**
 
 第一步：克隆(下载)勾股OA到你本地 **（如果不用git的可以在代码仓库上角打包下载代码，然后解压上传到服务器）** 
 
@@ -142,7 +142,7 @@ composer install
 
 4.  如果`composer install`失败，请尝试在命令行进行切换配置到国内源，命令如下:
 
-    composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/。
+    composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
 
 5.  访问 http://www.你的域名.com/install/index 前，请注意查看伪静态请配置是否设置了`thinkphp`伪静态规则。
 
@@ -154,7 +154,7 @@ composer install
 
     开启`debug`后，看具体的报错信息，然后沿着这些思路去一个个排查基本解决90%的问题。
 
-7.  如果是composer的安装，composer install报错，这不是勾股系列系统的问题，可以百度得到具体解决方案的。
+7.  如果是`composer`的安装，`composer install`报错，这不是勾股系列系统的问题，可以百度得到具体解决方案的。
 
 8.  安装过程中，如果 **进度条卡住(99%)**，一般都是数据库写入权限或者安装环境配置`config`目录无法写入问题，请注意检查权限。
 
