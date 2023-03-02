@@ -14,6 +14,7 @@ use think\exception\HttpResponseException;
 use think\facade\Request;
 use think\facade\Session;
 use think\facade\View;
+use think\facade\Db;
 use think\Response;
 
 /**
@@ -100,6 +101,8 @@ abstract class BaseController
         }
 		else{
             $this->uid = Session::get($session_admin);
+			$login_admin = Db::name('Admin')->where(['id' => $this->uid])->find();
+			View::assign('login_admin', $login_admin);	
 		}
     }
     /**
