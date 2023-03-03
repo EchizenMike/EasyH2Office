@@ -21,13 +21,15 @@
 			</select>
 		</div>
 		<div class="layui-input-inline" style="width:150px;">
-			<select name="status">
+			<select name="check_status">
 				<option value="">请选择合同状态</option>
-				<option value="1">已录入</option>
-				<option value="2">待审核</option>
-				<option value="3">已审核</option>
-				<option value="4">已中止</option>
-				<option value="5">已作废</option>
+				<option value="0">待审核</option>
+				<option value="1">审核中</option>
+				<option value="2">审核通过</option>
+				<option value="3">审核拒绝</option>
+				<option value="4">已撤销</option>
+				<option value="5">已中止</option>
+				<option value="6">已作废</option>
 			</select>
 		</div>
 		<div class="layui-input-inline" style="width:240px;">
@@ -312,7 +314,7 @@
 					keywords: data.field.keywords,
 					cate_id: data.field.cate_id,
 					type: data.field.type,
-					status: data.field.status
+					check_status: data.field.check_status
 				},
 				page: {
 					curr: 1

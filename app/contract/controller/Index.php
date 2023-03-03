@@ -33,7 +33,7 @@ class Index extends BaseController
 			if (!empty($param['type'])) {
                 $where[] = ['a.type', '=', $param['type']];
             }
-			if (!empty($param['check_status'])) {
+			if (isset($param['check_status']) && $param['check_status']!='') {
                 $where[] = ['a.check_status', '=', $param['check_status']];
             }
             $where[] = ['a.delete_time', '=', 0];
