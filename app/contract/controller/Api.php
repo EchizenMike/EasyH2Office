@@ -106,6 +106,9 @@ class Api extends BaseController
     {
         if (request()->isPost()) {
 			$param = get_params();
+			if($param['check_status'] == 0){
+				$param['check_step_sort'] = 0;
+			}
 			if($param['check_status'] == 1){
 				$check_admin_ids = isset($param['check_admin_ids'])?$param['check_admin_ids']:'';
 				$flow_data = set_flow($param['flow_id'],$check_admin_ids,$this->uid);

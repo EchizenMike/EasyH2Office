@@ -301,7 +301,7 @@ html{background-color:#fff;}
 					<span class="layui-btn layui-btn-primary check_back"><i class="layui-icon layui-icon-reduce-circle"></i> 撤回</span>
 				{/if}
 				{if ( $detail.check_status eq 4) AND ( $is_create_admin eq 1) }
-				<a class="layui-btn" href="/finance/invoice/add?id={$detail.id}">重新编辑</a>
+				<a class="layui-btn" href="/contract/index/add/id/{$detail.id}">重新编辑</a>
 				{/if}
 			</div>
 		</div>
