@@ -240,7 +240,7 @@ class Approve extends BaseController
             }
 			if (isset($param['end_time'])) {
                 $param['end_time'] = strtotime($param['end_time']);
-				if ($param['end_time'] <= $param['start_time']) {
+				if ($param['end_time'] < $param['start_time']) {
 					return to_assign(1, "时间选择有误");
 				}
             }
@@ -420,6 +420,7 @@ class Approve extends BaseController
 				'flows' => $flows,
 				'id' => $id,
 				'type' => $type,
+				'admin_info' => get_admin($this->uid)
 			]);
 			if(isTemplate($template)){
                 return view('add_'.$moban);

@@ -84,7 +84,8 @@ class Login
     public function lock()
     {
 		$session_admin = get_config('app.session_admin');
-		$admin= Session::get($session_admin);
+		$admin_id= Session::get($session_admin);
+		$admin = Db::name('admin')->where(['id' => $admin_id])->find();
 		if (request()->isAjax()) {
 			$param = get_params();
 			if($param['lock_password'] == ''){
