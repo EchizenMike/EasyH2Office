@@ -48,7 +48,7 @@
 		<span class="gray" style="margin-left:20px">负责人：</span>{$step.check_name}
 		<span class="gray" style="margin-left:20px">成员：</span>{$step.flow_names}
 		<span class="gray" style="margin-left:20px">周期：</span>{$step.start_time|time_format=###,'Y-m-d'} 到 {$step.end_time|time_format=###,'Y-m-d'}
-		{eq name="$step.flow_uid" value="$login_admin"}
+		{eq name="$step.flow_uid" value="$login_admin.id"}
 		<div class="pt-3">
 			<span class="layui-btn layui-btn-normal layui-btn-sm" data-event="step" data-check="1">确认</span>
 			{gt name="$detail.step_sort" value="0"}
