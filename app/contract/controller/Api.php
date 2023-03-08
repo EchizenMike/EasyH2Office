@@ -26,7 +26,7 @@ class Api extends BaseController
 		$where[] = ['delete_time', '=', 0];
 		$where[] = ['check_status', '=', 2];
 		$uid = $this->uid;
-		$auth = isAuth($uid,'contract');
+		$auth = isAuth($uid,'contract_admin');
 		if($auth==0){
 			$whereOr[] =['admin_id|prepared_uid|sign_uid|keeper_uid', '=', $uid];
 			$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',share_ids)")];

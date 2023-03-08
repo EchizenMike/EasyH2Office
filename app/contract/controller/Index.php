@@ -40,7 +40,7 @@ class Index extends BaseController
             $where[] = ['a.archive_status', '=', 0];
 			
 			$uid = $this->uid;
-			$auth = isAuth($uid,'contract');
+			$auth = isAuth($uid,'contract_admin');
 			if($auth==0){
 				$whereOr[] =['a.admin_id|a.prepared_uid|a.sign_uid|a.keeper_uid', '=', $uid];
 				$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',a.share_ids)")];
@@ -56,6 +56,9 @@ class Index extends BaseController
 			$list = $model->get_list($param, $where, $whereOr);
             return table_assign(0, '', $list);
         } else {
+			$uid = $this->uid;
+			$auth = isAuth($uid,'contract_admin');
+			View::assign('auth', $auth);
             return view();
         }
     }
