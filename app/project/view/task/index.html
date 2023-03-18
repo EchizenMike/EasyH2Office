@@ -72,15 +72,15 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
-	const moduleInit = ['tool','employeepicker'];
+	const moduleInit = ['tool','employeepicker','tablePlus'];
 	function gouguInit() {
-		var table = layui.table, form = layui.form, tool = layui.tool, employeepicker = layui.employeepicker;
+		var table = layui.tablePlus, form = layui.form, tool = layui.tool, employeepicker = layui.employeepicker;
 
 		layui.taskTable = table.render({
 			elem: '#task',
 			title: '任务列表',
 			toolbar: '#toolbarDemo',
-			defaultToolbar:['filter', {title:'导出EXCEL',layEvent: 'LAYTABLE_EXCEL',icon: 'layui-icon-export'}],
+			is_excel:true,
 			cellMinWidth: 80,
 			url: "/project/task/index", //数据接口
 			page: true, //开启分页
@@ -145,19 +145,7 @@
 		
 		//触发事件
 		table.on('toolbar(task)', function(obj){
-			if(obj.event === 'LAYTABLE_EXCEL'){
-				var formSelect = form.val('barsearchform');
-				formSelect.limit=99999;
-				$.ajax({
-					url: '/project/task/index',
-					data: formSelect,
-					success:function(res){
-						table.exportFile('task', res.data,'xls');
-					}
-				});
-				return;
-			}
-			else if(obj.event === 'add'){
+			if(obj.event === 'add'){
 				tool.side('/project/task/add');
 				return;
 			}
