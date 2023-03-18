@@ -65,9 +65,9 @@ layui.define(['jquery','layer','table'], function(exports) {
 			}
 			if(typeof params.done === "function"){
 				let _done = params.done;
-				params.done = function(data){
+				params.done = function(data, curr, count){
 					let obj = this;
-					_done(data);
+					_done(data, curr, count);
 					tablePlus.excel(data,excel_limit,obj);
 				}
 			}
