@@ -178,9 +178,6 @@
 		});
 		//监听搜索提交
 		form.on('submit(webform)', function (data) {
-			if (data.field.keywords == '') {
-				return false;
-			}
 			tableReload();
 			return false;
 		});

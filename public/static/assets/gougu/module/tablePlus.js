@@ -19,7 +19,7 @@ layui.define(['jquery','layer','table'], function(exports) {
 			else{
 				let _page = parseInt(data.count/page_size);
 				let page = data.count%page_size>0?(_page+1):_page;
-				let pageHtml='<p style="padding:16px 10px; text-align:center; color:red">由于导出数据比较消耗服务器资源，建议使用搜索功能筛选好数据再导出</p><p style="padding:0 10px; text-align:center;">共查询到<strong> '+data.count+' </strong>条数据，每次最多导出<strong>1000</strong>条，共<strong>'+page+'</strong>页，请点击下面的页码导出</p><div id="exportPage" class="layui-box layui-laypage" style="padding:10px 0; width:100%;text-align:center;">';
+				let pageHtml='<p style="padding:16px 10px; text-align:center; color:red">由于导出数据比较消耗服务器资源，建议使用搜索功能筛选好数据再导出</p><p style="padding:0 10px; text-align:center;">共查询到<strong> '+data.count+' </strong>条数据，每次最多导出<strong>'+page_size+'</strong>条，共<strong>'+page+'</strong>页，请点击下面的页码导出</p><div id="exportPage" class="layui-box layui-laypage" style="padding:10px 0; width:100%;text-align:center;">';
 				for (i = 1; i <= page; i++) {
 					pageHtml += '<a href="javascript:;" data-page="'+i+'">'+i+'</a>';
 				}
@@ -78,7 +78,8 @@ layui.define(['jquery','layer','table'], function(exports) {
 				}
 			}
 		}
-		tablePlus._render(params);
+		var init = tablePlus._render(params);
+		return init;
 		//console.log(params);
     };
     exports(MOD_NAME, tablePlus);
