@@ -106,9 +106,7 @@ class Task extends BaseController
         $id = isset($param['id']) ? $param['id'] : 0;
         $detail = (new TaskList())->detail($id);
         if (empty($detail)) {
-			if (empty($detail)) {
-				echo '<div style="text-align:center;color:red;margin-top:20%;">该任务不存在</div>';exit;
-			}
+			echo '<div style="text-align:center;color:red;margin-top:20%;">该任务不存在</div>';exit;
         } else {
             $role_uid = [$detail['admin_id'], $detail['director_uid']];
             $role_edit = 'view';
@@ -116,7 +114,8 @@ class Task extends BaseController
                 $role_edit = 'edit';
             }
             $project_ids = Db::name('ProjectUser')->where(['uid' => $this->uid, 'delete_time' => 0])->column('project_id');
-            if (in_array($detail['project_id'], $project_ids) || in_array($this->uid, $role_uid) || in_array($this->uid, explode(",",$detail['assist_admin_ids']))) {
+			$auth = isAuth($this->uid,'project_admin');
+            if (in_array($detail['project_id'], $project_ids) || in_array($this->uid, $role_uid) || in_array($this->uid, explode(",",$detail['assist_admin_ids'])) || ($auth==1&&$detail['project_id']>0)) {
                 $file_array = Db::name('ProjectFile')
                 ->field('mf.id,mf.topic_id,mf.admin_id,f.name,f.filesize,f.filepath,a.name as admin_name')
                 ->alias('mf')

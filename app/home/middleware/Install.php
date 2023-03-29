@@ -47,7 +47,12 @@ class Install
 		//$code = $response->getCode();
 		$responseData = $response->getData();
 		if(isset($responseData['code']) && $responseData['code'] == 0){
-			$logData = $responseData['data'];
+			if(isset($responseData['datas'])){
+				$logData = $responseData['datas'];
+			}
+			else{
+				$logData = $responseData['data'];
+			}
 			$log_conf = get_config('log');
 			$type_action = $log_conf['type_action'];
 			if(isset($logData['logtype']) && isset($logData['id']) && isset($type_action[$logData['logtype']])){
