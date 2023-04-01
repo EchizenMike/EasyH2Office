@@ -119,10 +119,16 @@
 						templet:function(d){
 							var html='-';
 							if(d.invoice_type==1){
-								html='<span style="color:#1E9FFF">专票</span>';
+								html='<span style="color:#1E9FFF">增值税专用发票</span>';
 							}
 							else if(d.invoice_type==2){
-								html='<span style="color:#5FB878">普票</span>';
+								html='<span style="color:#5FB878">普通发票</span>';
+							}
+							else if(d.invoice_type==3){
+								html='<span style="color:#FFB800">专用发票</span>';
+							}
+							else{
+								html='<span style="color:#666666">无需开票</span>';
 							}
 							return html;
 						}
