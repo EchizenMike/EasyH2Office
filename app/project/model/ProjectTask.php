@@ -52,12 +52,14 @@ class ProjectTask extends Model
         if (!empty($param['project_id'])) {
             $where[] = ['project_id', '=', $param['project_id']];
         } else {
-            $project_ids = Db::name('ProjectUser')->where(['uid' => $param['uid'], 'delete_time' => 0])->column('project_id');
-            $map1[] = ['admin_id', '=', $param['uid']];
-            $map2[] = ['director_uid', '=', $param['uid']];
-            $map3[] = ['', 'exp', Db::raw("FIND_IN_SET({$param['uid']},assist_admin_ids)")];
-            $map4[] = ['project_id', 'in', $project_ids];
-			$whereOr =[$map1,$map2,$map3,$map4];
+			if (isAuthProject($param['uid'])==0) {
+				$project_ids = Db::name('ProjectUser')->where(['uid' => $param['uid'], 'delete_time' => 0])->column('project_id');
+				$map1[] = ['admin_id', '=', $param['uid']];
+				$map2[] = ['director_uid', '=', $param['uid']];
+				$map3[] = ['', 'exp', Db::raw("FIND_IN_SET({$param['uid']},assist_admin_ids)")];
+				$map4[] = ['project_id', 'in', $project_ids];
+				$whereOr =[$map1,$map2,$map3,$map4];
+			}
         }
         if (!empty($param['type'])) {
             $where[] = ['type', '=', $param['type']];
@@ -77,6 +79,7 @@ class ProjectTask extends Model
         if (!empty($param['keywords'])) {
             $where[] = ['title|content', 'like', '%' . $param['keywords'] . '%'];
         }
+		
         $where[] = ['delete_time', '=', 0];
 		
         $rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
@@ -91,7 +94,10 @@ class ProjectTask extends Model
             ->order('id desc')
             ->paginate($rows, false, ['query' => $param])
             ->each(function ($item, $key) {
-                $item['director_name'] = Db::name('Admin')->where(['id' => $item['director_uid']])->value('name');
+				$item['director_name'] = '-';
+				if ($item['director_uid'] > 0) {
+					$item['director_name'] = Db::name('Admin')->where(['id' => $item['director_uid']])->value('name');
+				}
                 $assist_admin_names = Db::name('Admin')->where([['id', 'in', $item['assist_admin_ids']]])->column('name');
                 $item['cate_name'] = Db::name('WorkCate')->where(['id' => $item['cate']])->value('title');
                 if (empty($assist_admin_names)) {
@@ -104,14 +110,20 @@ class ProjectTask extends Model
                 } else {
                     $item['project_name'] = Db::name('Project')->where(['id' => $item['project_id']])->value('name');
                 }
-                $item['end_time'] = date('Y-m-d', $item['end_time']);
-                $item['delay'] = 0;
-                if ($item['over_time'] > 0 && $item['flow_status'] < 4) {
-                    $item['delay'] = countDays($item['end_time'], date('Y-m-d', $item['over_time']));
-                }
-                if ($item['over_time'] == 0 && $item['flow_status'] < 4) {
-                    $item['delay'] = countDays($item['end_time']);
-                }
+
+				$item['delay'] = 0;
+				if ($item['end_time'] > 0) {
+					$item['end_time'] = date('Y-m-d', $item['end_time']);
+					if ($item['over_time'] > 0 && $item['flow_status'] < 4) {
+						$item['delay'] = countDays($item['end_time'], date('Y-m-d', $item['over_time']));
+					}
+					if ($item['over_time'] == 0 && $item['flow_status'] < 4) {
+						$item['delay'] = countDays($item['end_time']);
+					}
+				}
+				else{
+					$item['end_time'] = '-';
+				}
                 $item['priority_name'] = self::$Priority[(int) $item['priority']];
                 $item['flow_name'] = self::$FlowStatus[(int) $item['flow_status']];
                 $item['type_name'] = self::$Type[(int) $item['type']];
@@ -130,10 +142,13 @@ class ProjectTask extends Model
                 $detail['project_name'] = Db::name('Project')->where(['id' => $detail['project_id']])->value('name');
             }
             $detail['admin_name'] = Db::name('Admin')->where(['id' => $detail['admin_id']])->value('name');
-            $detail['director_name'] = Db::name('Admin')->where(['id' => $detail['director_uid']])->value('name');
             $detail['work_hours'] = Db::name('Schedule')->where(['delete_time' => 0, 'tid' => $detail['id']])->sum('labor_time');
             $detail['cate_name'] = Db::name('WorkCate')->where(['id' => $detail['cate']])->value('title');
-            $detail['director_name'] = Db::name('Admin')->where(['id' => $detail['director_uid']])->value('name');
+			
+			$detail['director_name']= '';
+			if($detail['director_uid'] > 0){
+				$detail['director_name'] = Db::name('Admin')->where(['id' => $detail['director_uid']])->value('name');
+			}
             $detail['logs'] = Db::name('ProjectLog')->where(['module' => 'task', 'task_id' => $detail['id']])->count();
             $detail['comments'] = Db::name('ProjectComment')->where(['module' => 4, 'delete_time' => 0, 'topic_id' => $detail['id']])->count();
             $detail['assist_admin_names'] = '';
@@ -145,14 +160,19 @@ class ProjectTask extends Model
             $detail['flow_name'] = self::$FlowStatus[(int) $detail['flow_status']];
 			$detail['type_name'] = self::$Type[(int) $detail['type']];
             $detail['times'] = time_trans($detail['create_time']);
-            $detail['end_time'] = date('Y-m-d', $detail['end_time']);
-            $detail['delay'] = 0;
-            if ($detail['over_time'] > 0 && $detail['flow_status'] < 4) {
-                $detail['delay'] = countDays($detail['end_time'], date('Y-m-d', $detail['over_time']));
-            }
-            if ($detail['over_time'] == 0 && $detail['flow_status'] < 4) {
-                $detail['delay'] = countDays($detail['end_time']);
-            }
+			$detail['delay'] = 0;
+			if($detail['end_time']>0){
+				$detail['end_time'] = date('Y-m-d', $detail['end_time']);
+				if ($detail['over_time'] > 0 && $detail['flow_status'] < 4) {
+					$detail['delay'] = countDays($detail['end_time'], date('Y-m-d', $detail['over_time']));
+				}
+				if ($detail['over_time'] == 0 && $detail['flow_status'] < 4) {
+					$detail['delay'] = countDays($detail['end_time']);
+				}
+			}
+			else{
+				$detail['end_time'] = '';
+			}
         }
         return $detail;
     }

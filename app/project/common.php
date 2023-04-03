@@ -10,6 +10,18 @@
 ======================
  */
 use think\facade\Db;
+//是否是项目管理员,count>1即有权限
+function isAuthProject($uid)
+{
+	if($uid == 1){
+		return 1;
+	}
+	$map = [];
+	$map[] = ['name', '=', 'project_admin'];
+	$map[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',uids)")];
+    $count = Db::name('DataAuth')->where($map)->count();
+    return $count;
+}
 //写入日志
 function add_project_log($uid,$module,$param,$old)
 {

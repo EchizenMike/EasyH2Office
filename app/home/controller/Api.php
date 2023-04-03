@@ -53,6 +53,17 @@ class api extends BaseController
 		return table_assign(0, '', $res);
 	}
 
+	function isAuthProject($uid)
+	{
+		if($uid == 1){
+			return 1;
+		}
+		$map = [];
+		$map[] = ['name', '=', 'project_admin'];
+		$map[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',uids)")];
+		$count = Db::name('DataAuth')->where($map)->count();
+		return $count;
+	}
     //首页项目
     public function get_project_list()
     {
@@ -61,18 +72,28 @@ class api extends BaseController
 		$res['data'] = [];
 		if($exist){
 			$project_ids = Db::name('ProjectUser')->where(['uid' => $this->uid, 'delete_time' => 0])->column('project_id');
+			$where =[];
+			$where[] = ['a.delete_time', '=', 0];
+			if($this->isAuthProject($this->uid)==0){
+				$where[] = ['a.id', 'in', $project_ids];
+			}
 			$list = Db::name('Project')
 				->field('a.id,a.name,a.status,a.create_time,a.start_time,a.end_time,u.name as director_name')
 				->alias('a')
 				->join('Admin u', 'a.director_uid = u.id')
-				->where([['a.delete_time', '=', 0], ['a.id', 'in', $project_ids]])
+				->where($where)
 				->order('a.id desc')
 				->limit(8)
 				->select()->toArray();
-			foreach ($list as $key => $val) {
-				$list[$key]['create_time'] = date('Y-m-d :H:i', $val['create_time']);
-				$list[$key]['plan_time'] = date('Y-m-d', $list[$key]['start_time']) . ' 至 ' . date('Y-m-d', $list[$key]['end_time']);
-				$list[$key]['status_name'] = \app\project\model\Project::$Status[(int) $val['status']];
+			foreach ($list as $key => &$val) {
+				$val['create_time'] = date('Y-m-d :H:i', $val['create_time']);
+				if($val['end_time']>0){
+					$val['plan_time'] = date('Y-m-d', $val['start_time']) . ' 至 ' . date('Y-m-d', $val['end_time']);
+				}
+				else{
+					$val['plan_time'] = '-';
+				}
+				$val['status_name'] = \app\project\model\Project::$Status[(int) $val['status']];
 			}
 			$res['data'] = $list;
 		}
@@ -94,8 +115,9 @@ class api extends BaseController
 			$map1[] = ['admin_id', '=', $this->uid];
 			$map2[] = ['director_uid', '=', $this->uid];
 			$map3[] = ['', 'exp', Db::raw("FIND_IN_SET({$this->uid},assist_admin_ids)")];
-
-			$whereOr =[$map1,$map2,$map3];
+			if($this->isAuthProject($this->uid)==0){
+				$whereOr =[$map1,$map2,$map3];
+			}
 			$where[] = ['delete_time', '=', 0];
 			$list = Db::name('ProjectTask')
 				->where(function ($query) use ($whereOr) {
@@ -108,10 +130,15 @@ class api extends BaseController
 				->order('id desc')
 				->limit(8)
 				->select()->toArray();
-				foreach ($list as $key => $val) {
-					$list[$key]['director_name'] = Db::name('Admin')->where(['id' => $val['director_uid']])->value('name');
-					$list[$key]['end_time'] = date('Y-m-d', $val['end_time']);
-					$list[$key]['flow_name'] = \app\project\model\ProjectTask::$FlowStatus[(int) $val['flow_status']];
+				foreach ($list as $key => &$val) {
+					$val['director_name'] = Db::name('Admin')->where(['id' => $val['director_uid']])->value('name');
+					if($val['end_time']>0){
+						$val['end_time'] = date('Y-m-d', $val['end_time']);
+					}
+					else{
+						$val['end_time'] = '-';
+					}
+					$val['flow_name'] = \app\project\model\ProjectTask::$FlowStatus[(int) $val['flow_status']];
 				}
 			$res['data'] = $list;
 		}
