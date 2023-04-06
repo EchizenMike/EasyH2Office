@@ -228,30 +228,54 @@ class Import extends BaseController
 				return to_assign(1, '数据不能为空');
                 exit();
             }
+			$name_array = []; 
 			$source_array = Db::name('CustomerSource')->where(['status' => 1])->column('title', 'id');
 			$grade_array = Db::name('CustomerGrade')->where(['status' => 1])->column('title', 'id');
 			$industry_array = Db::name('Industry')->where(['status' => 1])->column('title', 'id');
 					
             //循环读取excel表格，整合成数组。如果是不指定key的二维，就用$data[i][j]表示。
             for ($j = 3; $j <= $highestRow; $j++) {
+				$file_check = [];
 				$name = $objPHPExcel->getActiveSheet()->getCell("A" . $j)->getValue();
 				if(empty($name)){
 					continue;
 				}
-
+				$count_name = Db::name('Customer')->where('name',$name)->count();
+				if($count_name>0){
+					return to_assign(1, '第'.($j - 2).'行的客户名称已经存在');
+				}
+				if(in_array($name,$name_array)){
+					return to_assign(1, '上传的文件存在相同的客户名称，请删除再操作');
+				}
+				array_push($name_array,$name);
 				$source_id = arraySearch($source_array,$objPHPExcel->getActiveSheet()->getCell("B" . $j)->getValue());
 				$grade_id = arraySearch($grade_array,$objPHPExcel->getActiveSheet()->getCell("C" . $j)->getValue());
-				$industry_id = arraySearch($industry_array,$objPHPExcel->getActiveSheet()->getCell("D" . $j)->getValue());				
+				$industry_id = arraySearch($industry_array,$objPHPExcel->getActiveSheet()->getCell("D" . $j)->getValue());	
 				
-				$tax_num = $objPHPExcel->getActiveSheet()->getCell("E" . $j)->getValue();
-				$bank = $objPHPExcel->getActiveSheet()->getCell("F" . $j)->getValue();
-				$bank_sn = $objPHPExcel->getActiveSheet()->getCell("G" . $j)->getValue();
+				$c_name = $objPHPExcel->getActiveSheet()->getCell("E" . $j)->getValue();
+				$c_mobile = $objPHPExcel->getActiveSheet()->getCell("F" . $j)->getValue();
+				$file_check['c_mobile'] = $c_mobile;
+				$tax_num = $objPHPExcel->getActiveSheet()->getCell("G" . $j)->getValue();
+				$bank = $objPHPExcel->getActiveSheet()->getCell("H" . $j)->getValue();
+				$bank_sn = $objPHPExcel->getActiveSheet()->getCell("I" . $j)->getValue();
 				$file_check['bank_sn'] = $bank_sn;
-				$bank_no = $objPHPExcel->getActiveSheet()->getCell("H" . $j)->getValue();				
-				$cperson_mobile = $objPHPExcel->getActiveSheet()->getCell("I" . $j)->getValue();				
-				$address = $objPHPExcel->getActiveSheet()->getCell("J" . $j)->getValue();
-				$content = $objPHPExcel->getActiveSheet()->getCell("K" . $j)->getValue();
-				$market = $objPHPExcel->getActiveSheet()->getCell("L" . $j)->getValue();
+				$bank_no = $objPHPExcel->getActiveSheet()->getCell("K" . $j)->getValue();				
+				$cperson_mobile = $objPHPExcel->getActiveSheet()->getCell("K" . $j)->getValue();				
+				$address = $objPHPExcel->getActiveSheet()->getCell("L" . $j)->getValue();
+				$content = $objPHPExcel->getActiveSheet()->getCell("M" . $j)->getValue();
+				$market = $objPHPExcel->getActiveSheet()->getCell("N" . $j)->getValue();
+				if(empty($c_name)){
+					return to_assign(1, '第'.($j - 2).'行的客户联系人姓名没完善');
+				}
+				if(empty($c_mobile)){
+					return to_assign(1, '第'.($j - 2).'行的客户联系人手机号码没完善');
+				}
+				$validate_mobile = \think\facade\Validate::rule([
+					'c_mobile' => 'mobile',
+				]);
+				if (!$validate_mobile->check($file_check)) {
+					return to_assign(1, '第'.($j - 2).'行的客户联系人手机号码格式错误');
+				}
 				if(empty($source_id)){
 					return to_assign(1, '第'.($j - 2).'行的客户来源错误');
 				}
@@ -261,16 +285,37 @@ class Import extends BaseController
 				if(empty($industry_id)){
 					return to_assign(1, '第'.($j - 2).'行的所属行业错误');
 				}
+				if(empty($tax_num)){
+					$tax_num='';
+				}
+				if(empty($bank)){
+					$bank='';
+				}
 				$validate_bank = \think\facade\Validate::rule([
 					'bank_sn' => 'number',
 				]);
 				if(!empty($bank_sn)){
 					if (!$validate_bank->check($file_check)) {
-						return to_assign(1, '第'.($j - 2).'行的银行卡账号'.$validate->getError());
+						return to_assign(1, '第'.($j - 2).'行的银行卡账号格式错误');
 					}
 				}
 				else{
 					$bank_sn='';
+				}
+				if(empty($bank_no)){
+					$bank_no='';
+				}
+				if(empty($cperson_mobile)){
+					$cperson_mobile='';
+				}
+				if(empty($address)){
+					$address='';
+				}
+				if(empty($content)){
+					$content='';
+				}
+				if(empty($market)){
+					$market='';
 				}
                 $data[$j - 3] = [		
                     'name' => $name,
@@ -286,17 +331,31 @@ class Import extends BaseController
                     'content' => $content,
 					'market' => $market,
                     'admin_id' => $this->uid,
+                    'c_mobile' => $c_mobile,
+                    'c_name' => $c_name,
                     'create_time' => time()
                 ];
             }
-           //dd($data);exit;
+            //dd($data);exit;
             // 批量添加数据
-            if ((new Customer())->saveAll($data)) {
-                return to_assign(0, '导入成功');
-            }
-			else{
-				return to_assign(1, '导入失败，请检查excel文件再试');
+			$count=0;
+			foreach ($data as $a => $aa) {	
+				$cid = Customer::strict(false)->field(true)->insertGetId($aa);
+				if($cid>0){
+					$contact = [
+						'name' => $aa['c_name'],
+						'mobile' => $aa['c_mobile'],
+						'sex' => 1,
+						'cid' => $cid,
+						'is_default' => 1,
+						'create_time' => time(),
+						'admin_id' => $this->uid
+					];
+					Db::name('CustomerContact')->strict(false)->field(true)->insert($contact);
+					$count++;
+				}
 			}
+            return to_assign(0, '共成功导入了'.$count.'条客户数据');
         } catch (\think\exception\ValidateException $e) {
 			return to_assign(1, $e->getMessage());
         }

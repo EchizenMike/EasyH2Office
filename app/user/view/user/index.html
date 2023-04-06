@@ -23,7 +23,7 @@
 		<h3>企业组织架构</h3>
 		<div id="depament"></div>
 	</div>
-	<div class="body-table" style="margin-left:228px;">
+	<div class="body-table" style="margin-left:228px; overflow:hidden;">
 		<form class="layui-form gg-form-bar border-t border-x" lay-filter="barsearchform">
 			<div class="layui-input-inline" style="width:136px">
 				<select name="status">
@@ -67,9 +67,9 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
-	const moduleInit = ['tool'];
+	const moduleInit = ['tool','tablePlus'];
 	function gouguInit() {
-		var table = layui.table, tool = layui.tool,tree = layui.tree,form = layui.form,upload = layui.upload;			
+		var table = layui.tablePlus, tool = layui.tool,tree = layui.tree,form = layui.form,upload = layui.upload;			
 		$.ajax({
 			url: "/api/index/get_department_tree",
 			type:'get',
@@ -185,10 +185,12 @@
 			elem: '#test',
 			title: '员工列表',
 			toolbar: '#toolbara',
+			defaultToolbar: [],
+			is_excel:true,
 			url: "/user/user/index", //数据接口	
-			defaultToolbar:['filter', {title:'导出EXCEL',layEvent: 'LAYTABLE_EXCEL',icon: 'layui-icon-export'}],		
 			page: true, //开启分页
 			limit: 20,
+			height: 'full-90',
 			cols: [
 				[
 					{type:'checkbox',fixed:'left'},
@@ -320,18 +322,6 @@
 		table.on('toolbar(test)', function(obj){
 			var checkStatus = table.checkStatus(obj.config.id); //获取选中行状态
 			var data = checkStatus.data;
-			if(obj.event === 'LAYTABLE_EXCEL'){
-				var formSelect = form.val('barsearchform');
-				formSelect.limit=99999;
-				$.ajax({
-					url: '/user/user/index',
-					data: formSelect,
-					success:function(res){
-						table.exportFile('test', res.data,'xls');
-					}
-				});
-				return;
-			}
 			if (obj.event === 'add') {
 				tool.side("/user/user/add");
 				return;
