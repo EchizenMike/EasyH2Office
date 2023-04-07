@@ -61,6 +61,7 @@ abstract class BaseController
         $this->action = strtolower($this->request->action());
         $this->uid = 0;
         $this->did = 0;
+        $this->pid = 0;
         // 控制器初始化
         $this->initialize();
     }
@@ -89,6 +90,7 @@ abstract class BaseController
                 $this->uid = Session::get($session_admin);
 				$login_admin = Db::name('Admin')->where(['id' => $this->uid])->find();
 				$this->did = $login_admin['did'];
+				$this->pid = $login_admin['position_id'];
                 View::assign('login_admin', $login_admin);				
 				$is_lock = $login_admin['is_lock'];
 				if($is_lock==1){

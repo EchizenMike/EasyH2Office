@@ -237,8 +237,7 @@ class Index extends BaseController
             );
         }
 		
-		$position_id = Db::name('Admin')->where('id',$this->uid)->value('position_id');
-		$adminGroup = Db::name('PositionGroup')->where(['pid' => $position_id])->column('group_id');
+		$adminGroup = Db::name('PositionGroup')->where(['pid' => $this->pid])->column('group_id');
 		$adminLayout = Db::name('AdminGroup')->where('id', 'in', $adminGroup)->column('layouts');
 		$adminLayouts = [];
 		foreach ($adminLayout as $k => $v) {
