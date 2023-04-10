@@ -117,13 +117,7 @@
 
 		//监听搜索提交
 		form.on('submit(webform)', function(data) {
-			layui.pageTable.reload({
-				where: {
-					keywords: data.field.keywords,
-					industry_id: data.field.industry_id,
-					source_id: data.field.source_id
-				}
-			});
+			layui.pageTable.reload();
 			return false;
 		});
 	}
