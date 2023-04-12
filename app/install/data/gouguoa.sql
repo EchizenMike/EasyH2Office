@@ -328,7 +328,7 @@ INSERT INTO `oa_admin_rule` VALUES (156, 155, 'customer/contact/contact_add', '�
 INSERT INTO `oa_admin_rule` VALUES (157, 155, 'customer/contact/contact_del', '删除', '联系人', 'customer', '', 2, 0, 1, 1656143065, 0);
 INSERT INTO `oa_admin_rule` VALUES (158, 135, 'customer/chance/index', '销售机会', '销售机会', 'customer', '', 1, 0, 1, 1656143065, 0);
 INSERT INTO `oa_admin_rule` VALUES (159, 158, 'customer/chance/chance_add', '新建/编辑', '销售机会', 'customer', '', 2, 0, 1, 1656143065, 0);
-INSERT INTO `oa_admin_rule` VALUES (160, 158, 'customer/chance/chance_view', '删除', '销售机会', 'customer', '', 2, 0, 1, 1656143065, 0);
+INSERT INTO `oa_admin_rule` VALUES (160, 158, 'customer/chance/chance_view', '查看', '销售机会', 'customer', '', 2, 0, 1, 1656143065, 0);
 INSERT INTO `oa_admin_rule` VALUES (161, 158, 'customer/chance/chance_del', '删除', '销售机会', 'customer', '', 2, 0, 1, 1656143065, 0);
 
 INSERT INTO `oa_admin_rule` VALUES (162, 0, '', '合同协议', '合同协议', 'contract', 'icon-hetongyidong', 1, 10, 1, 1656143065, 0);
