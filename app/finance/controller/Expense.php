@@ -110,7 +110,7 @@ class Expense extends BaseController
             if ($start_time > 0 && $end_time > 0) {
                 $map[] = ['expense_time', 'between', [$start_time, $end_time]];
             }
-			$map[] = ['check_status', '=', 2];			
+			$map[] = ['check_status', 'in', [2,3,5]];			
 			$map[] = ['', 'exp', Db::raw("FIND_IN_SET('{$user_id}',copy_uids)")];
 			$model = new ExpenseList;
 			$list = $model->get_list($param,$map);		
