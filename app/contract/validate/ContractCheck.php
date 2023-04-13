@@ -12,8 +12,8 @@ use think\Validate;
 class ContractCheck extends Validate
 {
     protected $rule = [
-        'name' => 'require|unique:contract',
-        'code' => 'require|unique:contract',
+        'name' => 'require',
+        'code' => 'require',
         'id'   => 'require',
         'cost'   => 'number',
         'cate_id' => 'require',
@@ -21,9 +21,7 @@ class ContractCheck extends Validate
 
     protected $message = [
         'name.require' => '合同名称不能为空',
-        'name.unique' => '同样的合同名称已经存在',
 		'code.require' => '合同编号不能为空',
-        'code.unique' => '同样的合同编号已经存在',
         'cost.number' => '价格只能是数字',
         'cate_id.require' => '所属分类为必选',
         'id.require' => '缺少更新条件',
