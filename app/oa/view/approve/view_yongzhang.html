@@ -44,15 +44,7 @@
 			<td colspan="3" style="line-height:inherit">
 				<div class="layui-row">
 					{volist name="$detail.fileArray" id="vo"}
-					<div class="layui-col-md4">
-						<div class="file-card">
-							<i class="file-icon iconfont icon-renwuguanli"></i>
-							<div class="file-title">{$vo.name}</div>
-							<div class="file-tool">
-								<a href="{$vo.filepath}" download="{$vo.name}" target="_blank" title="下载查看"><i class="iconfont icon-shujudaoru blue"></i></a>
-							</div>
-						</div>
-					</div>
+					<div class="layui-col-md4" id="uploadImg{$vo.id}">{:file_card($vo,'view')}</div>
 					{/volist}
 				</div>
 			</td>

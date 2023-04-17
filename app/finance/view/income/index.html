@@ -95,6 +95,7 @@
 						width: 136
 					}, {
 						field: 'invoice_title',
+						minWidth: 240,		
 						title: '发票抬头',
 						templet:function(d){
 							var html='';
@@ -115,7 +116,7 @@
 						field: 'invoice_type',
 						title: '开票类型',
 						align: 'center',
-						width: 90,
+						width: 120,
 						templet:function(d){
 							var html='-';
 							if(d.invoice_type==1){

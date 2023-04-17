@@ -518,6 +518,7 @@ class Approve extends BaseController
 		$class = strtolower(app('request')->controller());
 		$action = strtolower(app('request')->action());
 		$template = $module . '/view/'. $class .'/view_'.$moban.'.html';
+		//var_dump($detail['fileArray']);
 		View::assign('is_create_admin', $is_create_admin);
 		View::assign('is_check_admin', $is_check_admin);
 		View::assign('check_record', $check_record);

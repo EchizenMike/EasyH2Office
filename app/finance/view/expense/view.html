@@ -91,22 +91,20 @@
 		<tr>
 			<td class="layui-td-gray">费用金额</td>
 			<td colspan="5">	
-				<div>
-					<table class="layui-table layui-table-min">
-						<tr>
-							<th width="100">报销金额(元)</th>
-							<th width="150">报销类别</th>
-							<th>备注信息</th>
-						</tr>
-						{volist name="$detail.list" id="vo"}
-						<tr>
-							<td>{$vo.amount}</td>
-							<td>{$vo.cate_title}</td>
-							<td style="text-align:left">{$vo.remarks}</td>
-						</tr>
-						{/volist}
-					</table>
-				</div>
+				<table class="layui-table layui-table-min" style="margin:0">
+					<tr>
+						<th width="100">报销金额(元)</th>
+						<th width="150">报销类别</th>
+						<th>备注信息</th>
+					</tr>
+					{volist name="$detail.list" id="vo"}
+					<tr>
+						<td>{$vo.amount}</td>
+						<td>{$vo.cate_title}</td>
+						<td style="text-align:left">{$vo.remarks}</td>
+					</tr>
+					{/volist}
+				</table>
 			</td>
 		</tr>
 		{notempty name="$detail.file_ids"}
@@ -115,15 +113,7 @@
 			<td colspan="5" style="line-height:inherit">
 				<div class="layui-row">
 					{volist name="$detail.fileArray" id="vo"}
-					<div class="layui-col-md4">
-						<div class="file-card">
-							<i class="file-icon iconfont icon-renwuguanli"></i>
-							<div class="file-title file-title-view">{$vo.name}</div>
-							<div class="file-tool">
-								<a href="{$vo.filepath}" download="{$vo.name}" target="_blank" title="下载查看"><i class="iconfont icon-shujudaoru blue"></i></a>
-							</div>
-						</div>
-					</div>
+					<div class="layui-col-md4" id="uploadImg{$vo.id}">{:file_card($vo,'view')}</div>
 					{/volist}
 				</div>
 			</td>
@@ -143,7 +133,7 @@
 	
 	<table class="layui-table layui-table-form mt-4">
 		<tr>
-			<td class="layui-td-gray">审核状态</td>
+			<td class="layui-td-gray-2">审核状态</td>
 			<td>{eq name="$detail.check_status" value="0"}<span class="black">待审批</span>{/eq}
 				{eq name="$detail.check_status" value="1"}<span class="blue">审批中</span>{/eq}
 				{eq name="$detail.check_status" value="2"}<span class="green">已通过，待打款</span>{/eq}
@@ -232,7 +222,7 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
-const moduleInit = ['tool','employeepicker'];
+const moduleInit = ['tool','employeepicker','oaTool'];
 function gouguInit() {
 	var form = layui.form,tool=layui.tool, employeepicker = layui.employeepicker,dropdown = layui.dropdown;
 

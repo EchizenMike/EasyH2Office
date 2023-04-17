@@ -64,7 +64,7 @@ class Customer extends Model
         $detail = Db::name('Customer')->where(['id' => $id])->find();
         if (!empty($detail)) {
 			$file_array = Db::name('CustomerFile')
-				->field('cf.id,f.filepath,f.name,f.filesize,f.fileext')
+				->field('cf.id,f.filepath,f.name,f.filesize,f.fileext,f.create_time,f.admin_id')
 				->alias('cf')
 				->join('File f', 'f.id = cf.file_id', 'LEFT')
 				->order('cf.create_time asc')

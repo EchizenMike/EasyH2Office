@@ -42,25 +42,12 @@
 		{notempty name="$detail.file_array"}
 		<tr>
 			<td class="layui-td-gray" style="vertical-align:top">相关附件</td>
-			<td colspan="5">
-				<table class="layui-table" style="max-width: 800px;">
-					<thead>
-					  <tr>
-					  <th width="70%">文件名</th>
-					  <th width="20%" style="text-align:center">文件大小</th>
-					  <th width="10%" style="text-align:center">操作</th>
-					</tr>
-					</thead>
-					<tbody>							
-						{volist name="detail.file_array" id="vo"}
-							<tr>
-								<td>{$vo.name}</td>
-								<td style="text-align: center;">{$vo.filesize/1048576|round=2}MB</td>
-								<td style="text-align: center;"><a class="layui-btn layui-btn-xs layui-btn-normal" href="{$vo.filepath}" target="_blank">下载</a></td>
-							</tr>
-						{/volist}
-					</tbody>
-				</table>
+			<td colspan="5" style="line-height:inherit">
+				<div class="layui-row" id="fileList">
+					{volist name="$detail.file_array" id="vo"}
+					<div class="layui-col-md4" id="uploadImg{$vo.id}">{:file_card($vo,'view')}</div>
+					{/volist}
+				</div>
 			</td>
 		</tr>
 		{/notempty}
@@ -71,3 +58,9 @@
 </form>
 {/block}
 <!-- /主体 -->
+<!-- 脚本 -->
+{block name="script"}
+<script>
+const moduleInit = ['tool','formSelects','employeepicker','oaTool'];
+</script>
+{/block}

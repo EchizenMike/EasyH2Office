@@ -30,24 +30,6 @@
 	<button type="reset" class="layui-btn layui-btn-primary">重置</button>
 </div>
 <script>
-
-// 查找指定的元素在数组中的位置
-Array.prototype.indexOf = function (val) {
-	for (var i = 0; i < this.length; i++) {
-		if (this[i] == val) {
-			return i;
-		}
-	}
-	return -1;
-};
-// 通过索引删除数组元素
-Array.prototype.remove = function (val) {
-	var index = this.indexOf(val);
-	if (index > -1) {
-		this.splice(index, 1);
-	}
-};
-
 function flowStep(){
 	let tool=layui.tool,form = layui.form,upload = layui.upload,employeepicker = layui.employeepicker;
 	
@@ -140,50 +122,6 @@ function flowStep(){
 			}
 		})
 		return false;
-	});
-	
-	
-	$('#fileList').on('click', '.btn-delete', function () {
-		var _id = $(this).data('id');
-		var idsStr = $('#fileList input').val(),idsArray = [];
-		if (idsStr != '') {
-			idsArray = idsStr.split(",");
-		}
-		idsArray.remove(_id);
-		$('#fileList input').attr('value', idsArray.join(','));
-		$('#uploadImg' + _id).remove();
-	})
-	
-	//多附件上传
-	upload.render({
-		elem: '#upFile'
-		,url: "/api/index/upload"
-		,multiple: true
-		,accept: 'file' //普通文件
-		,exts: 'png|jpg|gif|jpeg|doc|docx|ppt|pptx|xls|xlsx|pdf|zip|rar|7z' //只允许上传文件格式
-		,done: function(res){
-			layer.msg(res.msg);
-			if (res.code == 0) {
-				//上传成功
-				var idsStr = $('#fileList input').val(),idsArray = [];
-				if (idsStr != '') {
-					idsArray = idsStr.split(",");
-				}
-				idsArray.push(res.data.id);
-				$('#fileList input').attr('value', idsArray.join(','));
-				let temp = `<div class="layui-col-md4" id="uploadImg${res.data.id}">
-						<div class="file-card">
-							<i class="file-icon iconfont icon-renwuguanli"></i>
-							<div class="file-title">${res.data.name}</div>
-							<div class="file-tool">
-								<a href="${res.data.filepath}" download="${res.data.name}" title="下载查看" target="_blank"><i class="iconfont icon-shujudaoru blue"></i></a>
-								<i class="btn-delete iconfont icon-shanchu red" data-id="${res.data.id}" title="删除"></i>
-							</div>
-						</div>
-					</div>`;
-				$('#fileList').append(temp);
-			}
-		}
 	});
 }
 </script>

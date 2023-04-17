@@ -146,15 +146,7 @@ html{background-color:#fff;}
 					<td colspan="7" style="line-height:inherit">
 						<div class="layui-row">
 							{volist name="$detail.fileArray" id="vo"}
-							<div class="layui-col-md4">
-								<div class="file-card">
-									<i class="file-icon iconfont icon-renwuguanli"></i>
-									<div class="file-title file-title-view">{$vo.name}</div>
-									<div class="file-tool">
-										<a href="{$vo.filepath}" download="{$vo.name}" target="_blank" title="下载查看"><i class="iconfont icon-shujudaoru blue"></i></a>
-									</div>
-								</div>
-							</div>
+							<div class="layui-col-md4" id="uploadImg{$vo.id}">{:file_card($vo,'view')}</div>
 							{/volist}
 						</div>
 					</td>
@@ -259,9 +251,9 @@ html{background-color:#fff;}
 <script>
 const contract_id = '{$detail.id}';
 const contract_status = '{$detail.check_status}';
-const moduleInit = ['tool','employeepicker'];
+const moduleInit = ['tool','employeepicker','oaTool'];
 	function gouguInit() {
-		var form = layui.form,tool=layui.tool, upload = layui.upload,element = layui.element,employeepicker = layui.employeepicker,dropdown = layui.dropdown;		
+		var form = layui.form,tool=layui.tool, oaTool = layui.oaTool,element = layui.element,employeepicker = layui.employeepicker,dropdown = layui.dropdown;		
 		element.on('tab(contract)', function(data){
 			let index = data.index;
 			if(index == 1){

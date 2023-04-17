@@ -46,15 +46,7 @@
 	<h3 class="py-3">相关附件</h3>
 	<div class="layui-row" id="fileBox">
 		{volist name="$detail.fileArray" id="vo"}
-		<div class="layui-col-md4" id="fileItem{$vo.id}">
-			<div class="file-card">
-				<i class="file-icon iconfont icon-renwuguanli"></i>
-				<div class="file-title file-title-view">{$vo.name}</div>
-				<div class="file-tool">
-					<a href="{$vo.filepath}" download="{$vo.name}" target="_blank" title="下载查看"><i class="iconfont icon-shujudaoru blue"></i></a>
-				</div>
-			</div>
-		</div>
+		<div class="layui-col-md4" id="uploadImg{$vo.id}">{:file_card($vo,'view')}</div>
 		{/volist}
 	</div>
 	{/notempty}
@@ -88,7 +80,7 @@
 {block name="script"}
 <script src="{__GOUGU__}/third_party/prism/prism.js"></script>
 <script>
-const moduleInit = ['tool','tinymce'];
+const moduleInit = ['tool','tinymce','oaTool'];
 function gouguInit() {
 	var form = layui.form,tool=layui.tool;
 	

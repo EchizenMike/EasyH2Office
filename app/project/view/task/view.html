@@ -94,39 +94,11 @@
 					{$detail.content|raw}</div>
 			</div>
 			<div class="detail-file">
-				<h3 class="py-4">文件附件</h3>
-				<div>
-					<button type="button" class="layui-btn layui-btn-normal layui-btn-sm" id="flieBtn">选择文件并上传</button>
-					<span
-						style="color:#FF5722; font-size:12px; margin-left: 8px;">上传前，请规范命名，最大只能上传{:get_system_info('upload_max_filesize')}的文件，超过请压缩成多个文件上传。</span>
-					<div class="layui-upload-list" {empty name="$file_array" }style="display:none;" {/empty}>
-						<table class="layui-table">
-							<thead>
-								<tr>
-									<th width="60%">文件名</th>
-									<th width="12%" style="text-align:center">文件大小</th>
-									<th width="12%" style="text-align:center">上传人</th>
-									<th width="15%" style="text-align:center">操作</th>
-								</tr>
-							</thead>
-							<tbody id="flieList">
-								{volist name="file_array" id="vo"}
-								<tr>
-									<td>{$vo.name}</td>
-									<td style="text-align: center;">{$vo.filesize/1048576|round=2}MB</td>
-									<td style="text-align: center;">{$vo.admin_name}</td>
-									<td style="text-align: center;">
-										<div class="layui-btn-group"><a class="layui-btn layui-btn-xs "
-												href="{$vo.filepath}" download="{$vo.name}" data-id="{$vo.id}">下载</a>
-											<span class="layui-btn layui-btn-xs layui-btn-danger file-delete"
-												data-uid="{$vo.admin_id}" data-id="{$vo.id}">删除</span>
-										</div>
-									</td>
-								</tr>
-								{/volist}
-							</tbody>
-						</table>
-					</div>
+				<h3 class="py-4">文件附件 <button type="button" class="layui-btn layui-btn-normal layui-btn-sm" id="uploadBtn">选择文件并上传</button></h3>
+				<div class="layui-row" id="fileBox">
+					{volist name="$file_array" id="vo"}
+					<div class="layui-col-md6" id="uploadImg{$vo.id}">{:file_card($vo)}</div>
+					{/volist}
 				</div>
 			</div>
 		</div>
@@ -175,7 +147,7 @@
 <script>
 	const admin_id = '{$detail.admin_id}';
 	const detail_id = '{$detail.id}';
-	const moduleInit = ['tool','employeepicker','oaEdit','oaSchedule','oaComment'];
+	const moduleInit = ['tool','employeepicker','oaEdit','oaSchedule','oaComment','oaTool'];
 	function gouguInit() {
 		const opsData = {
 			flow_status: [
@@ -207,7 +179,7 @@
 				{ 'id': 100, 'title': '100%' }
 			]
 		}
-		const edit = layui.oaEdit,work = layui.oaSchedule,comment = layui.oaComment, upload = layui.upload, tool = layui.tool;
+		const edit = layui.oaEdit,work = layui.oaSchedule,comment = layui.oaComment, oaTool = layui.oaTool, tool = layui.tool;
 
 		$('.hover-edit').hover(function () {
 			$(this).addClass('hover-on');
@@ -239,50 +211,28 @@
 				tool.delete("/project/task/delete", postData, callback);
 			});
 		})
-
-		upload.render({
-			elem: '#flieBtn'
-			, url: '/api/index/upload'
-			, accept: 'file' //普通文件
-			, exts: 'jpeg|jpg|png|gif|txt|doc|docx|ppt|pptx|xls|xlsx|pdf|zip|rar|7z' //只允许上传文件
-			, before: function (obj) {
-				layer.msg('上传中...', { time: 3600000 });
-			}
-			, done: function (res, index, upload) {
+		
+		oaTool.addFile({
+			type:1,
+			isSave:true,
+			uidDelete:true,
+			colmd:6,
+			ajaxDelete:function(file_id){
 				let callback = function (e) {
-					layer.msg('上传成功');
+					layer.msg(e.msg);
+					if (e.code == 0) {						
+						$('#fileItem' + file_id).remove();
+					}
+				}
+				tool.delete("/project/api/delete_file", {id: file_id}, callback);			
+			},
+			ajaxSave:function(res){
+				let callback = function (e) {
 					location.reload();
 				}
-				let postData = { 'topic_id': detail_id, 'file_id': res.data.id, 'file_name': res.data.name, 'module': 'task' };
-				if(res.code>0){
-					layer.msg(res.msg);
-				}
-				else{
-					tool.post("/project/api/add_file", postData, callback);
-				}				
-			}
-			, error: function (index, upload) {
-				layer.msg('上传失败');
+				tool.post("/project/api/add_file", {'topic_id': detail_id, 'file_id': res.data.id, 'file_name': res.data.name, 'module': 'task' }, callback);
 			}
 		});
-
-		$('#flieList').on('click', '.file-delete', function () {
-			let id = $(this).data('id');
-			let uid = $(this).data('uid');
-			if (uid != login_admin) {
-				layer.msg('你不是该文件的上传人，无权限删除');
-				return false;
-			}
-			layer.confirm('确定要删除该附件吗?', { icon: 3, title: '提示' }, function (index) {
-				let callback = function (e) {
-					layer.closeAll();
-					layer.msg(e.msg);
-					location.reload();
-				}
-				let postData = { 'id': id };
-				tool.delete("/project/api/delete_file", postData, callback);
-			});
-		})
 
 		//工作记录相关
 		work.load(detail_id);

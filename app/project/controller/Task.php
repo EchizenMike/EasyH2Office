@@ -117,7 +117,7 @@ class Task extends BaseController
 			$auth = isAuth($this->uid,'project_admin');
             if (in_array($detail['project_id'], $project_ids) || in_array($this->uid, $role_uid) || in_array($this->uid, explode(",",$detail['assist_admin_ids'])) || ($auth==1&&$detail['project_id']>0)) {
                 $file_array = Db::name('ProjectFile')
-                ->field('mf.id,mf.topic_id,mf.admin_id,f.name,f.filesize,f.filepath,a.name as admin_name')
+                ->field('mf.id,mf.topic_id,mf.admin_id,f.name,f.filesize,f.filepath,f.fileext,f.create_time,f.admin_id,a.name as admin_name')
                 ->alias('mf')
                 ->join('File f', 'mf.file_id = f.id', 'LEFT')
                 ->join('Admin a', 'mf.admin_id = a.id', 'LEFT')

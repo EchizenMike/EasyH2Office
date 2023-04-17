@@ -17,6 +17,20 @@ layui.define(['tool'], function (exports) {
 		}
 	};
 	
+	//格式化文件大小
+	function renderSize(value){
+		if(null==value||value==''){
+			 return "0 Bytes";
+		}
+		var unitArr = new Array("Bytes","KB","MB","GB","TB","PB","EB","ZB","YB");
+		var index=0;
+		var srcsize = parseFloat(value);
+		index=Math.floor(Math.log(srcsize)/Math.log(1024));
+		var size =srcsize/Math.pow(1024,index);
+		size=size.toFixed(2);//保留的小数位数
+		return size+unitArr[index];
+	} 
+	
 	const obj = {
 		addFile: function (options) {
 			let that = this;
@@ -29,58 +43,48 @@ layui.define(['tool'], function (exports) {
 				exts: 'png|jpg|gif|jpeg|doc|docx|ppt|pptx|xls|xlsx|pdf|zip|rar|7z', //只允许上传文件格式
 				colmd:4,
 				isSave:false,
-				ajaxSave:function(val){},
-				ajaxDelete:function(val){}
+				uidDelete:false,
+				ajaxSave:null,
+				ajaxDelete:null
 			};
 			let opts = $.extend({}, settings, options);
-			
-			if(opts.type==0){
-				//虚拟删除
-				$('#'+opts.box).on('click', '.btn-delete', function () {
-					let file_id = $(this).data('id');
-					let idsStr = $('#'+opts.box+'Input').val(),idsArray = [];
-					if (idsStr != '') {
-						idsArray = idsStr.split(",");
-					}
+			let box = $('#'+opts.box);
+			let boxInput = box.find('[data-type="file"]');
+			//删除
+			box.on('click', '.btn-delete', function () {
+				let file_id = $(this).data('id');
+				let id = $(this).data('id');
+				let uid = $(this).data('uid');
+				if (uid != login_admin && opts.uidDelete==true) {
+					layer.msg('你不是该文件的上传人，无权限删除');
+					return false;
+				}
+				let idsStr = boxInput.val(),idsArray = [];
+				if (typeof idsStr !== 'undefined' && idsStr != '') {
+					idsArray = idsStr.split(",");
 					idsArray.remove(file_id);
-					$('#'+opts.box+'Input').val(idsArray.join(','));
-					$('#fileItem' + file_id).remove();
-				})
-				
-				//ajax删除
-				$('#'+opts.box).on('click', '.ajax-delete', function () {
-					let file_id = $(this).data('id');
-					let idsStr = $('#'+opts.box+'Input').val(),idsArray = [];
-					if (idsStr != '') {
-						idsArray = idsStr.split(",");
-					}
-					idsArray.remove(file_id);
-					layer.confirm('确定删除该附件吗？', {
-						icon: 3,
-						title: '提示'
-					}, function(index) {
-						if (typeof (opts.ajaxSave) == "function") {
-							opts.ajaxSave(idsArray.join(','));
-						}
-						layer.close(index);
-					});
-				})
-			}
-			if(opts.type==1){
-				//ajax删除
-				$('#'+opts.box).on('click', '.ajax-delete', function () {
-					let file_id = $(this).data('id');
-					layer.confirm('确定删除该附件吗？', {
-						icon: 3,
-						title: '提示'
-					}, function(index) {
-						if (typeof (opts.ajaxSave) == "function") {
+				}
+				layer.confirm('确定删除该附件吗？', {
+					icon: 3,
+					title: '提示'
+				}, function(index) {
+					if (typeof (opts.ajaxDelete) === "function") {
+						//ajax删除
+						if(opts.type==1){
 							opts.ajaxDelete(file_id);
 						}
-						layer.close(index);
-					});
-				})
-			}
+						else{
+							opts.ajaxDelete(idsArray.join(','));
+						}						
+					}
+					else{
+						//虚拟删除
+						boxInput.val(idsArray.join(','));
+						$('#fileItem' + file_id).remove();
+					}
+					layer.close(index);
+				});
+			})
 			
 			//多附件上传
 			upload.render({
@@ -89,38 +93,56 @@ layui.define(['tool'], function (exports) {
 				accept: opts.accept,
 				exts: opts.exts,
 				multiple: true,
+				before: function(obj){
+					layer.msg('上传中...', {icon: 16, time: 0});
+				},
 				done: function(res){
-					layer.msg(res.msg);
 					if (res.code == 0) {
 						//上传成功
 						if(opts.type==0){
-							let idsStr = $('#'+opts.box+'Input').val(),idsArray = [];
-							if (idsStr != '') {
+							let idsStr = boxInput.val(),idsArray = [];
+							if (typeof idsStr !== 'undefined' && idsStr != '') {
 								idsArray = idsStr.split(",");
 							}
 							idsArray.push(res.data.id);
-							$('#'+opts.box+'Input').val(idsArray.join(','));
+							let filesize = renderSize(res.data.filesize);							
+							let type_icon = 'icon-sucaiziyuan';
+							let view_btn = '<a class="blue" href="'+res.data.filepath+'" download="'+res.data.name+'" target="_blank" title="下载查看"><i class="iconfont icon-tuiguangshezhi"></i></a>';
+							if(res.data.fileext == 'pdf'){
+								type_icon = 'icon-lunwenguanli';
+								view_btn = '<span class="file-view-pdf blue" data-href="'+res.data.filepath+'" title="在线查看"><i class="iconfont icon-yuejuan"></i></span>';
+							}
+							if(res.data.fileext == 'jpg' || res.data.fileext == 'jpeg' || res.data.fileext == 'png' || res.data.fileext == 'gif'){
+								type_icon = 'icon-sucaiguanli';
+								view_btn = '<span class="file-view-img blue" data-href="'+res.data.filepath+'" title="在线查看"><i class="iconfont icon-tupianguanli"></i></span>';
+							}
 							let temp = `<div class="layui-col-md${opts.colmd}" id="fileItem${res.data.id}">
 									<div class="file-card">
-										<i class="file-icon iconfont icon-renwuguanli"></i>
-										<div class="file-title">${res.data.name}</div>
-										<div class="file-tool">
-											<a href="${res.data.filepath}" download="${res.data.name}" title="下载查看" target="_blank"><i class="iconfont icon-shujudaoru blue"></i></a>
-											<span class="btn-delete iconfont icon-shanchu red" data-id="${res.data.id}" title="删除"></span>
+										<i class="file-icon iconfont ${type_icon}"></i>
+										<div class="file-info">
+											<div class="file-title">${res.data.name}</div>
+											<div class="file-ops">${filesize}，一分钟前</div>
 										</div>
+										<div class="file-tool">${view_btn}<span class="btn-delete red" data-id="${res.data.id}" title="删除"><i class="iconfont icon-shanchu"></i></span></div>
 									</div>
 								</div>`;
-							$('#'+opts.box).append(temp);
+							boxInput.val(idsArray.join(','));	
+							box.append(temp);
 							
-							if (typeof (opts.ajaxSave) == "function" && opts.isSave ==true) {
+							if (typeof (opts.ajaxSave) === "function" && opts.isSave ==true) {
 								opts.ajaxSave(idsArray.join(','));
+							}
+							else{
+								layer.msg(res.msg);
 							}
 						}
 						if(opts.type==1){
-							if (typeof (opts.ajaxSave) == "function" && opts.isSave ==true) {
+							if (typeof (opts.ajaxSave) === "function" && opts.isSave ==true) {
 								opts.ajaxSave(res);
 							}
 						}
+					}else{
+						layer.msg(res.msg);
 					}
 				}
 			});
@@ -163,7 +185,7 @@ layui.define(['tool'], function (exports) {
 			})	
 		},
 		//选择岗位	
-		positionPicker:function(type,callback){	
+		positionPicker:function(type,callback){
 			let select_type = type==1?'radio':'checkbox',positionTable;
 			layer.open({
 				title:'选择岗位',
@@ -196,7 +218,43 @@ layui.define(['tool'], function (exports) {
 					}
 				}
 			})		
-		},		
+		},
+		//选择服务类型
+		servicePicker:function(type,callback){	
+		let select_type = type==1?'radio':'checkbox',departmentTable;		
+		var serviceTable;
+			layer.open({
+				title: '选择服务类型',
+				area: ['500px', '536px'],
+				type: 1,
+				content: '<div class="picker-table"><div id="serviceTable"></div></div>',
+				success: function () {
+					serviceTable = table.render({
+						elem: '#serviceTable'
+						, url: '/api/index/get_services'
+						,page: false
+						, cols: [[
+							{ type: select_type, title: '选择' }
+							, { field: 'id', width: 100, title: '编号', align: 'center' }
+							, { field: 'title', title: '服务名称' }
+						]]
+					});
+				},
+				btn: ['确定'],
+				btnAlign: 'c',
+				yes: function(){
+					var checkStatus = table.checkStatus(serviceTable.config.id);
+					var data = checkStatus.data;
+					if(data.length>0){
+						callback(data);
+						layer.closeAll();
+					}else{
+						layer.msg('请选择服务类型');
+						return;
+					}
+				}
+			})
+		},
 		//选择客户
 		customerPicker:function(callback){
 			var customeTable;
@@ -251,11 +309,11 @@ layui.define(['tool'], function (exports) {
 			var contractTable;
 			layer.open({
 				title: '选择合同',
-				area: ['600px', '580px'],
+				area: ['720px', '580px'],
 				type: 1,
 				content: '<div class="picker-table">\
 					<form class="layui-form pb-2">\
-						<div class="layui-input-inline" style="width:480px;">\
+						<div class="layui-input-inline" style="width:600px;">\
 						<input type="text" name="keywords" placeholder="合同名称" class="layui-input" autocomplete="off" />\
 						</div>\
 						<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="search_contract">提交搜索</button>\
@@ -269,11 +327,12 @@ layui.define(['tool'], function (exports) {
 						, limit: 10
 						, cols: [[
 							{ type: 'radio', title: '选择' }
-							, { field: 'id', width: 100, title: '编号', align: 'center' }
+							, { field: 'code', width: 168, title: '合同编号', align: 'center' }
 							, { field: 'name', title: '合同名称' }
+							, { field: 'customer_name', title: '客户名称',width: 240}
 						]]
 					});
-					//项目搜索提交
+					//合同搜索提交
 					form.on('submit(search_contract)', function (data) {
 						contractTable.reload({ where: { keywords: data.field.keywords }, page: { curr: 1 } });
 						return false;
@@ -294,8 +353,135 @@ layui.define(['tool'], function (exports) {
 					}
 				}
 			})
+		},
+		//选择项目
+		projectPicker:function(callback){
+			var projectTable;
+			let projectLayer = layer.open({
+				title: '选择项目',
+				area: ['600px', '580px'],
+				type: 1,
+				content: '<div class="picker-table">\
+					<form class="layui-form pb-2">\
+						<div class="layui-input-inline" style="width:480px;">\
+						<input type="text" name="keywords" placeholder="项目名称" class="layui-input" autocomplete="off" />\
+						</div>\
+						<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="search_project">提交搜索</button>\
+					</form>\
+					<div id="projectTable"></div></div>',
+				success: function () {
+					projectTable = table.render({
+						elem: '#projectTable'
+						, url: '/project/api/get_project'
+						, page: true //开启分页
+						, limit: 10
+						, cols: [[
+							{ type: 'radio', title: '选择' }
+							, { field: 'id', width: 100, title: '编号', align: 'center' }
+							, { field: 'title', title: '项目名称' }
+						]]
+					});
+					//合同搜索提交
+					form.on('submit(search_project)', function (data) {
+						projectTable.reload({ where: { keywords: data.field.keywords }, page: { curr: 1 } });
+						return false;
+					});
+				},
+				btn: ['确定'],
+				btnAlign: 'c',
+				yes: function () {
+					var checkStatus = table.checkStatus(projectTable.config.id);
+					var data = checkStatus.data;
+					if (data.length > 0) {
+						callback(data[0]);
+						layer.close(projectLayer);
+					}
+					else {
+						layer.msg('请先选择项目');
+						return false;
+					}
+				}
+			})
+		},
+		//选择任务
+		taskPicker:function(project_id,callback){
+			var taskTable;
+			let taskLayer = layer.open({
+				title: '选择任务',
+				area: ['600px', '580px'],
+				type: 1,
+				content: '<div class="picker-table">\
+					<form class="layui-form pb-2">\
+						<div class="layui-input-inline" style="width:480px;">\
+						<input type="text" name="keywords" placeholder="任务主题" class="layui-input" autocomplete="off" />\
+						</div>\
+						<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="task_project">提交搜索</button>\
+					</form>\
+					<div id="taskTable"></div></div>',
+				success: function () {
+					taskTable = table.render({
+						elem: '#taskTable'
+						, url: '/project/api/get_task'
+						, page: true //开启分页
+						, limit: 10
+						, where:{'project_id':project_id}
+						, cols: [[
+							{ type: 'radio', title: '选择' }
+							, { field: 'id', width: 100, title: '编号', align: 'center' }
+							, { field: 'title', title: '任务主题' }
+						]]
+					});
+					//合同搜索提交
+					form.on('submit(search_project)', function (data) {
+						taskTable.reload({ where: { keywords: data.field.keywords }, page: { curr: 1 } });
+						return false;
+					});
+				},
+				btn: ['确定'],
+				btnAlign: 'c',
+				yes: function () {
+					var checkStatus = table.checkStatus(taskTable.config.id);
+					var data = checkStatus.data;
+					if (data.length > 0) {
+						callback(data[0]);
+						layer.close(taskLayer);
+					}
+					else {
+						layer.msg('请先选择任务主题');
+						return false;
+					}
+				}
+			})
 		}
 	};
+	
+	//查看图片文件
+	$('body').on('click','.file-view-img',function () {
+		let href = $(this).data('href');
+		if(href){
+			let photos = { "data": [{"src": href}]};
+			layer.photos({
+				photos: photos
+				,anim: 5 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
+			});
+		}
+	});	
+	
+	//查看pdf文件
+	$('body').on('click','.file-view-pdf',function () {
+		let href = $(this).data('href');
+		if(href){
+			layer.open({
+			  type: 2,
+			  title: '查看PDF文件，可以最大化看',
+			  shadeClose: true,
+			  shade: false,
+			  maxmin: true, //开启最大化最小化按钮
+			  area: ['900px', '600px'],
+			  content: href
+			});
+		}
+	});
 	
 	//选择部门	
 	$('body').on('click','.picker-depament',function () {
@@ -339,6 +525,28 @@ layui.define(['tool'], function (exports) {
 			that.next().val(ids.join(','));
 		}
 		obj.positionPicker(2,callback);
+	});	
+	
+	//选择服务
+	$('body').on('click','.picker-service',function () {
+		let that = $(this);
+		let callback = function(data){
+			that.val(data[0].title);
+			that.next().val(data[0].id);
+		}
+		obj.servicePicker(1,callback);
+	});
+	$('body').on('click','.picker-services',function () {
+		let that = $(this),ids = [],names=[];
+		let callback = function(data){
+			for ( var i = 0; i <data.length; i++){
+				ids.push(data[i].id);
+				names.push(data[i].title);
+			}
+			that.val(names.join(','));
+			that.next().val(ids.join(','));
+		}
+		obj.servicePicker(2,callback);
 	});
 
 	//选择客户	
@@ -349,8 +557,7 @@ layui.define(['tool'], function (exports) {
 			that.next().val(data.id);
 		}
 		obj.customerPicker(callback);
-	});
-	
+	});	
 	
 	//选择合同	
 	$('body').on('click','.picker-contract',function () {
@@ -360,6 +567,16 @@ layui.define(['tool'], function (exports) {
 			that.next().val(data.id);
 		}
 		obj.contractPicker(callback);
+	});	
+	
+	//选择项目
+	$('body').on('click','.picker-project',function () {
+		let that = $(this);
+		let callback = function(data){
+			that.val(data.title);
+			that.next().val(data.id);
+		}
+		obj.projectPicker(callback);
 	});
 	
 	exports('oaTool', obj);

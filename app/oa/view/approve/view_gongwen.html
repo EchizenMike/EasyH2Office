@@ -38,9 +38,12 @@
 				<div class="layui-row">
 					{volist name="$detail.fileArray" id="vo"}
 					<div class="layui-col-md4">
-						<div class="file-card">
+						<div class="file-card file-view">
 							<i class="file-icon iconfont icon-renwuguanli"></i>
-							<div class="file-title">{$vo.name}</div>
+							<div class="file-info">
+								<div class="file-title">{$vo.name}</div>
+								<div class="file-ops">{:to_size($vo.filesize)}，{$vo.create_time|date='Y-m-d H:i'}</div>
+							</div>
 							<div class="file-tool">
 								<a href="{$vo.filepath}" download="{$vo.name}" target="_blank" title="下载查看"><i class="iconfont icon-shujudaoru blue"></i></a>
 							</div>

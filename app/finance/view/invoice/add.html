@@ -80,7 +80,7 @@
 			</td>
 			<td colspan="5" style="line-height:inherit">
 				<div class="layui-row" id="fileBox">
-					<input type="hidden" id="fileBoxInput" name="file_ids" value="">
+					<input type="hidden" data-type="file" name="file_ids" value="">
 				</div>
 			</td>
 		</tr>
@@ -181,19 +181,10 @@
 			</td>
 			<td colspan="5" style="line-height:inherit">
 				<div class="layui-row" id="fileBox">
-					<input type="hidden" id="fileBoxInput" name="file_ids" value="{$detail.file_ids}">
+					<input type="hidden" data-type="file" name="file_ids" value="{$detail.file_ids}">
 					{notempty name="$detail.file_ids"}
 					{volist name="$detail.fileArray" id="vo"}
-					<div class="layui-col-md4" id="fileItem{$vo.id}">
-						<div class="file-card">
-							<i class="file-icon iconfont icon-renwuguanli"></i>
-							<div class="file-title">{$vo.name}</div>
-							<div class="file-tool">
-								<a href="{$vo.filepath}" download="{$vo.name}" target="_blank" title="下载查看"><i class="iconfont icon-shujudaoru blue"></i></a>
-								<i class="btn-delete iconfont icon-shanchu red" data-id="{$vo.id}" title="删除"></i>
-							</div>
-						</div>
-					</div>
+					<div class="layui-col-md4" id="uploadImg{$vo.id}">{:file_card($vo)}</div>
 					{/volist}
 					{/notempty}
 				</div>

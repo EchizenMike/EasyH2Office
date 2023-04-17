@@ -186,6 +186,15 @@ class Income extends BaseController
 			->where(['i.inid'=>$id,'i.status'=>1])
 			->order('i.enter_time desc')
 			->select();
+		if($detail['file_ids'] !=''){
+			$fileArray = Db::name('File')->where('id','in',$detail['file_ids'])->select();
+			$detail['fileArray'] = $fileArray;
+		}
+		
+		if($detail['other_file_ids'] !=''){
+			$fileArrayOther = Db::name('File')->where('id','in',$detail['other_file_ids'])->select();
+			$detail['fileArrayOther'] = $fileArrayOther;
+		}
         View::assign('uid', $this->uid);
         View::assign('detail', $detail);
         return view();

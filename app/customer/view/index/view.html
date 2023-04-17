@@ -95,21 +95,12 @@ html{background-color:#fff;}
 	  <tr>
 		<td class="layui-td-gray">
 			<div class="layui-input-inline">相关附件</div>
-			{eq name="$detail.status" value="1" }<div class="layui-input-inline"><button type="button" class="layui-btn layui-btn-xs" id="upFile"><i class="layui-icon"></i></button></div>{/eq}
+			{eq name="$detail.status" value="1" }<div class="layui-input-inline"><button type="button" class="layui-btn layui-btn-xs" id="uploadBtn"><i class="layui-icon"></i></button></div>{/eq}
 		</td>
 		<td colspan="7" style="line-height:inherit">
-			<div id="fileList">
+			<div id="fileBox">
 			{volist name="$detail.file_array" id="vo"}
-			<div class="layui-col-md4" id="file_{$vo.id}">
-				<div class="file-card">
-					<i class="file-icon iconfont icon-renwuguanli"></i>
-					<div class="file-title">{$vo.name}</div>
-					<div class="file-tool">
-						<a href="{$vo.filepath}" download="{$vo.name}" title="下载查看" target="_blank"><i class="iconfont icon-shujudaoru blue"></i></a>
-						<i class="btn-delete iconfont icon-shanchu red" data-id="{$vo.id}" title="删除"></i>
-					</div>
-				</div>
-			</div>
+			<div class="layui-col-md4" id="file_{$vo.id}">{:file_card($vo)}</div>
 			{/volist}
 			</div>
 		</td>
@@ -184,9 +175,9 @@ html{background-color:#fff;}
 <script>
 const customer_id = '{$detail.id}';
 const customer_status = '{$detail.status}';
-const moduleInit = ['tool','employeepicker'];
+const moduleInit = ['tool','employeepicker','oaTool'];
 	function gouguInit() {
-		var form = layui.form,tool=layui.tool, upload = layui.upload,element = layui.element,employeepicker = layui.employeepicker;	
+		var form = layui.form,tool=layui.tool, upload = layui.upload,element = layui.element,oaTool = layui.oaTool;	
 		
 		trace();
 		element.on('tab(customer)', function(data){
@@ -202,54 +193,39 @@ const moduleInit = ['tool','employeepicker'];
 			}
 		});
 		
-		
-		//删除附件
-		$('#fileList').on('click', '.btn-delete', function () {
-			var _id = $(this).data('id');
-			layer.confirm('确定要删除该附件吗?', {
-				icon: 3,
-				title: '提示'
-			}, function(index) {
+		oaTool.addFile({
+			isSave:true,
+			type:1,
+			ajaxSave:function(res){
+				$.ajax({
+					url: "/customer/api/add_file",
+					type:'post',
+					data:{
+						'customer_id':customer_id,
+						'file_id':res.data.id,
+						'file_name':res.data.name
+					},
+					success: function (e) {
+						layer.msg(e.msg);
+						if (e.code == 0) {
+							setTimeout(function(){
+								location.reload();
+							},1000)							
+						}
+					}
+				})
+			},
+			ajaxDelete:function(file_id){
 				let callback = function (e) {
 					layer.msg(e.msg);
 					if (e.code == 0) {						
-						$('#file_' + _id).remove();
+						$('#file_' + file_id).remove();
 					}
 				}
-				tool.delete("/customer/api/delete_file", {id: _id}, callback);
-				layer.close(index);
-			});
-		})
-		//多附件上传
-		upload.render({
-			elem: '#upFile'
-			,url: "/api/index/upload"
-			,multiple: true
-			,accept: 'file' //普通文件
-    		,exts: 'png|jpg|gif|jpeg|doc|docx|ppt|pptx|xls|xlsx|pdf|txt|zip|rar|7z' //只允许上传文件格式
-			,done: function(res){
-				if (res.code == 0) {					
-					let callback = function (e) {
-						layer.msg(e.msg);
-						let temp = `<div class="layui-col-md4" id="file_${e.data}">
-								<div class="file-card">
-									<i class="file-icon iconfont icon-renwuguanli"></i>
-									<div class="file-title">${res.data.name}</div>
-									<div class="file-tool">
-										<a href="${res.data.filepath}" download="${res.data.name}" title="下载查看" target="_blank"><i class="iconfont icon-shujudaoru blue"></i></a>
-										<i class="btn-delete iconfont icon-shanchu red" data-id="${e.data}" title="删除"></i>
-									</div>
-								</div>
-							</div>`;
-						$('#fileList').append(temp);
-					}
-					tool.post("/customer/api/add_file", {'customer_id':customer_id,'file_id':res.data.id,'file_name':res.data.name}, callback);
-				}
-				else{
-					layer.msg(res.msg);
-				}
+				tool.delete("/customer/api/delete_file", {id: file_id}, callback);
 			}
-		});
+		})
+		
 	}
 
 </script>

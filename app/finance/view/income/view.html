@@ -91,24 +91,34 @@
 		{/if}
 		{notempty name="$detail.file_ids"}
 		<tr>
-			<td class="layui-td-gray">相关附件</td>
+			<td class="layui-td-gray">关联附件</td>
 			<td colspan="5" style="line-height:inherit">
 				<div class="layui-row">
 					{volist name="$detail.fileArray" id="vo"}
-					<div class="layui-col-md4">
-						<div class="file-card">
-							<i class="file-icon iconfont icon-renwuguanli"></i>
-							<div class="file-title">{$vo.name}</div>
-							<div class="file-tool">
-								<a href="{$vo.filepath}" download="{$vo.name}" target="_blank" title="下载查看"><i class="iconfont icon-shujudaoru blue"></i></a>
-							</div>
-						</div>
-					</div>
+					<div class="layui-col-md4" id="uploadImg{$vo.id}">{:file_card($vo,'view')}</div>
 					{/volist}
 				</div>
 			</td>
 		</tr>
 		{/notempty}
+		<tr>
+			<td class="layui-td-gray">			
+				<div class="layui-input-inline">其他附件</div>
+				<div class="layui-input-inline">
+					<button type="button" class="layui-btn layui-btn-xs" id="uploadBtn"><i class="layui-icon"></i></button>
+				</div>
+			</td>
+			<td colspan="5" style="line-height:inherit">
+				<div class="layui-row" id="fileBox">
+					<input type="hidden" data-type="file" name="other_file_ids" value="{$detail.other_file_ids}">
+					{notempty name="$detail.other_file_ids"}
+					{volist name="$detail.fileArrayOther" id="vo"}
+					<div class="layui-col-md4" id="uploadImg{$vo.id}">{:file_card($vo)}</div>
+					{/volist}
+					{/notempty}
+				</div>
+			</td>
+		</tr>
 	</table>
 	
 	<h3 class="py-3">到账信息</h3>
@@ -133,7 +143,7 @@
 			<tr>
 				<td class="layui-td-gray">到账记录</td>
 				<td colspan="5">
-					<table class="layui-table layui-table-min">
+					<table class="layui-table layui-table-min" style="margin:0">
 						<tr>
 							<th style="width:150px;">到账日期</th>
 							<th style="width:150px;">到帐金额(元)</th>
@@ -167,5 +177,43 @@
 <!-- /主体 -->
 
 <!-- 脚本 -->
-{block name="script"}{/block}
+{block name="script"}
+<script>
+const moduleInit = ['tool','oaTool'];
+function gouguInit() {
+	var form = layui.form,tool=layui.tool, oaTool = layui.oaTool;
+
+	oaTool.addFile({
+		isSave:true,
+		uidDelete:true,
+		ajaxSave:function(val){
+			$.ajax({
+				url: "/finance/api/open",
+				type:'post',
+				data:{
+					id:$('[name="id"]').val(),
+					other_file_ids:val
+				},
+				success: function (e) {
+					location.reload();
+				}
+			})
+		},
+		ajaxDelete:function(val){
+			$.ajax({
+				url: "/finance/api/open",
+				type:'post',
+				data:{
+					id:$('[name="id"]').val(),
+					other_file_ids:val
+				},
+				success: function (e) {
+					location.reload();
+				}
+			})
+		}
+	})
+}
+</script>
+{/block}
 <!-- /脚本 -->

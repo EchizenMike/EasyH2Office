@@ -38,7 +38,7 @@
 			<td class="layui-td-gray"><div class="layui-input-inline">附件</div> <div class="layui-input-inline"><button type="button" class="layui-btn layui-btn-xs" id="upFile"><i class="layui-icon"></i></button></div></td>
 			<td colspan="5">
 				<div class="layui-row" id="fileList">
-					<input type="hidden" name="file_ids" value="">
+					<input type="hidden" data-type="file" name="file_ids" value="">
 				</div>
 			</td>
 		</tr>
@@ -113,19 +113,10 @@
 			<td class="layui-td-gray"><div class="layui-input-inline">附件</div> <div class="layui-input-inline"><button type="button" class="layui-btn layui-btn-xs" id="upFile"><i class="layui-icon"></i></button></div></td>
 			<td colspan="5" style="line-height:inherit">
 				<div class="layui-row" id="fileList">
-					<input type="hidden" name="file_ids" value="{$detail.file_ids}">
+					<input type="hidden" name="file_ids" data-type="file" value="{$detail.file_ids}">
 					{notempty name="$detail.file_ids"}
 					{volist name="$detail.file_array" id="vo"}
-					<div class="layui-col-md4" id="uploadImg{$vo.id}">
-						<div class="file-card">
-							<i class="file-icon iconfont icon-renwuguanli"></i>
-							<div class="file-title">{$vo.name}</div>
-							<div class="file-tool">
-								<a href="{$vo.filepath}" download="{$vo.name}" target="_blank" title="下载查看"><i class="iconfont icon-shujudaoru blue"></i></a>
-								<i class="btn-delete iconfont icon-shanchu red" data-id="{$vo.id}" title="删除"></i>
-							</div>
-						</div>
-					</div>
+					<div class="layui-col-md4" id="uploadImg{$vo.id}">{:file_card($vo)}</div>
 					{/volist}
 					{/notempty}
 				</div>
@@ -146,27 +137,13 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
-// 查找指定的元素在数组中的位置
-Array.prototype.indexOf = function (val) {
-	for (var i = 0; i < this.length; i++) {
-		if (this[i] == val) {
-			return i;
-		}
-	}
-	return -1;
-};
-// 通过索引删除数组元素
-Array.prototype.remove = function (val) {
-	var index = this.indexOf(val);
-	if (index > -1) {
-		this.splice(index, 1);
-	}
-};
-
-	const moduleInit = ['tool','employeepicker','dtree'];
+	const moduleInit = ['tool','employeepicker','dtree','oaTool'];
 	function gouguInit() {
-		var form = layui.form,tool=layui.tool,table=layui.table,laydate = layui.laydate,employeepicker = layui.employeepicker,dtree = layui.dtree,upload = layui.upload;
-
+		var form = layui.form,tool=layui.tool,table=layui.table,laydate = layui.laydate,employeepicker = layui.employeepicker,dtree = layui.dtree,oaTool = layui.oaTool;
+		oaTool.addFile({
+			btn: 'upFile',
+			box: 'fileList'
+		});
 		//监听保存到草稿并发送
 		form.on('submit(webform)', function(data){
 			$.ajax({
@@ -342,48 +319,6 @@ Array.prototype.remove = function (val) {
 				}
 			})		
 		}
-		
-		$('#fileList').on('click', '.btn-delete', function () {
-			var _id = $(this).data('id');
-			var idsStr = $('#fileList input').val(),idsArray = [];
-			if (idsStr != '') {
-				idsArray = idsStr.split(",");
-			}
-			idsArray.remove(_id);
-			$('#fileList input').attr('value', idsArray.join(','));
-			$('#uploadImg' + _id).remove();
-		})
-		//多附件上传
-		upload.render({
-			elem: '#upFile'
-			,url: "/api/index/upload"
-			,multiple: true
-			,accept: 'file' //普通文件
-    		,exts: 'png|jpg|gif|jpeg|doc|docx|ppt|pptx|xls|xlsx|pdf|zip|rar|7z' //只允许上传文件格式
-			,done: function(res){
-				layer.msg(res.msg);
-				if (res.code == 0) {
-					//上传成功
-					var idsStr = $('#fileList input').val(),idsArray = [];
-					if (idsStr != '') {
-						idsArray = idsStr.split(",");
-					}
-					idsArray.push(res.data.id);
-					$('#fileList input').attr('value', idsArray.join(','));
-					let temp = `<div class="layui-col-md4" id="uploadImg${res.data.id}">
-							<div class="file-card">
-								<i class="file-icon iconfont icon-renwuguanli"></i>
-								<div class="file-title">${res.data.name}</div>
-								<div class="file-tool">
-									<a href="${res.data.filepath}" download="${res.data.name}" title="下载查看" target="_blank"><i class="iconfont icon-shujudaoru blue"></i></a>
-									<i class="btn-delete iconfont icon-shanchu red" data-id="${res.data.id}" title="删除"></i>
-								</div>
-							</div>
-						</div>`;
-					$('#fileList').append(temp);
-				}
-			}
-		});	
 		
 	}		
 	</script>

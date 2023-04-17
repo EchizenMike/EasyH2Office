@@ -352,7 +352,7 @@ class Index extends BaseController
             } else {
                 $mid = $res;
             }
-            add_log('save',$mid);
+            add_log('save',$mid,$basedata,'消息');
             return to_assign(0, '保存成功', $mid);
         } else {
             return to_assign(1, '操作失败');
@@ -407,7 +407,7 @@ class Index extends BaseController
             if ($res!==false) {
                 //草稿消息变成已发消息
                 MessageList::where(['id' => $msg['id']])->update(['is_draft' => '1', 'send_time' => time(), 'update_time' => time()]);
-                add_log('send',$msg['id']);
+                add_log('send',$msg['id'],[],'消息');
                 return to_assign(0, '发送成功');
             } else {
                 return to_assign(1, '发送失败');
@@ -460,14 +460,14 @@ class Index extends BaseController
         foreach ($list as $key => $v) {
             if (MessageList::update($v) !== false) {
                 if ($type = 1) {
-                    add_log('view', $v['id']);
+                    add_log('view', $v['id'],[],'消息');
                 } else if ($type = 2) {
-                    add_log('delete', $v['id']);
+                    add_log('delete', $v['id'],[],'消息');
                 } else if ($type = 3) {
-                    add_log('recovery', $v['id']);
+                    add_log('recovery', $v['id'],[],'消息');
                 }
                 else if ($type = 4) {
-                    add_log('clear', $v['id']);
+                    add_log('clear', $v['id'],[],'消息');
                 }
             }
         }

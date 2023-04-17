@@ -146,7 +146,7 @@ class Work extends BaseController
 				$person_name = Db::name('Admin')->where('status', 1)->where('id', 'in', $detail['type_user'])->column('name');
 				$detail['person_name'] = implode(",", $person_name);
 				$file_array = Db::name('WorkFileInterfix')
-					->field('wf.id,wf.wid,wf.file_id,f.name,f.filesize,f.filepath')
+					->field('wf.id,wf.wid,wf.file_id,f.name,f.filesize,f.filepath,f.fileext,f.create_time,f.admin_id')
 					->alias('wf')
 					->join('file f', 'wf.file_id = f.id', 'LEFT')
 					->order('wf.create_time desc')
@@ -193,7 +193,7 @@ class Work extends BaseController
         $detail['send_time'] = date('Y-m-d H:i:s',$detail['create_time']);    
         //当前消息的附件
         $file_array = Db::name('WorkFileInterfix')
-            ->field('wf.id,wf.wid,wf.file_id,f.name,f.filesize,f.filepath')
+            ->field('wf.id,wf.wid,wf.file_id,f.name,f.filesize,f.filepath,f.fileext,f.create_time,f.admin_id')
             ->alias('wf')
             ->join('file f', 'wf.file_id = f.id', 'LEFT')
             ->order('wf.create_time desc')

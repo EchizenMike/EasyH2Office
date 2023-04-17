@@ -44,7 +44,7 @@
 		<tr>
 		<td class="layui-td-gray">关联的项目</td>
 			<td colspan="5">
-				<input type="text" class="layui-input project-picker" name="ptname" placeholder="请选择需要关联的项目" readonly value="">		
+				<input type="text" class="layui-input picker-project" name="ptname" placeholder="请选择需要关联的项目" readonly value="">		
 				<input type="hidden" class="layui-input" name="ptid" value="0">		
 			</td>
 		</tr>
@@ -79,9 +79,9 @@
 		</tr>
 		<tr>
 			<td class="layui-td-gray"><div class="layui-input-inline">附件</div> <div class="layui-input-inline"><button type="button" class="layui-btn layui-btn-xs" id="upFile"><i class="layui-icon"></i></button></div></td>
-			<td colspan="5">
+			<td colspan="5" style="line-height:inherit">
 				<div class="layui-row" id="fileList">
-					<input type="hidden" name="file_ids" value="">
+					<input type="hidden" data-type="file" name="file_ids" value="">
 				</div>
 			</td>
 		</tr>
@@ -134,7 +134,7 @@
 		<tr>
 		<td class="layui-td-gray">关联的项目</td>
 			<td colspan="5">
-				<input type="text" class="layui-input project-picker" name="ptname" placeholder="请选择需要关联的项目" readonly value="{$expense.ptname}">		
+				<input type="text" class="layui-input picker-project" name="ptname" placeholder="请选择需要关联的项目" readonly value="{$expense.ptname}">		
 				<input type="hidden" class="layui-input" name="ptid" value="{$expense.ptid}">		
 			</td>
 		</tr>
@@ -171,21 +171,12 @@
 		</tr>
 		<tr>
 			<td class="layui-td-gray"><div class="layui-input-inline">附件</div> <div class="layui-input-inline"><button type="button" class="layui-btn layui-btn-xs" id="upFile"><i class="layui-icon"></i></button></div></td>
-			<td colspan="5">
+			<td colspan="5" style="line-height:inherit">
 				<div class="layui-row" id="fileList">
-					<input type="hidden" name="file_ids" value="{$expense.file_ids}">
+					<input type="hidden" name="file_ids" data-type="file" value="{$expense.file_ids}">
 					{notempty name="$expense.file_ids"}
 					{volist name="$expense.fileArray" id="vo"}
-					<div class="layui-col-md4" id="uploadImg{$vo.id}">
-						<div class="file-card">
-							<i class="file-icon iconfont icon-renwuguanli"></i>
-							<div class="file-title">{$vo.name}</div>
-							<div class="file-tool">
-								<a href="{$vo.filepath}" download="{$vo.name}" target="_blank" title="下载查看"><i class="iconfont icon-shujudaoru blue"></i></a>
-								<i class="btn-delete iconfont icon-shanchu red" data-id="{$vo.id}" title="删除"></i>
-							</div>
-						</div>
-					</div>
+					<div class="layui-col-md4" id="uploadImg{$vo.id}">{:file_card($vo)}</div>
 					{/volist}
 					{/notempty}
 				</div>
@@ -236,28 +227,14 @@
 
 <!-- 脚本 -->
 {block name="script"}
-	<script>
-// 查找指定的元素在数组中的位置
-Array.prototype.indexOf = function (val) {
-	for (var i = 0; i < this.length; i++) {
-		if (this[i] == val) {
-			return i;
-		}
-	}
-	return -1;
-};
-// 通过索引删除数组元素
-Array.prototype.remove = function (val) {
-	var index = this.indexOf(val);
-	if (index > -1) {
-		this.splice(index, 1);
-	}
-};
-
-const moduleInit = ['tool','employeepicker'];
+<script>
+	const moduleInit = ['tool','employeepicker','oaTool'];
 	function gouguInit() {
-		var form = layui.form,upload = layui.upload,tool=layui.tool,table=layui.table,employeepicker = layui.employeepicker,laydate = layui.laydate;	
-
+		var form = layui.form,upload = layui.upload,tool=layui.tool,table=layui.table,oaTool = layui.oaTool,laydate = layui.laydate;	
+		oaTool.addFile({
+			btn: 'upFile',
+			box: 'fileList'
+		});	
 		laydate.render({
 			elem: '#income_month',
 			type:'month',
@@ -314,60 +291,7 @@ const moduleInit = ['tool','employeepicker'];
 				that.parents(".more_interfix").remove();
 			}
 		});
-		
-		//选择关联项目	
-		$('.project-picker').on('click', function () {
-			selectProject();
-		});
-		var projectTable;
-		function selectProject() {
-			layer.open({
-				title: '选择项目',
-				area: ['600px', '580px'],
-				type: 1,
-				content: '<div class="picker-table">\
-					<form class="layui-form pb-2">\
-						<div class="layui-input-inline" style="width:480px;">\
-						<input type="text" name="keywords"  placeholder="项目名称" class="layui-input" autocomplete="off" />\
-						</div>\
-						<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="search_form">提交搜索</button>\
-				  	</form>\
-					<div id="projectTable"></div></div>',
-				success: function () {
-					projectTable = table.render({
-						elem: '#projectTable'
-						, url: '/project/api/get_project'
-						, page: true //开启分页
-						, limit: 10
-						, cols: [[
-							{ type: 'radio', title: '选择' }
-							, { field: 'id', width: 100, title: '编号', align: 'center' }
-							, { field: 'title', title: '项目名称' }
-						]]
-					});
-					//项目搜索提交
-					form.on('submit(search_form)', function (data) {
-						projectTable.reload({ where: { keywords: data.field.keywords }, page: { curr: 1 } });
-						return false;
-					});
-				},
-				btn: ['确定'],
-				yes: function () {
-					var checkStatus = table.checkStatus(projectTable.config.id);
-					var data = checkStatus.data;
-					if (data.length > 0) {
-						$('[name="ptname"]').val(data[0].title);
-						$('[name="ptid"]').val(data[0].id);
-						layer.closeAll();
-					}
-					else {
-						layer.msg('请先选择项目');
-						return false;
-					}
-				}
-			})
-		}
-		
+
 		//监听提交
 		form.on('submit(webform)', function(data){
 		  	var interfix = $('.more_interfix');
@@ -468,48 +392,6 @@ const moduleInit = ['tool','employeepicker'];
 				}
 			})
 		});
-		
-		$('#fileList').on('click', '.btn-delete', function () {
-			var _id = $(this).data('id');
-			var idsStr = $('#fileList input').val(),idsArray = [];
-			if (idsStr != '') {
-				idsArray = idsStr.split(",");
-			}
-			idsArray.remove(_id);
-			$('#fileList input').attr('value', idsArray.join(','));
-			$('#uploadImg' + _id).remove();
-		})
-		//多附件上传
-		upload.render({
-			elem: '#upFile'
-			,url: "/api/index/upload"
-			,multiple: true
-			,accept: 'file' //普通文件
-    		,exts: 'png|jpg|gif|jpeg|doc|docx|ppt|pptx|xls|xlsx|pdf|zip|rar|7z' //只允许上传文件格式
-			,done: function(res){
-				layer.msg(res.msg);
-				if (res.code == 0) {
-					//上传成功
-					var idsStr = $('#fileList input').val(),idsArray = [];
-					if (idsStr != '') {
-						idsArray = idsStr.split(",");
-					}
-					idsArray.push(res.data.id);
-					$('#fileList input').attr('value', idsArray.join(','));
-					let temp = `<div class="layui-col-md4" id="uploadImg${res.data.id}">
-							<div class="file-card">
-								<i class="file-icon iconfont icon-renwuguanli"></i>
-								<div class="file-title">${res.data.name}</div>
-								<div class="file-tool">
-									<a href="${res.data.filepath}" download="${res.data.name}" title="下载查看" target="_blank"><i class="iconfont icon-shujudaoru blue"></i></a>
-									<i class="btn-delete iconfont icon-shanchu red" data-id="${res.data.id}" title="删除"></i>
-								</div>
-							</div>
-						</div>`;
-					$('#fileList').append(temp);
-				}
-			}
-		});	
 	}		
 	</script>
 {/block}

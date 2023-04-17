@@ -109,26 +109,13 @@
 				<strong>项目附件</strong>
 			</div>
 			<div class="layui-col-md6" style="text-align:right">
-				<button type="button" class="layui-btn layui-btn-normal layui-btn-sm" id="fileBtn">上传附件</button>
+				<button type="button" class="layui-btn layui-btn-normal layui-btn-sm" id="uploadBtn">上传附件</button>
 			</div>
 		</div>
 	</div>
-	<div class="layui-row p-2" id="fileList">
+	<div class="layui-row p-2" id="fileBox">
 		{volist name="file_array" id="vo"}
-			<div class="layui-col-md4">
-				<div class="file-card">
-					<i class="file-icon iconfont icon-renwuguanli"></i>
-					<div class="file-title" title="上传人：{$vo.admin_name}">
-						{$vo.name}
-					</div>
-					<div class="file-tool">
-						<a href="{$vo.filepath}" download="{$vo.name}" data-id="{$vo.id}" target="_blank" title="大小：{$vo.filesize/1048576|round=2}MB">
-							<i class="iconfont icon-shujudaoru blue"></i>
-						</a>
-						<i class="btn-delete iconfont icon-shanchu red" data-id="{$vo.id}"></i>
-					</div>
-				</div>
-			</div>
+			<div class="layui-col-md4" id="fileItem{$vo.id}">{:file_card($vo)}</div>
 		{/volist}
 		{empty name="$file_array" }
 		<div class="layui-data-none">暂无附件</div>
@@ -262,7 +249,7 @@
 </div>
 <script>
 function overview(){
-	let form = layui.form,tool = layui.tool,table = layui.table, comment = layui.oaComment, edit = layui.oaEdit,upload = layui.upload;
+	let form = layui.form,tool = layui.tool,table = layui.table, comment = layui.oaComment, edit = layui.oaEdit,oaTool = layui.oaTool;
 	$('.hover-edit').hover(function () {
 		$(this).addClass('hover-on');
 	}, function () {
@@ -428,48 +415,28 @@ function overview(){
 		}
 	});
 
-	upload.render({
-		elem: '#fileBtn'
-		, url: '/api/index/upload'
-		, accept: 'file' //普通文件
-		, exts: 'jpeg|jpg|png|gif|doc|docx|ppt|pptx|xls|xlsx|pdf|zip|rar|7z' //只允许上传文件
-		, before: function (obj) {
-			layer.msg('上传中...', { time: 3600000 });
-		}
-		, done: function (res, index, upload) {
+	oaTool.addFile({
+		type:1,
+		isSave:true,
+		ajaxDelete:function(file_id){
+			let callback = function (e) {
+				layer.msg(e.msg);
+				if (e.code == 0) {						
+					$('#fileItem' + file_id).remove();
+				}
+			}
+			tool.delete("/project/api/delete_file", {id: file_id}, callback);			
+		},
+		ajaxSave:function(res){
 			let callback = function (e) {
 				layer.msg('上传成功');
 				setTimeout(function(){
 					location.reload();
 				},2000)	
 			}
-			let postData = { 'topic_id': project_id, 'file_id': res.data.id, 'file_name': res.data.name, 'module': 'project' };
-			if(res.code>0){
-				layer.msg(res.msg);
-			}
-			else{
-				tool.post("/project/api/add_file", postData, callback);
-			}
-		}
-		, error: function (index, upload) {
-			layer.msg('上传失败');
+			tool.post("/project/api/add_file", { 'topic_id': project_id, 'file_id': res.data.id, 'file_name': res.data.name, 'module': 'project' }, callback);
 		}
 	});
-
-	$('#fileList').on('click', '.btn-delete', function () {
-		let id = $(this).data('id');
-		layer.confirm('确定要删除该附件吗?', { icon: 3, title: '提示' }, function (index) {
-			let callback = function (e) {
-				layer.closeAll();
-				layer.msg(e.msg);
-				setTimeout(function(){
-					location.reload();
-				},2000)					
-			}
-			let postData = { "id": id };
-			tool.delete("/project/api/delete_file", postData, callback);
-		});
-	})
 
 	$('#linkBtn').on('click', function () {
 		comment.addLink(0, project_id, 'project', '', '');

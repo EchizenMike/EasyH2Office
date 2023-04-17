@@ -427,6 +427,57 @@ function hidetel($phone)
 	}
 }
 
+/**
+ * @Method: 文件格式大小
+ * @param[type] $file_size [文件大小]
+ */
+function to_size($file_size){
+	$file_size = $file_size-1;
+	if ($file_size >= 1099511627776){
+		$show_filesize = number_format(($file_size / 1099511627776),2) . " TB";
+	}
+	elseif ($file_size >= 1073741824) {
+		$show_filesize = number_format(($file_size / 1073741824),2) . " GB";
+	}
+	elseif ($file_size >= 1048576) {
+		$show_filesize = number_format(($file_size / 1048576),2) . " MB";
+	}
+	elseif ($file_size >= 1024) {
+		$show_filesize = number_format(($file_size / 1024),2) . " KB";
+	}
+	elseif ($file_size > 0) {
+		$show_filesize = $file_size . " b";
+	}
+	elseif ($file_size == 0 || $file_size == -1) {
+		$show_filesize = "0 b";
+	}
+	return $show_filesize;
+}
+
+//格式化附件展示
+function file_card($file,$view=''){
+	$image=['jpg','jpeg','png','gif'];
+	$type_icon = 'icon-sucaiziyuan';
+	$view_btn = '<a class="blue" href="'.$file['filepath'].'" download="'.$file['name'].'" target="_blank" title="下载查看"><i class="iconfont icon-tuiguangshezhi"></i></a>';
+	if($file['fileext'] == 'pdf'){
+		$type_icon = 'icon-lunwenguanli';
+		$view_btn = '<span class="file-view-pdf blue" data-href="'.$file['filepath'].'" title="在线查看"><i class="iconfont icon-yuejuan"></i></span>';
+	}
+	if(in_array($file['fileext'], $image)){
+		$type_icon = 'icon-sucaiguanli';
+		$view_btn = '<span class="file-view-img blue" data-href="'.$file['filepath'].'" title="在线查看"><i class="iconfont icon-tupianguanli"></i></span>';
+	}
+	$item = '<div class="file-card file-'.$view.'" id="fileItem'.$file['id'].'">
+		<i class="file-icon iconfont '.$type_icon.'"></i>
+		<div class="file-info">
+			<div class="file-title" title="'.$file['name'].'">'.$file['name'].'</div>
+			<div class="file-ops">'.to_size($file['filesize']).'，'.date('Y-m-d H:i',$file['create_time']).'</div>
+		</div>
+		<div class="file-tool">'.$view_btn.'<span class="btn-delete red" data-id="'.$file['id'].'" data-uid="'.$file['admin_id'].'" title="删除"><i class="iconfont icon-shanchu"></i></span></div>
+	</div>';
+	return $item;
+}
+
 //读取报销类型
 function get_expense_cate()
 {
@@ -481,6 +532,17 @@ function get_work_cate()
 {
     $work = Db::name('WorkCate')->where(['status' => 1])->select()->toArray();
     return $work;
+}
+
+//读取所属地区
+function get_region_name($id){
+    $region = Db::name('city')->where(['id'=>$id])->find();
+	if(empty($region)){
+		return '';
+	}
+	else{
+		return $region['name'];
+	}
 }
 
 /**
@@ -777,7 +839,7 @@ function send_email($to, $subject = '', $content = '')
  * $prefix前缀
  */
 function get_codeno($prefix=1){
-    $no    =   $prefix . date('ymdHis') . rand(10,99);
+    $no    =   $prefix . date('YmdHis') . rand(10,99);
     return $no;
 }
 /**
