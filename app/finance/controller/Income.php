@@ -155,6 +155,11 @@ class Income extends BaseController
 				$fileArray = Db::name('File')->where('id','in',$detail['file_ids'])->select();
 				$detail['fileArray'] = $fileArray;
 			}
+			
+			if($detail['other_file_ids'] !=''){
+				$fileArrayOther = Db::name('File')->where('id','in',$detail['other_file_ids'])->select();
+				$detail['fileArrayOther'] = $fileArrayOther;
+			}
 			$detail['not_income'] =  ($detail['amount']*100 - $detail['enter_amount']*100)/100;
 			//已到账的记录
 			$detail['income'] = InvoiceIncome::field('i.*,a.name as admin')
