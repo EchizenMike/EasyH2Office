@@ -144,6 +144,7 @@
 						,url: '/api/import/import_admin'
 						,auto: false
 						,accept: 'file' //普通文件
+						,acceptMime: 'application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' // 此处设置上传的文件格式
 						,exts: 'xls|xlsx' //只允许上传文件格式
 						,bindAction: '#uploadAjax'
 						,choose: function(obj){
