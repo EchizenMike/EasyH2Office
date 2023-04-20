@@ -36,7 +36,7 @@ function get_system_config($name, $key = '')
         $config = get_cache('system_config' . $name);
     } else {
         $conf = Db::name('config')->where('name', $name)->find();
-        if ($conf['content']) {
+        if (isset($conf['content'])) {
             $config = unserialize($conf['content']);
         }
         set_cache('system_config' . $name, $config);
