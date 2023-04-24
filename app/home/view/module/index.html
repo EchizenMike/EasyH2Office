@@ -52,7 +52,7 @@
 			</td>
 			<td align="center">
 				<div class="layui-btn-group">
-					<a class="layui-btn layui-btn-danger layui-btn-xs delete" data-name="{$vo.name}">卸载</a>
+					<a class="layui-btn layui-btn-danger layui-btn-xs delete" data-name="{$vo.name}" data-type="{$vo.type}">卸载</a>
 				</div>
 			</td>
 			{/eq}
@@ -88,6 +88,11 @@
 		});
 		$('body').on('click', '.delete', function () {
 			let name = $(this).data('name');
+			let type = $(this).data('type');
+			if(type==1){
+				layer.msg('系统模块，不支持卸载');
+				return false;
+			}
 			layer.confirm('确定要卸载该模块吗?', { icon: 3, title: '提示' }, function (index) {
 				let callback = function (e) {
 					layer.msg(e.msg);

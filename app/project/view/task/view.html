@@ -93,12 +93,10 @@
 					</td>						
 				</tr>
 			</table>
-			{notempty name="$detail.content"}
 			<div class="content hover-edit">
-				<h3 class="py-4">任务描述</h3>
+				<h3 class="py-4">任务描述<i class="iconfont icon-wodedianping" title="编辑" data-name="content"></i></h3>
 				<div class="content-content" id="content_{$detail.id}" data-val="{$detail.content}">{$detail.content|raw}</div>
 			</div>
-			{/notempty}
 			<div class="detail-file">
 				<h3 class="py-4">文件附件 <button type="button" class="layui-btn layui-btn-normal layui-btn-xs" id="uploadBtn" style="font-weight:400;">+ 上传</button></h3>
 				<div class="layui-row pb-2" id="fileBox">
