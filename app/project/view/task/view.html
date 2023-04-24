@@ -3,6 +3,11 @@
 <style>
 .hover-view i,.hover-edit i{margin-left:4px; font-weight:800; cursor:pointer; opacity:0}
 .hover-edit.hover-on i{opacity:1}
+.layui-tab-title .layui-this{background-color:#fff;}
+.layui-tab-card,.layui-card{box-shadow:0 0 0 0 rgb(0 0 0 / 10%); border-radius:0; border-top:none;}
+.layui-card-tips {color: #969696;}
+.layui-card-value {padding: 4px 0 16px;font-size: 18px;color: #1E9FFF;}
+
 .content-content{line-height:1.6;}
 .content-content p{margin-bottom:6px;}
 .content-content img{max-width:100%; padding:8px; box-sizing: border-box;}
@@ -37,8 +42,8 @@
 			{/eq}
 		</div>
 	</div>
-	<div class="layui-row border-b">
-		<div class="layui-col-md9 p-3 border-r">
+	<div class="layui-row border-b" style="background-color:#fff;">
+		<div class="layui-col-md9 px-3 py-1 border-r">
 			<table class="layui-table layui-table-form">
 				<tr>
 					<td class="layui-td-gray">任务负责人</td>
@@ -88,14 +93,20 @@
 					</td>						
 				</tr>
 			</table>
+			{notempty name="$detail.content"}
 			<div class="content hover-edit">
-				<h3 class="py-4">任务描述<i class="iconfont icon-wodedianping" title="编辑" data-name="content"></i></h3>
-				<div class="content-content" id="content_{$detail.id}" data-val="{$detail.content}">
-					{$detail.content|raw}</div>
+				<h3 class="py-4">任务描述</h3>
+				<div class="content-content" id="content_{$detail.id}" data-val="{$detail.content}">{$detail.content|raw}</div>
 			</div>
+			{/notempty}
 			<div class="detail-file">
-				<h3 class="py-4">文件附件 <button type="button" class="layui-btn layui-btn-normal layui-btn-sm" id="uploadBtn">选择文件并上传</button></h3>
-				<div class="layui-row" id="fileBox">
+				<h3 class="py-4">文件附件 <button type="button" class="layui-btn layui-btn-normal layui-btn-xs" id="uploadBtn" style="font-weight:400;">+ 上传</button></h3>
+				<div class="layui-row pb-2" id="fileBox">
+					{empty name="$file_array"}
+					<div style="line-height:1.5">
+						<div class="layui-data-none">暂无附件文件</div>
+					</div>
+					{/empty}
 					{volist name="$file_array" id="vo"}
 					<div class="layui-col-md6" id="uploadImg{$vo.id}">{:file_card($vo)}</div>
 					{/volist}
@@ -120,12 +131,13 @@
 			</div>
 		</div>
 	</div>
-	<div class="layui-tab layui-tab-brief px-3" lay-filter="docDemoTabBrief">
+
+	<div class="layui-tab layui-tab-card" style="margin:0;" lay-filter="docDemoTabBrief">
 		<ul class="layui-tab-title">
 			<li class="layui-this">员工评论({$detail.comments})</li>
 			<li>操作日志({$detail.logs})</li>
 		</ul>
-		<div class="layui-tab-content p-0">
+		<div class="layui-tab-content py-1 px-3" style="background-color:#fff;">
 			<div class="layui-tab-item comment-list layui-show">
 				<div class="comment-input my-2">
 					<input type="text" id="commentInput" readonly placeholder="发表一下你的看法" class="layui-input" value="">
@@ -204,14 +216,14 @@
 					layer.msg(e.msg);
 					parent.layui.taskTable.reload();
 					if (e.code == 0) {
-						tool.sideClose(1000);
+						parent.layui.tool.close(1000);
 					}
 				}
 				let postData = { "id": detail_id };
 				tool.delete("/project/task/delete", postData, callback);
 			});
 		})
-		
+
 		oaTool.addFile({
 			type:1,
 			isSave:true,
@@ -233,7 +245,6 @@
 				tool.post("/project/api/add_file", {'topic_id': detail_id, 'file_id': res.data.id, 'file_name': res.data.name, 'module': 'task' }, callback);
 			}
 		});
-
 		//工作记录相关
 		work.load(detail_id);
 		$('.add-schedule').on('click', function () {

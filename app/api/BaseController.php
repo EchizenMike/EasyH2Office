@@ -76,6 +76,7 @@ abstract class BaseController
         $this->controller = strtolower($this->request->controller());
         $this->action = strtolower($this->request->action());
         $this->uid = 0;
+        $this->did = 0;
         $this->jwt_conf = get_system_config('token');
         // 控制器初始化
         $this->initialize();
@@ -102,6 +103,7 @@ abstract class BaseController
 		else{
             $this->uid = Session::get($session_admin);
 			$login_admin = Db::name('Admin')->where(['id' => $this->uid])->find();
+			$this->did = $login_admin['did'];
 			View::assign('login_admin', $login_admin);	
 		}
     }

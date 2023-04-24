@@ -17,23 +17,6 @@ use think\facade\View;
 
 class Cate extends BaseController
 {	
-
-	public function conf()
-    {
-		$param = get_params();
-        if (request()->isPost()) {
-			$param['update_time'] = time();
-            $res = Db::name('DataAuth')->strict(false)->field(true)->update($param);
-            return to_assign();
-        } else {
-			$detail = Db::name('DataAuth')->where('name','contract_admin')->find();
-			$uids = Db::name('Admin')->where('id', 'in', $detail['uids'])->column('name');
-            $detail['unames'] = implode(',', $uids);
-			View::assign('detail', $detail);
-            return view();
-        }
-    }
-
 	//类别
     public function cate()
     {

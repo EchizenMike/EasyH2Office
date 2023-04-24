@@ -2,17 +2,12 @@
 <!-- 主体 -->
 {block name="body"}
 <form class="layui-form p-4">
-	<h3 class="pb-3">权限配置</h3>
+	<h3 class="pb-1">权限配置</h3>
 	<table class="layui-table layui-table-form">
 		<tr>
 			<td colspan="4" class="red" style="line-height:1.8">
-				<p><strong>财务模块使用说明：</strong></p>
-				<p><strong>1、设置报销打款管理员，可设置多个</strong></p>
-				<p style="text-indent:1.6em">拥有报销打款管理员权限的员工可以设置报销的打款情况。</p>
-				<p><strong>2、设置发票管理员，可设置多个</strong></p>
-				<p style="text-indent:1.6em">拥有发票管理员权限的员工可以开具、废弃发票。</p>
-				<p><strong>3、设置到账管理员，可设置多个</strong></p>
-				<p style="text-indent:1.6em">拥有到账管理员权限的员工可以设置发票的到账情况。</p>
+				<p><strong>项目模块使用说明：</strong></p>
+				<p>{$detail.desc}</p>
 			</td>
 		</tr>
 		<tr>
@@ -34,19 +29,19 @@
 		<tr>
 			<td class="layui-td-gray-2">发票管理员</td>
 			<td colspan="3">
-			<input type="text" name="conf_unames_1" value="{$detail.conf_unames_1}" readonly placeholder="请选择发票管理员" autocomplete="off" class="layui-input picker-more">
+			<input type="text" name="conf_1_str" value="{$detail.conf_1_str}" readonly placeholder="请选择发票管理员" autocomplete="off" class="layui-input picker-more">
 			<input type="hidden" name="conf_1" value="{$detail.conf_1}">
 			</td>
 		</tr>
 		<tr>
 			<td class="layui-td-gray-2">到账管理员</td>
 			<td colspan="3">
-			<input type="text" name="conf_unames_2" value="{$detail.conf_unames_2}" readonly placeholder="请选择到账管理员" autocomplete="off" class="layui-input picker-more">
+			<input type="text" name="conf_2_str" value="{$detail.conf_2_str}" readonly placeholder="请选择到账管理员" autocomplete="off" class="layui-input picker-more">
 			<input type="hidden" name="conf_2" value="{$detail.conf_2}">
 			</td>
 		</tr>
 	</table>
-	<div class="py-3">
+	<div class="pt-1">
 		<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform">立即提交</button>
 		<button type="reset" class="layui-btn layui-btn-primary">重置</button>
 	</div>
@@ -65,8 +60,11 @@
 		form.on('submit(webform)', function (data) {
 			let callback = function (e) {
 				layer.msg(e.msg);
+				if(e.code==0){
+					tool.sideClose(1000);
+				}
 			}
-			tool.post("/finance/expense/conf", data.field, callback);
+			tool.post("/home/dataauth/edit", data.field, callback);
 			return false;
 		});
 	}

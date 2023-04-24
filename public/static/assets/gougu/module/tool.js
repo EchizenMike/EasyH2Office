@@ -282,6 +282,20 @@ layui.define([], function (exports) {
 		}
 	};
 	
+	$('body').on('click', '.tool-time', function () {
+		let that = $(this);
+        let type = that.data('type');
+		if (typeof(type) == "undefined" || type == '') {
+			type = 'date';
+		}
+		layui.laydate.render({ 
+			elem: that,
+			show: true,
+			type: type
+		});
+		return false;
+	});
+	
 	$('body').on('click', '.tab-a', function () {
         let id = $(this).data('id');
 		let url = $(this).data('href');

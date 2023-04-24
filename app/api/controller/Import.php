@@ -79,7 +79,6 @@ class Import extends BaseController
 			$path = get_config('filesystem.disks.public.url');
             // 读取文件，tp6默认上传的文件，在runtime的相应目录下，可根据实际情况自己更改
             $objPHPExcel = $objReader->load('.'.$path . '/' .$savename);
-            //$objPHPExcel = $objReader->load('./storage/202209/d11544d20b3ca1c1a5f8ce799c3b2433.xlsx');
             $sheet = $objPHPExcel->getSheet(0);   //excel中的第一张sheet
             $highestRow = $sheet->getHighestRow();       // 取得总行数
             $highestColumn = $sheet->getHighestColumn();   // 取得总列数
@@ -112,7 +111,6 @@ class Import extends BaseController
 				$type = arraySearch($type_array,$objPHPExcel->getActiveSheet()->getCell("G" . $j)->getValue());
 				$pinyinname = $pinyin->name($name,PINYIN_UMLAUT_V);
 				$username = implode('', $pinyinname);
-				
 				$mobile = $objPHPExcel->getActiveSheet()->getCell("B" . $j)->getValue();
 				$email = $objPHPExcel->getActiveSheet()->getCell("C" . $j)->getValue();
 				$file_check['mobile'] = $mobile;
@@ -124,7 +122,7 @@ class Import extends BaseController
 					'email' => 'email',
 				]);
 				if (!$validate_mobile->check($file_check)) {
-					return to_assign(1, '第'.($j - 2).'行的手机号码'.$validate->getError());
+					return to_assign(1, '第'.($j - 2).'行的手机号码的格式错误');
 				}
 				else{
 					if(in_array($mobile,$mobile_array)){
@@ -134,10 +132,9 @@ class Import extends BaseController
 						array_push($mobile_array,$mobile);
 					}
 				}
-				
 				if(!empty($email)){
 					if (!$validate_email->check($file_check)) {
-						return to_assign(1, '第'.($j - 2).'行的电子邮箱'.$validate->getError());
+						return to_assign(1, '第'.($j - 2).'行的电子邮箱的格式错误');
 					}
 					else{
 						if(in_array($email,$email_array)){
@@ -150,10 +147,6 @@ class Import extends BaseController
 				}
 				else{
 					$email='';
-				}
-				 
-				if(empty($department)){
-					return to_assign(1, '第'.($j - 2).'行的所在部门错误');
 				}
 				if(empty($department)){
 					return to_assign(1, '第'.($j - 2).'行的所在部门错误');
@@ -195,8 +188,11 @@ class Import extends BaseController
 	public function import_customer(){
         // 获取表单上传文件
         $file[]= request()->file('file');
-		if($this->uid>1){
-			return to_assign(1,'该操作只能是超级管理员有权限操作');
+		
+		$param = get_params();
+		$type = 'sea';
+		if(isset($param['type'])){
+			$type = $param['type'];
 		}
         try {
             // 验证文件大小，名称等是否正确
@@ -317,6 +313,12 @@ class Import extends BaseController
 				if(empty($market)){
 					$market='';
 				}
+				$belong_uid = 0;
+				$belong_did = 0;
+				if($type != 'sea'){
+					$belong_uid = $this->uid;
+					$belong_did = $this->did;
+				}
                 $data[$j - 3] = [		
                     'name' => $name,
                     'source_id' => $source_id,
@@ -331,6 +333,8 @@ class Import extends BaseController
                     'content' => $content,
 					'market' => $market,
                     'admin_id' => $this->uid,
+                    'belong_uid' => $belong_uid,
+                    'belong_did' => $belong_did,
                     'c_mobile' => $c_mobile,
                     'c_name' => $c_name,
                     'create_time' => time()

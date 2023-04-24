@@ -17,23 +17,7 @@ use think\facade\Db;
 use think\facade\View;
 
 class Index extends BaseController
-{
-	public function conf()
-    {
-		$param = get_params();
-        if (request()->isPost()) {
-			$param['update_time'] = time();
-            $res = Db::name('DataAuth')->strict(false)->field(true)->update($param);
-            return to_assign();
-        } else {
-			$detail = Db::name('DataAuth')->where('name','project_admin')->find();
-			$uids = Db::name('Admin')->where('id', 'in', $detail['uids'])->column('name');
-            $detail['unames'] = implode(',', $uids);
-			View::assign('detail', $detail);
-            return view();
-        }
-    }
-	
+{	
     public function index()
     {
         if (request()->isAjax()) {
@@ -102,6 +86,7 @@ class Index extends BaseController
                 $param['end_time'] = strtotime(urldecode($param['end_time']));
             }
 			
+			$param['status'] = 2;
 			$param['step_sort'] = 0;
 			$flowNameData = isset($param['flowName']) ? $param['flowName'] : '';
 			$flowUidsData = isset($param['chargeIds']) ? $param['chargeIds'] : '';

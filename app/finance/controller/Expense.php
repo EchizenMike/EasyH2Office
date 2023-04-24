@@ -18,26 +18,6 @@ use think\facade\View;
 
 class Expense extends BaseController
 {
-	public function conf()
-    {
-		$param = get_params();
-        if (request()->isPost()) {
-			$param['update_time'] = time();
-            $res = Db::name('DataAuth')->strict(false)->field(true)->update($param);
-            return to_assign();
-        } else {
-			$detail = Db::name('DataAuth')->where('name','finance_admin')->find();
-			$unames = Db::name('Admin')->where('id', 'in', $detail['uids'])->column('name');
-            $detail['unames'] = implode(',', $unames);
-			$conf_unames_1 = Db::name('Admin')->where('id', 'in', $detail['conf_1'])->column('name');
-            $detail['conf_unames_1'] = implode(',', $conf_unames_1);
-			$conf_unames_2 = Db::name('Admin')->where('id', 'in', $detail['conf_2'])->column('name');
-            $detail['conf_unames_2'] = implode(',', $conf_unames_2);
-			View::assign('detail', $detail);
-            return view();
-        }
-    }
-
     public function index()
     {
         if (request()->isAjax()) {

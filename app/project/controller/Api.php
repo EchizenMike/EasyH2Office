@@ -597,7 +597,7 @@ class Api extends BaseController
 				Db::name('StepRecord')->where(['action_id'=>$id,'type'=>2,'delete_time'=>0])->update(['delete_time'=>time()]);
 				$res = Db::name('Step')->strict(false)->field(true)->insertAll($flow);	
 				if ($res) {
-					$res = Db::name('Project')->where('id', $id)->strict(false)->field(true)->update(['step_sort'=>0,'update_time'=>time()]);
+					$res = Db::name('Project')->where('id', $id)->strict(false)->field(true)->update(['step_sort'=>0,'status'=>2,'update_time'=>time()]);
 					add_log('reset', $param['id'], $param,'项目阶段');
 				}
 				return to_assign();
