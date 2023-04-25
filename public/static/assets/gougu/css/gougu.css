@@ -13,16 +13,8 @@
 .layui-table-box{background-color:#fff;}
 .layui-table-page{background-color:#fff;border-bottom:1px solid #f1f1f1;}
 .layui-table-tool{box-shadow: 0 0 0 rgb(0 0 0 / 1%);}
-.layui-btn{background-color: #47B347;}
-.layui-btn-normal{background-color: #3c9cff;}
-.layui-btn-warm{background-color: #ff9900;}
-.layui-btn-danger{background-color: #FF5722;}
-.layui-btn-primary{background-color: #f5f5fa;}
-.layui-btn-primary:hover{border-color:#3c9cff;color:#3c9cff}
-.layui-btn-group .layui-btn-primary:hover{color:#3c9cff}
 .layui-btn-reset {height: 38px;background-color: #fff; line-height: 38px; border: 1px solid transparent;padding: 0 12px; white-space: nowrap; color: #767a82;font-size: 14px;cursor: pointer;vertical-align: middle;}
 .layui-btn-reset:hover{color: #333333;}
-.layui-laypage .layui-laypage-curr .layui-laypage-em{background-color: #47B347;}
 
 .layui-tab-brief>.layui-tab-title .layui-this{color:#187FDD}
 .layui-tab-brief>.layui-tab-more li.layui-this:after, .layui-tab-brief>.layui-tab-title .layui-this:after{border-color:#187FDD}
@@ -158,7 +150,7 @@ a.tab-a:hover,a:hover,a.open-a:hover,a.link-a:hover,a.right-a:hover{color:#187FD
 .border-r{border-right:1px solid #eee; box-sizing:border-box}
 
 .layui-bg-0{background-color:#648A8D !important;}/*灰青*/
-.layui-bg-1,.layui-bg-green{background-color:#47B347 !important;}/*亮绿*/
+.layui-bg-1,.layui-bg-green{background-color:#16b777 !important;}/*亮绿*/
 .layui-bg-2{background-color:#187FDD !important;}/*亮蓝*/
 .layui-bg-3{background-color:#FEC939 !important;}/*亮黄*/
 .layui-bg-4{background-color:#FD6206 !important;}/*亮橙*/
@@ -169,7 +161,7 @@ a.tab-a:hover,a:hover,a.open-a:hover,a.link-a:hover,a.right-a:hover{color:#187FD
 .layui-bg-9{background-color:#969696 !important;}/*灰黑*/
 
 .layui-color-0{color:#648A8D !important;}/*灰青*/
-.layui-color-1{color:#47B347 !important;}/*亮绿*/
+.layui-color-1{color:#16b777 !important;}/*亮绿*/
 .layui-color-2{color:#187FDD !important;}/*亮蓝*/
 .layui-color-3{color:#FEC939 !important;}/*亮黄*/
 .layui-color-4{color:#FD6206 !important;}/*亮橙*/
@@ -191,7 +183,7 @@ a.tab-a:hover,a:hover,a.open-a:hover,a.link-a:hover,a.right-a:hover{color:#187FD
 .yellow-disabled{color:#f9d39b;}
 .yellow-light{color:#fdf6ec;}
 
-.green{color:#47B347;}
+.green{color:#16b777;}
 .green-dark{color:#53c21d;}
 .green-disabled{color:#a9e08f;}
 .green-light{color:#f5fff0;}
@@ -262,7 +254,8 @@ div.layui-table-main::-webkit-scrollbar-thumb:active{background-color:rgba(0,0,0
 }
 
 /*gg-DIY*/
-.gg-form-bar{padding:12px; background-color:#fff;}
+.gg-form-bar{padding:12px 12px 0; background-color:#fff;}
+.gg-form-bar .layui-input-inline{margin-bottom:12px;}
 .gg-tab-bar{background-color:#fff;}
 .gg-tab{text-align: left!important;}
 .gg-tab-title{position: relative;left: 0; height: 40px; white-space: nowrap; font-size: 0;}
