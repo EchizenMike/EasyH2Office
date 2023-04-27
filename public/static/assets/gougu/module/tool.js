@@ -9,47 +9,37 @@ layui.define([], function (exports) {
 				return false;
 			}
 			that.loading = true;
-			var countWidth = window.innerWidth-(window.innerWidth*0.5)+456;
+			sideWidth = '80%';
 			if(window.innerWidth<=1000){
-				countWidth = 750;
+				sideWidth = '92%';
 			}
-			if (width && width > 0) {
-				sideWidth = width + 'px';
-			}
-			else{
-				sideWidth = countWidth + 'px';
+			if(window.innerWidth>1000 && window.innerWidth<=1440){
+				sideWidth = '88%';
 			}
 			layer.open({
 				type: 2,
-				title: '',
-				offset: ['0', '100%'],
-				skin: 'layui-anim layui-anim-rl layui-layer-admin-right',
+				title: false,
+				offset: 'r',
+				anim: 'slideLeft',
 				closeBtn: 0,
 				content: url,
 				area: [sideWidth, '100%'],
-				success: function (obj, index) {
-						var btn = '<div data-index="'+index+'" class="express-close" title="关闭">关闭</div>';
-						obj.append(btn);
-						$('body').addClass('right-open');
-						that.loading = false;
-						obj.on('click','.express-close', function () {
-							let op_width = obj.outerWidth();
-							obj.animate({ left: '+=' + op_width + 'px' }, 200, 'linear', function () {
-								$('body').removeClass('right-open');
-								layer.close(index);
-								if (layui.pageTable) {
-									layui.pageTable.resize();
-								}
-							})
-						})
-						$(window).resize(function () {
-							var resizeWidth = window.innerWidth-(window.innerWidth*0.5)+456;
-							if(window.innerWidth<=1000){
-								resizeWidth = 750;
-							}
-							obj.width(resizeWidth);
-						})
+				skin:'layui-layer-gougu-admin',
+				end: function(){
+					$('body').removeClass('right-open');
+					if (layui.pageTable) {
+						layui.pageTable.resize();
 					}
+				},
+				success: function (obj, index) {
+					var btn = '<div data-index="'+index+'" class="express-close" title="关闭">关闭</div>';
+					obj.append(btn);
+					$('body').addClass('right-open');
+					that.loading = false;
+					obj.on('click','.express-close', function () {					
+						layer.close(index);
+					})
+				}
 			})
 		},
 		//右侧ajax请求的方式打开页面参考勾股DEV
@@ -281,7 +271,7 @@ layui.define([], function (exports) {
 			}			
 		}
 	};
-	
+	//时间选择快捷操作
 	$('body').on('click', '.tool-time', function () {
 		let that = $(this);
         let type = that.data('type');
@@ -294,6 +284,17 @@ layui.define([], function (exports) {
 			type: type
 		});
 		return false;
+	});
+	
+	//搜索表单重置快捷操作
+	$('body').on('click', '[lay-filter="reset"]', function () {
+		let that = $(this);
+        let prev = that.prev();
+		if (typeof(prev) != "undefined") {
+			setTimeout(function () {
+				prev.click();
+			}, 10)
+		}
 	});
 	
 	$('body').on('click', '.tab-a', function () {
