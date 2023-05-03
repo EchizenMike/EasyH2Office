@@ -10,11 +10,14 @@ layui.define([], function (exports) {
 			}
 			that.loading = true;
 			sideWidth = '80%';
-			if(window.innerWidth<=1000){
-				sideWidth = '92%';
+			if(window.innerWidth>1400 && window.innerWidth<=1600){
+				sideWidth = '85%';
 			}
 			if(window.innerWidth>1000 && window.innerWidth<=1440){
-				sideWidth = '88%';
+				sideWidth = '92%';
+			}
+			if(window.innerWidth<=1000){
+				sideWidth = '93.8%';
 			}
 			layer.open({
 				type: 2,
