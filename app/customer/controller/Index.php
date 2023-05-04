@@ -40,6 +40,15 @@ class Index extends BaseController
 			if (!empty($param['type'])) {
                 $where[] = ['a.intent_status', '=', $param['type']];
             }
+			if (!empty($param['follow_time'])) {
+				$follow_time =explode('~', $param['follow_time']);
+                $where[] = ['ct.follow_time', 'between', [strtotime(urldecode($follow_time[0])),strtotime(urldecode($follow_time[1]))]];
+            }
+			if (!empty($param['next_time'])) {
+				$next_time =explode('~', $param['next_time']);
+                $where[] = ['ct.next_time', 'between', [strtotime(urldecode($next_time[0])),strtotime(urldecode($next_time[1]))]];
+            }
+			
             $where[] = ['a.delete_time', '=', 0];
 			
 			$uid = $this->uid;
@@ -95,18 +104,25 @@ class Index extends BaseController
 				}
 			}
 			
+			$ct_sql= Db::name('CustomerTrace')->order('id desc')->buildSql();
+			$orderby = 'a.create_time desc';
+			if(isset($param['orderby'])){
+				$orderby = 'ct.'.$param['orderby'];
+			}
             $rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
             $content = CustomerList::where($where)
 				->where(function ($query) use($whereOr) {
 					$query->whereOr($whereOr);
 				})
-                ->field('a.*,d.title as belong_department,g.title as grade,s.title as source,i.title as industry')
+                ->field('a.*,d.title as belong_department,g.title as grade,s.title as source,i.title as industry,ct.follow_time,ct.next_time')
                 ->alias('a')
                 ->join('customer_source s', 'a.source_id = s.id')
                 ->join('customer_grade g', 'a.grade_id = g.id')
                 ->join('industry i', 'a.industry_id = i.id')
                 ->join('department d', 'a.belong_did = d.id','LEFT')
-                ->order('a.create_time desc')
+                ->join($ct_sql.' ct', 'ct.cid = a.id','LEFT')
+                ->order($orderby)
+				->group('ct.follow_time') //去重
                 ->paginate($rows, false, ['query' => $param])
 				->each(function ($item, $key) {
                     $item->belong_name = Db::name('Admin')->where(['id' => $item->belong_uid])->value('name');
@@ -133,6 +149,19 @@ class Index extends BaseController
 					else{
 						$item->services_name = Db::name('Services')->where(['id' => $item->services_id])->value('title');
 					}
+					
+					if(empty($item->follow_time)){
+						$item->follow_time = '-';
+					}
+					else{
+						$item->follow_time = date('Y-m-d H:i:s', $item->follow_time);
+					}
+					if(empty($item->next_time)){
+						$item->next_time = '-';
+					}
+					else{
+						$item->next_time = date('Y-m-d H:i:s', $item->next_time);
+					}					
 				});
             return table_assign(0, '', $content);
         } else {
