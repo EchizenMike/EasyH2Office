@@ -20,6 +20,13 @@
 			<td>{$detail.name}</td>
 		</tr>
 		<tr>
+			<td class="layui-td-gray-2">默认阶段配置<font>*</font>
+			</td>
+			<td colspan="3">
+				<input type="text" name="conf_1" value="{$detail.conf_1}" placeholder="请输入默认阶段，每个阶段以|分割" lay-verify="required" lay-reqText="请输入默认阶段" autocomplete="off" class="layui-input">
+			</td>
+		</tr>
+		<tr>
 			<td class="layui-td-gray-2">项目管理员</td>
 			<td colspan="3">
 				<input type="text" id="unames" name="unames" value="{$detail.unames}" readonly placeholder="请选择权限人员" autocomplete="off" class="layui-input picker-more">
