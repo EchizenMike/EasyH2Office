@@ -119,10 +119,10 @@ class Index extends BaseController
                 ->join('customer_source s', 'a.source_id = s.id')
                 ->join('customer_grade g', 'a.grade_id = g.id')
                 ->join('industry i', 'a.industry_id = i.id')
-                ->join('department d', 'a.belong_did = d.id','LEFT')
-                ->join($ct_sql.' ct', 'ct.cid = a.id','LEFT')
+                ->join('department d', 'a.belong_did = d.id')
+                ->join($ct_sql.' ct', 'ct.cid = a.id','left')
                 ->order($orderby)
-				->group('ct.follow_time') //去重
+				->group('a.id') //去重
                 ->paginate($rows, false, ['query' => $param])
 				->each(function ($item, $key) {
                     $item->belong_name = Db::name('Admin')->where(['id' => $item->belong_uid])->value('name');

@@ -52,10 +52,10 @@
 					,{field:'email',width:120,title: '电子邮箱', align:'center'}
 					,{field:'position',width:120,title: '担任职位', align:'center'}
 					,{field:'department',width:120,title: '部门', align:'center'}
-					,{fixed:'right',width:120,title: '操作', align:'center',templet: function(d){
+					,{fixed:'right',width:100,title: '操作', align:'center',templet: function(d){
 						var html = '<div class="layui-btn-group">';
 						var btn='<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>';
-						var btn1='<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="open">设为首要</a>';
+						var btn1='<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>';
 						return html+btn+btn1+'</div>';
 					}}
 				]]
@@ -74,19 +74,7 @@
 								layui.pageTable.reload();
 							}
 						}
-						tool.post("/customer/contact/contact_delete", { id: obj.data.id,status: 0,title: obj.data.title}, callback);
-						layer.close(index);
-					});
-				}
-				if(obj.event === 'open'){
-					layer.confirm('确定要设置该联系人为默认该客户的首要联系人吗?', {icon: 3, title:'提示'}, function(index){
-						let callback = function (e) {
-							layer.msg(e.msg);
-							if (e.code == 0) {
-								layui.pageTable.reload();
-							}
-						}
-						tool.post("/customer/contact/contact_check", { id: obj.data.id,status: 1,title: obj.data.title}, callback);
+						tool.delete("/customer/contact/contact_del", { id: obj.data.id}, callback);
 						layer.close(index);
 					});
 				}
