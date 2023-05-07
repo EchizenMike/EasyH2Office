@@ -13,7 +13,7 @@ layui.define([], function (exports) {
 		selector: '#gouguedit',
 		quickbars_insert_toolbar:'',
 		quickbars_selection_toolbar: 'cut copy | bold italic underline strikethrough ',
-		plugins: 'code quickbars print preview searchreplace autolink fullscreen image link media codesample table charmap hr advlist lists wordcount imagetools',
+		plugins: 'code quickbars print preview searchreplace autolink fullscreen image link media codesample table charmap hr advlist lists wordcount imagetools paste',
 		toolbar: 'code undo redo | forecolor backcolor bold italic underline strikethrough removeformat | alignleft aligncenter alignright alignjustify outdent indent | bullist numlist table blockquote link image media codesample | formatselect fontselect fontsizeselect',
 		resize: false,
 		elementpath: false,
