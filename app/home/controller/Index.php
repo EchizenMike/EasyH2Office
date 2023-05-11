@@ -311,7 +311,14 @@ class Index extends BaseController
     public function edit_password()
     {
 		if (request()->isAjax()) {
-            $param = get_params();
+			
+			//下面部分代码可删除--------------
+			if($_SERVER['HTTP_HOST']=='oa.gougucms.com'){
+				return to_assign(1, 'Bad Man，为什么总想着改别人的密码？已记录IP，抓住你了！');
+			}
+			//上面部分代码可删除--------------
+			
+			$param = get_params();			
             try {
                 validate(AdminCheck::class)->scene('editPwd')->check($param);
             } catch (ValidateException $e) {
