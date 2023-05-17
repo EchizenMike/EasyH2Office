@@ -71,7 +71,7 @@ class Contact extends BaseController
                     return to_assign(1, $e->getError());
                 }
 				$detail= Db::name('CustomerContact')->where(['id' => $param['id']])->find();
-                $data['update_time'] = time();
+                $param['update_time'] = time();
                 $res = Db::name('CustomerContact')->strict(false)->field(true)->update($param);
                 if ($res) {
                     add_log('edit', $param['id'], $param);

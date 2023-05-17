@@ -40,7 +40,7 @@ layui.define(['tool'], function (exports) {
 				box: 'fileBox',
 				url: "/api/index/upload",
 				accept: 'file', //普通文件
-				exts: 'png|jpg|gif|jpeg|doc|docx|ppt|pptx|xls|xlsx|pdf|zip|rar|7z', //只允许上传文件格式
+				exts: 'png|jpg|gif|jpeg|doc|docx|ppt|pptx|xls|xlsx|pdf|zip|rar|7z|txt|wps|avi|wmv|mpg|mov|rm|swf|flv|mp4|dwg|dxf|dwt|xmind', //只允许上传文件格式
 				colmd:4,
 				isSave:false,
 				uidDelete:false,

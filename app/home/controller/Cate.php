@@ -61,7 +61,7 @@ class Cate extends BaseController
                     // 验证失败 输出错误信息
                     return to_assign(1, $e->getError());
                 }
-                $data['update_time'] = time();
+                $param['update_time'] = time();
                 $res = Db::name('FlowType')->strict(false)->field(true)->update($param);
                 if ($res) {
                     add_log('edit', $param['id'], $param);
@@ -135,7 +135,7 @@ class Cate extends BaseController
                     // 验证失败 输出错误信息
                     return to_assign(1, $e->getError());
                 }
-                $data['update_time'] = time();
+                $param['update_time'] = time();
                 $res = Db::name('CostCate')->strict(false)->field(true)->update($param);
                 if ($res) {
                     add_log('edit', $param['id'], $param);
@@ -199,7 +199,7 @@ class Cate extends BaseController
                     // 验证失败 输出错误信息
                     return to_assign(1, $e->getError());
                 }
-                $data['update_time'] = time();
+                $param['update_time'] = time();
                 $res = Db::name('ExpenseCate')->strict(false)->field(true)->update($param);
                 if ($res) {
                     add_log('edit', $param['id'], $param);
@@ -327,7 +327,7 @@ class Cate extends BaseController
                     // 验证失败 输出错误信息
                     return to_assign(1, $e->getError());
                 }
-                $data['update_time'] = time();
+                $param['update_time'] = time();
                 $res = Db::name('Industry')->strict(false)->field(true)->update($param);
                 if ($res) {
                     add_log('edit', $param['id'], $param);
@@ -391,7 +391,7 @@ class Cate extends BaseController
                     // 验证失败 输出错误信息
                     return to_assign(1, $e->getError());
                 }
-                $data['update_time'] = time();
+                $param['update_time'] = time();
                 $res = Db::name('Services')->strict(false)->field(true)->update($param);
                 if ($res) {
                     add_log('edit', $param['id'], $param);
@@ -433,7 +433,6 @@ class Cate extends BaseController
 		}
     }  
 	
-	
 	//工作类别
     public function work_cate()
     {
@@ -456,7 +455,7 @@ class Cate extends BaseController
                     // 验证失败 输出错误信息
                     return to_assign(1, $e->getError());
                 }
-                $data['update_time'] = time();
+                $param['update_time'] = time();
                 $res = Db::name('WorkCate')->strict(false)->field(true)->update($param);
                 if ($res) {
                     add_log('edit', $param['id'], $param);

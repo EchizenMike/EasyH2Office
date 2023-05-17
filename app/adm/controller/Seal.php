@@ -39,7 +39,7 @@ class Seal extends BaseController
                     // 验证失败 输出错误信息
                     return to_assign(1, $e->getError());
                 }
-                $data['update_time'] = time();
+                $param['update_time'] = time();
                 $res = Db::name('SealCate')->strict(false)->field(true)->update($param);
                 if ($res) {
                     add_log('edit', $param['id'], $param);
