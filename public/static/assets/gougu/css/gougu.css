@@ -15,6 +15,7 @@
 .layui-table-tool{box-shadow: 0 0 0 rgb(0 0 0 / 1%);}
 .layui-input, .layui-select, .layui-textarea {height: 36px;line-height: 1.22;line-height: 36px\9;}
 .layui-input, .layui-textarea {padding-left:6px;}
+.layui-form-pane .layui-form-label{height: 36px;}
 
 .layui-btn {height: 36px;line-height: 36px; padding:0 16px;}
 .layui-btn-sm {height: 30px; line-height: 30px; padding:0 8px;}

@@ -45,6 +45,33 @@ layui.define([], function (exports) {
 				}
 			})
 		},
+		box: function (url,title="内容", width=720,height=405) {
+			let that = this;
+			if (that.loading == true) {
+				return false;
+			}
+			that.loading = true;
+			layer.open({
+				type: 2,
+				title: title,
+				content: url,
+				area: [width+'px', height+'px'],
+				maxmin: true,
+				end: function(){
+					if (layui.pageTable) {
+						layui.pageTable.resize();
+					}
+				},
+				success: function (obj, index) {
+					var btn = '<div data-index="'+index+'" class="express-close" style="display:none;" title="关闭">关闭</div>';
+					obj.append(btn);
+					that.loading = false;
+					obj.on('click','.express-close', function () {					
+						layer.close(index);
+					})
+				}
+			})
+		},
 		//右侧ajax请求的方式打开页面参考勾股DEV
 		open: function (url, width) {
 			let that = this;
