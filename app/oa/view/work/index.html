@@ -11,12 +11,12 @@
 	  <div class="layui-tab-content" style="padding:0">
 		<div class="layui-tab-item layui-show">
 			<form class="layui-form gg-form-bar border-x border-t" lay-filter="barsearchform">
-				<div class="layui-inline" id="date">
-					<div class="layui-input-inline" style="width:112px">
+				<div class="layui-input-inline" id="date">
+					<div class="layui-input-inline" style="width:112px; margin-bottom:0">
 					  <input type="text" autocomplete="off" id="start_time" name="start_time" class="layui-input" placeholder="接收开始日期">
 					</div>
 					~
-					<div class="layui-input-inline" style="width:112px">
+					<div class="layui-input-inline" style="width:112px; margin-bottom:0">
 					  <input type="text" autocomplete="off" id="end_time" name="end_time" class="layui-input" placeholder="接收结束日期">
 					</div>
 				</div>
@@ -28,18 +28,21 @@
 						<option value="2">月报</option>
 					</select>
 				</div>
-				<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform">提交搜索</button>
+				<div class="layui-input-inline" style="width:150px;">
+					<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform"><i class="layui-icon layui-icon-search mr-1"></i>搜索</button>
+					<button type="reset" class="layui-btn layui-btn-reset" lay-filter="reset">清空</button>
+				</div>
 			</form>
 			<table class="layui-hide" id="test" lay-filter="test"></table>
 		</div>
 		<div class="layui-tab-item">
 			<form class="layui-form gg-form-bar border-x border-t" lay-filter="barsearchform2">
-				<div class="layui-inline" id="date1">
-					<div class="layui-input-inline" style="width:112px">
+				<div class="layui-input-inline" id="date1">
+					<div class="layui-input-inline" style="width:112px; margin-bottom:0"">
 					  <input type="text" autocomplete="off" id="start_time1" name="start_time" class="layui-input" placeholder="接收开始日期">
 					</div>
 					~
-					<div class="layui-input-inline" style="width:112px">
+					<div class="layui-input-inline" style="width:112px; margin-bottom:0"">
 					  <input type="text" autocomplete="off" id="end_time1" name="end_time" class="layui-input" placeholder="接收结束日期">
 					</div>
 				</div>
@@ -58,7 +61,10 @@
 						<option value="2">月报</option>
 					</select>
 				</div>
-				<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform1">提交搜索</button>
+				<div class="layui-input-inline" style="width:150px;">
+					<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform1"><i class="layui-icon layui-icon-search mr-1"></i>搜索</button>
+					<button type="reset" class="layui-btn layui-btn-reset" lay-filter="reset">清空</button>
+				</div>
 			</form>
 			<table class="layui-hide" id="test1" lay-filter="test1"></table>
 		</div>
@@ -94,7 +100,8 @@
 		//日期范围
 		laydate.render({
 			elem: '#date',
-			range: ['#start_time', '#end_time']
+			range: ['#start_time', '#end_time'].
+			rangeLinked:true
 		});
 
 		layui.pageTable = table.render({
@@ -179,7 +186,8 @@
 		//日期范围
 		laydate.render({
 			elem: '#date1',
-			range: ['#start_time1', '#end_time1']
+			range: ['#start_time1', '#end_time1'],
+			rangeLinked:true
 		});
 
 		layui.pageTable1 = table.render({

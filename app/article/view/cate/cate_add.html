@@ -76,9 +76,7 @@
 			let callback = function (e) {
 				layer.msg(e.msg);
 				if (e.code == 0) {
-					setTimeout(function () {
-						parent.location.reload();
-					}, 1000);					
+					tool.sideClose(1000);				
 				}
 			}
 			tool.post("/article/cate/cate_add", data.field, callback);

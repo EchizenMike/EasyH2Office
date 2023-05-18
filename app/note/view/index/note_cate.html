@@ -2,7 +2,7 @@
 <!-- 主体 -->
 {block name="body"}
 <div class="p-3">
-	<div class="gg-form-bar border-t border-x">
+	<div class="gg-form-bar border-t border-x" style="padding-bottom:12px;">
 		<button class="layui-btn layui-btn-sm add-menu">+ 添加分类</button>
     </div>
     <div>
@@ -18,19 +18,20 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
-	const moduleInit = ['tool', 'treeGrid'];
+	const moduleInit = ['tool'];
 	function gouguInit() {
-		var treeGrid = layui.treeGrid,table = layui.table, tool = layui.tool;
-		var pageTable = treeGrid.render({
-			id:'treeTable'
-			,elem: '#treeTable'
-			,idField:'id'
+		var treeTable = layui.treeTable, tool = layui.tool;
+		
+		layui.pageTable = treeTable.render({
+			elem: '#treeTable'
 			,url: "/note/index/note_cate"
-			,cellMinWidth: 100
-			,treeId:'id'//树形id字段名称
-			,treeUpId:'pid'//树形父id字段名称
-			,treeShowName:'title'//以树形式显示的字段
-			,isOpenDefault:true
+			,tree: { // treeTable 特定属性集
+				customName: {name:'title'},
+				data: {},
+				view: {showIcon:false},
+				async: {},
+				callback: {}
+			}
 			,cols: [[
 				{field:'id',width:80, title: 'ID号', align:'center'}
 				,{field: 'sort', title: '排序', align:'center', style:'cursor: pointer;', width:80}
@@ -43,7 +44,6 @@
 				}
 			]]
 			,page:false
-			//,skin:'line'
 		});
 			
 			
@@ -54,7 +54,7 @@
 		});
 		
 		//操作按钮
-		treeGrid.on('tool(treeTable)', function (obj) {
+		treeTable.on('tool(treeTable)', function (obj) {
 			if (obj.event === 'add') {
 				tool.side('/note/index/note_cate_add?pid='+obj.data.id);
 				return;

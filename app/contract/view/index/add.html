@@ -76,16 +76,20 @@
       </tr>
 	   <tr>
         <td class="layui-td-gray-2">客户联系地址</td>
-        <td>
+        <td  colspan="3">
           <input type="text" name="customer_address" autocomplete="off" placeholder="请输入客户联系地址" class="layui-input">
         </td>
-        <td class="layui-td-gray-2">合同开始日期<font>*</font></td>
+        <td class="layui-td-gray-2">合同始止日期<font>*</font></td>
         <td>
-          <input type="text" name="start_time" readonly lay-verify="required" lay-reqText="请选择合同开始时间" placeholder="请选择合同开始时间" class="layui-input select-time">
-        </td>
-		<td class="layui-td-gray-2">合同结束日期<font>*</font></td>
-        <td>
-			<input type="text" name="end_time" readonly lay-verify="required" lay-reqText="请选择合同结束时间" placeholder="请选择合同结束时间" class="layui-input select-time">
+			<div id="barDate" class="layui-input-inline">
+				<div class="layui-input-inline" style="width:110px; margin-bottom:0">
+					<input type="text" class="layui-input" id="start_time" placeholder="选择时间区间" readonly name="start_time" lay-verify="required" lay-reqText="请选择合同开始时间">
+				</div>
+				~
+				<div class="layui-input-inline" style="width:110px;margin-bottom:0">
+					<input type="text" class="layui-input" id="end_time" placeholder="选择时间区间" readonly name="end_time" lay-verify="required" lay-reqText="请选择合同结束时间">
+				</div>
+			</div>
         </td>
       </tr>
 	  {neq name="$type" value="2"}
@@ -120,7 +124,7 @@
         </td>
 		<td class="layui-td-gray-2">合同签订时间<font>*</font></td>
         <td>
-			<input type="text" name="sign_time" readonly lay-verify="required" lay-reqText="请选择合同签订日期" placeholder="请选择合同签订日期" class="layui-input select-time">
+			<input type="text" name="sign_time" readonly lay-verify="required" lay-reqText="请选择合同签订日期" placeholder="请选择合同签订日期" class="layui-input tool-time">
         </td>
         <td class="layui-td-gray-2">合同制定人<font>*</font></td>
         <td>
@@ -177,12 +181,11 @@
 	const moduleInit = ['tool','employeepicker','oaTool'];
 	function gouguInit() {
 		var form = layui.form,tool=layui.tool,table = layui.table,laydate = layui.laydate,oaTool = layui.oaTool, employeepicker = layui.employeepicker;
-		//日期
-		lay('.select-time').each(function () {
-			laydate.render({
-				elem: this,
-				trigger: 'click'
-			});
+		//日期范围
+		laydate.render({
+			elem: '#barDate',
+			range: ['#start_time', '#end_time'],
+			rangeLinked:true
 		});
 		
 		//相关附件上传

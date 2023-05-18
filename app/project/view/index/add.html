@@ -163,7 +163,8 @@
 		//日期范围
 		laydate.render({
 			elem: '#date',
-			range: ['#start_time', '#end_time']
+			range: ['#start_time', '#end_time'],
+			rangeLinked:true
 		});	
 		
 		//日期
@@ -171,6 +172,7 @@
 			laydate.render({
 				elem: this,
 				range: '到',
+				rangeLinked:true,
 				trigger: 'click'
 			});
 		});

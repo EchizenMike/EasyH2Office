@@ -13,7 +13,13 @@
 .layui-table-box{background-color:#fff;}
 .layui-table-page{background-color:#fff;border-bottom:1px solid #f1f1f1;}
 .layui-table-tool{box-shadow: 0 0 0 rgb(0 0 0 / 1%);}
-.layui-btn-reset {height: 38px;background-color: #fff; line-height: 38px; border: 1px solid transparent;padding: 0 12px; white-space: nowrap; color: #767a82;font-size: 14px;cursor: pointer;vertical-align: middle;}
+.layui-input, .layui-select, .layui-textarea {height: 36px;line-height: 1.22;line-height: 36px\9;}
+.layui-input, .layui-textarea {padding-left:6px;}
+
+.layui-btn {height: 36px;line-height: 36px; padding:0 16px;}
+.layui-btn-sm {height: 30px; line-height: 30px; padding:0 8px;}
+.layui-btn-xs {height: 22px; line-height: 22px; padding:0 4px;}
+.layui-btn-reset {height: 36px;background-color: #fff; line-height: 36px; border: 1px solid transparent;padding: 0 8px; white-space: nowrap; color: #767a82;font-size: 14px;cursor: pointer;vertical-align: middle;}
 .layui-btn-reset:hover{color: #333333;}
 
 .layui-tab-brief>.layui-tab-title .layui-this{color:#187FDD}
@@ -67,6 +73,16 @@ a.tab-a:hover,a:hover,a.open-a:hover,a.link-a:hover,a.right-a:hover{color:#187FD
 .h2,h2{font-size:20px; font-weight: 600;}
 .h3,h3{font-size:18px; font-weight: 600;}
 .h4,h4{font-size:16px; font-weight: 600;}
+
+.f12{font-size:12px;}
+.f14{font-size:14px;}
+.f16{font-size:16px;}
+.f18{font-size:18px;}
+.f20{font-size:20px;}
+.f24{font-size:24px;}
+.f28{font-size:28px;}
+.f32{font-size:32px;}
+.f36{font-size:36px;}
 
 .m-0{margin:0}
 .m-1{margin:4px}
@@ -254,7 +270,8 @@ div.layui-table-main::-webkit-scrollbar-thumb:active{background-color:rgba(0,0,0
 }
 
 /*gg-DIY*/
-.gg-form-bar{padding:12px; background-color:#fff;}
+.gg-form-bar{padding:10px 15px 0; background-color:#fff;}
+.gg-form-bar .layui-input-inline{margin-bottom:10px;}
 .gg-tab-bar{background-color:#fff;}
 .gg-tab{text-align: left!important;}
 .gg-tab-title{position: relative;left: 0; height: 40px; white-space: nowrap; font-size: 0;}
@@ -287,6 +304,7 @@ div.layui-table-main::-webkit-scrollbar-thumb:active{background-color:rgba(0,0,0
 .sub-menu li.sub-menu-li.active a{color:#4285F4; background-color:#F2F8FF}
 .sub-menu li.sub-menu-li span.num{margin-left:4px}
 
+/*附件*/
 .file-card {background: #fff;border: 1px solid #f1f1f1; border-radius: 2px; padding:0; margin:4px 6px;
     -webkit-box-align: center;
     -ms-flex-align: center;
@@ -305,6 +323,49 @@ div.layui-table-main::-webkit-scrollbar-thumb:active{background-color:rgba(0,0,0
 .file-hasdelete{background:url(../images/delete_icon.png) no-repeat 96% 0; background-size: auto 58px; color:#aaa}
 .file-hasdelete .file-icon{color:#aaa;}
 .file-hasdelete .file-tool{display:none}
+/*审批*/
+.check-items{overflow-x: auto; padding: 2px 0;}
+.flow-flex-row {box-direction: row;
+	box-orient: horizontal;
+    -webkit-box-orient: horizontal;
+    -ms-flex-direction: row;
+    flex-direction: row;
+}
+.flow-flexbox { width: 100%;text-align: left;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    display: -webkit-flex;
+    box-align: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+	flex-wrap: wrap;
+}
+.check-item{width: auto; -ms-flex-negative: 0; flex-shrink: 0; padding:4px 0}
+.check-item i{margin-right:3px; color:#646464;}
+.check-item span{color:#999;margin:0 3px;}
+.check-item .layui-icon {font-size:18px;}
+.check-item .layui-icon.layui-icon-right{font-size:12px;}
+.layui-icon[data-ok]{color:#34a853}
+.layui-icon[data-no]{color:#FF5722;}
+.check-item-status{color:#999; font-size:12px; margin-left:3px;}
+
+.flow-tips{padding:6px 10px;}
+.flow-tips li{padding:5px 0;}
+.flow-tips li i{color:#4285f4;}
+.flow-tips li span{color:#999; font-size:12px; margin-left:4px;}
+
+.flow-record{padding:4px 4px 0;}
+.flow-record .layui-timeline-item{text-decoration:line-through; color:#acacac; padding-bottom:10px;}
+.flow-record .layui-timeline-item.delete-0{text-decoration:none; color:#323232;}
+.layui-timeline-content ul{font-size:12px;}
+.check-status{color:#999; margin-left:5px;}
+.check-remark{padding:6px; margin-top:6px; margin-bottom:10px; border-radius:4px; background-color:#f5f5f5;}
+.check-record{line-height:1.5; padding:4px 0}
+.flow-this{font-weight:800;}
+.flow-this i{color:#4285f4}
+
 
 .editormd,.editormd-toolbar,.editormd .CodeMirror,.CodeMirror-gutters{border-color:#eeeeee!important;}
 .editormd{margin-bottom:0!important;}
@@ -314,5 +375,5 @@ div.layui-table-main::-webkit-scrollbar-thumb:active{background-color:rgba(0,0,0
 .express-box { position: fixed; z-index:9999; height:100%; right: -100%; top:0;background-color: #fff;}
 .express-box article{width:100%; height:100%; overflow:auto;}
 .express-mask{ display: none; position: fixed; top: 0; left: 0; z-index: 9998; width: 100%; height: 100%; background-color: rgba(0,0,0,.6); }
-.express-close{position: absolute;width:24px;height:60px; padding:30px 6px; line-height:30px;text-align:center; left: -38px;right:0; top: 20%;background-color:#FF5722;color:#fff;border-radius:6px 0 0 6px; cursor:pointer; border:2px solid #fff; border-right:none; font-weight:600; font-size:14px;}
+.express-close{position: absolute;width:24px;height:60px; padding:20px 6px; line-height:30px;text-align:center; left: -38px;right:0; top: 16%;background-color:#FF5722;color:#fff;border-radius:6px 0 0 6px; cursor:pointer; border:2px solid #fff; border-right:none; font-weight:600; font-size:14px;}
 .express-close:hover{opacity:0.9}

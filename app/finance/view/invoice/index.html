@@ -4,11 +4,11 @@
 <div class="p-3">
 	<form class="layui-form gg-form-bar border-x border-t" lay-filter="barsearchform">
 		<div id="barDate" class="layui-input-inline">
-			<div class="layui-input-inline" style="width:110px;">
+			<div class="layui-input-inline" style="width:110px; margin-bottom:0">
 				<input type="text" class="layui-input" id="start_time" placeholder="选择时间区间" readonly name="start_time">
 			</div>
 			~
-			<div class="layui-input-inline" style="width:110px;">
+			<div class="layui-input-inline" style="width:110px; margin-bottom:0">
 				<input type="text" class="layui-input" id="end_time" placeholder="选择时间区间" readonly name="end_time">
 			</div>
 		</div>
@@ -23,7 +23,10 @@
 				<option value="10">已作废</option>
 			</select>
 		</div>
-		<button class="layui-btn layui-btn-danger" lay-submit="" lay-filter="webform">提交搜索</button>
+		<div class="layui-input-inline" style="width:150px;">
+			<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform"><i class="layui-icon layui-icon-search mr-1"></i>搜索</button>
+			<button type="reset" class="layui-btn layui-btn-reset" lay-filter="reset">清空</button>
+		</div>
 	</form>
 	<table class="layui-hide" id="test" lay-filter="test"></table>
 </div>
@@ -44,7 +47,8 @@
 		//日期范围
 		laydate.render({
 			elem: '#barDate',
-			range: ['#start_time', '#end_time']
+			range: ['#start_time', '#end_time'],
+			rangeLinked:true
 		});
 		
 		//监听搜索提交

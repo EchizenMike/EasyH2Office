@@ -22,7 +22,8 @@ class Cate extends BaseController
     {
         if (request()->isAjax()) {
             $cate = Db::name('ArticleCate')->order('create_time asc')->select();
-            return to_assign(0, '', $cate);
+			$list = generateTree($cate);
+            return to_assign(0, '', $list);
         } else {
             return view();
         }

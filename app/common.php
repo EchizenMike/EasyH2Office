@@ -1098,6 +1098,19 @@ function get_data_node($data=[],$pid=0){
 	return array_values($dep);
 }
 
+
+function generateTree($flatArray, $parentId = 0) {
+  $tree = [];
+  foreach ($flatArray as $item) {
+    if ($item['pid'] === $parentId) {
+      $node = $item;
+	  $node['children'] = generateTree($flatArray, $item['id']);
+      $tree[] = $node;
+    }
+  }
+  return $tree;
+}
+
 //访问按小时归档统计
 function hour_document($arrData)
 {

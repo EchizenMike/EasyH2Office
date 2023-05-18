@@ -2,31 +2,39 @@
 <!-- 主体 -->
 {block name="body"}
 <div class="p-3">
-	<div class="gg-form-bar border-t border-x">
+	<div class="gg-form-bar border-t border-x" style="padding-bottom:12px;">
 		<button class="layui-btn layui-btn-sm add-menu">+ 添加菜单/节点</button>
 	</div>
 	<div>
 		<table class="layui-hide" id="treeTable" lay-filter="treeTable"></table>
 	</div>
 </div>
+<script type="text/html" id="toolbarDemo">
+  <div class="layui-btn-container">
+    <button class="layui-btn layui-btn-sm" lay-event="add">+ 添加权限组</button>
+  </div>
+</script>
 {/block}
 <!-- /主体 -->
 
 <!-- 脚本 -->
 {block name="script"}
 <script>
-	const moduleInit = ['tool', 'treeGrid'];
+	const moduleInit = ['tool'];
 	function gouguInit() {
-		var treeGrid = layui.treeGrid,table = layui.table, tool = layui.tool;
-		var pageTable = treeGrid.render({
-			id: 'treeTable'
-			, elem: '#treeTable'
-			, idField: 'id'
-			, url: "/home/rule/index"
+		var treeTable = layui.treeTable, tool = layui.tool;
+		
+		layui.pageTable = treeTable.render({
+			elem: '#treeTable'
+			,url: "/home/rule/index"
+			,tree: { // treeTable 特定属性集
+				customName: {name:'title'},
+				data: {},
+				view: {showIcon:false},
+				async: {},
+				callback: {}
+			}
 			, cellMinWidth: 80
-			, treeId: 'id'//树形id字段名称
-			, treeUpId: 'pid'//树形父id字段名称
-			, treeShowName: 'title'//以树形式显示的字段
 			, cols: [[
 				{ field: 'id', width: 80, title: 'ID号', align: 'center' }
 				, { field: 'sort', width: 60, title: '排序', align: 'center' }
@@ -64,7 +72,7 @@
 		});
 
 		//操作按钮
-		treeGrid.on('tool(treeTable)', function (obj) {
+		treeTable.on('tool(treeTable)', function (obj) {
 			console.log(obj);
 			if (obj.event === 'add') {
 				tool.side('/home/rule/add?pid=' + obj.data.id);

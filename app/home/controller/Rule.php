@@ -26,7 +26,8 @@ class Rule extends BaseController
                 ->leftJoin('adminModule m', 'a.module = m.name')
                 ->order('a.sort asc,a.id asc')
                 ->select();
-            return to_assign(0, '', $rule);
+			$list = generateTree($rule);
+            return to_assign(0, '', $list);
         } else {
             return view();
         }

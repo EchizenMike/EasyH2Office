@@ -1,266 +1,44 @@
-{extend name="../../base/view/common/base" /}
-{block name="style"}
-<style>
-html{background-color:#fff;}
-.log-timeline{ position: relative; min-height:600px; padding-left: 48px; background-color:#fff;}
-.log-timeline:after {content: ""; position: absolute; top: 0; left: 24px; width: 1px; height: 100%; background: #e3e9ed;}
-.log-timeline dl{padding-bottom: 8px; position: relative;}
-.log-timeline dt{font-size: 16px; line-height: 2.4; color: #323232; font-weight:600}
-.log-timeline dd{font-size: 14px; line-height: 1.6; padding:5px 0}
-.log-timeline .date-second-point{width: 10px; height: 10px; display: block; border-radius: 50%; border: 3px solid #FBBC05; background: #fff; position: absolute; z-index: 99; left:-32px; top:9px}
-.log-timeline .log-thumb{width: 24px; height: 24px; border-radius: 50%; margin-right:4px;}
-.log-timeline .open-a{margin:0 4px;}
-.log-item i{font-weight:800; color:#323232}
-.log-content strong{margin:0 4px; color:#323232}
-
-.check-items{overflow-x: auto; padding: 2px 0;}
-.flow-flex-row {box-direction: row;
-	box-orient: horizontal;
-    -webkit-box-orient: horizontal;
-    -ms-flex-direction: row;
-    flex-direction: row;
-}
-.flow-flexbox { width: 100%;text-align: left;
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    display: -webkit-flex;
-    box-align: center;
-    -webkit-box-align: center;
-    -ms-flex-align: center;
-    align-items: center;
-	flex-wrap: wrap;
-}
-.check-item{width: auto; -ms-flex-negative: 0; flex-shrink: 0; padding:4px 0}
-.check-item i{margin-right:3px; color:#646464;}
-.check-item span{color:#999;margin:0 3px;}
-.check-item .layui-icon {font-size:18px;}
-.check-item .layui-icon.layui-icon-right{font-size:12px;}
-.layui-icon[data-ok]{color:#34a853}
-.layui-icon[data-no]{color:#FF5722;}
-.check-item-status{color:#999; font-size:12px; margin-left:3px;}
-
-.flow-tips{padding:6px 10px;}
-.flow-tips li{padding:5px 0;}
-.flow-tips li i{color:#4285f4;}
-.flow-tips li span{color:#999; font-size:12px; margin-left:4px;}
-
-.flow-record{padding:4px 4px 0;}
-.flow-record .layui-timeline-item{text-decoration:line-through; color:#acacac; padding-bottom:10px;}
-.flow-record .layui-timeline-item.delete-0{text-decoration:none; color:#323232;}
-.layui-timeline-content ul{font-size:12px;}
-.check-status{color:#999; margin-left:5px;}
-.check-remark{padding:6px; margin-top:6px; margin-bottom:10px; border-radius:4px; background-color:#f5f5f5;}
-.check-record{line-height:1.5; padding:4px 0}
-.flow-this{font-weight:800;}
-.flow-this i{color:#4285f4}
-.layui-table-min th{font-size:13px; text-align:center; background-color:#f8f8f8;}
-.layui-table-min td{font-size:13px; padding:6px;text-align:center;}
-</style>
-{/block}
-<!-- 主体 -->
-{block name="body"}
-<form class="layui-form px-4 pt-2" lay-filter="contract">
-	<div class="layui-tab" style="margin:0;" lay-filter="contract" id="contractTab">
-	  <ul class="layui-tab-title">
-		<li class="layui-this" data-load="true">合同详情</li>
-		<li>操作记录</li>
-	  </ul>
-	  <div class="layui-tab-content">
-		<div class="layui-tab-item layui-show">	
-			<table class="layui-table layui-table-form">
-				{gt name="$detail.pid" value="0"}
-				 <tr>
-					<td class="layui-td-gray">母合同名称</td>
-					<td colspan="7">{$detail.pname}</td>
-				  </tr>
-				{/gt}
-			  <tr>
-				<td class="layui-td-gray">合同名称</td>
-				<td colspan="5">{$detail.name}</td>
-				<td class="layui-td-gray">合同编号</td>
-				<td>{$detail.code}</td>
-			  </tr>
-			  <tr>
-				<td class="layui-td-gray">签约主体(乙方)</td>
-				<td colspan="3">
-					{volist name=":contract_subject()" id="v"}
-					{eq name="$v.id" value="$detail.subject_id" }{$v.title}{/eq}
-					{/volist}
-				</td>
-				<td class="layui-td-gray">合同性质</td>
-				<td>
-					{eq name="$detail.type" value="1" }普通合同{/eq}
-					{eq name="$detail.type" value="2" }框架合同{/eq}
-					{eq name="$detail.type" value="3" }补充协议{/eq}
-					{eq name="$detail.type" value="4" }其他合同{/eq}
-				</td>
-				<td class="layui-td-gray">合同类别</td>
-				<td>
-					{volist name=":contract_cate()" id="v"}
-					{eq name="$v.id" value="$detail.cate_id" }{$v.title}{/eq}
-					{/volist}
-				</td>
-			  </tr>
-			  <tr>
-				<td class="layui-td-gray">客户名称(甲方)</td>
-				<td colspan="3">{$detail.customer}</td>
-				<td class="layui-td-gray">签约客户代表</td>
-				<td>{$detail.customer_name}</td>
-				<td class="layui-td-gray">客户联系电话</td>
-				<td>{$detail.customer_mobile}</td>
-			  </tr>
-			   <tr>
-				<td class="layui-td-gray-2">客户联系地址</td>
-				<td  colspan="3">{$detail.customer_address}</td>
-				<td class="layui-td-gray-2">合同开始日期</td>
-				<td>{$detail.start_time}</td>
-				<td class="layui-td-gray-2">合同结束日期</td>
-				<td>{$detail.end_time}</td>
-			  </tr>
-			  {neq name="$detail.type" value="2"}
-			  <tr>
-				<td class="layui-td-gray">合同金额</td>
-				<td>{$detail.cost}</td>
-				{eq name="$detail.is_tax" value="1" }
-				<td class="layui-td-gray">是否含税</td>
-				<td>是</td>
-				<td class="layui-td-gray">税点(百分比)</td>
-				<td colspan="3">{$detail.tax}%</td>
-				{/eq}
-				{eq name="$detail.is_tax" value="0" }
-				<td class="layui-td-gray">是否含税</td>
-				<td colspan="5">否</td>
-				{/eq}
-			  </tr>
-			  {/neq}
-			  {notempty name="$detail.remark"}
-			   <tr>
-				<td class="layui-td-gray">备注信息</td>
-				<td colspan="7">{$detail.remark}</td>
-			  </tr>
-			  {/notempty}
-				{notempty name="$detail.file_ids"}
-				<tr>
-					<td class="layui-td-gray">相关附件</td>
-					<td colspan="7" style="line-height:inherit">
-						<div class="layui-row">
-							{volist name="$detail.fileArray" id="vo"}
-							<div class="layui-col-md4" id="uploadImg{$vo.id}">{:file_card($vo,'view')}</div>
-							{/volist}
-						</div>
-					</td>
-				</tr>
-				{/notempty}
-			  <tr>
-				<td colspan="8"><strong>签订信息</strong></td>
-			  </tr>
-			  <tr>
-				<td class="layui-td-gray-2">合同制定人</td>
-				<td>{$detail.prepared_name} </td>
-				<td class="layui-td-gray-2">合同签订人</td>
-				<td>{$detail.sign_name}</td>
-				<td class="layui-td-gray-2">合同签订时间</td>
-				<td>{$detail.sign_time}</td>
-				<td class="layui-td-gray-2">合同签订部门</td>
-				<td>{$detail.sign_department}</td>
-			  </tr>
-			  <tr>        
-				<td class="layui-td-gray-2">合同保管人</td>
-				<td>{$detail.keeper_name}{gt name="$auth" value="0"}<span id="keeper" data-ids="{$detail.keeper_uid}" data-names="{$detail.keeper_name}" class="layui-btn layui-btn-xs layui-btn-normal ml-1">更改</span>{/gt}</td>
-				<td class="layui-td-gray">合同共享人员</td>
-				<td colspan="5">{$detail.share_names}{gt name="$auth" value="0"}<span id="shares" data-ids="{$detail.share_ids}" data-names="{$detail.share_names}" class="layui-btn layui-btn-xs layui-btn-normal ml-1">更改</span>{/gt}</td>
-			  </tr>			  
-			  <tr>
-				<td colspan="8"><strong>审核信息</strong></td>
-			  </tr>
-			  <tr>
-				<td class="layui-td-gray-2">合同状态</td>
-				<td><span class="layui-color-{$detail.check_status}">{$detail.status_name}</span></td>
-				<td class="layui-td-gray-2">录入人</td>
-				<td>{$detail.admin_name} </td>
-				<td class="layui-td-gray-2">录入时间</td>
-				<td colspan="3">{$detail.create_time}</td>
-			  </tr>
-			{notempty name="$check_record"}
-			<tr>
-				<td class="layui-td-gray">历史审批记录</td>
-				<td colspan="7">
-					<ul class="layui-timeline flow-record pt-2">
-					{volist name="$check_record" id="vo"}		
-						<li class="layui-timeline-item delete-{$vo.delete_time}">
-							<i class="layui-icon layui-timeline-axis">&#xe63f;</i>
-							<p style="padding-left:24px">{$vo.check_time_str}<span class="black ml-2">{$vo.name}</span><span class="mx-2 layui-color-{$vo.status}">{$vo.status_str}</span>了此申请。操作意见：<span class="green">{$vo.content}</span></p>
-						</li>
-					{/volist}
-					</ul>
-				</td>
-			</tr>
-			{/notempty}
-			  {eq name="$is_create_admin" value = "1"}
-				<tr>
-					<td class="layui-td-gray-2">选择审批流程<font>*</font></td>
-					<td colspan="7">
-						<select name="flow_id" lay-verify="required" lay-filter="flowtype" lay-reqText="请选择审批流程">
-						<option value="">--请选择--</option>
-						{volist name="flows" id="vo"}
-						  <option value="{$vo.id}" title="{$vo.check_type}">{$vo.name}</option>
-						{/volist}
-						</select>
-					</td>
-				</tr>
-				<tr id="flow_tr">
-					<td class="layui-td-gray">审核人<font>*</font></td>
-					<td colspan="7">
-						<input type="text" name="check_admin_name" value="" autocomplete="off" placeholder="请选择审核人" lay-verify="required" lay-reqText="请选择审核人" class="layui-input picker-one" readonly>
-						<input type="hidden" name="check_admin_ids" value="">
-					</td>
-				</tr>
-				<tr>
-					<td class="layui-td-gray">抄送人</td>
-					<td colspan="7">
-						<input type="text" name="copy_names" value="" autocomplete="off" placeholder="请选择抄送人" class="layui-input picker-more" readonly>
-						<input type="hidden" name="copy_uids" value="">
-					</td>
-				</tr>
-				{/eq}
-			</table>
-			<div class="pt-3">
-				{eq name="$is_create_admin" value = "1"}
-				<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform">提交审核</button>
-				<a class="layui-btn" href="/contract/index/add/id/{$detail.id}">编辑合同</a>
-				{/eq}
-				{gt name="$auth" value="0"}
-				<span class="layui-btn layui-btn-warm" data-event="check" data-status="5">中止合同</span>
-				<span class="layui-btn layui-btn-danger" data-event="check" data-status="6">作废合同</span>
-				{/gt}
-			</div>
-		</div>
-		<div class="layui-tab-item">
-			{include file="/index/view_log" /}
-		</div>
-	  </div>
-	</div>
-	
-</form>
-{/block}
-<!-- /主体 -->
-
-<!-- 脚本 -->
-{block name="script"}
+{eq name="$is_create_admin" value = "1"}
+<table class="layui-table layui-table-form">
+	<tr>
+		<td class="layui-td-gray-2">选择审批流程<font>*</font></td>
+		<td colspan="7">
+			<select name="flow_id" lay-verify="required" lay-filter="flowtype" lay-reqText="请选择审批流程">
+			<option value="">--请选择--</option>
+			{volist name="flows" id="vo"}
+			  <option value="{$vo.id}" title="{$vo.check_type}">{$vo.name}</option>
+			{/volist}
+			</select>
+		</td>
+	</tr>
+	<tr id="flow_tr">
+		<td class="layui-td-gray">审核人<font>*</font></td>
+		<td colspan="7">
+			<input type="text" name="check_admin_name" value="" autocomplete="off" placeholder="请选择审核人" lay-verify="required" lay-reqText="请选择审核人" class="layui-input picker-one" readonly>
+			<input type="hidden" name="check_admin_ids" value="">
+		</td>
+	</tr>
+	<tr>
+		<td class="layui-td-gray">抄送人</td>
+		<td colspan="7">
+			<input type="text" name="copy_names" value="" autocomplete="off" placeholder="请选择抄送人" class="layui-input picker-more" readonly>
+			<input type="hidden" name="copy_uids" value="">
+		</td>
+	</tr>
+</table>
+{/eq}
+<div class="pt-2">
+	{eq name="$is_create_admin" value = "1"}
+	<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform">提交审核</button>
+	<a class="layui-btn" href="/contract/index/add/id/{$detail.id}">编辑合同</a>
+	{/eq}
+	{gt name="$auth" value="0"}
+	<span class="layui-btn layui-btn-warm" data-event="check" data-status="5">中止合同</span>
+	<span class="layui-btn layui-btn-danger" data-event="check" data-status="6">作废合同</span>
+	{/gt}
+</div>
 <script>
-const contract_id = '{$detail.id}';
-const contract_status = '{$detail.check_status}';
-const moduleInit = ['tool','employeepicker','oaTool'];
-	function gouguInit() {
-		var form = layui.form,tool=layui.tool, oaTool = layui.oaTool,element = layui.element,employeepicker = layui.employeepicker,dropdown = layui.dropdown;		
-		element.on('tab(contract)', function(data){
-			let index = data.index;
-			if(index == 1){
-				log(layui);	
-			}
-		});
-		
+	function init(form,tool) {		
 		$('body').on('click','[data-event="check"]',function(){
 			let status = $(this).data('status');
 			let action = '';
@@ -319,7 +97,7 @@ const moduleInit = ['tool','employeepicker','oaTool'];
 					success:function(e){
 						layer.msg(e.msg);
 						if (e.code == 0) {
-							tool.sideClose(1000);
+							parent.layui.tool.close(1000);
 						}
 					}
 				})
@@ -398,55 +176,6 @@ const moduleInit = ['tool','employeepicker','oaTool'];
 				}
 			})
 		});
-		
-		//选择合同保管人弹窗	
-		$('body').on('click','#keeper',function () {
-			var ids=$(this).data('ids')+'',names = $(this).data('names')+'';
-			employeepicker.init({
-				ids:ids,
-				names:names,
-				type:0,
-				department_url: "/api/index/get_department_tree",
-				employee_url: "/api/index/get_employee",
-				callback:function(ids,names,dids,departments){
-					let callback = function (e) {
-						layer.msg(e.msg);
-						if (e.code == 0) {
-							location.reload();
-						}
-					}
-					tool.post("/contract/index/add", {'id':contract_id,'keeper_uid':ids,'scene':'change'}, callback);
-				}
-			});
-		});
-	
-	
-		//选择共享成员弹窗	
-		$('body').on('click','#shares',function () {
-			var  ids=$(this).data('ids')+'',names = $(this).data('names')+'',share_ids_array=[],share_names_array=[];
-			if(ids.length>0){
-				share_ids_array=ids.split(',');
-				share_names_array=names.split(',');
-			}
-			employeepicker.init({
-				ids:share_ids_array,
-				names:share_names_array,
-				type:1,
-				department_url: "/api/index/get_department_tree",
-				employee_url: "/api/index/get_employee",
-				callback:function(ids,names,dids,departments){
-					let callback = function (e) {
-						layer.msg(e.msg);
-						if (e.code == 0) {
-							location.reload();
-						}
-					}
-					tool.post("/contract/index/add", {'id':contract_id,'share_ids':ids.join(','),'scene':'change'}, callback);
-				}
-			});
-		});
 	}
 
 </script>
-{/block}
-<!-- /脚本 -->

@@ -15,11 +15,11 @@
           </select>
 		</div>
 		<div class="layui-input-inline" id="selectDate">
-			<div class="layui-input-inline" style="width:110px;">
+			<div class="layui-input-inline" style="width:110px; margin-bottom:0">
 			  <input type="text" autocomplete="off" name="start_date" id="startDate" class="layui-input" placeholder="预计签单时间">
 			</div>
 			<div class="layui-input-inline">-</div>
-			<div class="layui-input-inline" style="width:110px;">
+			<div class="layui-input-inline" style="width:110px; margin-bottom:0;">
 			  <input type="text" autocomplete="off" name="end_date" id="endDate" class="layui-input" placeholder="预计签单时间">
 			</div>
 		</div>
@@ -27,8 +27,10 @@
 			<input type="text" name="username" placeholder="请选择归属人" class="layui-input picker-one" autocomplete="off" />
 			<input type="text" name="uid" style="display:none" />
 		</div>
-		<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform">提交搜索</button>
-		<button type="reset" class="layui-btn layui-btn-reset" lay-filter="clear">清空</button>
+		<div class="layui-input-inline" style="width:150px;">
+			<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform"><i class="layui-icon layui-icon-search mr-1"></i>搜索</button>
+			<button type="reset" class="layui-btn layui-btn-reset" lay-filter="reset">清空</button>
+		</div>
 	</form>
     <table class="layui-hide" id="test" lay-filter="test"></table>
 </div>
@@ -46,6 +48,7 @@
 		laydate.render({
 			elem: '#selectDate'
 			,range: ['#startDate', '#endDate']
+			,rangeLinked:true
 		});
 		
 		layui.pageTable = table.render({

@@ -5,19 +5,22 @@
 	{include file="index/msgmenu" /}
 	<div style="margin-left:172px;">
 		<form class="layui-form gg-form-bar border-t border-x">
-			<div class="layui-inline" style="width:240px">
+			<div class="layui-input-inline" style="width:240px">
 				<input type="text" name="keywords" placeholder="关键字" class="layui-input" autocomplete="off"/>
 			</div>
-			<div class="layui-inline" id="date">
-				<div class="layui-input-inline" style="width:112px">
+			<div class="layui-input-inline" id="date">
+				<div class="layui-input-inline" style="width:112px; margin-bottom:0">
 				  <input type="text" autocomplete="off" id="start_time" name="start_time" class="layui-input" placeholder="开始日期">
 				</div>
 				~
-				<div class="layui-input-inline" style="width:112px">
+				<div class="layui-input-inline" style="width:112px; margin-bottom:0;">
 				  <input type="text" autocomplete="off" id="end_time" name="end_time" class="layui-input" placeholder="结束日期">
 				</div>
 			</div>
-			<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform">提交搜索</button>
+			<div class="layui-input-inline" style="width:150px;">
+				<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform"><i class="layui-icon layui-icon-search mr-1"></i>搜索</button>
+				<button type="reset" class="layui-btn layui-btn-reset" lay-filter="reset">清空</button>
+			</div>
 		</form> 
 		<table class="layui-hide" id="test" lay-filter="test"></table>
 	</div>
@@ -52,7 +55,8 @@
 		//日期范围
 		laydate.render({
 			elem: '#date',
-			range: ['#start_time', '#end_time']
+			range: ['#start_time', '#end_time'],
+			rangeLinked:true
 		});
 
 		layui.pageTable = table.render({

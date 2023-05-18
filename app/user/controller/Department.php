@@ -20,12 +20,13 @@ class Department extends BaseController
     public function index()
     {
         if (request()->isAjax()) {
-            $list = Db::name('Department')
+            $cate = Db::name('Department')
                 ->field('d.*,a.name as leader')
                 ->alias('d')
                 ->join('Admin a', 'a.id = d.leader_id', 'LEFT')
                 ->order('d.sort desc,d.id asc')
                 ->select();
+			$list = generateTree($cate);
             return to_assign(0, '', $list);
         } else {
             return view();

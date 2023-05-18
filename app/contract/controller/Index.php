@@ -302,12 +302,7 @@ class Index extends BaseController
 		View::assign('flows', $flows);
         View::assign('auth', $auth);
         View::assign('detail', $detail);
-		if($detail['check_status'] == 0 || $detail['check_status'] == 4){
-			return view('view_set');
-		}
-		else{
-			return view();
-		}
+		return view();
     }
     //删除
     public function delete()

@@ -12,50 +12,6 @@ html{background-color:#fff;}
 .log-timeline .open-a{margin:0 4px;}
 .log-item i{font-weight:800; color:#323232}
 .log-content strong{margin:0 4px; color:#323232}
-
-.check-items{overflow-x: auto; padding: 2px 0;}
-.flow-flex-row {box-direction: row;
-	box-orient: horizontal;
-    -webkit-box-orient: horizontal;
-    -ms-flex-direction: row;
-    flex-direction: row;
-}
-.flow-flexbox { width: 100%;text-align: left;
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    display: -webkit-flex;
-    box-align: center;
-    -webkit-box-align: center;
-    -ms-flex-align: center;
-    align-items: center;
-	flex-wrap: wrap;
-}
-.check-item{width: auto; -ms-flex-negative: 0; flex-shrink: 0; padding:4px 0}
-.check-item i{margin-right:3px; color:#646464;}
-.check-item span{color:#999;margin:0 3px;}
-.check-item .layui-icon {font-size:18px;}
-.check-item .layui-icon.layui-icon-right{font-size:12px;}
-.layui-icon[data-ok]{color:#34a853}
-.layui-icon[data-no]{color:#FF5722;}
-.check-item-status{color:#999; font-size:12px; margin-left:3px;}
-
-.flow-tips{padding:6px 10px;}
-.flow-tips li{padding:5px 0;}
-.flow-tips li i{color:#4285f4;}
-.flow-tips li span{color:#999; font-size:12px; margin-left:4px;}
-
-.flow-record{padding:4px 4px 0;}
-.flow-record .layui-timeline-item{text-decoration:line-through; color:#acacac; padding-bottom:10px;}
-.flow-record .layui-timeline-item.delete-0{text-decoration:none; color:#323232;}
-.layui-timeline-content ul{font-size:12px;}
-.check-status{color:#999; margin-left:5px;}
-.check-remark{padding:6px; margin-top:6px; margin-bottom:10px; border-radius:4px; background-color:#f5f5f5;}
-.check-record{line-height:1.5; padding:4px 0}
-.flow-this{font-weight:800;}
-.flow-this i{color:#4285f4}
-.layui-table-min th{font-size:13px; text-align:center; background-color:#f8f8f8;}
-.layui-table-min td{font-size:13px; padding:6px;text-align:center;}
 </style>
 {/block}
 <!-- 主体 -->
@@ -68,7 +24,7 @@ html{background-color:#fff;}
 	  </ul>
 	  <div class="layui-tab-content">
 		<div class="layui-tab-item layui-show">	
-			<table class="layui-table layui-table-form">
+			<table class="layui-table layui-table-form" style="margin:0">
 				{gt name="$detail.pid" value="0"}
 				 <tr>
 					<td class="layui-td-gray">母合同名称</td>
@@ -212,52 +168,56 @@ html{background-color:#fff;}
 				</td>
 			</tr>
 			{/notempty}
-			{eq name="$detail.check_status" value="2" }
-			  <tr>
-				<td class="layui-td-gray-2">归档状态</td>
-				{eq name="$detail.archive_status" value="0" }
-				<td colspan="7"><span class="layui-color-{$detail.archive_status}">{$detail.archive_status_name}</span></td>
-				{else/}
-				<td><span class="layui-color-{$detail.archive_status}">{$detail.archive_status_name}</span></td>
-				<td class="layui-td-gray-2">归档人</td>
-				<td>{$detail.archive_name} </td>
-				<td class="layui-td-gray-2">归档时间</td>
-				<td colspan="3">{$detail.archive_time}</td>
-				{/eq}
-			  </tr>
-			{/eq}
-			
-			{eq name="$detail.check_status" value="4" }
-			  <tr>
-				<td class="layui-td-gray-2">中止人</td>
-				<td>{$detail.stop_name} </td>
-				<td class="layui-td-gray-2">中止时间</td>
-				<td colspan="5">{$detail.stop_time}</td>
-			  </tr>
-			  <tr>
-				<td class="layui-td-gray-2">中止备注</td>
-				<td colspan="7">{$detail.stop_remark}</td>
-			  </tr>
-			{/eq}
-			
-			{eq name="$detail.check_status" value="5" }
-			  <tr>
-				<td class="layui-td-gray-2">作废人</td>
-				<td>{$detail.void_name} </td>
-				<td class="layui-td-gray-2">作废时间</td>
-				<td colspan="5">{$detail.void_time}</td>
-			  </tr>
-			  <tr>
-				<td class="layui-td-gray-2">作废备注</td>
-				<td colspan="7">{$detail.void_remark}</td>
-			  </tr>
-			{/eq}			
-			</table>
-			
-			{eq name="$detail.check_status" value="1" }
+		</table>
+		
+			{if ($detail.check_status == 1)}
 				{include file="/index/view_step" /}			
-			{/eq}
-			<div class="pt-3">
+			{elseif ($detail.check_status == 0) OR ($detail.check_status == 4)}
+				{include file="/index/view_set" /}
+			{else /}
+			<table class="layui-table layui-table-form">
+				{eq name="$detail.check_status" value="2" }
+				  <tr>
+					<td class="layui-td-gray-2">归档状态</td>
+					{eq name="$detail.archive_status" value="0" }
+					<td colspan="7"><span class="layui-color-{$detail.archive_status}">{$detail.archive_status_name}</span></td>
+					{else/}
+					<td><span class="layui-color-{$detail.archive_status}">{$detail.archive_status_name}</span></td>
+					<td class="layui-td-gray-2">归档人</td>
+					<td>{$detail.archive_name} </td>
+					<td class="layui-td-gray-2">归档时间</td>
+					<td colspan="3">{$detail.archive_time}</td>
+					{/eq}
+				  </tr>
+				{/eq}
+				
+				{eq name="$detail.check_status" value="5" }
+				  <tr>
+					<td class="layui-td-gray-2">中止人</td>
+					<td>{$detail.stop_name} </td>
+					<td class="layui-td-gray-2">中止时间</td>
+					<td colspan="5">{$detail.stop_time}</td>
+				  </tr>
+				  <tr>
+					<td class="layui-td-gray-2">中止备注</td>
+					<td colspan="7">{$detail.stop_remark}</td>
+				  </tr>
+				{/eq}
+				
+				{eq name="$detail.check_status" value="6" }
+				  <tr>
+					<td class="layui-td-gray-2">作废人</td>
+					<td>{$detail.void_name} </td>
+					<td class="layui-td-gray-2">作废时间</td>
+					<td colspan="5">{$detail.void_time}</td>
+				  </tr>
+				  <tr>
+					<td class="layui-td-gray-2">作废备注</td>
+					<td colspan="7">{$detail.void_remark}</td>
+				  </tr>
+				{/eq}			
+			</table>
+			<div class="pt-2">
 				{gt name="$auth" value="0"}				
 					{eq name="$detail.check_status" value="2" }
 						{eq name="$detail.archive_status" value="1" }
@@ -282,10 +242,9 @@ html{background-color:#fff;}
 				{if ( $detail.check_status eq 3) AND ( $is_create_admin eq 1) }
 					<span class="layui-btn layui-btn-primary check_back"><i class="layui-icon layui-icon-reduce-circle"></i> 撤回</span>
 				{/if}
-				{if ( $detail.check_status eq 4) AND ( $is_create_admin eq 1) }
-				<a class="layui-btn" href="/contract/index/add/id/{$detail.id}">重新编辑</a>
-				{/if}
 			</div>
+			{/if}
+		
 		</div>
 		<div class="layui-tab-item">
 			{include file="/index/view_log" /}
@@ -310,11 +269,14 @@ const moduleInit = ['tool','employeepicker','oaTool'];
 				log(layui);	
 			}
 		});
-		
+		if(typeof init==='function'){
+			init(form,tool);
+		}
+
 		if (typeof (flowStep) == "function") {
 			flowStep();
-		}		
-	
+		}
+		
 		//选择合同保管人弹窗	
 		$('body').on('click','#keeper',function () {
 			var ids=$(this).data('ids')+'',names = $(this).data('names')+'';
@@ -335,7 +297,6 @@ const moduleInit = ['tool','employeepicker','oaTool'];
 				}
 			});
 		});
-	
 	
 		//选择共享成员弹窗	
 		$('body').on('click','#shares',function () {
