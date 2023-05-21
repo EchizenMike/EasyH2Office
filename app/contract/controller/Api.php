@@ -37,7 +37,7 @@ class Api extends BaseController
 		}
 		$rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
         $list = Db::name('Contract')
-			->field('id,name,customer_id,sign_uid,sign_time')
+			->field('id,name,code,customer_id,sign_uid,sign_time')
 			->order('id desc')
 			->where($where)
 			->where(function ($query) use($whereOr) {
@@ -46,6 +46,7 @@ class Api extends BaseController
 			->paginate($rows, false)->each(function($item, $key){
 				$item['sign_name'] = Db::name('Admin')->where('id',$item['sign_uid'])->value('name');
                 $item['sign_time'] = date('Y-m-d', $item['sign_time']);
+                $item['customer'] =  Db::name('Customer')->where('id',$item['customer_id'])->value('name');
 				return $item;
 			});
         table_assign(0, '', $list);

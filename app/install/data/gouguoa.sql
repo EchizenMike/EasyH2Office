@@ -1303,6 +1303,21 @@ CREATE TABLE `oa_work_record`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COMMENT = '汇报工作发送记录表';
 
 -- ----------------------------
+-- Table structure for oa_work_comment
+-- ----------------------------
+DROP TABLE IF EXISTS `oa_work_comment`;
+CREATE TABLE `oa_work_comment`  (
+  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `work_id` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '工作汇报id',
+  `admin_id` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建人',
+  `content` text NULL COMMENT '点评内容',
+  `create_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '添加时间',
+  `update_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '修改时间',
+  `delete_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '删除时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COMMENT = '工作汇报点评表';
+
+-- ----------------------------
 -- Table structure for oa_customer_grade
 -- ----------------------------
 DROP TABLE IF EXISTS `oa_customer_grade`;

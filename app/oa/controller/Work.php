@@ -208,6 +208,29 @@ class Work extends BaseController
 		if($detail['update_time']>0){
 			$detail['update_time_str'] = date('Y-m-d H:i:s',$detail['update_time']);  
 		}
+		$comment = Db::name('WorkComment')
+			->field('a.*,u.name,u.thumb')
+			->alias('a')
+			->join('Admin u', 'u.id = a.admin_id')
+			->order('a.create_time desc')
+			->where(['a.work_id'=>$detail['id'],'a.delete_time' => 0])
+			->select()->toArray();
+		foreach ($comment as $k => &$v) {
+			$v['times'] = time_trans($v['create_time']);
+			$v['create_time'] = date('Y-m-d H:i:s',$v['create_time']);
+			if($v['update_time']>0){
+				$v['update_time'] = '，最后编辑时间:'.time_trans($v['update_time']);
+			}
+			else{
+				$v['update_time'] = '';
+			}
+		}
+		$detail['comment_auth'] = 0;
+		$type_user_array = explode(",", $detail['type_user']);
+		if (in_array($this->uid, $type_user_array)) {
+			$detail['comment_auth'] = 1;
+		}
+		$detail['comment']	= $comment;
         View::assign('detail', $detail);
         return view();
     }

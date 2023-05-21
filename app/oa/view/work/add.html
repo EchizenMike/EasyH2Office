@@ -155,9 +155,9 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
-const moduleInit = ['tool','formSelects','employeepicker','oaTool'];
+const moduleInit = ['tool','employeepicker','oaTool'];
 	function gouguInit() {
-		var form = layui.form,tool=layui.tool, table = layui.table, employeepicker = layui.employeepicker, oaTool = layui.oaTool;
+		var form = layui.form,tool=layui.tool,  oaTool = layui.oaTool;
 		oaTool.addFile({
 			btn: 'upFile',
 			box: 'fileList'
@@ -201,42 +201,6 @@ const moduleInit = ['tool','formSelects','employeepicker','oaTool'];
 			})
 			return false;
 		});
-
-		upload.render({ //允许上传的文件后缀
-			elem: '#testList'
-			,url: '/api/index/upload' //此处配置你自己的上传接口即可
-			,accept: 'file' //普通文件
-			,exts: 'jpeg|jpg|png|gif|doc|docx|ppt|pptx|xls|xlsx|pdf|zip|rar|7z' //只允许上传文件
-			,before: function(obj){ //obj参数包含的信息，跟 choose回调完全一致，可参见上文。
-				layer.msg('上传中...',{time: 3600000});
-			}
-			,done: function(res, index, upload){
-				layer.msg(res.msg);
-				if(res.code==0){
-					var timestamp=new Date().getTime();
-					var tr = '<tr data-id="'+res.data.id+'" id="tr_'+timestamp+'">\
-					  <td>'+ res.data.name +'</td>\
-					  <td align="center">'+ (res.data.filesize/(1024*1024)).toFixed(2) +'MB</td>\
-					  <td align="center">\
-					  <span class="layui-btn layui-btn-xs layui-btn-danger demo-delete" data-id="'+timestamp+'">删除</span>\
-					  </td>\
-					</tr>';
-					$('.layui-upload-list').show();
-					$('#demoList').append(tr);
-				}
-			}
-			,error: function(index, upload){
-				layer.msg('上传失败');
-			}
-		});
-		
-		$('#demoList').on('click','.demo-delete',function(){
-			let id = $(this).data('id');
-			layer.confirm('确定要删除该附件吗?', {icon: 3, title:'提示'}, function(index){
-				$('#tr_'+id).remove()
-				layer.close(index);
-			});
-		})
 
 	}		
 	</script>
