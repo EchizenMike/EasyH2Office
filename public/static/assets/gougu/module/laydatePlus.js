@@ -56,7 +56,6 @@ layui.define(['layer'],function(exports){
 						date1.setHours(0, 0, 0, 0);
 						value.push(date1);
 						var date2 = new Date();
-						date2.setDate(date2.getDate() - 7);
 						date2.setHours(23, 59, 59, 999);
 						value.push(new Date(date2));
 						return value;
@@ -71,7 +70,6 @@ layui.define(['layer'],function(exports){
 						date1.setHours(0, 0, 0, 0);
 						value.push(date1);
 						var date2 = new Date();
-						date2.setDate(date2.getDate() - 30);
 						date2.setHours(23, 59, 59, 999);
 						value.push(new Date(date2));
 						return value;
