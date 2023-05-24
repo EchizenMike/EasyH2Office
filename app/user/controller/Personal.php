@@ -52,12 +52,12 @@ class Personal extends BaseController
     {
         $param = get_params();
         if (request()->isAjax()) {
-            $param['move_time'] = isset($param['move_time']) ? strtotime($param['move_time']) : 0;
             if ($param['id'] > 0) {
                 $param['update_time'] = time();
                 $res = Db::name('DepartmentChange')->strict(false)->field(true)->update($param);
                 add_log('edit', $param['id'], $param);
             } else {
+				$param['move_time'] = isset($param['move_time']) ? strtotime($param['move_time']) : 0;
 				$count = Db::name('Department')->where(['leader_id' => $param['uid']])->count();
 				if($count>0){
 					return to_assign(1,'请先撤销该员工的部门负责人头衔再调部门');
