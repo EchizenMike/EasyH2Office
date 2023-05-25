@@ -12,7 +12,7 @@ use think\Validate;
 class SealCateCheck extends Validate
 {
     protected $rule = [
-        'title' => 'require|unique:cost_cate',
+        'title' => 'require|unique:seal_cate',
         'id' => 'require',
     ];
 

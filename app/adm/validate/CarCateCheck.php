@@ -12,7 +12,7 @@ use think\Validate;
 class CarCateCheck extends Validate
 {
     protected $rule = [
-        'title' => 'require|unique:cost_cate',
+        'title' => 'require|unique:car_cate',
         'id' => 'require',
     ];
 
