@@ -56,6 +56,9 @@ layui.define(['jquery','layer','table'], function(exports) {
 		let excel_limit = params.excel_limit||1000;
 		if(is_excel){
 			let toolbar = ['filter', {title:'导出EXCEL',layEvent: 'LAYTABLE_EXCEL',icon: 'layui-icon-export'}];
+			if(!params.toolbar){
+				params.toolbar = true;
+			}
 			if(!params.defaultToolbar){
 				params.defaultToolbar = toolbar;
 			}	
