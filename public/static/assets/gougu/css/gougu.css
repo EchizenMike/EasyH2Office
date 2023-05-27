@@ -36,6 +36,7 @@
 .layui-table-view{margin:0;}
 .layui-table-view .layui-table th{background-color:#f8f8f8;}
 .layui-table-form tbody tr:hover{background-color: #fff;}
+.layui-table-tool{padding:10px 12px}
 .layui-td-gray,.layui-td-gray-2,.layui-td-gray-3,.layui-td-gray-4{color:#909399; width:68px; text-align:right; background-color:#fafafa;}
 .layui-td-gray-2{width:96px;}
 .layui-td-gray-3{width:126px;}
@@ -271,7 +272,7 @@ div.layui-table-main::-webkit-scrollbar-thumb:active{background-color:rgba(0,0,0
 }
 
 /*gg-DIY*/
-.gg-form-bar{padding:10px 15px 0; background-color:#fff;}
+.gg-form-bar{padding:10px 12px 0; background-color:#fff;}
 .gg-form-bar .layui-input-inline{margin-bottom:10px;}
 .gg-tab-bar{background-color:#fff;}
 .gg-tab{text-align: left!important;}

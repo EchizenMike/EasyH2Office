@@ -17,7 +17,7 @@
 				title="修改计划结束日期" data-name="end_time"></i>
 			{gt name=":isModule('contract')" value="0"}
 				<span class="gray" style="margin-left:32px">关联合同：</span>
-				<span id="content_{$detail.id}" data-val="{$detail.contract_id}">{$detail.contract}</span>
+				<span id="contract_id_{$detail.id}" data-val="{$detail.contract_id}">{$detail.contract}</span>
 				<i class="iconfont icon-wodedianping" title="编辑" data-id="{$detail.id}" data-name="contract_id"></i>
 			{/gt}
 		</div>

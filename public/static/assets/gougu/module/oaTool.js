@@ -455,34 +455,6 @@ layui.define(['tool'], function (exports) {
 		}
 	};
 	
-	//查看图片文件
-	$('body').on('click','.file-view-img',function () {
-		let href = $(this).data('href');
-		if(href){
-			let photos = { "data": [{"src": href}]};
-			layer.photos({
-				photos: photos
-				,anim: 5 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
-			});
-		}
-	});	
-	
-	//查看pdf文件
-	$('body').on('click','.file-view-pdf',function () {
-		let href = $(this).data('href');
-		if(href){
-			layer.open({
-			  type: 2,
-			  title: '查看PDF文件，可以最大化看',
-			  shadeClose: true,
-			  shade: false,
-			  maxmin: true, //开启最大化最小化按钮
-			  area: ['900px', '600px'],
-			  content: href
-			});
-		}
-	});
-	
 	//选择部门	
 	$('body').on('click','.picker-depament',function () {
 		let that = $(this);
