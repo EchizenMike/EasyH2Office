@@ -1286,7 +1286,7 @@ function stringToArray($string)
  * @param $field  排序的字段
  * @param $order 排序方式1降序2升序
  */
-function sort_select($select = array(), $field, $order = 1)
+function sort_select($select = array(), $field='', $order = 1)
 {
     $count = count($select);
     if ($order == 1) {
