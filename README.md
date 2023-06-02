@@ -69,7 +69,7 @@ BOSS角色：suhaizhen     123456
 ~~~
 服务器运行环境要求：
 ~~~
-    PHP >= 7.3
+    PHP >= 7.4
     Mysql >= 5.5.0 (需支持innodb引擎)  
     Apache 或 Nginx  
     PDO PHP Extension  
