@@ -40,6 +40,12 @@ class Role extends BaseController
         if (request()->isAjax()) {
             $ruleData = isset($param['rule']) ? $param['rule'] : 0;
             $layoutData = isset($param['layout']) ? $param['layout'] : 0;
+			if($ruleData==0){
+				return to_assign(1, '权限节点至少选择一个');
+			}
+			if($layoutData==0){
+				return to_assign(1, '首页展示模块至少选择一个');
+			}
             $param['rules'] = implode(',', $ruleData);
             $param['layouts'] = implode(',', $layoutData);
             if (!empty($param['id']) && $param['id'] > 0) {
