@@ -52,7 +52,7 @@ BOSS角色：suhaizhen     123456
 
 **功能矩阵**
 
-系统后台集成了主流的通用功能，如：登录验证、系统配置、操作日志管理、角色权限、职位职称、功能菜单、模块管理、关键字管理、文件上传、数据备份/还原、基础数据、审批流程、员工管理、消息通知、企业公告、知识文章、办公审批、日常办公、财务管理、客户管理、合同管理、项目管理、任务管理等。更多的个性化功能可以基于当前系统便捷做二次开发。
+系统后台集成了主流的通用功能，如：登录验证、系统配置、操作日志管理、角色权限、职位职称、数据权限、功能菜单、模块管理、关键字管理、文件上传、数据备份/还原、基础数据、审批流程、员工管理、消息通知、企业公告、知识文章、办公审批、日常办公、财务管理、客户管理、合同管理、项目管理、任务管理等。更多的个性化功能可以基于当前系统便捷做二次开发。
 
 ![输入图片说明](https://oa.gougucms.com/storage/image/gouguoa2.0.png)
 
@@ -70,11 +70,12 @@ BOSS角色：suhaizhen     123456
 服务器运行环境要求：
 ~~~
     PHP >= 7.4
-    Mysql >= 5.5.0 (需支持innodb引擎)  
+    Mysql >= 5.6.0 (需支持innodb引擎)  
     Apache 或 Nginx  
     PDO PHP Extension  
     MBstring PHP Extension  
     CURL PHP Extension  
+    FileInfo PHP Extension
     Composer (用于管理第三方扩展包)
 ~~~
 
@@ -97,7 +98,7 @@ BOSS角色：suhaizhen     123456
     
 composer install  
     
-第四步：添加虚拟主机并绑定到项目的public目录 ，实际部署中，确保绑定域名访问到的是public目录。**（这一步很重要，很多人出错）**
+第四步：添加虚拟主机并绑定到项目的`public`目录 ，实际部署中，确保绑定域名访问到的是`public`目录。**（这一步很重要，很多人出错）**
 
 第五步：伪静态配置 **（这一步也很重要，很多人出错）**，使用的是ThinkPHP的伪静态规则，**具体看下面的伪静态配置内容**。
 
@@ -134,7 +135,7 @@ composer install
 
 ### ❓ 常见问题
 
-1.  安装失败，可能存在php配置文件禁止了putenv 和 proc_open函数。解决方法，查找php.ini文件位置，打开php.ini，搜索 disable_functions 项，看是否禁用了putenv 和 proc_open函数。如果在禁用列表里，移除putenv proc_open然后退出，重启php即可。
+1.  安装失败，可能存在php配置文件禁止了`putenv`和`proc_open`函数。解决方法，查找`php.ini`文件位置，打开`php.ini`，搜索`disable_functions`项，看是否禁用了`putenv`和`proc_open`函数。如果在禁用列表里，移除`putenv`、`proc_open`然后退出，重启`php`即可。
 
 2.  如果安装后打开页面提示 `404`错误，请检查服务器伪静态配置，如果是宝塔面板，网站伪静态请配置使用thinkphp规则。
 
@@ -182,7 +183,7 @@ composer install
 ### 👍 支持我们
 
 - If the project is very helpful to you, you can buy the author a cup of coffee☕.
-- 如果这个项目对您有帮助，可以请作者喝杯咖啡吧哟☕
+- 如果这个项目对您有帮助，可以请作者喝杯咖啡哟☕
 
 |支付宝      |    微信|
 | :--------: | :--------:|
