@@ -104,7 +104,7 @@ class Index extends BaseController
 				}
 			}
 			
-			$ct_sql= Db::name('CustomerTrace')->order('id desc')->limit(1)->buildSql();
+			$ct_sql= Db::name('CustomerTrace')->order('id desc')->buildSql();
 			$orderby = 'a.create_time desc';
 			if(isset($param['orderby'])){
 				$orderby = 'ct.'.$param['orderby'];
@@ -122,6 +122,7 @@ class Index extends BaseController
                 ->join('department d', 'a.belong_did = d.id')
                 ->join($ct_sql.' ct', 'ct.cid = a.id','left')
                 ->order($orderby)
+                ->group('a.id')
                 ->paginate($rows, false, ['query' => $param])
 				->each(function ($item, $key) {
                     $item->belong_name = Db::name('Admin')->where(['id' => $item->belong_uid])->value('name');
