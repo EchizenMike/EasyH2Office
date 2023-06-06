@@ -26,7 +26,7 @@ class Index extends BaseController
             $where = array();
             $whereOr = array();
             if (!empty($param['keywords'])) {
-                $where[] = ['a.id|a.name', 'like', '%' . $param['keywords'] . '%'];
+                $where[] = ['a.id|a.name|cc.name|cc.mobile', 'like', '%' . $param['keywords'] . '%'];
             }
 			if (!empty($param['status'])) {
                 $where[] = ['a.status', '=', $param['status']];
@@ -103,9 +103,9 @@ class Index extends BaseController
 					}
 				}
 			}
-			
-			$ct_sql= Db::name('CustomerTrace')->order('id desc')->buildSql();
-			$orderby = 'a.create_time desc';
+			$cc_sql= Db::name('CustomerContact')->group('cid')->buildSql();
+			$ct_sql= Db::name('CustomerTrace')->group('cid')->field('cid,MAX(follow_time) AS follow_time,MAX(next_time) AS next_time')->buildSql();
+			$orderby = 'ct.next_time desc,a.create_time desc';
 			if(isset($param['orderby'])){
 				$orderby = 'ct.'.$param['orderby'];
 			}
@@ -121,8 +121,9 @@ class Index extends BaseController
                 ->join('industry i', 'a.industry_id = i.id')
                 ->join('department d', 'a.belong_did = d.id')
                 ->join($ct_sql.' ct', 'ct.cid = a.id','left')
+				->join($cc_sql.' cc', 'a.id = cc.cid','left')
+				->distinct()
                 ->order($orderby)
-                ->group('a.id')
                 ->paginate($rows, false, ['query' => $param])
 				->each(function ($item, $key) {
                     $item->belong_name = Db::name('Admin')->where(['id' => $item->belong_uid])->value('name');
