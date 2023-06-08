@@ -283,7 +283,7 @@ class Index extends BaseController
 			->order('check_time asc')
 			->select()->toArray();
 		foreach ($check_record as $kk => &$vv) {		
-			$vv['check_time_str'] = date('Y-m-d :H:i', $vv['check_time']);
+			$vv['check_time_str'] = date('Y-m-d H:i', $vv['check_time']);
 			$vv['status_str'] = '提交';
 			if($vv['status'] == 1){
 				$vv['status_str'] = '审核通过';

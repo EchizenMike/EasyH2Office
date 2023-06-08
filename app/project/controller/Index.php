@@ -358,7 +358,7 @@ class Index extends BaseController
 				->where(array('s.action_id' => $id, 's.type' => 2))
 				->select()->toArray();		
 			foreach ($step_record as $kk => &$vv) {		
-				$vv['check_time_str'] = date('Y-m-d :H:i', $vv['check_time']);
+				$vv['check_time_str'] = date('Y-m-d H:i', $vv['check_time']);
 				$vv['status_str'] = '提交';
 				if($vv['status'] == 1){
 					$vv['status_str'] = '确认完成';

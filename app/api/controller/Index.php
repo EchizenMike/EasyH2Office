@@ -287,7 +287,7 @@ class Index extends BaseController
 				$check_array = Db::name('FlowRecord')->where(['check_user_id' => $v['id'],'step_id' => $val['id']])->order('check_time desc')->select()->toArray();
 				if(!empty($check_array)){
 					$checked = $check_array[0];
-					$v['check_time'] = date('Y-m-d :H:i', $checked['check_time']);
+					$v['check_time'] = date('Y-m-d H:i', $checked['check_time']);
 					$v['content'] = $checked['content'];
 					$v['status'] = $checked['status'];	
 				}
@@ -299,7 +299,7 @@ class Index extends BaseController
 						->join('Admin a', 'a.id = f.check_user_id', 'left')
 						->where(['f.step_id' => $val['id']])->select()->toArray();
 			foreach ($check_list as $kk => &$vv) {		
-				$vv['check_time_str'] = date('Y-m-d :H:i', $vv['check_time']);
+				$vv['check_time_str'] = date('Y-m-d H:i', $vv['check_time']);
 			}
 			
 			$val['user_id_info'] = $user_id_info;
@@ -319,7 +319,7 @@ class Index extends BaseController
 					->order('check_time asc')
 					->select()->toArray();
 		foreach ($check_list as $kk => &$vv) {		
-			$vv['check_time_str'] = date('Y-m-d :H:i', $vv['check_time']);
+			$vv['check_time_str'] = date('Y-m-d H:i', $vv['check_time']);
 		}
         return to_assign(0, '', $check_list);
     }

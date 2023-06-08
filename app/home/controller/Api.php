@@ -24,7 +24,7 @@ class api extends BaseController
             ->limit(8)
             ->select()->toArray();
         foreach ($list as $key => $val) {
-            $list[$key]['create_time'] = date('Y-m-d :H:i', $val['create_time']);
+            $list[$key]['create_time'] = date('Y-m-d H:i', $val['create_time']);
         }
         $res['data'] = $list;
         return table_assign(0, '', $res);
@@ -46,7 +46,7 @@ class api extends BaseController
 				->limit(8)
 				->select()->toArray();
 			foreach ($list as $key => $val) {
-				$list[$key]['create_time'] = date('Y-m-d :H:i', $val['create_time']);
+				$list[$key]['create_time'] = date('Y-m-d H:i', $val['create_time']);
 			}
 			$res['data'] = $list;			
 		}
@@ -86,7 +86,7 @@ class api extends BaseController
 				->limit(8)
 				->select()->toArray();
 			foreach ($list as $key => &$val) {
-				$val['create_time'] = date('Y-m-d :H:i', $val['create_time']);
+				$val['create_time'] = date('Y-m-d H:i', $val['create_time']);
 				if($val['end_time']>0){
 					$val['plan_time'] = date('Y-m-d', $val['start_time']) . ' 至 ' . date('Y-m-d', $val['end_time']);
 				}
