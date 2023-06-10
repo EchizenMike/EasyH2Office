@@ -163,6 +163,7 @@ layui.define(['layer'],function(exports){
 				type: 'datetime',
 				range: '~',
 				trigger: 'none',
+				rangeLinked:true,
 				shortcuts: shortcuts,
 				show:true
 			});
