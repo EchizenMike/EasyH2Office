@@ -103,7 +103,7 @@ class Index extends BaseController
 					}
 				}
 			}
-			$cc_sql= Db::name('CustomerContact')->group('cid')->buildSql();
+			$cc_sql= Db::name('CustomerContact')->group('cid,mobile,qq,wechat,email')->field('cid,mobile,qq,wechat,email')->buildSql();
 			$ct_sql= Db::name('CustomerTrace')->group('cid')->field('cid,MAX(follow_time) AS follow_time,MAX(next_time) AS next_time')->buildSql();
 			$orderby = 'ct.next_time desc,a.create_time desc';
 			if(isset($param['orderby'])){
