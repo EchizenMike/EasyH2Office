@@ -10,42 +10,36 @@
 	<table class="layui-table layui-table-form">
 		<tr>
 			<td class="layui-td-gray-2">活动名称<font>*</font></td>
-			<td colspan="2"><input type="text" name="name" value="" autocomplete="off" placeholder="请输入活动名称" lay-verify="required" lay-reqText="请输入活动名称" class="layui-input"></td>
+			<td><input type="text" name="name" value="" autocomplete="off" placeholder="请输入活动名称" lay-verify="required" lay-reqText="请输入活动名称" class="layui-input"></td>
 			<td class="layui-td-gray">活动预算<font>*</font></td>
-			<td colspan="2"><input type="text" name="amount" value="" autocomplete="off" placeholder="请输入活动预算金额" lay-verify="required|number" lay-reqText="请输入活动预算金额" class="layui-input"></td>
+			<td><input type="text" name="amount" value="" autocomplete="off" placeholder="请输入活动预算金额" lay-verify="required|number" lay-reqText="请输入活动预算金额" class="layui-input"></td>
 		</tr>
 		<tr>
 			<td class="layui-td-gray">活动说明<font>*</font></td>
-			<td colspan="5">
+			<td colspan="3">
 				<textarea name="content" placeholder="请输入活动说明" class="layui-textarea" lay-verify="required" lay-reqText="请输入活动说明" ></textarea>
 			</td>
 		</tr>
 		<tr>
 			<td class="layui-td-gray">开始时间<font>*</font></td>
 			<td>
-				<input id="start_time_a" name="start_time_a" autocomplete="off" class="layui-input select-time" value="" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
-			</td>
-			<td>
-				<input id="start_time_b" name="start_time_b" autocomplete="off" class="layui-input select-datetime" value="" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
+				<input id="start_time" name="start_time" autocomplete="off" class="layui-input select-time" value="" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
 			</td>
 			<td class="layui-td-gray">结束时间<font>*</font></td>
 			<td>
-				<input id="end_time_a" name="end_time_a" autocomplete="off" class="layui-input select-time" value="" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
-			</td>
-			<td>
 				<input type="hidden" name="duration" value="">
-				<input id="end_time_b" name="end_time_b" autocomplete="off" class="layui-input select-datetime" value="" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
+				<input id="end_time" name="end_time" autocomplete="off" class="layui-input select-time" value="" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
 			</td>
 		</tr>
 		<tr>
 			<td class="layui-td-gray">备注</td>
-			<td colspan="5">
+			<td colspan="3">
 				<textarea name="remark" placeholder="请输入备注信息" class="layui-textarea"></textarea>
 			</td>
 		</tr>
 		<tr>
 			<td class="layui-td-gray"><div class="layui-input-inline">附件</div> <div class="layui-input-inline"><button type="button" class="layui-btn layui-btn-xs" id="upFile"><i class="layui-icon"></i></button></div></td>
-			<td colspan="5" style="line-height:inherit">
+			<td colspan="3" style="line-height:inherit">
 				<div class="layui-row" id="fileList">
 					<input type="hidden" data-type="file" name="file_ids" value="">
 				</div>
@@ -56,9 +50,9 @@
 	<table class="layui-table layui-table-form">
 		<tr>
 			<td class="layui-td-gray-2">活动名称<font>*</font></td>
-			<td colspan="2"><input type="text" name="name" value="{$detail.name}" autocomplete="off" placeholder="请输入活动名称" lay-verify="required" lay-reqText="请输入活动名称" class="layui-input"></td>
+			<td><input type="text" name="name" value="{$detail.name}" autocomplete="off" placeholder="请输入活动名称" lay-verify="required" lay-reqText="请输入活动名称" class="layui-input"></td>
 			<td class="layui-td-gray">活动预算<font>*</font></td>
-			<td colspan="2"><input type="text" name="amount" value="{$detail.amount}" autocomplete="off" placeholder="请输入活动预算金额" lay-verify="required|number" lay-reqText="请输入活动预算金额" class="layui-input"></td>
+			<td><input type="text" name="amount" value="{$detail.amount}" autocomplete="off" placeholder="请输入活动预算金额" lay-verify="required|number" lay-reqText="请输入活动预算金额" class="layui-input"></td>
 		</tr>
 		<tr>
 			<td class="layui-td-gray">活动说明<font>*</font></td>
@@ -69,29 +63,23 @@
 		<tr>
 			<td class="layui-td-gray">开始时间<font>*</font></td>
 			<td>
-				<input id="start_time_a" name="start_time_a" autocomplete="off" class="layui-input select-time" value="{$detail.start_time_a}" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
-			</td>
-			<td>
-				<input id="start_time_b" name="start_time_b" autocomplete="off" class="layui-input select-datetime" value="{$detail.start_time_b}" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
+				<input id="start_time" name="start_time" autocomplete="off" class="layui-input select-time" value="{$detail.start_time|date='Y-m-d H:i:s'}" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
 			</td>
 			<td class="layui-td-gray">结束时间<font>*</font></td>
 			<td>
-				<input id="end_time_a" name="end_time_a" autocomplete="off" class="layui-input select-time" value="{$detail.end_time_a}" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
-			</td>
-			<td>
-				<input type="hidden" name="duration" value="{$detail.duration}">
-				<input id="end_time_b" name="end_time_b" autocomplete="off" class="layui-input select-datetime" value="{$detail.end_time_b}" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
+				<input type="hidden" name="duration" value="">
+				<input id="end_time" name="end_time" autocomplete="off" class="layui-input select-time" value="{$detail.end_time|date='Y-m-d H:i:s'}" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
 			</td>
 		</tr>
 		<tr>
 			<td class="layui-td-gray">备注</td>
-			<td colspan="5">
+			<td colspan="3">
 				<textarea name="remark" placeholder="请输入备注" class="layui-textarea">{$detail.remark}</textarea>
 			</td>
 		</tr>
 		<tr>
 			<td class="layui-td-gray"><div class="layui-input-inline">附件</div> <div class="layui-input-inline"><button type="button" class="layui-btn layui-btn-xs" id="upFile"><i class="layui-icon"></i></button></div></td>
-			<td colspan="5" style="line-height:inherit">
+			<td colspan="3" style="line-height:inherit">
 				<div class="layui-row" id="fileList">
 					<input type="hidden" name="file_ids" data-type="file" value="{$detail.file_ids}">
 					{notempty name="$detail.file_ids"}
@@ -127,46 +115,14 @@ const moduleInit = ['tool','employeepicker','oaTool'];
 			flowStep();
 		}	 
 		//日期时间范围
-		laydate.render({
-			elem: '#start_time_a',
-			type: 'date',
-			format: 'yyyy-MM-dd',
-			showBottom: false
-		});
-
-		//日期时间范围
-		laydate.render({
-			elem: '#end_time_a',
-			type: 'date',
-			format: 'yyyy-MM-dd',
-			showBottom: false
-		});
-		
-		//选择具体时间
-		lay('.select-datetime').each(function () {
+		lay('.select-time').each(function () {
 			laydate.render({
 				elem: this,
 				trigger: 'click',
-				type: 'time',
-				format: 'HH:mm',
-				btns: ['clear', 'confirm'],
-				ready: function (date) {
-				   var dom = $(".laydate-time-list").children("li");
-				   for (var i = 0; i < dom.length; i++) {
-					   if (i == 2 || i == 5) {
-						   $(dom[i]).remove();
-					   } else if(i==1||i==4) {
-						   var li = $(dom[i]).children("ol").children("li")
-						   for (var j = 0; j < li.length; j++) {
-							   if ($(li[j]).text() != 00 && $(li[j]).text()!=30) {
-								   $(li[j]).remove();
-							   }
-						   }
-					   }
-					}
-				}
+				fullPanel:true,
+				type:'datetime'
 			});
-		});	
+		});
 	}
 </script>
 {/block}

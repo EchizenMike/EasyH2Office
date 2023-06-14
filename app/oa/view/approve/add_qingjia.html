@@ -10,7 +10,7 @@
 	<table class="layui-table layui-table-form">
 		<tr>
 			<td class="layui-td-gray-2">请假类型<font>*</font></td>
-			<td colspan="5">
+			<td colspan="3">
 				<select name="detail_type" lay-verify="required" lay-reqText="请选择请假类型">
 				  <option value="">--请选择--</option>
 				  <option value="1">事假</option>
@@ -28,35 +28,29 @@
 		<tr>
 			<td class="layui-td-gray">开始时间<font>*</font></td>
 			<td>
-				<input id="start_time_a" name="start_time_a" autocomplete="off" class="layui-input select-time" value="" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
-			</td>
-			<td>
-				<input id="start_time_b" name="start_time_b" autocomplete="off" class="layui-input select-datetime" value="" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
+				<input id="start_time" name="start_time" autocomplete="off" class="layui-input select-time" value="" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
 			</td>
 			<td class="layui-td-gray">结束时间<font>*</font></td>
 			<td>
-				<input id="end_time_a" name="end_time_a" autocomplete="off" class="layui-input select-time" value="" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
-			</td>
-			<td>
 				<input type="hidden" name="duration" value="">
-				<input id="end_time_b" name="end_time_b" autocomplete="off" class="layui-input select-datetime" value="" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
+				<input id="end_time" name="end_time" autocomplete="off" class="layui-input select-time" value="" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
 			</td>
 		</tr>
 		<tr>
 			<td class="layui-td-gray">请假工时</td>
-			<td colspan="2" id="hours">-</td>
+			<td id="hours">-</td>
 			<td class="layui-td-gray">请假天数</td>
-			<td colspan="2" id="days">-</td>
+			<td id="days">-</td>
 		</tr>
 		<tr>
 			<td class="layui-td-gray">请假事由<font>*</font></td>
-			<td colspan="5">
+			<td colspan="3">
 				<textarea name="content" placeholder="请输入请假事由" class="layui-textarea" lay-verify="required" lay-reqText="请输入请假事由"></textarea>
 			</td>
 		</tr>
 		<tr>
 			<td class="layui-td-gray"><div class="layui-input-inline">附件</div> <div class="layui-input-inline"><button type="button" class="layui-btn layui-btn-xs" id="upFile"><i class="layui-icon"></i></button></div></td>
-			<td colspan="5" style="line-height:inherit">
+			<td colspan="3" style="line-height:inherit">
 				<div class="layui-row" id="fileList">
 					<input data-type="file" type="hidden" name="file_ids" value="">
 				</div>
@@ -67,7 +61,7 @@
 	<table class="layui-table layui-table-form">
 		<tr>
 			<td class="layui-td-gray">请假类型<font>*</font></td>
-			<td colspan="5">
+			<td colspan="3">
 				<select name="detail_type" lay-verify="required" lay-reqText="请选择请假类型">
 				  <option value="">--请选择--</option>
 				  <option value="1" {eq name="$detail.detail_type" value="1"}selected=""{/eq}>事假</option>
@@ -85,35 +79,29 @@
 		<tr>
 			<td class="layui-td-gray">开始时间<font>*</font></td>
 			<td>
-				<input id="start_time_a" name="start_time_a" autocomplete="off" class="layui-input select-time" value="{$detail.start_time_a}" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
-			</td>
-			<td>
-				<input id="start_time_b" name="start_time_b" autocomplete="off" class="layui-input select-datetime" value="{$detail.start_time_b}" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
+				<input id="start_time" name="start_time" autocomplete="off" class="layui-input select-time" value="{$detail.start_time|date='Y-m-d H:i:s'}" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
 			</td>
 			<td class="layui-td-gray">结束时间<font>*</font></td>
 			<td>
-				<input id="end_time_a" name="end_time_a" autocomplete="off" class="layui-input select-time" value="{$detail.end_time_a}" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
-			</td>
-			<td>
-				<input type="hidden" name="duration" value="{$detail.duration}">
-				<input id="end_time_b" name="end_time_b" autocomplete="off" class="layui-input select-datetime" value="{$detail.end_time_b}" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
+				<input type="hidden" name="duration" value="">
+				<input id="end_time" name="end_time" autocomplete="off" class="layui-input select-time" value="{$detail.end_time|date='Y-m-d H:i:s'}" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
 			</td>
 		</tr>
 		<tr>
 			<td class="layui-td-gray">请假工时</td>
-			<td colspan="2" id="hours">共{$detail.duration}工时</td>
+			<td id="hours">共{$detail.duration}工时</td>
 			<td class="layui-td-gray">请假天数</td>
-			<td colspan="2" id="days">共{$detail.days}天,{$detail.hours}小时</td>
+			<td id="days">共{$detail.days}天,{$detail.hours}小时</td>
 		</tr>
 		<tr>
 			<td class="layui-td-gray">请假事由<font>*</font></td>
-			<td colspan="5">
+			<td colspan="3">
 				<textarea name="content" placeholder="请输入请假事由" class="layui-textarea" lay-verify="required" lay-reqText="请输入请假事由">{$detail.content}</textarea>
 			</td>
 		</tr>
 		<tr>
 			<td class="layui-td-gray"><div class="layui-input-inline">附件</div> <div class="layui-input-inline"><button type="button" class="layui-btn layui-btn-xs" id="upFile"><i class="layui-icon"></i></button></div></td>
-			<td colspan="5" style="line-height:inherit">
+			<td colspan="3" style="line-height:inherit">
 				<div class="layui-row" id="fileList">
 					<input data-type="file" type="hidden" name="file_ids" value="{$detail.file_ids}">
 					{notempty name="$detail.file_ids"}
@@ -137,68 +125,48 @@
 /**
  * 工时计算
   */
-function leaveTime() {
-	var data_1 = $('#start_time_a').val();
-	var data_1_1 = $('#start_time_b').val();
-	var data_2 = $('#end_time_a').val();
-	var data_2_1 = $('#end_time_b').val();
-	if(data_1=='' || data_1_1=='' || data_2=='' || data_2_1==''){
-		return 0;
-	}	
+const WORKDAY_HOURS = 8;
+const START_HOUR = 9;
+const END_HOUR = 18;
+const START_BREAK_HOUR = 12;
+const END_BREAK_HOUR = 13;
+const WEEKEND_DAYS = [0, 6];
 
-    var start_date = data_1+' '+data_1_1; 
-    var end_date = data_2+' '+data_2_1; 
-	var start = new Date(start_date.replace(/-/g,'/'));
-	var end = new Date(end_date.replace(/-/g,'/'));
-    var startHour = start.getHours(); //16
-    var startMin = start.getMinutes(); 
-    var endHour = end.getHours();
-	var endMin = end.getMinutes(); 
-	
-    var startDate = start.setHours(0, 0, 0);
-    var endDate = end.setHours(0, 0, 0);
-	if(endDate<startDate){
-		return 0;
-	}
-    var dayNum = parseInt(Math.abs(endDate - startDate) / 1000 / 60 / 60 / 24);
-	
-    var hour = 0;
-    if (startDate == endDate) {
-        var date = new Date(startDate);
-        var week = date.getDay();
-        if (week != 0 && week != 6) {
-			hour= (endHour-startHour)*10-startMin/6+endMin/6;
-			if (startHour <= 12 && endHour>12) {
-				hour= hour-15;
-			}
-        }
-    } else {
-        for (var i = 0; i <= dayNum; i++) {
-            var DateTime = startDate + 60 * 60 * 24 * 1000*i
-            var date = new Date(DateTime);
-            var week = date.getDay();
-            if (week != 0 && week != 6) {
-                if (DateTime == startDate) {
-					hour+= (18-startHour)*10-(startMin/6);
-					if (startHour <= 12) {
-						hour= hour-15;
-					}
-                } else if (DateTime > startDate && DateTime < endDate) {
-                    hour += 75;
-                } else if (DateTime == endDate){
-                    hour+= (endHour-9)*10+endMin/6;
-					if (endHour > 12) {
-						hour= hour-15;
-					}
-                }
-            }
-        }
-    }
-	if(hour<0){
-		hour=0;
-	}
-    return hour; 
+function isWeekend(day) {
+  return WEEKEND_DAYS.includes(day);
 }
+
+function calculateWorkHours() {
+  var startDate = new Date($('#start_time').val());
+  var endDate = new Date($('#end_time').val());
+
+  const start = startDate.getTime();
+  const end = endDate.getTime();
+  const startDay = startDate.getDay();
+  const endDay = endDate.getDay();
+
+  let totalHours = 0;
+
+  for (let time = start; time < end; time += 3600000 /* 1 hour in milliseconds */) {
+    const date = new Date(time);
+    const dayOfWeek = date.getDay();
+    const hour = date.getHours();
+
+    if (!isWeekend(dayOfWeek)) {
+      if (dayOfWeek === startDay && hour < START_HOUR) {
+        continue;
+      } else if (dayOfWeek === endDay && hour >= END_HOUR) {
+        break;
+      } else if (hour >= START_HOUR && hour < END_HOUR) {
+        if (hour < START_BREAK_HOUR || hour >= END_BREAK_HOUR) {
+          totalHours += 1;
+        }
+      }
+    }
+  }
+  return totalHours;
+}
+
 
 const moduleInit = ['tool','employeepicker','oaTool'];
 	function gouguInit() {
@@ -220,61 +188,22 @@ const moduleInit = ['tool','employeepicker','oaTool'];
 			laydate.render({
 				elem: this,
 				trigger: 'click',
+				fullPanel:true,
+				type:'datetime',
 				done:function(){
-					var hours = leaveTime();
+					var hours = calculateWorkHours();
 					if(hours == 0){
 						$('#hours,#days').html('-');
 					}
 					else{
-						$('#hours').html('共'+hours/10+'小时');
+						$('#hours').html('共'+hours+'小时');
 						var days = 0;
-						if(hours>=75){
-							days = parseInt(hours/75);
+						if(hours>=8){
+							days = parseInt(hours/8);
 						}
-						$('#days').html('共'+days+'天，'+(hours%75)/10+'小时');
+						$('#days').html('共'+days+'天，'+(hours%8)+'小时');
 					}
-					$('[name="duration"]').val(hours/10);
-				}
-			});
-		});
-		
-		//选择具体时间
-		lay('.select-datetime').each(function () {
-			laydate.render({
-				elem: this,
-				trigger: 'click',
-				type: 'time',
-				format: 'HH:mm',
-				btns: ['clear', 'confirm'],
-				ready: function (date) {
-				   var dom = $(".laydate-time-list").children("li");
-				   for (var i = 0; i < dom.length; i++) {
-					   if (i == 2 || i == 5) {
-						   $(dom[i]).remove();
-					   } else if(i==1||i==4) {
-						   var li = $(dom[i]).children("ol").children("li")
-						   for (var j = 0; j < li.length; j++) {
-							   if ($(li[j]).text() != 00 && $(li[j]).text()!=30) {
-								   $(li[j]).remove();
-							   }
-						   }
-					   }
-					}
-				},
-				done:function(){
-					var hours = leaveTime();
-					if(hours == 0){
-						$('#hours,#days').html('-');
-					}
-					else{
-						$('#hours').html('共'+hours/10+'小时');
-						var days = 0;
-						if(hours>=75){
-							days = parseInt(hours/75);
-						}
-						$('#days').html('共'+days+'天，'+(hours%75)/10+'小时');
-					}
-					$('[name="duration"]').val(hours/10);
+					$('[name="duration"]').val(hours);
 				}
 			});
 		});

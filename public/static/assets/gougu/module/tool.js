@@ -311,7 +311,8 @@ layui.define([], function (exports) {
 		layui.laydate.render({ 
 			elem: that,
 			show: true,
-			type: type
+			type: type,
+			fullPanel: true
 		});
 		return false;
 	});	

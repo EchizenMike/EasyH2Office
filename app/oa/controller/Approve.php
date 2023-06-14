@@ -399,8 +399,8 @@ class Approve extends BaseController
 				$detail['end_time_b'] = date('H:i',$detail['end_time']);
 				$detail['detail_time'] = date('Y-m-d',$detail['detail_time']);
 				
-				$detail['days'] = floor($detail['duration']*10/75);
-				$detail['hours'] = (($detail['duration']*10)%75)/10;
+				$detail['days'] = floor($detail['duration']*10/80);
+				$detail['hours'] = (($detail['duration']*10)%80)/10;
 				$type = $detail['type'];
 				if($detail['file_ids'] !=''){
 					$fileArray = Db::name('File')->where('id','in',$detail['file_ids'])->select();
@@ -446,8 +446,8 @@ class Approve extends BaseController
 			$detail['detail_time'] = date('Y-m-d',$detail['detail_time']);
 		}
 		
-		$detail['days'] = floor($detail['duration']*10/75);
-		$detail['hours'] = (($detail['duration']*10)%75)/10;
+		$detail['days'] = floor($detail['duration']*10/80);
+		$detail['hours'] = (($detail['duration']*10)%80)/10;
 		
 		$detail['create_user'] = Db::name('Admin')->where('id',$detail['admin_id'])->value('name');
 		$flows = Db::name('FlowStep')->where(['action_id'=>$detail['id'],'type'=>1,'sort'=>$detail['check_step_sort'],'delete_time'=>0])->find();
