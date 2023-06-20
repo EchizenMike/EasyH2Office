@@ -19,13 +19,12 @@
 			</td>
 			<td class="layui-td-gray">结束时间<font>*</font></td>
 			<td>
-				<input type="hidden" name="duration" value="">
 				<input id="end_time" name="end_time" autocomplete="off" class="layui-input select-time" value="" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
 			</td>
 		</tr>
 		<tr>
 			<td class="layui-td-gray">外出时长</td>
-			<td id="hours">-</td>
+			<td><input name="duration" value="" class="layui-input" lay-verify="required|number" placeholder="请完善请外出时长" lay-reqText="请完善请外出时长"></td>
 			<td class="layui-td-gray">外出天数</td>
 			<td id="days">-</td>
 		</tr>
@@ -63,7 +62,7 @@
 		</tr>
 		<tr>
 			<td class="layui-td-gray">外出时长</td>
-			<td id="hours">共{$detail.duration}工时</td>
+			<td><input name="duration" value="{$detail.duration}" class="layui-input" lay-verify="required|number" placeholder="请完善请外出时长" lay-reqText="请完善外出时长"></td>
 			<td class="layui-td-gray">外出天数</td>
 			<td id="days">共{$detail.days}天,{$detail.hours}小时</td>
 		</tr>
@@ -141,6 +140,21 @@ function calculateWorkHours() {
   return totalHours;
 }
 
+function isNumber(str, type) {
+	var t = type || 0;
+	var patn = /^[0-9]+$/;
+	if (t > 0) {
+		patn = /^\d+(\.\d+)?$/;
+	}
+	if (!patn.test(str)){
+		return false;
+	}
+	else{
+		return true;
+	}
+}
+
+
 const moduleInit = ['tool','employeepicker','oaTool'];
 	function gouguInit() {
 		var form = layui.form,
@@ -152,7 +166,7 @@ const moduleInit = ['tool','employeepicker','oaTool'];
 			btn: 'upFile',
 			box: 'fileList'
 		});
-
+	
 		if (typeof (flowStep) == "function") {
 			flowStep();
 		}	
@@ -166,20 +180,34 @@ const moduleInit = ['tool','employeepicker','oaTool'];
 				done:function(){
 					var hours = calculateWorkHours();
 					if(hours == 0){
-						$('#hours,#days').html('-');
+						$('[name="duration"]').val('');
+						$('#days').html('-');
 					}
 					else{
-						$('#hours').html('共'+hours+'小时');
+						$('[name="duration"]').val(hours);
 						var days = 0;
 						if(hours>=8){
 							days = parseInt(hours/8);
 						}
-						$('#days').html('共'+days+'天，'+(hours%8)+'小时');
-					}
-					$('[name="duration"]').val(hours);
+						$('#days').html('共'+days+'天，'+(hours%8).toFixed(1)+'小时');
+					}					
 				}
 			});
 		});
+		
+		$('[name="duration"]').on('input',function(){
+			let hours = $(this).val();
+			if(isNumber(hours,1) && hours>0){
+				var days = 0;
+				if(hours>=8){
+					days = parseInt(hours/8);
+				}
+				$('#days').html('共'+days+'天，'+((hours%8).toFixed(1))+'小时');
+			}
+			else{
+				$('#days').html('-');
+			}			
+		})
 	}
 </script>
 {/block}

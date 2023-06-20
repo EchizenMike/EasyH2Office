@@ -422,10 +422,10 @@ class Index extends BaseController
 				if($next_step){
 					//存在下一步审核
 					if($next_step['flow_type'] == 1){
-						$param['check_admin_ids'] = get_department_leader($this->uid);
+						$param['check_admin_ids'] = get_department_leader($detail['admin_id']);
 					}
 					else if($next_step['flow_type'] == 2){
-						$param['check_admin_ids'] = get_department_leader($this->uid,1);
+						$param['check_admin_ids'] = get_department_leader($detail['admin_id'],1);
 					}
 					else{
 						$param['check_admin_ids'] = $next_step['flow_uids'];
@@ -439,7 +439,7 @@ class Index extends BaseController
 					$param['check_admin_ids'] ='';
 				}
 			}
-			if($param['check_status'] == 1 && $param['check_admin_ids']==''){
+			if($param['check_status'] == 1 && empty($param['check_admin_ids'])){
 				return to_assign(1,'找不到下一步的审批人，该审批流程设置有问题，请联系HR或者管理员');
 			}			
 			//审核通过数据操作

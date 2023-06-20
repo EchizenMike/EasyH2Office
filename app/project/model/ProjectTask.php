@@ -61,9 +61,6 @@ class ProjectTask extends Model
 				$whereOr =[$map1,$map2,$map3,$map4];
 			}
         }
-        if (!empty($param['type'])) {
-            $where[] = ['type', '=', $param['type']];
-        }
         if (!empty($param['flow_status'])) {
             $where[] = ['flow_status', '=', $param['flow_status']];
         }

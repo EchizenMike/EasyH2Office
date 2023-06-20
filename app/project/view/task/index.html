@@ -39,18 +39,12 @@
 				</select>
 			</div>
 			<div class="layui-input-inline" style="width:200px;">
-				<select name="project_id" lay-filter="project">
-					<option value="">所属项目</option>
-					{volist name="project" id="vo"}
-					<option value="{$vo.id}">{$vo.name}</option>
-					{/volist}
-				</select>
+				<input type="text" name="project_name" placeholder="所属项目" readonly class="layui-input picker-project" autocomplete="off" />
+				<input name="project_id" style="display: none;" value="" />
 			</div>
 			<div class="layui-input-inline" style="width:160px;">
-				<input type="hidden" name="type" />
+				<input type="text" name="director" placeholder="任务负责人，可多选" readonly class="layui-input picker-more" autocomplete="off" />
 				<input name="director_uid" style="display: none;" value="" />
-				<input type="text" name="director" placeholder="负责人，可多选" readonly class="layui-input employeepicker"
-					autocomplete="off" />
 			</div>
 			<div class="layui-input-inline" style="width:200px;">
 				<input type="text" name="keywords" placeholder="主题/描述内容" class="layui-input" autocomplete="off" />
@@ -74,9 +68,9 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
-	const moduleInit = ['tool','employeepicker','tablePlus'];
+	const moduleInit = ['tool','employeepicker','tablePlus','oaTool'];
 	function gouguInit() {
-		var table = layui.tablePlus, form = layui.form, tool = layui.tool, employeepicker = layui.employeepicker;
+		var table = layui.tablePlus, form = layui.form, tool = layui.tool;
 
 		layui.taskTable = table.render({
 			elem: '#task',
@@ -87,7 +81,7 @@
 			url: "/project/task/index", //数据接口
 			page: true, //开启分页
 			limit: 20,
-			height: 'full-88',
+			height: 'full-82',
 			cols: [[
 				{
 					field: 'id', title: '任务编号', width: 80, align: 'center', fixed: 'left', templet: function (d) {
@@ -122,28 +116,6 @@
 				}
 			]]
 		});
-
-		//选择人弹窗	
-		$('#taskList').on('click', '.employeepicker', function () {
-			let that = $(this);
-			let ids_name = that.attr('name') + '_uid';
-			var ids = $('[name="' + ids_name + '"]').val(), names = that.val(), id_array = [], name_array = [];
-			if (ids.length > 0) {
-				id_array = ids.split(',');
-				name_array = names.split(',');
-			}
-			employeepicker.init({
-				ids: id_array,
-				names: name_array,
-				department_url: "/api/index/get_department_tree",
-				employee_url: "/api/index/get_employee",
-				callback: function (ids, names, dids, departments) {
-					$('[name="' + ids_name + '"]').val(ids);
-					that.val(names);
-					tableReload();
-				}
-			});
-		});
 		
 		//触发事件
 		table.on('toolbar(task)', function(obj){
@@ -152,55 +124,11 @@
 				return;
 			}
 		});
-
-		//查看模式
-		$('#taskList').on('click', '[data-event="show"]', function () {
-			layer.msg('开源版只支持列表模式');
-		});
-
-		//任务类型
-		$('#taskTab').on('click', 'li', function () {
-			$(this).addClass('tab-this').siblings().removeClass('tab-this');
-			let type = $(this).data('type');
-			$('#taskForm').find('[name="type"]').val(type);
-			tableReload();
-		});
-
-		form.on('select(status)', function (data) {
-			tableReload();
-		});
-		form.on('select(priority)', function (data) {
-			tableReload();
-		});
-		form.on('select(cate)', function (data) {
-			tableReload();
-		});
-		form.on('select(project)', function (data) {
-			tableReload();
-		});
 		//监听搜索提交
 		form.on('submit(webform)', function (data) {
-			tableReload();
+			layui.taskTable.reload({ where: data.field });
 			return false;
 		});
-		$('#taskForm').on('click', '[lay-filter="clear"]', function () {
-			setTimeout(function () {
-				tableReload();
-			}, 10)
-		})
-
-		function tableReload() {
-			let postData = {
-				flow_status: $('#taskForm').find('[name="flow_status"]').val(),
-				priority: $('#taskForm').find('[name="priority"]').val(),
-				cate: $('#taskForm').find('[name="cate"]').val(),
-				delay: $('#taskForm').find('[name="delay"]').val(),
-				director_uid: $('#taskForm').find('[name="director_uid"]').val(),
-				project_id: $('#taskForm').find('[name="project_id"]').val(),
-				keywords: $('#taskForm').find('[name="keywords"]').val()
-			}
-			layui.taskTable.reload({ where: postData });
-		}
 	}		
 </script>
 {/block}
