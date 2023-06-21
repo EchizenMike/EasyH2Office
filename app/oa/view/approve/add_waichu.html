@@ -126,16 +126,13 @@ function calculateWorkHours() {
     const hour = date.getHours();
 
     if (!isWeekend(dayOfWeek)) {
-      if (dayOfWeek === startDay && hour < START_HOUR) {
-        continue;
-      } else if (dayOfWeek === endDay && hour >= END_HOUR) {
-        break;
-      } else if (hour >= START_HOUR && hour < END_HOUR) {
-        if (hour < START_BREAK_HOUR || hour >= END_BREAK_HOUR) {
-          totalHours += 1;
-        }
-      }
-    }
+		if (hour >= START_HOUR && hour < END_HOUR) {
+			if (hour < START_BREAK_HOUR || hour >= END_BREAK_HOUR) {
+				console.log(totalHours);
+				totalHours += 1;
+			}
+		}
+	}
   }
   return totalHours;
 }
