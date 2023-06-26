@@ -147,7 +147,7 @@ class ProjectTask extends Model
 				$detail['director_name'] = Db::name('Admin')->where(['id' => $detail['director_uid']])->value('name');
 			}
             $detail['logs'] = Db::name('ProjectLog')->where(['module' => 'task', 'task_id' => $detail['id']])->count();
-            $detail['comments'] = Db::name('ProjectComment')->where(['module' => 4, 'delete_time' => 0, 'topic_id' => $detail['id']])->count();
+            $detail['comments'] = Db::name('ProjectComment')->where(['module' => 'task', 'delete_time' => 0, 'topic_id' => $detail['id']])->count();
             $detail['assist_admin_names'] = '';
             if (!empty($detail['assist_admin_ids'])) {
                 $assist_admin_names = Db::name('Admin')->where('id', 'in', $detail['assist_admin_ids'])->column('name');
