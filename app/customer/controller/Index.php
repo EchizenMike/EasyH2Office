@@ -579,6 +579,10 @@ class Index extends BaseController
 				'create_time' => time()
 			);
 			if (Db::name('Customer')->update($data) !== false) {
+				//删除客户联系人
+				Db::name('CustomerContact')->where(['cid' => $params['id']])->update(['delete_time'=>time()]);
+				//删除客户机会
+				Db::name('CustomerChance')->where(['cid' => $params['id']])->update(['delete_time'=>time()]);
 				add_log('delete', $params['id']);
 				Db::name('CustomerLog')->strict(false)->field(true)->insert($log_data);
 				return to_assign();

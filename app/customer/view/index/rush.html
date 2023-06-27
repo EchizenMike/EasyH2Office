@@ -96,7 +96,7 @@
 					let callback = function (e) {
 						layer.msg(e.msg);
 						if (e.code == 0) {
-							obj.del();
+							layui.pageTable.reload();
 							let count =$('#count').text();
 							$('#count').html(++count);
 						}

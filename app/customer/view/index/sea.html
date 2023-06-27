@@ -255,7 +255,7 @@
 							let callback = function (e) {
 								layer.msg(e.msg);
 								if (e.code == 0) {
-									obj.del();
+									layui.pageTable.reload();
 								}
 							}
 							tool.post("/customer/api/distribute", {id: data.id,uid:ids,did:dids}, callback);
@@ -272,7 +272,7 @@
 					let callback = function (e) {
 						layer.msg(e.msg);
 						if (e.code == 0) {
-							obj.del();
+							layui.pageTable.reload();
 						}
 					}
 					tool.post("/customer/index/get", {id: data.id}, callback);
@@ -287,7 +287,7 @@
 					let callback = function (e) {
 						layer.msg(e.msg);
 						if (e.code == 0) {
-							obj.del();
+							layui.pageTable.reload();
 						}
 					}
 					tool.delete("/customer/index/to_trash", {id: data.id,type:1}, callback);
@@ -300,14 +300,8 @@
 		//监听搜索提交
 		form.on('submit(webform)', function(data) {
 			layui.pageTable.reload({
-				where: {
-					keywords: data.field.keywords,
-					industry_id: data.field.industry_id,
-					source_id: data.field.source_id
-				},
-				page: {
-					curr: 1
-				}
+				where: data.field,
+				page: {curr: 1}
 			});
 			return false;
 		});
