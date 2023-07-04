@@ -212,13 +212,14 @@ layui.define(['layer','dtree'],function(exports){
 							$('#layui-layer'+idx).find('.layui-layer-btn0').hide();
 						}						
 					},
-					btn: ['确定添加', '取消关闭'],
+					btn: ['确定添加', '清空已选'],
 					btnAlign:'c',
-					yes: function(idx,obj){
+					btn1: function(idx,obj){
 						me.settings.callback(me.settings.ids,me.settings.names,me.settings.dids,me.settings.departments);
 						layer.close(idx);
 					},
 					btn2: function(idx,obj){
+						me.settings.callback([],[],[],[]);
 						layer.close(idx);
 					}
 			})	
