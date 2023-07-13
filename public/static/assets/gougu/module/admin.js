@@ -33,7 +33,31 @@ layui.define(['element'], function (exports) {
 		},
 		//从子页面打开新的Tab页面，防止id重复，使用时间戳作为唯一标识
 		sonAdd: function (url, title,id) {
-			this.tabAdd( id, url,title);
+			if ($(".layui-tab-title li[lay-id]").length <= 0) {
+				//打开新的tab项
+				this.tabAdd(id, url, title);
+			} else {
+				//否则判断该tab项是否以及存在
+				var isHas = false;
+				$.each($(".layui-tab-title li[lay-id]"), function () {
+					//如果点击左侧菜单栏所传入的id 在右侧tab项中的lay-id属性可以找到，则说明该tab项已经打开
+					if ($(this).attr("lay-id") == id) {
+						isHas = true;
+						$('[data-frameid="' + id + '"]').attr('src', url);
+						//最后不管是否新增tab，最后都转到要打开的选项页面上
+						tab.tabChange(id);
+					}
+				})
+				if (isHas == false) {
+					//标志为false 新增一个tab项
+					tab.tabAdd(id, url, title);
+				}
+			}
+			try {
+				layer.close(window.openTips);
+			} catch (e) {
+				console.log(e.message);
+			}
 		},
 		//根据传入的id传入到指定的tab项，并滚动定位
 		tabChange: function (id) {
