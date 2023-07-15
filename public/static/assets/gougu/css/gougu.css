@@ -322,7 +322,7 @@ div.layui-table-main::-webkit-scrollbar-thumb:active{background-color:rgba(0,0,0
 .file-card .file-ops{font-size:12px; color:#aaa;}
 .file-card .file-tool .iconfont{font-size:20px; font-weight:600; padding:4px; display:inline-block; cursor:pointer;}
 .file-card.file-view .btn-delete{display:none}
-.file-hasdelete{background:url(../images/delete_icon.png) no-repeat 96% 0; background-size: auto 58px; color:#aaa}
+.file-hasdelete{background:url(../images/delete_icon.png) no-repeat 99% 0; background-size: auto 58px; color:#aaa}
 .file-hasdelete .file-icon{color:#aaa;}
 .file-hasdelete .file-tool{display:none}
 /*审批*/

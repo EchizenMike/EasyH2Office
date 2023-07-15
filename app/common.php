@@ -467,7 +467,11 @@ function file_card($file,$view=''){
 		$type_icon = 'icon-sucaiguanli';
 		$view_btn = '<span class="file-view-img blue" data-href="'.$file['filepath'].'" title="在线查看"><i class="iconfont icon-tupianguanli"></i></span>';
 	}
-	$item = '<div class="file-card file-'.$view.'" id="fileItem'.$file['id'].'">
+	$file_del='';
+	if(!empty($file['delete_time'])){
+		$file_del = 'file-hasdelete';
+	}
+	$item = '<div class="file-card '.$file_del.' file-'.$view.'" id="fileItem'.$file['id'].'">
 		<i class="file-icon iconfont '.$type_icon.'"></i>
 		<div class="file-info">
 			<div class="file-title" title="'.$file['name'].'">'.$file['name'].'</div>
