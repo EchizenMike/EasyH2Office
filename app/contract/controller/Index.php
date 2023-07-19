@@ -129,19 +129,21 @@ class Index extends BaseController
                 $param['update_time'] = time();
 				$old = Db::name('Contract')->where(['id' => $param['id']])->find();
 				$auth = isAuth($this->uid,'contract_admin');
-				if($this->uid!=$old['admin_id'] && $auth==0 && $old['check_status'] == 1){
-					return to_assign(1, "只有录入人员和合同管理员有权限操作");
+				if($old['check_status'] == 0 || $old['check_status'] == 4){
+					if($this->uid!=$old['admin_id'] && $auth==0){
+						return to_assign(1, "只有录入人员和合同管理员有权限操作");
+					}
+					$res = contractList::strict(false)->field(true)->update($param);
+					if ($res) {
+						add_log('edit', $param['id'], $param);
+						to_log($this->uid,$param,$old);
+						return to_assign();
+					} else {
+						return to_assign(1, '操作失败');
+					}					
 				}
-				if($auth==0 && $old['check_status'] > 1){
-					return to_assign(1, "只有合同管理员有权限操作");
-				}
-				$res = contractList::strict(false)->field(true)->update($param);
-				if ($res) {
-					add_log('edit', $param['id'], $param);
-					to_log($this->uid,$param,$old);
-					return to_assign();
-				} else {
-					return to_assign(1, '操作失败');
+				else{
+					return to_assign(1, "当前状态不允许编辑");					
 				}
             } else {
                 try {
