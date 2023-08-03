@@ -38,21 +38,19 @@ class Chance extends BaseController
 			
 			$uid = $this->uid;
 			$auth = isAuth($uid,'customer_admin');
-			if($auth==0){
-				$dids = get_department_role($this->uid);
-				if(!empty($dids)){
-					$whereOr[] =['c.belong_did', 'in', $dids];
-					if (!empty($param['uid'])) {
-						$where[] = ['c.belong_uid', '=', $param['uid']];
+			
+			if (empty($param['uid'])) {
+				if($auth==0){
+					$dids = get_department_role($this->uid);
+					if(!empty($dids)){
+						$whereOr[] =['c.belong_did', 'in', $dids];
 					}
+					$whereOr[] =['c.belong_uid', '=', $uid];				
+					$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',c.share_ids)")];
 				}
-				$whereOr[] =['c.belong_uid', '=', $uid];				
-				$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',c.share_ids)")];
 			}
 			else{
-				if (!empty($param['uid'])) {
-					$where[] = ['c.belong_uid', '=', $param['uid']];
-				}
+				$where[] = ['a.belong_uid', '=', $param['uid']];
 			}
 			
             $rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
