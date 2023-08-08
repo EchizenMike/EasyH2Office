@@ -87,11 +87,23 @@
 						align: 'center',
 						width: 66
 					}, {
-						field: 'is_home',
-						title: '是否共享',
-						toolbar: '#is_share',
+						field: 'is_share',
+						title: '阅读权限范围',
 						align: 'center',
-						width: 80
+						width: 100,
+						templet: function(d){
+							let html='<span class="green">私有</span>';
+							if(d.is_share==1){
+								html='<span class="blue">所有人</span>';
+							}
+							else if(d.is_share==2){
+								html='<span class="yellow">部门</span>';
+							}
+							else if(d.is_share==3){
+								html='<span class="red">部分人员</span>';
+							}
+							return html;
+						}
 					}, {
 						field: 'right',
 						title: '操作',
