@@ -118,6 +118,20 @@ layui.define(['element'], function (exports) {
 				if ($itemleft + $item.outerWidth() >= $outerWidth - $left) return $tabTitle.css("left", -$itemleft), false;
 			})
 		},
+		tabFollow:function(id){
+			$('.layui-nav-tree').find('.side-menu-item').removeClass('layui-this');
+			$('.layui-nav-tree').find('dd').removeClass('layui-this');
+			$('.layui-nav-tree').find('dd').removeClass('layui-nav-itemed');
+			$('.layui-nav-tree').find('.menu-li').removeClass('layui-nav-itemed');
+			$('.side-menu-item').each(function (index,item){
+				if($(item).data("id") == id) {
+					//console.log(item);
+					$(item).addClass('layui-this');
+					$(item).parents('dd').addClass('layui-nav-itemed');
+					$(item).parents('.menu-li').addClass('layui-nav-itemed');
+				}
+			})
+		},
 		refresh:function(id){
 			if(parent.document.getElementById(id)){
 				var src = parent.document.getElementById(id).contentWindow.location.href ? parent.document.getElementById(id).contentWindow.location.href : iframe.src;
@@ -173,11 +187,12 @@ layui.define(['element'], function (exports) {
 	//切换tab
 	element.on('tab(gg-admin-tab)', function (data) {
 		let thisPage = $('#GouguAppBody').find('.gg-tab-page').eq(data.index);
+		let id = thisPage.data('id');
+		let url = thisPage.data('url');
 		if(thisPage.find('iframe').length==0){
-			let id = thisPage.data('id');
-			let url = thisPage.data('url');
 			thisPage.html('<iframe id="' + id + '" data-frameid="' + id + '" src="' + url + '" frameborder="0" align="left" width="100%" height="100%" scrolling="yes"></iframe>');
 		}
+		tab.tabFollow(id);
 		$('#GouguAppBody').find('.gg-tab-page').removeClass('layui-show');
 		thisPage.addClass('layui-show');
 		if(data.index==0){
