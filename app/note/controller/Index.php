@@ -199,9 +199,9 @@ class Index extends BaseController
         if ($cate_count > 0) {
             return to_assign(1, "该分类下还有子分类，无法删除");
         }
-        $content_count = Db::name('Note')->where(["cate_id" => $id])->count();
+        $content_count = Db::name('Note')->where(["cate_id" => $id,'status'=>1])->count();
         if ($content_count > 0) {
-            return to_assign(1, "该分类下还有文章，无法删除");
+            return to_assign(1, "该分类下还有公告，无法删除");
         }
         if (Db::name('NoteCate')->delete($id) !== false) {
             add_log('delete', $id);

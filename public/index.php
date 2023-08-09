@@ -15,7 +15,7 @@ if (empty(file_exists(__DIR__ . '/../vendor/autoload.php'))) {
 require __DIR__ . '/../vendor/autoload.php';
 
 // 定义当前版本号
-define('CMS_VERSION','4.60.28');
+define('CMS_VERSION','4.80.09');
 
 // 定义Layui版本号
 define('LAYUI_VERSION','2.8.12');
