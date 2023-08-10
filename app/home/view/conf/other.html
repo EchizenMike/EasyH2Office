@@ -18,15 +18,10 @@
 			<td class="layui-td-gray">开发者</td>
 			<td>
 				<input type="hidden" value="{$id}" name="id">
-				<input type="text" name="author" autocomplete="off" placeholder="请输入开发者" lay-reqText="请输入开发者"
-					class="layui-input" {notempty name="$config.author" } value="{$config.author}" {/notempty}>
+				<input type="text" name="author" autocomplete="off" placeholder="请输入开发者" lay-reqText="请输入开发者" class="layui-input" value="{$config.author|default=''}">
 			</td>
-			<td class="layui-td-gray-2">开发版本号
-			</td>
-			<td>
-				<input type="text" name="version" autocomplete="off" placeholder="请输入版本号" lay-reqText="请输入版本号"
-					class="layui-input" {notempty name="$config.version" } value="{$config.version}" {/notempty}>
-			</td>
+			<td class="layui-td-gray-2">开发版本号</td>
+			<td><input type="text" name="version" autocomplete="off" placeholder="请输入版本号" lay-reqText="请输入版本号" class="layui-input" value="{$config.version|default=''}"></td>
 		</tr>
 	</table>
 

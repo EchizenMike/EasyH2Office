@@ -72,8 +72,8 @@
             <div class="layui-side layui-side-menu layui-side-{$theme}">
                 <div class="layui-side-scroll no-scroll">
                     <div class="layui-logo" gg-event="closeAllTabs">
-                        <img src="{__IMG__}/syslogo.png" style="height: 40px;" class="syslogo">
-                        <img src="{__IMG__}/syslogo_small.png" style="height: 40px;" class="logo">
+                        <img src="{:get_system_config('web','logo')}" onerror="javascript:this.src='{__IMG__}/syslogo.png';this.onerror=null;" style="height: 40px;" class="syslogo">
+                        <img src="{:get_system_config('web','small_logo')}" onerror="javascript:this.src='{__IMG__}/syslogo_small.png';this.onerror=null;" style="height: 40px;" class="logo">
                     </div>
 
 					<ul id="menuList" class="layui-nav layui-nav-tree layui-inline" lay-shrink="all">
