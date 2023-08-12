@@ -32,7 +32,7 @@ layui.define(['jquery','layer','table'], function(exports) {
 					  area:['580px','240px'],
 					  content: pageHtml,
 					  success:function(res){
-							var tableWhere = obj.where;
+							var tableWhere = JSON.parse(JSON.stringify(obj.where));
 							tableWhere.limit=page_size;										
 							$('#exportPage').on('click','a',function(){
 								tableWhere.page=$(this).data('page');
