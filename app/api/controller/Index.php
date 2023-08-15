@@ -379,7 +379,15 @@ class Index extends BaseController
 					$next_step = Db::name('FlowStep')->where(['action_id'=>$id,'type'=>$type,'sort'=>($detail['check_step_sort']+1),'delete_time'=>0])->find();
 					if($next_step){
 						//存在下一步审核
-						$param['check_admin_ids'] = $next_step['flow_uids'];
+						if($next_step['flow_type'] == 1){
+							$param['check_admin_ids'] = get_department_leader($detail['admin_id']);
+						}
+						else if($next_step['flow_type'] == 2){
+							$param['check_admin_ids'] = get_department_leader($detail['admin_id'],1);
+						}
+						else{
+							$param['check_admin_ids'] = $next_step['flow_uids'];
+						}
 						$param['check_step_sort'] = $detail['check_step_sort']+1;
 						$param['check_status'] = 1;
 					}
