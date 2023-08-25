@@ -1,11 +1,31 @@
 layui.define(['element'], function (exports) {
 	var element = layui.element;
 	var tab = {
-		/*新增一个Tab页面
-		* @id，tab页面唯一标识，可是标签中data-id的属性值
-		* @url,tab页面地址
-		* @name,tab页面标题，
-		*/
+        // tab动画加载效果
+        loading: function() {
+            let load = '<div class="tab-loading"><div class="tab-loader"></div></div>';
+            let $iframe = $('#GouguAppBody').find('.gg-tab-page.layui-show iframe');
+            if (!$iframe.next().length) {
+                $iframe.parent().append(load);
+                let tabLoad = $iframe.parent().find('.tab-loading');
+				let tab_timestamp =  $iframe.data('timestamp');
+				let timestamp = new Date().getTime();
+				//console.log(tab_timestamp);
+				if(timestamp-tab_timestamp<666){
+					$iframe.on('load', function() {
+						tabLoad.fadeOut(666, function() {
+							tabLoad.remove();
+						});
+					})
+				}
+				else{
+					tabLoad.fadeOut(666, function() {
+						tabLoad.remove();
+					});
+				}
+            }
+        },
+		//历史tab预加载
 		tabTem: function (id, url, title) {
 			element.tabAdd('gg-admin-tab', {
 				id: id,
@@ -14,8 +34,13 @@ layui.define(['element'], function (exports) {
 			});
 			$('#GouguAppBody').append('<div class="gg-tab-page" title="'+title+'" id="tabItem' + id + '" data-id="' + id + '" data-url="' + url + '"></div>');
 		},
+		/*新增一个Tab页面
+		* @id，tab页面唯一标识，可是标签中data-id的属性值
+		* @url,tab页面地址
+		* @name,tab页面标题，
+		*/
 		tabAdd: function (id, url, title) {
-			var thetabs = $('#pageTabUl').find('li');
+			let thetabs = $('#pageTabUl').find('li');
 			if (thetabs.length > 12) {
 				layer.tips('点击LOGO快速关闭已开的TAB页面', $('.layui-logo'));
 			}
@@ -28,7 +53,9 @@ layui.define(['element'], function (exports) {
 				url:url,
 				title: '<span class="gg-tab-active"></span>' + title
 			});
-			$('#GouguAppBody').append('<div class="gg-tab-page" title="'+title+'" id="tabItem' + id + '" data-id="' + id + '"><iframe id="' + id + '" data-frameid="' + id + '" src="' + url + '" frameborder="0" align="left" width="100%" height="100%" scrolling="yes"></iframe></div>');
+			// 获取当前时间戳（毫秒数）
+			let timestamp = new Date().getTime();
+			$('#GouguAppBody').append('<div class="gg-tab-page" title="'+title+'" id="tabItem'+id+'" data-id="'+id +'"><iframe id="'+id+'" data-frameid="'+id+'" data-timestamp="'+timestamp+'" src="'+url+'" frameborder="0" align="left" width="100%" height="100%" scrolling="yes"></iframe></div>');
 			this.tabChange(id);
 		},
 		//从子页面打开新的Tab页面，防止id重复，使用时间戳作为唯一标识
@@ -190,7 +217,9 @@ layui.define(['element'], function (exports) {
 		let id = thisPage.data('id');
 		let url = thisPage.data('url');
 		if(thisPage.find('iframe').length==0){
-			thisPage.html('<iframe id="' + id + '" data-frameid="' + id + '" src="' + url + '" frameborder="0" align="left" width="100%" height="100%" scrolling="yes"></iframe>');
+			// 获取当前时间戳（毫秒数）
+			let timestamp = new Date().getTime();
+			thisPage.html('<iframe id="'+id+'" data-frameid="'+id+'" data-timestamp="'+timestamp+'" src="'+url+'" frameborder="0" align="left" width="100%" height="100%" scrolling="yes"></iframe>');
 		}
 		tab.tabFollow(id);
 		$('#GouguAppBody').find('.gg-tab-page').removeClass('layui-show');
@@ -198,6 +227,7 @@ layui.define(['element'], function (exports) {
 		if(data.index==0){
 			tab.refresh(0);
 		}
+		tab.loading();
 		tab.tabRoll("auto", data.index);
 		tab.tabCookie();
 	});

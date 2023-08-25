@@ -51,7 +51,7 @@ class Api extends BaseController
 				//发送消息通知
 				$detail = Expense::where(['id' => $param['id']])->find();
 				$msg=[
-					'create_time'=>date('Y-m-d H:i:s',(int)$detail['create_time']),
+					'create_time'=>$detail['create_time'],
 					'title'=>'报销',
 					'action_id'=>$detail['id']
 				];

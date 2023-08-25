@@ -140,7 +140,7 @@
             <!-- 主体内容 -->
             <div class="layui-body" id="GouguAppBody">
                 <div class="gg-tab-page layui-show" id="tabItem0">
-                    <iframe id="0" data-frameid="0" title="勾股OA" name="myiframe" src="{:url('/home/index/main')}" frameborder="0" align="left" width="100%" height="100%" scrolling="yes"></iframe>
+                    <iframe id="0" data-frameid="0" title="勾股OA" name="myiframe" src="{:url('/home/index/main')}" frameborder="0" data-timestamp="0" align="left" width="100%" height="100%" scrolling="yes"></iframe>
                 </div>
             </div>
             <!-- 辅助元素，用于移动设备下遮罩 -->
@@ -170,7 +170,7 @@
 				}
 			}
 		}
-		
+		admin.loading();
 		$('.layui-side-scroll').hover(function(){
 			$(this).removeClass('no-scroll');
 		},function(){
