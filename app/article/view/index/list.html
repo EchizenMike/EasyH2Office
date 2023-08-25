@@ -15,8 +15,8 @@
 			<input type="text" name="keywords" placeholder="标题/分类/描述/内容" class="layui-input" autocomplete="off" />
 		</div>
 		<div class="layui-input-inline" style="width:150px;">
-			<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform"><i class="layui-icon layui-icon-search mr-1"></i>搜索</button>
-			<button type="reset" class="layui-btn layui-btn-reset" lay-filter="reset">清空</button>
+			<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="table-search"><i class="layui-icon layui-icon-search mr-1"></i>搜索</button>
+			<button type="reset" class="layui-btn layui-btn-reset" lay-filter="table-search-reset">清空</button>
 		</div>
 	</form>
 	<table class="layui-hide" id="test" lay-filter="test"></table>
@@ -42,18 +42,15 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
-	const moduleInit = ['tool'];
+	const moduleInit = ['tool','tablePlus'];
 	function gouguInit() {
-		var table = layui.table, tool = layui.tool ,form = layui.form;
+		var table = layui.tablePlus, tool = layui.tool ,form = layui.form;
 		layui.pageTable = table.render({
 			elem: '#test',
 			title: '文章列表',
 			toolbar: '#toolbarDemo',
-			defaultToolbar: false,
+			defaultToolbar:false,
 			url: "/article/index/list", //数据接口
-			cellMinWidth: 80,
-			page: true, //开启分页
-			limit: 20,
 			cols: [
 				[ //表头
 					{
@@ -144,20 +141,6 @@
 					layer.close(index);
 				});
 			}
-		});
-
-		//监听搜索提交
-		form.on('submit(webform)', function(data) {
-			layui.pageTable.reload({
-				where: {
-					keywords: data.field.keywords,
-					cate_id: data.field.cate_id
-				},
-				page: {
-					curr: 1
-				}
-			});
-			return false;
 		});
 	}
 </script>

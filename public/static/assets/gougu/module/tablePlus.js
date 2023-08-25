@@ -1,8 +1,7 @@
-layui.define(['jquery','layer','table'], function(exports) {
+layui.define(function(exports) {
 	//tablePlus在原来的table模块的基础上实现了批量数据导出功能，实现defaultToolbar中筛选列记忆功能
-	var $ = layui.$,
-	layer = layui.layer,
-	table = layui.table;	
+	var table = layui.table;	
+	var form = layui.form;	
     var MOD_NAME='tablePlus';	
     var tablePlus=$.extend({},table);	
     tablePlus._render = tablePlus.render;	
@@ -63,15 +62,25 @@ layui.define(['jquery','layer','table'], function(exports) {
 		let is_excel = params.is_excel||false;
 		let cols_save = params.cols_save||false;
 		let excel_limit = params.excel_limit||1000;
+		if(params.limit === undefined){
+			params.limit = 20;
+		}
+		if(params.page === undefined){
+			params.page = true;
+		}
+		if(params.cellMinWidth === undefined){
+			params.cellMinWidth = 80;
+		}	
 		if(is_excel){
 			let toolbar = ['filter', {title:'导出EXCEL',layEvent: 'LAYTABLE_EXCEL',icon: 'layui-icon-export'},{title:'数据说明',layEvent: 'LAYTABLE_HELP',icon: 'layui-icon-help'}];
-			if(!params.defaultToolbar){
+			if(params.defaultToolbar == false){
 				params.defaultToolbar = toolbar;
 			}	
 			else{
-				let _toolbar = params.defaultToolbar;
+				let _toolbar = params.defaultToolbar||[];
 				params.defaultToolbar = _toolbar.concat(toolbar);
 			}
+			
 			if(typeof params.done === "function"){
 				let _done = params.done;
 				params.done = function(data, curr, count){
@@ -118,6 +127,24 @@ layui.define(['jquery','layer','table'], function(exports) {
 			params.cols = cols;
 		}
 		var init = tablePlus._render(params);
+		//监听搜索提交
+		form.on('submit(table-search)', function(data) {
+			init.reload({
+				where: data.field,
+				page: {curr: 1}
+			});
+			return false;
+		});
+		//重置搜索提交
+		$('body').on('click', '[lay-filter="table-search-reset"]', function () {
+			let prev = $(this).prev();
+			if (typeof(prev) != "undefined") {
+				setTimeout(function () {
+					prev.click();
+				}, 10)
+			}
+		});
+		
 		return init;
 		//console.log(params);
     };
