@@ -411,20 +411,34 @@
 					dropdown.render({
 						elem: '#type'
 						,data: [{
-						  title: '<span class="layui-badge-dot"></span> 紧急',
+						  title: '紧急',
+						  templet: function(d){
+							  return '<span class="layui-badge-dot"></span> ' + d.title;
+						  },
 						  id: 1
 						},{
-						  title: '<span class="layui-badge-dot layui-bg-orange"></span> 重要',
-
+						  title: '重要',
+						  templet: function(d){
+							  return '<span class="layui-badge-dot layui-bg-orange"></span> ' + d.title;
+						  },
 						  id: 2
 						},{
-						  title: '<span class="layui-badge-dot layui-bg-blue"></span> 次要',
+						  title: '次要',
+						  templet: function(d){
+							  return '<span class="layui-badge-dot layui-bg-blue"></span> ' + d.title;
+						  },
 						  id: 3
 						},{
-						  title: '<span class="layui-badge-dot layui-bg-green"></span> 不重要',
+						  title: '不重要',
+						  templet: function(d){
+							  return '<span class="layui-badge-dot layui-bg-green"></span> ' + d.title;
+						  },
 						  id: 4
 						},{
-						  title: '<span class="layui-badge-dot layui-bg-black"></span> 无优先级',
+						  title: '无优先级',
+						  templet: function(d){
+							  return '<span class="layui-badge-dot layui-bg-black"></span> ' + d.title;
+						  },
 						  id: 5
 						}]
 						,click: function(obj){
