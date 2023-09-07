@@ -6,7 +6,7 @@
 {block name="body"}
 <div class="layui-layout-body">
     <div id="GouguApp">
-        <div class="layui-layout gg-layout">
+        <div class="layui-layout gg-layout layout-menu-{$web.menu_mode|default='classical'}">
             <div class="layui-header">
                 <!-- 头部区域 -->
                 <div class="layui-layout-left">
@@ -69,51 +69,15 @@
             </div>
 
             <!-- 侧边菜单 -->
-            <div class="layui-side layui-side-menu layui-side-{$theme}">
-                <div class="layui-side-scroll no-scroll">
-                    <div class="layui-logo" gg-event="closeAllTabs">
-                        <img src="{:get_system_config('web','logo')}" onerror="javascript:this.src='{__IMG__}/syslogo.png';this.onerror=null;" style="height: 40px;" class="syslogo">
-                        <img src="{:get_system_config('web','small_logo')}" onerror="javascript:this.src='{__IMG__}/syslogo_small.png';this.onerror=null;" style="height: 40px;" class="logo">
-                    </div>
-
-					<ul id="menuList" class="layui-nav layui-nav-tree layui-inline" lay-shrink="all">
-						<li class="layui-nav-item menu-li">
-							<a href="javascript:;" class="side-menu-item layui-this" data-href="/home/index/main.html" data-id="0" style="padding-top:0; padding-bottom:0;"><i class="iconfont icon-xueshuguanli"></i> 工 作 台</a>
-						</li>
-					{foreach name="menu" item="a"}
-						<li class="layui-nav-item menu-li">
-							<a href="javascript:;" lay-tips="{$a.title}" lay-direction="2" data-id="{$a.id}" data-title="{$a.title}" data-href="/{$a.src}"><i class="iconfont {$a.icon}"></i> {$a.title}</a>
-							{notempty name="$a.list"}
-								<dl class="layui-nav-child">
-								{foreach name="$a.list" item="b"}
-									<dd>
-									<a href="javascript:;" class="side-menu-item" data-id="{$b.id}" data-title="{$b.title}" data-href="/{$b.src}">{$b.title}</a>
-									{notempty name="$b.list"}
-										<dl class="layui-nav-child">
-										{foreach name="$b.list" item="c"}
-											<dd>
-											<a href="javascript:;" class="side-menu-item" data-id="{$c.id}" data-title="{$c.title}" data-href="/{$c.src}">{$c.title}</a>
-											{notempty name="$c.list"}
-												<dl class="layui-nav-child">
-												{foreach name="$c.list" item="d"}
-													<dd><a href="javascript:;" class="side-menu-item" data-id="{$d.id}" data-title="{$d.title}" data-href="/{$d.src}">{$d.title}</a></dd>
-												{/foreach}
-												</dl>
-											{/notempty}
-											</dd>
-										{/foreach}
-										</dl>
-									{/notempty}
-									</dd>
-								{/foreach}
-								</dl>
-							{/notempty}
-						</li>			
-					{/foreach}
-					</ul>
-                </div>
-            </div>
-
+			{empty name="$web.menu_mode"}
+				{include file="/index/menu_classical" /}
+			{else/}
+				{if ($web.menu_mode == 'expand') }
+					{include file="/index/menu_expand" /}
+				{else/}
+					{include file="/index/menu_classical" /}
+				{/if}
+			{/empty}
             <!-- 页面标签 -->
             <div id="pageTabs" class="page-tabs">
                 <div class="layui-icon gg-tabs-control layui-icon-prev" gg-event="tabRollLeft"></div>
@@ -139,7 +103,7 @@
 
             <!-- 主体内容 -->
             <div class="layui-body" id="GouguAppBody">
-                <div class="gg-tab-page layui-show" id="tabItem0">
+                <div class="gg-tab-page layui-show" id="tabItem0" data-id="0">
                     <iframe id="0" data-frameid="0" title="勾股OA" name="myiframe" src="{:url('/home/index/main')}" frameborder="0" data-timestamp="0" align="left" width="100%" height="100%" scrolling="yes"></iframe>
                 </div>
             </div>
@@ -171,11 +135,7 @@
 			}
 		}
 		admin.loading();
-		$('.layui-side-scroll').hover(function(){
-			$(this).removeClass('no-scroll');
-		},function(){
-			$(this).addClass('no-scroll');
-		});
+		menuInit();
 	
 		$('#GouguApp').on("click",'[gg-event="logout"]',function () {
 			layer.confirm('确认注销登录吗?', { icon: 7, title: '警告' }, function (index) {

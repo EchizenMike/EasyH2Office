@@ -1,4 +1,4 @@
-layui.define([], function (exports) {
+layui.define(function (exports) {
 	var MOD_NAME = 'tool';
 	var tool = {
 		loading: false,
@@ -30,7 +30,7 @@ layui.define([], function (exports) {
 				skin:'layui-layer-gougu-admin',
 				end: function(){
 					$('body').removeClass('right-open');
-					if (layui.pageTable) {
+					if (layui.pageTable && layui.pageTable.resize) {
 						layui.pageTable.resize();
 					}
 				},
@@ -58,7 +58,7 @@ layui.define([], function (exports) {
 				area: [width+'px', height+'px'],
 				maxmin: true,
 				end: function(){
-					if (layui.pageTable) {
+					if (layui.pageTable && layui.pageTable.resize) {
 						layui.pageTable.resize();
 					}
 				},

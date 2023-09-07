@@ -1,10 +1,13 @@
 layui.define(['element'], function (exports) {
 	var element = layui.element;
+	var $gouguApp = $("#GouguApp");
+	var $gouguAppBody = $("#GouguAppBody");
+	var $gouguMenuList = $("#menuList");
 	var tab = {
         // tab动画加载效果
         loading: function() {
             let load = '<div class="tab-loading"><div class="tab-loader"></div></div>';
-            let $iframe = $('#GouguAppBody').find('.gg-tab-page.layui-show iframe');
+            let $iframe = $gouguAppBody.find('.gg-tab-page.layui-show iframe');
             if (!$iframe.next().length) {
                 $iframe.parent().append(load);
                 let tabLoad = $iframe.parent().find('.tab-loading');
@@ -32,7 +35,7 @@ layui.define(['element'], function (exports) {
 				url:url,
 				title: '<span class="gg-tab-active"></span>' + title
 			});
-			$('#GouguAppBody').append('<div class="gg-tab-page" title="'+title+'" id="tabItem' + id + '" data-id="' + id + '" data-url="' + url + '"></div>');
+			$gouguAppBody.append('<div class="gg-tab-page" title="'+title+'" id="tabItem' + id + '" data-id="' + id + '" data-url="' + url + '"></div>');
 		},
 		/*新增一个Tab页面
 		* @id，tab页面唯一标识，可是标签中data-id的属性值
@@ -41,10 +44,10 @@ layui.define(['element'], function (exports) {
 		*/
 		tabAdd: function (id, url, title) {
 			let thetabs = $('#pageTabUl').find('li');
-			if (thetabs.length > 12) {
+			if (thetabs.length > 15) {
 				layer.tips('点击LOGO快速关闭已开的TAB页面', $('.layui-logo'));
 			}
-			if (thetabs.length > 16) {
+			if (thetabs.length > 20) {
 				layer.msg('你已打开了太多TAB页面了，请关闭部分TAB再使用');
 				return false;
 			}
@@ -55,7 +58,7 @@ layui.define(['element'], function (exports) {
 			});
 			// 获取当前时间戳（毫秒数）
 			let timestamp = new Date().getTime();
-			$('#GouguAppBody').append('<div class="gg-tab-page" title="'+title+'" id="tabItem'+id+'" data-id="'+id +'"><iframe id="'+id+'" data-frameid="'+id+'" data-timestamp="'+timestamp+'" src="'+url+'" frameborder="0" align="left" width="100%" height="100%" scrolling="yes"></iframe></div>');
+			$gouguAppBody.append('<div class="gg-tab-page" title="'+title+'" id="tabItem'+id+'" data-id="'+id +'"><iframe id="'+id+'" data-frameid="'+id+'" data-timestamp="'+timestamp+'" src="'+url+'" frameborder="0" align="left" width="100%" height="100%" scrolling="yes"></iframe></div>');
 			this.tabChange(id);
 		},
 		//从子页面打开新的Tab页面，防止id重复，使用时间戳作为唯一标识
@@ -146,16 +149,35 @@ layui.define(['element'], function (exports) {
 			})
 		},
 		tabFollow:function(id){
-			$('.layui-nav-tree').find('.side-menu-item').removeClass('layui-this');
-			$('.layui-nav-tree').find('dd').removeClass('layui-this');
-			$('.layui-nav-tree').find('dd').removeClass('layui-nav-itemed');
-			$('.layui-nav-tree').find('.menu-li').removeClass('layui-nav-itemed');
+			$gouguMenuList.find('.side-menu-item').removeClass('layui-this');
+			$gouguMenuList.find('dd').removeClass('layui-this').removeClass('layui-nav-itemed');
+			$gouguMenuList.find('.menu-li').removeClass('layui-nav-itemed');
+			$gouguMenuList.find('.gg-second-menu').removeClass('current');
 			$('.side-menu-item').each(function (index,item){
 				if($(item).data("id") == id) {
 					//console.log(item);
 					$(item).addClass('layui-this');
 					$(item).parents('dd').addClass('layui-nav-itemed');
-					$(item).parents('.menu-li').addClass('layui-nav-itemed');
+					$(item).parents('dl').addClass('current');
+					
+					let $menuli = $(item).parents('.menu-li');
+					$menuli.addClass('layui-nav-itemed');
+					
+					// 展开菜单模式
+					if ($('.layout-menu-expand').length) {
+						$menuli.siblings().find('a').removeClass('layui-this');
+						$menuli.children('a').addClass('layui-this');
+						// 子级菜单
+						$menuli.siblings().find('.gg-second-menu').removeClass('current');
+						if ($menuli.children('.gg-second-menu').length) {
+							$('#GouguAppBody').addClass('sub-menu');
+							let second_menu = $(this).parent().parent();
+							second_menu.removeClass('show-up');
+							console.log(second_menu.html());
+						} else {
+							$('#GouguAppBody').removeClass('sub-menu');
+						}
+					}
 				}
 			})
 		},
@@ -168,7 +190,7 @@ layui.define(['element'], function (exports) {
 		tabCookie:function(){
 			let thetabs = $('#pageTabUl').find('li');
 			let tab_id = 0,tab_array=[];
-			$('#pageTabUl li').each(function(index,item){
+			thetabs.each(function(index,item){
 				let _id = $(item).attr('lay-id'),_url = $(item).attr('lay-url'),_title = $(item).text();
 				if(_id>0){
 					tab_array.push({'id':_id,'url':_url,'title':_title});
@@ -213,7 +235,7 @@ layui.define(['element'], function (exports) {
 	};
 	//切换tab
 	element.on('tab(gg-admin-tab)', function (data) {
-		let thisPage = $('#GouguAppBody').find('.gg-tab-page').eq(data.index);
+		let thisPage = $gouguAppBody.find('.gg-tab-page').eq(data.index);
 		let id = thisPage.data('id');
 		let url = thisPage.data('url');
 		if(thisPage.find('iframe').length==0){
@@ -222,7 +244,7 @@ layui.define(['element'], function (exports) {
 			thisPage.html('<iframe id="'+id+'" data-frameid="'+id+'" data-timestamp="'+timestamp+'" src="'+url+'" frameborder="0" align="left" width="100%" height="100%" scrolling="yes"></iframe>');
 		}
 		tab.tabFollow(id);
-		$('#GouguAppBody').find('.gg-tab-page').removeClass('layui-show');
+		$gouguAppBody.find('.gg-tab-page').removeClass('layui-show');
 		thisPage.addClass('layui-show');
 		if(data.index==0){
 			tab.refresh(0);
@@ -233,7 +255,7 @@ layui.define(['element'], function (exports) {
 	});
 	//删除tab
 	element.on('tabDelete(gg-admin-tab)', function (data) {
-		$('#GouguAppBody').find('.gg-tab-page').eq(data.index).remove();
+		$gouguAppBody.find('.gg-tab-page').eq(data.index).remove();
 		tab.tabRoll("auto", data.index);
 		tab.tabCookie();
 	});
@@ -248,7 +270,7 @@ layui.define(['element'], function (exports) {
 	})
 
 	//关闭全部tab，只保留首页
-	$("#GouguApp").on('click', '[gg-event="closeAllTabs"]', function () {
+	$gouguApp.on('click', '[gg-event="closeAllTabs"]', function () {
 		var thetabs = $('#pageTabs .layui-tab-title').find('li'), ids = [];
 		for (var i = 0; i < thetabs.length; i++) {
 			var id = thetabs.eq(i).attr('lay-id');
@@ -259,7 +281,7 @@ layui.define(['element'], function (exports) {
 	})
 
 	//关闭其他tab
-	$("#GouguApp").on('click', '[gg-event="closeOtherTabs"]', function () {
+	$gouguApp.on('click', '[gg-event="closeOtherTabs"]', function () {
 		var thetabs = $('#pageTabs .layui-tab-title').find('li'), ids = [];
 		var thisid = $('#pageTabs .layui-tab-title').find('.layui-this').attr('lay-id');
 		for (var i = 0; i < thetabs.length; i++) {
@@ -273,23 +295,23 @@ layui.define(['element'], function (exports) {
 	})
 
 	//关闭当前tab
-	$("#GouguApp").on('click', '[gg-event="closeThisTabs"]', function () {
+	$gouguApp.on('click', '[gg-event="closeThisTabs"]', function () {
 		var thisid = $('#pageTabs .layui-tab-title').find('.layui-this').attr('lay-id');
 		tab.tabDelete(thisid);
 		return false;
 	})
 
 	//当点击有side-menu-item属性的标签时，即左侧菜单栏中内容 ，触发tab
-	$('body').on('click', 'a.side-menu-item', function () {
+	$gouguMenuList.on('click', 'a.side-menu-item', function () {
 		var that = $(this);
 		var url = that.data("href"), id = that.data("id"), title = that.data("title");
 		if (url == '' || url == '/') {
 			return false;
 		}
 		//这时会判断右侧.layui-tab-title属性下的有lay-id属性的li的数目，即已经打开的tab项数目
-		$('.site-menu-active').removeClass('layui-this');
-		that.addClass('layui-this');
-		$('#GouguApp').removeClass('side-spread-sm');
+		//$('.site-menu-active').removeClass('layui-this');
+		//that.addClass('layui-this');
+		//$gouguApp.removeClass('side-spread-sm');
 		if ($(".layui-tab-title li[lay-id]").length <= 0) {
 			//打开新的tab项
 			tab.tabAdd(id, url, title);
@@ -318,19 +340,24 @@ layui.define(['element'], function (exports) {
 	});
 
 	//左侧菜单展开&收缩
-	$('#GouguApp').on('click', '[gg-event="shrink"]', function () {
-		if (window.innerWidth > 992) {
-			$('#GouguApp').toggleClass('side-spread');
-		} else {
-			$('#GouguApp').toggleClass('side-spread-sm');
+	$gouguApp.on('click', '[gg-event="shrink"]', function () {
+		var that_i = $(this).children('i');
+		if (that_i.hasClass("layui-icon-shrink-right")) {
+			that_i.removeClass("layui-icon-shrink-right").addClass("layui-icon-spread-left");			
 		}
+		else{
+			that_i.removeClass("layui-icon-spread-left").addClass("layui-icon-shrink-right");	
+		}
+		$gouguApp.toggleClass('side-spread');
 	})
-	$('#GouguApp').on('click', '[gg-event="shade"]', function () {
-		$('#GouguApp').removeClass('side-spread-sm');
+	/*
+	$gouguApp.on('click', '[gg-event="shade"]', function () {
+		$gouguApp.removeClass('side-spread-sm');
 	})
+	*/
 
 	//左上角清除缓存
-	$('#GouguApp').on('click', '[gg-event="cache"]', function (e) {
+	$gouguApp.on('click', '[gg-event="cache"]', function (e) {
 		let that = $(this);
 		let url = $(this).data('href');
 		if (that.attr('class') === 'clearThis') {
@@ -355,9 +382,9 @@ layui.define(['element'], function (exports) {
 	})
 
 	//右上角刷新当前tab页面
-	$('#GouguApp').on('click', '[gg-event="refresh"]', function () {
+	$gouguApp.on('click', '[gg-event="refresh"]', function () {
 		var that = $(this);
-		if ($(this).hasClass("refreshThis")) {
+		if (that.hasClass("refreshThis")) {
 			that.removeClass("refreshThis");
 			var iframe = $(".gg-tab-page.layui-show").find("iframe")[0];
 			if (iframe) {
@@ -375,7 +402,7 @@ layui.define(['element'], function (exports) {
 	})
 
 	//右上角全屏&退出全屏
-	$('#GouguApp').on("click", ".fullScreen", function () {
+	$gouguApp.on("click", ".fullScreen", function () {
 		if ($(this).hasClass("layui-icon-screen-restore")) {
 			screenFun(2).then(function () {
 				$(".fullScreen").eq(0).removeClass("layui-icon-screen-restore");
@@ -388,9 +415,9 @@ layui.define(['element'], function (exports) {
 	});
 
 	//小菜单展现多级菜单
-	$("#GouguApp").on("mouseenter", ".layui-nav-tree .menu-li", function () {
+	$gouguApp.on("mouseenter", ".layui-nav-tree .menu-li", function () {
 		var tips = $(this).prop("innerHTML");
-		if ($('#GouguApp').hasClass('side-spread') && tips) {
+		if ($gouguApp.hasClass('side-spread') && tips) {
 			tips = "<ul class='layuimini-menu-left-zoom layui-nav layui-nav-tree layui-this'><li class='layui-nav-item layui-nav-itemed'>" + tips + "</li></ul>";
 			window.openTips = layer.tips(tips, $(this), {
 				tips: [2, '#2f4056'],

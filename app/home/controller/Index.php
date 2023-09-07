@@ -95,6 +95,7 @@ class Index extends BaseController
             }
             View::assign('menu', $list);
 			View::assign('theme',$admin['theme']);
+			View::assign('web',get_system_config('web'));			
             return View();
         }
     }

@@ -1026,6 +1026,7 @@ function set_recursion($result, $pid = 0, $level=-1)
         if ($v['pid'] == $pid) {
             if ($pid != 0) {
                 $v['title'] = $space[$level] . $v['title'];
+                $v['level'] = $level+1;
             }
             /*将该类别的数据放入list中*/
             $list[] = $v;
