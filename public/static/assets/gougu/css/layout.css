@@ -65,7 +65,7 @@ body{color:#323232}
 .layui-side-menu .layui-nav-itemed>.layui-nav-child { padding: 0}
 .layui-side-menu .layui-nav-item .bi,
 .layui-side-menu .layui-nav-item .iconfont,
-.layui-side-menu .layui-nav-item .layui-icon{position: absolute; top: 50%;left: 16px; margin-top: -20px}
+.layui-side-menu .layui-nav-item .layui-icon{position: absolute; top: 50%;left: 16px; margin-top: -21px}
 .layui-side-menu .layui-nav-item .layui-nav-more {margin-top: -24px; color:#677C91}
 .layui-side-menu .layui-nav-child .layui-nav-more {margin-top: -20px; color:#677C91}
 
