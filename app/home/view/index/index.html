@@ -109,6 +109,11 @@
             </div>
             <!-- 辅助元素，用于移动设备下遮罩 -->
             <div class="gg-body-shade" gg-event="shade"></div>
+            <div class="notification" style="display:none;">
+				<audio id="msgSound">
+					<source src="{__STATIC__}/home/file/msg.mp3" type="audio/mpeg">
+				</audio>
+			</div>
         </div>
     </div>
 </div>
@@ -117,7 +122,7 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
-	var msgStatus=0,isClose=0,msgNum = 0;
+	const msg_sound = {$web.msg_sound|default=0};
 	const moduleInit = ['tool','admin'];
 	function gouguInit() {
 		let admin = layui.admin;
@@ -183,7 +188,25 @@
 				})
 			}
 		});
+		
 		//轮循获取消息
+		let msg_num = 0,msg_bool=false;
+		const msgSound = document.getElementById("msgSound");
+		$(document).ready(function(){
+			$(document).one('click',function(){
+				msg_bool = true;
+				//console.log("页面被点击了");
+			});
+		});
+		
+		$("#GouguAppBody").find('.gg-tab-page.layui-show iframe').on("load", function() {
+			var iframeDocument = $(this).contents();
+			iframeDocument.one('click',function(){
+				msg_bool = true;
+				//console.log("子页面被点击了");
+			});
+		});	
+		
 		var getStatus = setInterval(function () {
 			$.ajax({
 				url: "/home/index/index",
@@ -192,41 +215,15 @@
 					if(e.code==0 && e.data!==''){
 						if(e.data.msg_num>0){
 							$('#msgNum').show().find('span').html(e.data.msg_num);
+							if(e.data.msg_num!=msg_num && msg_bool == true && msg_sound==1){
+								msgSound.play();
+								msg_num = e.data.msg_num;
+							}
 						}
 						else{
 							$('#msgNum').hide().find('span').html(0);
 						}
-						if(isClose==0&&e.data&&e.data.length){
-							var html = '<ul id="messageul" style="line-height:24px;">';						
-							$.each(e.data, function(key, value) {
-								if(key!='msg_num'){
-									html += '<li style="cursor:pointer;">'+value+'</li>';
-								}							
-							});
-							html +='</ul>'; 
-							if(msgStatus==1){
-								$('#msgBox').html(html);
-							}else{
-								layer.open({
-									type: 1
-									,title:'消息提醒'
-									,offset: 'rb'
-									,area:['240px','168px']
-									,content: '<div id="msgBox" style="padding:10px 15px;">'+html+'</div>'
-									,btnAlign: 'c' //按钮居中
-									,shade: 0 //不显示遮罩
-									,success:function(){
-										msgStatus=1;
-									}
-									,cancel:function(){
-										msgStatus=0;
-										isClose=1;
-									}
-								});
-							}
-						}
 					}else{
-						msgStatus=0;
 						layer.closeAll();
 					}
 				}

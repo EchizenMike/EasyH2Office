@@ -85,6 +85,18 @@
 				<input type="text" name="copyright" autocomplete="off" placeholder="请输入版权信息" lay-reqText="请输入版权信息" readonly class="layui-input" value="{$config.copyright|default='勾股OA'}">
 			</td>
 		</tr>
+		<tr>
+			<td class="layui-td-gray-3">开启新消息声音提醒</td>
+			<td colspan="3">
+				{empty name="$config.msg_sound"}
+					<input type="radio" name="msg_sound" value="1" title="开启">
+					<input type="radio" name="msg_sound" value="0" title="不开启" checked>
+				{else/}
+					<input type="radio" name="msg_sound" value="1" title="开启" {eq name="$config.msg_sound" value="1"}checked{/eq}>
+					<input type="radio" name="msg_sound" value="0" title="不开启" {eq name="$config.msg_sound" value="0"}checked{/eq}>
+				{/empty}				
+			</td>
+		</tr>
 	</table>
 
 	<div class="py-3">
