@@ -302,7 +302,7 @@ layui.define(['element'], function (exports) {
 	})
 
 	//当点击有side-menu-item属性的标签时，即左侧菜单栏中内容 ，触发tab
-	$gouguMenuList.on('click', 'a.side-menu-item', function () {
+	$('body').on('click', 'a.side-menu-item', function () {
 		var that = $(this);
 		var url = that.data("href"), id = that.data("id"), title = that.data("title");
 		if (url == '' || url == '/') {
