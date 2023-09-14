@@ -106,7 +106,7 @@ class Contract extends Model
 			//作废信息
 			if($detail['void_uid'] > 0){
 				$detail['void_name'] = Db::name('Admin')->where(['id' => $detail['void_uid']])->value('name');
-				$detail['voidtime'] = date('Y-m-d', $detail['void_time']);
+				$detail['void_time'] = date('Y-m-d', $detail['void_time']);
 			}
 			//归档信息
 			if($detail['archive_status'] == 1){

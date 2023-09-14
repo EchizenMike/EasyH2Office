@@ -33,13 +33,13 @@
 	<a class="layui-btn" href="/contract/index/add/id/{$detail.id}">编辑合同</a>
 	{/eq}
 	{gt name="$auth" value="0"}
-	<span class="layui-btn layui-btn-warm" data-event="check" data-status="5">中止合同</span>
-	<span class="layui-btn layui-btn-danger" data-event="check" data-status="6">作废合同</span>
+	<span class="layui-btn layui-btn-warm" data-event="ctrl" data-status="5">中止合同</span>
+	<span class="layui-btn layui-btn-danger" data-event="ctrl" data-status="6">作废合同</span>
 	{/gt}
 </div>
 <script>
 	function init(form,tool) {		
-		$('body').on('click','[data-event="check"]',function(){
+		$('body').on('click','[data-event="ctrl"]',function(){
 			let status = $(this).data('status');
 			let action = '';
 			let title = ''

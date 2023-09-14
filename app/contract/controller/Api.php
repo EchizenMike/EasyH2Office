@@ -164,12 +164,12 @@ class Api extends BaseController
 				$param['check_time'] = time();
 				$param['check_remark'] = $param['mark'];
 			}
-			if($param['check_status'] == 4){
+			if($param['check_status'] == 5){
 				$param['stop_uid'] = $this->uid;
 				$param['stop_time'] = time();
 				$param['stop_remark'] = $param['mark'];
 			}
-			if($param['check_status'] == 5){
+			if($param['check_status'] == 6){
 				$param['void_uid'] = $this->uid;
 				$param['void_time'] = time();
 				$param['void_remark'] = $param['mark'];
