@@ -120,7 +120,7 @@ layui.define(function(exports) {
 			let colsStatus = savedCols ? JSON.parse(savedCols) : {};
 			let cols = params.cols;
 			for (var i=0;i<cols[0].length;i++){
-                if(cols[0][i].field!=undefined){
+                if(cols[0][i].field!=undefined  && colsStatus[cols[0][i].field] != undefined){
                     cols[0][i].hide=colsStatus[cols[0][i].field];
                 }
             }
@@ -138,7 +138,7 @@ layui.define(function(exports) {
 		//重置搜索提交
 		$('body').on('click', '[lay-filter="table-search-reset"]', function () {
 			let prev = $(this).prev();
-			if (typeof(prev) != "undefined") {
+			if (typeof(prev) != "undefined" ) {
 				setTimeout(function () {
 					prev.click();
 				}, 10)
