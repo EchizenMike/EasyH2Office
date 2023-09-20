@@ -139,7 +139,7 @@
 						field: 'right',
 						fixed:'right',
 						title: '操作',
-						width: 100,
+						width: 120,
 						align: 'center',
 						templet: function (d) {
 							var html = '<div class="layui-btn-group">';
@@ -147,7 +147,7 @@
 							var btn1='<span class="layui-btn layui-btn-xs" lay-event="edit">编辑</span>';
 							var btn2='<span class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</span>';
 							if(d.check_status==0 || d.check_status==4){
-								return html+btn1+btn2+'</div>';
+								return html+btn0+btn1+btn2+'</div>';
 							}
 							else{
 								return btn0;
