@@ -22,60 +22,12 @@ class Index extends BaseController
     {
         if (request()->isAjax()) {
             $admin_id = $this->uid;
-            //发票待审核统计
-            $invoice_map_check[] = ['check_status', '<', 2];
-            $invoice_map_check[] = ['', 'exp', Db::raw("FIND_IN_SET('{$admin_id}',check_admin_ids)")];
-            $invoice_map_check[] = ['delete_time', '=', 0];
-            $invoice_count_check = Db::name('Invoice')->where($invoice_map_check)->count();
-            $statistics['invoice_html_check'] = '<a class="tab-a" data-title="待审核的发票" data-href="/finance/invoice/list" class="menu-active"> 您有<font style="color:#FF0000">' . $invoice_count_check . '</font>条发票申请待审核</a>';
-            if ($invoice_count_check == 0) {
-                $statistics['invoice_html_check'] = '';
-            }
-
-			$map = [];
-			$map[] = ['name', '=', 'finance_admin'];
-			$map[] = ['', 'exp', Db::raw("FIND_IN_SET('{$admin_id}',conf_1)")];
-			$count = Db::name('DataAuth')->where($map)->count();
-			
-			$statistics['invoice_html_open'] = '';
-			if($count>0 ||$admin_id == 1){
-				//发票待开具统计
-				$invoice_map_open[] = ['open_time', '=', 0];
-				$invoice_map_open[] = ['check_status', '=', 2];
-				$invoice_map_open[] = ['delete_time', '=', 0];
-				$invoice_count_open = Db::name('Invoice')->where($invoice_map_open)->count();
-				if ($invoice_count_open > 0) {
-					$statistics['invoice_html_open'] = '<a class="tab-a" data-title="待开具的发票" data-href="/finance/invoice/checkedlist">您有<font style="color:#FF0000">' . $invoice_count_open . '</font>条发票待开具</a>';
-				}
-			}
-
-            //待审核的报销统计
-            $expense_map_check[] = ['check_status', '<', 2];
-            $expense_map_check[] = ['', 'exp', Db::raw("FIND_IN_SET('{$admin_id}',check_admin_ids)")];
-            $expense_map_check[] = ['delete_time', '=', 0];
-            $expense_count_check = Db::name('Expense')->where($expense_map_check)->count();
-            $statistics['expense_html_check'] = '<a class="tab-a" data-title="待我审批的报销" data-href="/finance/expense/list">您有<font style="color:#FF0000">' . $expense_count_check . '</font>条报销单待审核</a>';
-            if ($expense_count_check == 0) {
-                $statistics['expense_html_check'] = '';
-            }
-
             //未读消息统计
             $msg_map[] = ['to_uid', '=', $admin_id];
             $msg_map[] = ['read_time', '=', 0];
             $msg_map[] = ['status', '=', 1];
             $msg_count = Db::name('Message')->where($msg_map)->count();
-            $statistics['msg_html'] = '<a class="tab-a" data-title="消息中心" data-href="/message/index/inbox" >您有<font style="color:#FF0000">' . $msg_count . '</font>条未读消息</a>';
             $statistics['msg_num'] = $msg_count;
-            if ($msg_count == 0) {
-                $statistics['msg_html'] = '';
-            }
-
-            foreach ($statistics as $key => $value) {
-                if (!$value) {
-                    unset($statistics[$key]);
-                }
-
-            }
             return to_assign(0, 'ok', $statistics);
         } else {
             $admin = Db::name('Admin')->where('id',$this->uid)->find();
