@@ -1203,34 +1203,71 @@ function table_assign($code = 0, $msg = '请求成功', $data = [], $httpCode = 
  * 人民币转大写
  * @param
  */
-function cny($ns)
-{
-    static $cnums = array("零", "壹", "贰", "叁", "肆", "伍", "陆", "柒", "捌", "玖"),
-    $cnyunits = array("圆", "角", "分"),
-    $grees = array("拾", "佰", "仟", "万", "拾", "佰", "仟", "亿");
-    list($ns1, $ns2) = explode(".", $ns, 2);
-    $ns2 = array_filter(array($ns2[1], $ns2[0]));
-    $ret = array_merge($ns2, array(implode("", _cny_map_unit(str_split($ns1), $grees)), ""));
-    $ret = implode("", array_reverse(_cny_map_unit($ret, $cnyunits)));
-    return str_replace(array_keys($cnums), $cnums, $ret);
-}
+function cny($amount){
+	$capitalNumbers = [
+        '零',
+        '壹',
+        '贰',
+        '叁',
+        '肆',
+        '伍',
+        '陆',
+        '柒',
+        '捌',
+        '玖',
+    ];
 
-function _cny_map_unit($list, $units)
-{
-    $ul = count($units);
-    $xs = array();
-    foreach (array_reverse($list) as $x) {
-        $l = count($xs);
-        if ($x != "0" || !($l % 4)) {
-            $n = ($x == '0' ? '' : $x) . ($units[($l - 1) % $ul]);
-        } else {
-            $n = is_numeric($xs[0][0]) ? $x : '';
-        }
-        array_unshift($xs, $n);
+    $integerUnits = ['', '拾', '佰', '仟',];
+    $placeUnits = ['', '万', '亿', '兆',];
+    $decimalUnits = ['角', '分', '厘', '毫',];
+    $result = [];
+    $arr = explode('.', (string)$amount);
+    $integer = trim($arr[0] ?? '', '-');
+    $decimal = $arr[1] ?? '';
+    if (!((int)$decimal)) {
+        $decimal = '';
     }
-    return $xs;
+    // 转换整数部分,从个位开始
+    $integerNumbers = $integer ? array_reverse(str_split($integer)) : [];
+    $last = null;
+    foreach (array_chunk($integerNumbers, 4) as $chunkKey => $chunk) {
+        if (!((int)implode('', $chunk))) {
+            // 全是 0 则直接跳过
+            continue;
+        }
+        array_unshift($result, $placeUnits[$chunkKey]);
+        foreach ($chunk as $key => $number) {
+            // 去除重复 零，以及第一位的 零，类似：1002、110
+            if (!$number && (!$last || $key === 0)) {
+                $last = $number;
+                continue;
+            }
+            $last = $number;
+            // 类似 1022，中间的 0 是不需要 佰 的
+            if ($number) {
+                array_unshift($result, $integerUnits[$key]);
+            }
+            array_unshift($result, $capitalNumbers[$number]);
+        }
+    }
+    if (!$result) {
+        $result[] = $capitalNumbers[0];
+    }
+    $result[] = '圆';
+    if (!$decimal) {
+        $result[] = '整';
+    }
+    // 转换小数位
+    $decimalNumbers = $decimal ? str_split($decimal) : [];
+    foreach ($decimalNumbers as $key => $number) {
+        $result[] = $capitalNumbers[$number];
+        $result[] = $decimalUnits[$key];
+    }
+    if (strpos((string)$amount, '-') === 0) {
+        array_unshift($result, '负');
+    }
+    return implode('', $result);
 }
-
 
 /**
  * 金额展示规则,超过1万时以万为单位，低于1万时以千为单位，低于1千时以元为单位
