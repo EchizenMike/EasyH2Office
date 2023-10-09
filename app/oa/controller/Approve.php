@@ -96,12 +96,11 @@ class Approve extends BaseController
                 $map2[] = ['f.admin_id', '=', $param['uid']];
             }
 			//按时间检索
-            $start_time = isset($param['start_time']) ? strtotime($param['start_time']) : 0;
-            $end_time = isset($param['end_time']) ? strtotime($param['end_time']) : 0;
-			if ($start_time > 0 && $end_time > 0) {
-				$map1[] = ['f.create_time', 'between', [$start_time, $end_time]];
-				$map2[] = ['f.create_time', 'between', [$start_time, $end_time]];
-			}
+			if (!empty($param['apply_time'])) {
+				$apply_time =explode('~', $param['apply_time']);
+                $map1[] = ['f.create_time', 'between', [strtotime(urldecode($apply_time[0])),strtotime(urldecode($apply_time[1]))]];
+                $map2[] = ['f.create_time', 'between', [strtotime(urldecode($apply_time[0])),strtotime(urldecode($apply_time[1]))]];
+            }
 			
 			$rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
 			
@@ -193,11 +192,10 @@ class Approve extends BaseController
                 $map[] = ['f.admin_id', '=', $param['uid']];
             }
 			//按时间检索
-            $start_time = isset($param['start_time']) ? strtotime($param['start_time']) : 0;
-            $end_time = isset($param['end_time']) ? strtotime($param['end_time']) : 0;
-			if ($start_time > 0 && $end_time > 0) {
-				$map[] = ['f.create_time', 'between', [$start_time, $end_time]];
-			}
+			if (!empty($param['apply_time'])) {
+				$apply_time =explode('~', $param['apply_time']);
+                $map[] = ['f.create_time', 'between', [strtotime(urldecode($apply_time[0])),strtotime(urldecode($apply_time[1]))]];
+            }
 			
 			$rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];			
 			$list = Db::name('Approve')

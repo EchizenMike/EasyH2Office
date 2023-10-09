@@ -8,17 +8,11 @@
 {block name="body"}
 <div class="p-3">
 	<form class="layui-form gg-form-bar border-x border-t" lay-filter="barsearchform">
-		<div id="barDate" class="layui-input-inline">
-			<div class="layui-input-inline" style="width:110px; margin-bottom:0">
-				<input type="text" class="layui-input" id="start_time" placeholder="选择时间区间" readonly name="start_time">
-			</div>
-			~
-			<div class="layui-input-inline" style="width:110px; margin-bottom:0;">
-				<input type="text" class="layui-input" id="end_time" placeholder="选择时间区间" readonly name="end_time">
-			</div>
+		<div class="layui-input-inline" style="width:300px;">
+			<input type="text" class="layui-input" id="diff_time" placeholder="日程时间范围" readonly name="diff_time">
 		</div>
 		<div class="layui-input-inline" style="width:110px;">
-			<input type="text" name="username"  placeholder="请选择员工" class="layui-input" readonly data-event="select"/>
+			<input type="text" name="username"  placeholder="请选择员工" class="layui-input picker-one" readonly />
 			<input type="text" name="uid" value="" style="display:none" />	
 		</div>
 		<div class="layui-input-inline" style="width:220px;">
@@ -44,46 +38,25 @@
 <!-- 脚本 -->
 {block name="script"}
 	<script>
-	const moduleInit = ['tool','employeepicker'];
+	const moduleInit = ['tool','employeepicker','laydatePlus'];
 	function gouguInit() {
-		var form = layui.form,table = layui.table,tool=layui.tool, employeepicker = layui.employeepicker,laydate = layui.laydate,dropdown = layui.dropdown;	  
+		var form = layui.form,table = layui.table,tool=layui.tool,laydatePlus = layui.laydatePlus,laydate = layui.laydate,dropdown = layui.dropdown;	  
 
 		//日期范围
-		laydate.render({
-			elem: '#barDate',
-			range: ['#start_time', '#end_time'],
-			rangeLinked:true
-		});
+		var diff_time = new laydatePlus({'target':'diff_time'});
 
+		//监听搜索提交
+		form.on('submit(webform)', function(data) {
+			layui.pageTable.reload({
+				where: data.field,
+				page: {curr: 1}
+			});
+			return false;
+		});
 		$('[lay-filter="clear"]').on('click',function(){
 			setTimeout(function(){
 				$('[lay-filter="webform"]').click();
 			},10)			
-		})
-		
-		// 选择员工
-		$('body').on('click','[data-event="select"]',function(){
-			var that = $(this);
-			var names = that.val(), ids = $('[name="uid"]').val();
-			employeepicker.init({
-				ids: ids,
-				names: names,
-				type: 0,
-				department_url: "/api/index/get_department_tree",
-				employee_url: "/api/index/get_employee",
-				callback: function (ids, names, dids, departments) {
-					$('[name="uid"]').val(ids);
-					that.val(names);
-					$('[lay-filter="webform"]').click();
-				}
-			})
-		});
-
-		//监听搜索提交
-		form.on('submit(webform)', function(data){
-			let f=data.field;
-			layui.pageTable.reload({where:{keywords:f.keywords,start_time:f.start_time,end_time:f.end_time,uid:f.uid},page:{curr:1}});
-			return false;
 		});
 
 		layui.pageTable = table.render({

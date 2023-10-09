@@ -11,21 +11,15 @@
 	  <div class="layui-tab-content" style="padding:0">
 		<div class="layui-tab-item layui-show">
 			<form class="layui-form gg-form-bar border-x border-t" lay-filter="barsearchform">
-				<div class="layui-input-inline" id="date">
-					<div class="layui-input-inline" style="width:112px; margin-bottom:0">
-					  <input type="text" autocomplete="off" id="start_time" name="start_time" class="layui-input" placeholder="接收开始日期">
-					</div>
-					~
-					<div class="layui-input-inline" style="width:112px; margin-bottom:0">
-					  <input type="text" autocomplete="off" id="end_time" name="end_time" class="layui-input" placeholder="接收结束日期">
-					</div>
+				<div class="layui-input-inline" style="width:300px;">
+					<input type="text" class="layui-input" id="diff_time" placeholder="接收日期范围" readonly name="diff_time">
 				</div>
 				<div class="layui-input-inline" style="width:136px">
 					<select name="type">
 						<option value="">选择类型</option>
 						<option value="1">日报</option>
 						<option value="2">周报</option>
-						<option value="2">月报</option>
+						<option value="3">月报</option>
 					</select>
 				</div>
 				<div class="layui-input-inline" style="width:150px;">
@@ -37,14 +31,8 @@
 		</div>
 		<div class="layui-tab-item">
 			<form class="layui-form gg-form-bar border-x border-t" lay-filter="barsearchform2">
-				<div class="layui-input-inline" id="date1">
-					<div class="layui-input-inline" style="width:112px; margin-bottom:0"">
-					  <input type="text" autocomplete="off" id="start_time1" name="start_time" class="layui-input" placeholder="接收开始日期">
-					</div>
-					~
-					<div class="layui-input-inline" style="width:112px; margin-bottom:0"">
-					  <input type="text" autocomplete="off" id="end_time1" name="end_time" class="layui-input" placeholder="接收结束日期">
-					</div>
+				<div class="layui-input-inline" style="width:300px;">
+					<input type="text" class="layui-input" id="diff_time1" placeholder="接收日期范围" readonly name="diff_time1">
 				</div>
 				<div class="layui-input-inline" style="width:136px">
 					<select name="read">
@@ -58,7 +46,7 @@
 						<option value="">选择类型</option>
 						<option value="1">日报</option>
 						<option value="2">周报</option>
-						<option value="2">月报</option>
+						<option value="3">月报</option>
 					</select>
 				</div>
 				<div class="layui-input-inline" style="width:150px;">
@@ -93,16 +81,12 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
-	const moduleInit = ['tool','employeepicker'];
+	const moduleInit = ['tool','employeepicker','laydatePlus'];
 	function gouguInit() {
-		var form = layui.form,table = layui.table,tool=layui.tool, laydate = layui.laydate;
+		var form = layui.form,table = layui.table,tool=layui.tool, laydatePlus = layui.laydatePlus;
 	  
 		//日期范围
-		laydate.render({
-			elem: '#date',
-			range: ['#start_time', '#end_time'],
-			rangeLinked:true
-		});
+		var diff_time = new laydatePlus({'target':'diff_time'});
 
 		layui.pageTable = table.render({
 			elem: '#test',
@@ -178,17 +162,13 @@
 		//监听搜索提交
 		form.on('submit(webform)', function(data){
 			let f=data.field;
-			layui.pageTable.reload({where:{send:1,start_time:f.start_time,end_time:f.end_time,type:f.type,read:f.read},page:{curr:1}});
+			layui.pageTable.reload({where:{send:1,diff_time:f.diff_time,type:f.type,read:f.read},page:{curr:1}});
 			return false;
 		});		
 		
 		
 		//日期范围
-		laydate.render({
-			elem: '#date1',
-			range: ['#start_time1', '#end_time1'],
-			rangeLinked:true
-		});
+		var diff_time1 = new laydatePlus({'target':'diff_time1'});
 
 		layui.pageTable1 = table.render({
 			elem: '#test1',
@@ -246,7 +226,7 @@
 		//监听搜索提交
 		form.on('submit(webform1)', function(data){
 			let f=data.field;
-			layui.pageTable1.reload({where:{send:0,start_time:f.start_time,end_time:f.end_time,type:f.type,read:f.read},page:{curr:1}});
+			layui.pageTable1.reload({where:{send:0,diff_time1:f.diff_time1,type:f.type,read:f.read},page:{curr:1}});
 			return false;
 		});		
 		

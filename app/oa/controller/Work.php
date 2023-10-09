@@ -64,10 +64,9 @@ class Work extends BaseController
 					$map[] = ['type', '=', $param['type']];
 				}
 				//按时间检索
-				$start_time = isset($param['start_time']) ? strtotime(urldecode($param['start_time'])) : 0;
-				$end_time = isset($param['end_time']) ? strtotime(urldecode($param['end_time'].' 23:59:59')) : 0;
-				if ($start_time > 0 && $end_time > 0) {
-					$map[] = ['create_time', 'between', "$start_time,$end_time"];
+				if (!empty($param['diff_time'])) {
+					$diff_time =explode('~', $param['diff_time']);
+					$map[] = ['create_time', 'between', [strtotime(urldecode($diff_time[0])),strtotime(urldecode($diff_time[1]))]];
 				}
 				$map[] = ['admin_id', '=', $this->uid];         
 				$map[] = ['status', '=', 1];
@@ -87,10 +86,9 @@ class Work extends BaseController
 				$map[] = ['a.to_uid', '=', $this->uid];         
 				$map[] = ['a.status', '=', 1];
 				//按时间检索
-				$start_time = isset($param['start_time']) ? strtotime(urldecode($param['start_time'])) : 0;
-				$end_time = isset($param['end_time']) ? strtotime(urldecode($param['end_time'].' 23:59:59')) : 0;
-				if ($start_time > 0 && $end_time > 0) {
-					$map[] = ['a.send_time', 'between', "$start_time,$end_time"];
+				if (!empty($param['diff_time1'])) {
+					$diff_time =explode('~', $param['diff_time1']);
+					$map[] = ['send_time', 'between', [strtotime(urldecode($diff_time[0])),strtotime(urldecode($diff_time[1]))]];
 				}
 				$list = $this->getList($map, $param);
 			}            

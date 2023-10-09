@@ -23,15 +23,10 @@
 		<div class="layui-input-inline" style="width:150px;">
 			<input type="text" name="username"  placeholder="选择申请人" class="layui-input picker-one" readonly>
 			<input type="text" name="uid" value="" style="display:none" />	
+			<input type="text" name="status" value="0" style="display:none" />	
 		</div>
-		<div id="barDate" class="layui-input-inline">
-			<div class="layui-input-inline" style="width:120px; margin-bottom:0">
-				<input type="text" class="layui-input" id="start_time" placeholder="申请时间区间" readonly name="start_time">
-			</div>
-			~
-			<div class="layui-input-inline" style="width:120px; margin-bottom:0">
-				<input type="text" class="layui-input" id="end_time" placeholder="申请时间区间" readonly name="end_time">
-			</div>
+		<div class="layui-input-inline" style="width:300px;">
+			<input type="text" class="layui-input" id="apply_time" placeholder="申请时间区间" readonly name="apply_time">
 		</div>
 		<div class="layui-input-inline" style="width:150px;">
 			<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform"><i class="layui-icon layui-icon-search mr-1"></i>搜索</button>
@@ -49,46 +44,33 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
-	const moduleInit = ['tool','employeepicker'];
+	const moduleInit = ['tool','employeepicker','laydatePlus'];
 	function gouguInit() {
-		var form = layui.form,table = layui.table, tool = layui.tool ,element=layui.element,laydate = layui.laydate;
-			
-		$('[lay-filter="clear"]').on('click',function(){
-			setTimeout(function(){
-				$('[lay-filter="webform"]').click();
-			},10)			
-		});
+		var form = layui.form,table = layui.table, tool = layui.tool ,element=layui.element,laydatePlus = layui.laydatePlus;
 		  
 		//日期范围
-		laydate.render({
-			elem: '#barDate',
-			range: ['#start_time', '#end_time'],
-			rangeLinked:true
-		});
+		var apply_time = new laydatePlus({'target':'apply_time'});
 			
 		element.on('tab(tab)', function(data){
-			$('[name="tab"]').val(data.index);
 			$("#barsearchform")[0].reset();
 			layui.pageTable.reload({where:{status:data.index},page:{curr:1}});
+			$('[name="status"]').val(data.index);
 			return false;
 		});	
 			
 		//监听搜索提交
 		form.on('submit(webform)', function(data) {
 			layui.pageTable.reload({
-				where: {
-					status: data.field.tab,
-					type: data.field.type,
-					start_time:data.field.start_time,
-					end_time:data.field.end_time,
-					uid: data.field.uid
-				},
-				page: {
-					curr: 1
-				}
+				where: data.field,
+				page: {curr: 1}
 			});
 			return false;
-		});	
+		});
+		$('[lay-filter="clear"]').on('click',function(){
+			setTimeout(function(){
+				$('[lay-filter="webform"]').click();
+			},10)			
+		});
 			
 		layui.pageTable = table.render({
 			elem: '#test'

@@ -19,14 +19,13 @@ class Plan extends BaseController
 {
     function index() {
         if (request()->isAjax()) {
-            $param = get_params();
-            //按时间检索
-            $start_time = isset($param['start_time']) ? strtotime($param['start_time']) : 0;
-            $end_time = isset($param['end_time']) ? strtotime($param['end_time']) : 0;
-            $where = [];
-            if ($start_time > 0 && $end_time > 0) {
-                $where[] = ['a.start_time', 'between', [$start_time, $end_time]];
+            $param = get_params();			
+			//按时间检索
+			if (!empty($param['diff_time'])) {
+				$diff_time =explode('~', $param['diff_time']);
+                $where[] = ['a.start_time', 'between', [strtotime(urldecode($diff_time[0])),strtotime(urldecode($diff_time[1]))]];
             }
+			
             if (!empty($param['keywords'])) {
                 $where[] = ['a.title', 'like', '%' . trim($param['keywords']) . '%'];
             }

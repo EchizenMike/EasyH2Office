@@ -3,6 +3,7 @@ layui.define(['layer'],function(exports){
 	let laydate = layui.laydate;	
 	const opts={
 		"target":'laydateplus',
+		"rangeLinked":false,
 		"callback": null
 	};
 	var laydatePlus = function(options){
@@ -163,7 +164,7 @@ layui.define(['layer'],function(exports){
 				type: 'datetime',
 				range: '~',
 				trigger: 'none',
-				rangeLinked:true,
+				rangeLinked:this.settings.rangeLinked,
 				shortcuts: shortcuts,
 				show:true
 			});
