@@ -26,12 +26,11 @@ class Income extends BaseController
             $where = [];
             $where[] = ['delete_time', '=', 0];
             $where[] = ['check_status', '=', 5];
-            //按时间检索
-            $start_time = isset($param['start_time']) ? strtotime(urldecode($param['start_time'])) : 0;
-            $end_time = isset($param['end_time']) ? strtotime(urldecode($param['end_time'])) : 0;
-            if ($start_time > 0 && $end_time > 0) {
-                $where[] = ['enter_time', 'between', [$start_time, $end_time]];
-            }
+			//按时间检索
+			if (!empty($param['diff_time'])) {
+				$diff_time =explode('~', $param['diff_time']);
+				$where[] = ['enter_time', 'between', [strtotime(urldecode($diff_time[0])),strtotime(urldecode($diff_time[1]))]];
+			}
             if (isset($param['is_cash']) && $param['is_cash']!='') {
                 $where[] = ['is_cash', '=', $param['is_cash']];
             }

@@ -170,9 +170,6 @@ class Task extends BaseController
 	public function task_time() {
         if (request()->isAjax()) {
             $param = get_params();
-            //按时间检索
-            $start_time = isset($param['start_time']) ? strtotime($param['start_time']) : 0;
-            $end_time = isset($param['end_time']) ? strtotime($param['end_time']) : 0;
             $tid = isset($param['tid']) ? $param['tid'] : 0;
             $where = [];
 			if ($tid>0) {
@@ -188,8 +185,10 @@ class Task extends BaseController
 				if (!empty($param['keywords'])) {
 					$where[] = ['a.title', 'like', '%' . trim($param['keywords']) . '%'];
 				}
-				if ($start_time > 0 && $end_time > 0) {
-					$where[] = ['a.start_time', 'between', [$start_time, $end_time]];
+				//按时间检索
+				if (!empty($param['diff_time'])) {
+					$diff_time =explode('~', $param['diff_time']);
+					$where[] = ['a.start_time', 'between', [strtotime(urldecode($diff_time[0])),strtotime(urldecode($diff_time[1]))]];
 				}
 			}
             $where[] = ['a.delete_time', '=', 0];

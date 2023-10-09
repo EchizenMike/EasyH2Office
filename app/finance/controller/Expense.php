@@ -24,12 +24,11 @@ class Expense extends BaseController
             $param = get_params();
             $where = [];
             $where[] = ['delete_time', '=', 0];
-            //按时间检索
-            $start_time = !empty($param['start_time']) ? strtotime(urldecode($param['start_time'])) : 0;
-            $end_time = !empty($param['end_time']) ? strtotime(urldecode($param['end_time'])) : 0;
-            if ($start_time > 0 && $end_time > 0) {
-                $where[] = ['expense_time', 'between', [$start_time, $end_time]];
-            }
+			//按时间检索
+			if (!empty($param['diff_time'])) {
+				$diff_time =explode('~', $param['diff_time']);
+				$where[] = ['expense_time', 'between', [strtotime(urldecode($diff_time[0])),strtotime(urldecode($diff_time[1]))]];
+			}
 
 			$where[] = ['admin_id','=',$this->uid];
             if (!empty($param['check_status']) && $param['check_status']!='') {
@@ -85,11 +84,10 @@ class Expense extends BaseController
 			//查询条件
 			$map = [];
 			//按时间检索
-            $start_time = !empty($param['start_time']) ? strtotime(urldecode($param['start_time'])) : 0;
-            $end_time = !empty($param['end_time']) ? strtotime(urldecode($param['end_time'])) : 0;
-            if ($start_time > 0 && $end_time > 0) {
-                $map[] = ['expense_time', 'between', [$start_time, $end_time]];
-            }
+			if (!empty($param['diff_time'])) {
+				$diff_time =explode('~', $param['diff_time']);
+				$map[] = ['expense_time', 'between', [strtotime(urldecode($diff_time[0])),strtotime(urldecode($diff_time[1]))]];
+			}	
 			$map[] = ['check_status', 'in', [2,3,5]];			
 			$map[] = ['', 'exp', Db::raw("FIND_IN_SET('{$user_id}',copy_uids)")];
 			$model = new ExpenseList;
@@ -112,12 +110,11 @@ class Expense extends BaseController
 			else{
 				$where[] = ['check_status','in',[2,5]];
 			}
-            //按时间检索
-            $start_time = !empty($param['start_time']) ? strtotime(urldecode($param['start_time'])) : 0;
-            $end_time = !empty($param['end_time']) ? strtotime(urldecode($param['end_time'])) : 0;
-            if ($start_time > 0 && $end_time > 0) {
-                $where[] = ['expense_time', 'between', [$start_time, $end_time]];
-            }			
+			//按时间检索
+			if (!empty($param['diff_time'])) {
+				$diff_time =explode('~', $param['diff_time']);
+				$where[] = ['expense_time', 'between', [strtotime(urldecode($diff_time[0])),strtotime(urldecode($diff_time[1]))]];
+			}		
 			$model = new ExpenseList;
 			$list = $model->get_list($param,$where);	
             return table_assign(0, '', $list);

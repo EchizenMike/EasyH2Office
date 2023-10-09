@@ -31,9 +31,11 @@ class Chance extends BaseController
 			if (!empty($param['stage'])) {
                 $where[] = ['a.stage', '=', $param['stage']];
             }
-			if (!empty($param['start_date']) && !empty($param['end_date'])) {
-                $where[] = ['a.expected_time', 'BETWEEN', [strtotime($param['start_date']),strtotime($param['end_date'])]];
-            }
+			//按时间检索
+			if (!empty($param['diff_time'])) {
+				$diff_time =explode('~', $param['diff_time']);
+				$where[] = ['a.expected_time', 'between', [strtotime(urldecode($diff_time[0])),strtotime(urldecode($diff_time[1]))]];
+			}
             $where[] = ['a.delete_time', '=', 0];
 			
 			$uid = $this->uid;

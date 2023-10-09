@@ -3,14 +3,8 @@
 {block name="body"}
 <div class="p-3">
 	<form class="layui-form gg-form-bar border-x border-t" lay-filter="barsearchform">
-		<div id="barDate" class="layui-input-inline">
-			<div class="layui-input-inline" style="width:110px; margin-bottom:0;">
-				<input type="text" class="layui-input" id="start_time" placeholder="选择时间区间" readonly name="start_time">
-			</div>
-			~
-			<div class="layui-input-inline" style="width:110px; margin-bottom:0">
-				<input type="text" class="layui-input" id="end_time" placeholder="选择时间区间" readonly name="end_time">
-			</div>
+		<div class="layui-input-inline" style="width:300px;">
+			<input type="text" class="layui-input" id="diff_time" placeholder="选择时间区间" readonly name="diff_time">
 		</div>
 		<div class="layui-input-inline">
 			<select name="check_status">
@@ -38,20 +32,18 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
-	const moduleInit = ['tool'];
+	const moduleInit = ['tool','laydatePlus'];
 	function gouguInit() {
-		var form = layui.form,table = layui.table,tool=layui.tool, laydate = layui.laydate;
+		var form = layui.form,table = layui.table,tool=layui.tool, laydatePlus = layui.laydatePlus;
 		//日期范围
-		laydate.render({
-			elem: '#barDate',
-			range: ['#start_time', '#end_time'],
-			rangeLinked:true
-		});
+		var diff_time = new laydatePlus({'target':'diff_time'});
 		
 		//监听搜索提交
-		form.on('submit(webform)', function(data){
-			let f=data.field;
-			layui.pageTable.reload({where:{check_status:f.check_status,start_time:f.start_time,end_time:f.end_time},page:{curr:1}});
+		form.on('submit(webform)', function(data) {
+			layui.pageTable.reload({
+				where: data.field,
+				page: {curr: 1}
+			});
 			return false;
 		});
 

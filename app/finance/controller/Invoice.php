@@ -28,11 +28,10 @@ class Invoice extends BaseController
 				$where[] = ['i.check_status','=',$param['check_status']];
             }
             //按时间检索
-            $start_time = isset($param['start_time']) ? strtotime(urldecode($param['start_time'])) : 0;
-            $end_time = isset($param['end_time']) ? strtotime(urldecode($param['end_time'])) : 0;
-            if ($start_time > 0 && $end_time > 0) {
-                $where[] = ['i.create_time', 'between', [$start_time, $end_time]];
-            }			
+			if (!empty($param['diff_time'])) {
+				$diff_time =explode('~', $param['diff_time']);
+				$where[] = ['i.create_time', 'between', [strtotime(urldecode($diff_time[0])),strtotime(urldecode($diff_time[1]))]];
+			}		
 			$where[] = ['i.admin_id','=',$this->uid];
 			$where[] = ['i.delete_time','=',0];
 			$model = new InvoiceList();
@@ -81,11 +80,10 @@ class Invoice extends BaseController
 			//查询条件
 			$map = [];
 			//按时间检索
-            $start_time = !empty($param['start_time']) ? strtotime(urldecode($param['start_time'])) : 0;
-            $end_time = !empty($param['end_time']) ? strtotime(urldecode($param['end_time'])) : 0;
-            if ($start_time > 0 && $end_time > 0) {
-                $where[] = ['i.expense_time', 'between', [$start_time, $end_time]];
-            }
+			if (!empty($param['diff_time'])) {
+				$diff_time =explode('~', $param['diff_time']);
+				$map[] = ['i.create_time', 'between', [strtotime(urldecode($diff_time[0])),strtotime(urldecode($diff_time[1]))]];
+			}
 			$map[] = ['i.delete_time','=',0];
 			$map[] = ['i.check_status', '=', 2];			
 			$map[] = ['', 'exp', Db::raw("FIND_IN_SET('{$user_id}',i.copy_uids)")];
@@ -109,12 +107,11 @@ class Invoice extends BaseController
 			else{
 				$where[] = ['i.check_status','in',[2,5,10]];
 			}
-            //按时间检索
-            $start_time = !empty($param['start_time']) ? strtotime(urldecode($param['start_time'])) : 0;
-            $end_time = !empty($param['end_time']) ? strtotime(urldecode($param['end_time'])) : 0;
-            if ($start_time > 0 && $end_time > 0) {
-                $where[] = ['i.create_time', 'between', [$start_time, $end_time]];
-            }			
+			//按时间检索
+			if (!empty($param['diff_time'])) {
+				$diff_time =explode('~', $param['diff_time']);
+				$where[] = ['i.create_time', 'between', [strtotime(urldecode($diff_time[0])),strtotime(urldecode($diff_time[1]))]];
+			}			
 			$where[] = ['i.delete_time','=',0];
 			$model = new InvoiceList();
 			$list = $model->get_list($param,$where);
