@@ -1,9 +1,10 @@
-layui.define(['tool','employeepicker','tinymce'], function (exports) {
+layui.define(['tool','employeepicker','tinymce','oaTool'], function (exports) {
 	let form = layui.form;
 	let table = layui.table;
 	let laydate = layui.laydate;
 	let dropdown = layui.dropdown;
 	let employeepicker = layui.employeepicker;
+	let oaTool = layui.oaTool;
 	let tinymce = layui.tinymce;
 	let obj = {
 		//文本
@@ -52,8 +53,6 @@ layui.define(['tool','employeepicker','tinymce'], function (exports) {
 			employeepicker.init({
 				ids: real_txt.toString(),
 				names: show_txt,
-				department_url: "/api/index/get_department_tree",
-				employee_url: "/api/index/get_employee",
 				type: 0,
 				callback: function (ids, names) {
 					editPost(id, name, names, ids);
@@ -72,61 +71,26 @@ layui.define(['tool','employeepicker','tinymce'], function (exports) {
 			employeepicker.init({
 				ids: ids,
 				names: names,
-				department_url: "/api/index/get_department_tree",
-				employee_url: "/api/index/get_employee",
 				type: 1,
 				callback: function (ids, names) {
 					editPost(id, name, names.join(','), ids.join(','));
 				}
 			});
 		},
-		//ajax表格单选
-		select_table: function (id, name, real_val, url, editPost) {
-			let that = this;
-			let selectTable;
-			layer.open({
-				title: '请选择',
-				area: ['600px', '580px'],
-				type: 1,
-				content: '<div class="picker-table">\
-					<form class="layui-form pb-2">\
-						<div class="layui-input-inline" style="width:480px;">\
-						<input type="text" name="keywords"  placeholder="项目名称" class="layui-input" autocomplete="off" />\
-						</div>\
-						<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="search_form">提交搜索</button>\
-					</form>\
-					<div id="selectTable"></div></div>',
-				success: function () {
-					selectTable = table.render({
-						elem: '#selectTable'
-						, url: url
-						, page: true //开启分页
-						, limit: 10
-						, cols: [[
-							{ type: 'radio', title: '选择' }
-							, { field: 'id', width: 100, title: '编号', align: 'center' }
-							, { field: 'title', title: '项目名称' }
-						]]
-					});
-					//项目搜索提交
-					form.on('submit(search_form)', function (data) {
-						selectTable.reload({ where: { keywords: data.field.keywords }, page: { curr: 1 } });
-						return false;
-					});
-				},
-				btn: ['确定'],
-				yes: function () {
-					var checkStatus = table.checkStatus(selectTable.config.id);
-					var data = checkStatus.data;
-					if (data.length > 0) {
-						editPost(id, name, data[0].title, data[0].id);
-					}
-					else {
-						layer.msg('请选择');
-						return false;
-					}
-				}
-			})
+		//项目
+		select_table: function (id, name, real_val, editPost) {
+			let callback = function(data){
+				editPost(id, name, data.title, data.id);
+			}
+			oaTool.projectPicker(callback);
+		},
+		//任务
+		select_task: function (id, name, real_val, editPost) {
+			let callback = function(data){
+				console.log(data.id);
+				editPost(id, name, data.title, data.id);
+			}
+			oaTool.taskPicker(callback);
 		},
 		//表格单选
 		select_type: function (id, name, real_val, data, editPost) {

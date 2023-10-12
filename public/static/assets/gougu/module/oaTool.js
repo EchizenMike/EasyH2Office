@@ -17,6 +17,11 @@ layui.define(['tool'], function (exports) {
 		}
 	};
 	
+	//是否是对象
+	function isObject(val) {
+		return typeof val === 'object' && val !== null
+	}
+	
 	//格式化文件大小
 	function renderSize(value){
 		if(null==value||value==''){
@@ -387,9 +392,9 @@ layui.define(['tool'], function (exports) {
 						return false;
 					});
 				},
-				btn: ['确定'],
+				btn: ['确定选择','清除数据'],
 				btnAlign: 'c',
-				yes: function () {
+				btn1: function () {
 					var checkStatus = table.checkStatus(projectTable.config.id);
 					var data = checkStatus.data;
 					if (data.length > 0) {
@@ -400,15 +405,20 @@ layui.define(['tool'], function (exports) {
 						layer.msg('请先选择项目');
 						return false;
 					}
+				},
+				btn2: function () {
+					callback({'id':0,'title':''});
+					layer.closeAll();
 				}
 			})
 		},
 		//选择任务
-		taskPicker:function(project_id,callback){
-			var taskTable;
+		taskPicker:function(callback,where){
+			let map = isObject(where)?where:{};
+			let taskTable;
 			let taskLayer = layer.open({
 				title: '选择任务',
-				area: ['600px', '580px'],
+				area: ['666px', '580px'],
 				type: 1,
 				content: '<div class="picker-table">\
 					<form class="layui-form pb-2">\
@@ -424,22 +434,24 @@ layui.define(['tool'], function (exports) {
 						, url: '/project/api/get_task'
 						, page: true //开启分页
 						, limit: 10
-						, where:{'project_id':project_id}
+						, where:map
 						, cols: [[
 							{ type: 'radio', title: '选择' }
-							, { field: 'id', width: 100, title: '编号', align: 'center' }
+							, { field: 'id', width: 90, title: '编号', align: 'center' }
 							, { field: 'title', title: '任务主题' }
+							, { field: 'project_name', width: 200, title: '关联项目' }
 						]]
 					});
-					//合同搜索提交
+					//任务搜索提交
 					form.on('submit(search_project)', function (data) {
-						taskTable.reload({ where: { keywords: data.field.keywords }, page: { curr: 1 } });
+						let maps = $.extend({}, map, data.field);
+						taskTable.reload({ where: maps, page: { curr: 1 } });
 						return false;
 					});
 				},
-				btn: ['确定'],
+				btn: ['确定选择','清除数据'],
 				btnAlign: 'c',
-				yes: function () {
+				btn1: function () {
 					var checkStatus = table.checkStatus(taskTable.config.id);
 					var data = checkStatus.data;
 					if (data.length > 0) {
@@ -447,9 +459,13 @@ layui.define(['tool'], function (exports) {
 						layer.close(taskLayer);
 					}
 					else {
-						layer.msg('请先选择任务主题');
+						layer.msg('请先选择任务');
 						return false;
 					}
+				},
+				btn2: function () {
+					callback({'id':0,'title':''});
+					layer.closeAll();
 				}
 			})
 		}
@@ -550,6 +566,19 @@ layui.define(['tool'], function (exports) {
 		}
 		obj.projectPicker(callback);
 	});
+	
+	//选择任务
+	$('body').on('click','.picker-task',function () {
+		let that = $(this);
+		let projectid = that.data('projectid'),taskid = that.data('taskid');
+		let project_id = projectid?projectid:0;
+		let task_id = taskid?taskid:0;
+		let callback = function(data){
+			that.val(data.title);
+			that.next().val(data.id);
+		}
+		obj.taskPicker(callback,{project_id:project_id,task_id:task_id});
+	});	
 	
 	exports('oaTool', obj);
 });  

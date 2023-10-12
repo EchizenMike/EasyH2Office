@@ -4,6 +4,8 @@ layui.define(['layer','dtree'],function(exports){
   var dtree = layui.dtree;
   var opts={
 		"title":'选择员工',
+		"department_url": "/api/index/get_department_tree",
+		"employee_url": "/api/index/get_employee",
 		"type":1,
 		"ids":[],
 		"names":[],
@@ -235,8 +237,6 @@ layui.define(['layer','dtree'],function(exports){
 			ids:ids,
 			names:names,
 			type:0,
-			department_url: "/api/index/get_department_tree",
-			employee_url: "/api/index/get_employee",
 			callback:function(ids,names,dids,departments){
 				that.val(names);
 				that.next().val(ids);
@@ -256,8 +256,6 @@ layui.define(['layer','dtree'],function(exports){
 			ids:ids_array,
 			names:names_array,
 			type:1,
-			department_url: "/api/index/get_department_tree",
-			employee_url: "/api/index/get_employee",
 			callback:function(ids,names,dids,departments){
 				that.val(names.join(','));
 				that.next().val(ids.join(','));
