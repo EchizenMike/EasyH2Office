@@ -269,13 +269,14 @@ layui.define(['tool'], function (exports) {
 				type: 1,
 				content: '<div class="picker-table">\
 					<form class="layui-form pb-2">\
-						<div class="layui-input-inline" style="width:480px;">\
-						<input type="text" name="keywords"  placeholder="客户名称" class="layui-input" autocomplete="off" />\
+						<div class="layui-input-inline" style="width:382px;">\
+						<input type="text" name="keywords" placeholder="客户名称" class="layui-input" autocomplete="off" />\
 						</div>\
 						<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="search_customer">提交搜索</button>\
+						<span class="layui-btn customer-new">新增客户</span>\
 				  	</form>\
 					<div id="customerTable"></div></div>',
-				success: function () {
+				success: function (layero, idx, that) {
 					customeTable = table.render({
 						elem: '#customerTable'
 						, url: '/contract/api/get_customer'
@@ -292,6 +293,10 @@ layui.define(['tool'], function (exports) {
 						customeTable.reload({ where: { keywords: data.field.keywords }, page: { curr: 1 } });
 						return false;
 					});
+					$('.picker-table').on('click','.customer-new',function(){
+						layer.close(idx);
+						tool.side('/customer/index/add');
+					})
 				},
 				btn: ['确定'],
 				btnAlign: 'c',
