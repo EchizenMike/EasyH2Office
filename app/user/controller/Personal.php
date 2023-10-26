@@ -52,12 +52,12 @@ class Personal extends BaseController
     {
         $param = get_params();
         if (request()->isAjax()) {
+            $param['move_time'] = isset($param['move_time']) ? strtotime($param['move_time']) : 0;
             if ($param['id'] > 0) {
                 $param['update_time'] = time();
                 $res = Db::name('DepartmentChange')->strict(false)->field(true)->update($param);
                 add_log('edit', $param['id'], $param);
             } else {
-				$param['move_time'] = isset($param['move_time']) ? strtotime($param['move_time']) : 0;
 				$count = Db::name('Department')->where(['leader_id' => $param['uid']])->count();
 				if($count>0){
 					return to_assign(1,'请先撤销该员工的部门负责人头衔再调部门');
@@ -108,7 +108,12 @@ class Personal extends BaseController
                 ->paginate($rows, false, ['query' => $param])
                 ->each(function ($item, $key) {
                     $item->quit_time = date('Y-m-d', $item->quit_time);
+					$item->connect_time_str='-';
+					if($item->connect_time>0){
+						$item->connect_time_str = date('Y-m-d', $item->connect_time);
+					}
                     $item->lead_admin = Db::name('admin')->where(['id' => $item->lead_admin_id])->value('name');
+                    $item->connect_name = Db::name('admin')->where(['id' => $item->connect_id])->value('name');
                     $this_uids_name = Db::name('admin')->where([['id','in', $item->connect_uids]])->column('name');
                     $item->connect_names = implode(',', $this_uids_name);
                 });
@@ -123,23 +128,23 @@ class Personal extends BaseController
     {
         $param = get_params();
         if (request()->isAjax()) {
-            $count = Db::name('Department')->where(['leader_id' => $param['uid']])->count();
-            if($count>0){
-                return to_assign(1,'请先撤销该员工的部门负责人头衔再添加离职档案');
-            }
             $param['quit_time'] = isset($param['quit_time']) ? strtotime($param['quit_time']) : 0;
             if ($param['id'] > 0) {
                 $param['update_time'] = time();
                 $res = Db::name('PersonalQuit')->strict(false)->field(true)->update($param);
                 add_log('edit', $param['id'], $param);
             } else {
+				$count = Db::name('Department')->where(['leader_id' => $param['uid']])->count();
+				if($count>0){
+					return to_assign(1,'请先撤销该员工的部门负责人头衔再添加离职档案');
+				}
                 $param['create_time'] = time();
                 $param['admin_id'] = $this->uid;
                 $res = Db::name('PersonalQuit')->strict(false)->field(true)->insertGetId($param);
-                add_log('add', $res, $param);
-            }
-            if ($res!==false) {
-                Db::name('Admin')->where('id', $param['uid'])->update(['status' => 2]);
+				if ($res!==false) {
+					Db::name('Admin')->where('id', $param['uid'])->update(['status' => 2]);
+					add_log('add', $res, $param);
+				}
             }
             return to_assign();
         } else {
@@ -158,6 +163,7 @@ class Personal extends BaseController
                 $this_uids_name = Db::name('Admin')->where([['id','in', $detail['connect_uids']]])->column('name');
                 $detail['connect_names'] = implode(',', $this_uids_name);
                 $detail['quit_time'] = date('Y-m-d', $detail['quit_time']);
+				$detail['connect_name'] = Db::name('admin')->where(['id' => $detail['connect_id']])->value('name');
                 View::assign('detail', $detail);
             }
             View::assign('id', $id);
@@ -176,6 +182,33 @@ class Personal extends BaseController
             $uid = Db::name('PersonalQuit')->where('id', $id)->value('uid');
             Db::name('Admin')->where('id', $uid)->update(['status' => 1]);
             add_log('delete', $id);
+            return to_assign(0, "删除成功");
+        } else {
+            return to_assign(1, "删除失败");
+        }
+    }
+	
+	//一键交接资料
+    public function leave_check()
+    {
+        $id = get_params("id");
+        $data['id'] = $id;
+        $data['connect_time'] = time();
+		$detail = Db::name('PersonalQuit')->where('id', $id)->find();
+        $uid =  $detail['uid'];
+        $connect_uid = $detail['connect_id'];
+        if (Db::name('PersonalQuit')->update($data) !== false) {
+			//项目负责人
+            Db::name('Project')->where([['director_uid','=',$uid],['status','<',3]])->update(['director_uid' => $connect_uid]);
+			//任务负责人
+            Db::name('ProjectTask')->where([['director_uid','=',$uid],['flow_status','<',3]])->update(['director_uid' => $connect_uid]);			
+			//客户所属人
+			$did = Db::name('Admin')->where('id', $connect_uid)->value('did');
+            Db::name('Customer')->where([['belong_uid','=',$uid]])->update(['belong_uid' => $connect_uid,'belong_did'=>$did]);
+			//合同
+            Db::name('Contract')->where([['admin_id','=',$uid],['check_status','<',3]])->update(['admin_id' => $connect_uid]);
+			
+            add_log('hand', $id);
             return to_assign(0, "删除成功");
         } else {
             return to_assign(1, "删除失败");

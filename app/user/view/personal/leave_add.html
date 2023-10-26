@@ -2,7 +2,7 @@
 <!-- 主体 -->
 {block name="body"}
 <form class="layui-form p-4">
-	<h3 class="pb-3">离职档案</h3>
+	<h3 class="pb-2">离职档案</h3>
 	{if condition="$id eq 0"}
 	<table class="layui-table">
 		<tr>
@@ -27,9 +27,14 @@
 			</td>
 		</tr>
 		<tr>
-			<td class="layui-td-gray">交接人员<font>*</font></td>
-			<td colspan="3">				
-				<input type="text" name="connect_names" autocomplete="off" lay-verify="required" placeholder="请选择交接人员" lay-reqText="请选择交接人员" readonly class="layui-input picker-more">
+			<td class="layui-td-gray-2">资料接受人<font>*</font></td>
+			<td>				
+				<input type="text" name="connect_name" autocomplete="off" lay-verify="required" placeholder="请选择资料接受人" lay-reqText="请选择资料接受人" readonly class="layui-input picker-one">
+				<input type="hidden" name="connect_id" class="layui-input">
+			</td>
+			<td class="layui-td-gray-2">参与交接人员<font>*</font></td>
+			<td>				
+				<input type="text" name="connect_names" autocomplete="off" lay-verify="required" placeholder="请选择参与交接人员" lay-reqText="请选择参与交接人员" readonly class="layui-input picker-more">
 				<input type="hidden" name="connect_uids" class="layui-input">
 			</td>
 		</tr>
@@ -43,15 +48,10 @@
 	{else/}
 	<table class="layui-table">
 		<tr>
-			<td class="layui-td-gray">离职员工<font>*</font></td>
-			<td>				
-				<input type="hidden" name="uid" value="{$detail.uid}" autocomplete="off">
-				<input type="text" name="name" value="{$detail.name}" placeholder="请选择离职员工" lay-reqText="请选择离职员工" lay-verify="required" autocomplete="off" class="layui-input" readonly>
-			</td>
+			<td class="layui-td-gray">离职员工</td>
+			<td>{$detail.name}</td>
 			<td class="layui-td-gray">所在部门</td>
-			<td>
-				<input type="text" name="department" value="{$detail.department}" autocomplete="off" class="layui-input" readonly>
-			</td>
+			<td>{$detail.department}</td>
 		</tr>
 		<tr>
 			<td class="layui-td-gray">离职日期<font>*</font></td>
@@ -64,9 +64,14 @@
 			</td>
 		</tr>
 		<tr>
-			<td class="layui-td-gray">交接人员<font>*</font></td>
-			<td colspan="3">				
-				<input type="text" name="connect_names" autocomplete="off" lay-verify="required" placeholder="请选择交接人员" lay-reqText="请选择交接人员" readonly class="layui-input picker-more" value="{$detail.connect_names}">
+			<td class="layui-td-gray-2">资料接受人<font>*</font></td>
+			<td>				
+				<input type="text" name="connect_name" autocomplete="off" lay-verify="required" placeholder="请选择资料接受人" lay-reqText="请选择资料接受人" readonly class="layui-input picker-one" value="{$detail.connect_name}">
+				<input type="hidden" name="connect_id" class="layui-input" value="{$detail.connect_id}">
+			</td>
+			<td class="layui-td-gray-2">参与交接人员<font>*</font></td>
+			<td>				
+				<input type="text" name="connect_names" autocomplete="off" lay-verify="required" placeholder="请选择参与交接人员" lay-reqText="请选择参与交接人员" readonly class="layui-input picker-more" value="{$detail.connect_names}">
 				<input type="hidden" name="connect_uids" class="layui-input" value="{$detail.connect_uids}">
 			</td>
 		</tr>
@@ -132,6 +137,10 @@
 			}
 			if(data.field.uid==data.field.lead_admin_id){
 				layer.msg('离职员工和部门负责人不能是同一个人');
+				return false;
+			}
+			if(data.field.uid==data.field.connect_id){
+				layer.msg('离职员工和资料接受人不能是同一个人');
 				return false;
 			}
 			let callback = function (e) {

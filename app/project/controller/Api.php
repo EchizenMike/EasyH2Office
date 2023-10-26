@@ -10,6 +10,7 @@ namespace app\project\controller;
 use app\api\BaseController;
 use app\oa\model\Schedule as ScheduleList;
 use app\project\model\Project as ProjectList;
+use app\project\model\ProjectTask as TaskList;
 use app\project\model\ProjectLog;
 use app\project\model\ProjectComment;
 use think\facade\Db;
@@ -542,6 +543,87 @@ class Api extends BaseController
 		return table_assign(0, '', $list);
     }
 	
+    //获取任务列表
+    public function get_task(){
+	    $param = get_params();
+        $param['uid'] = $this->uid;
+        $list = (new TaskList())->list($param);
+        return table_assign(0, '', $list);
+	}
+
+    //获取树形任务列表
+    public function get_project_task(){
+	    $param = get_params();
+		$list = Db::name('ProjectTask')->withoutField('content,md_content')->where('project_id',$param['project_id'])->order('id desc')->select()->toArray();
+		foreach ($list as $key => &$vo) {
+				$vo['director_name'] = '-';
+				if ($vo['director_uid'] > 0) {
+					$vo['director_name'] = Db::name('Admin')->where(['id' => $vo['director_uid']])->value('name');
+				}
+                $assist_admin_names = Db::name('Admin')->where([['id', 'in', $vo['assist_admin_ids']]])->column('name');
+                if (empty($assist_admin_names)) {
+                    $vo['assist_admin_names'] = '-';
+                } else {
+                    $vo['assist_admin_names'] = implode(',', $assist_admin_names);
+                }
+                $vo['cate_name'] = Db::name('WorkCate')->where(['id' => $vo['cate']])->value('title');
+				$vo['after_num'] = Db::name('ProjectTask')->where(['before_task'=>$vo['id'],'delete_time' => 0])->count();
+				if($vo['after_num']==1){
+					$vo['after_id'] = Db::name('ProjectTask')->where(['before_task'=>$vo['id'],'delete_time' => 0])->value('id');
+				}
+				$vo['delay'] = 0;
+				if ($vo['end_time'] > 0) {
+					$vo['end_time'] = date('Y-m-d', $vo['end_time']);
+					if ($vo['over_time'] > 0 && $vo['flow_status'] < 4) {
+						$vo['delay'] = countDays($vo['end_time'], date('Y-m-d', $vo['over_time']));
+					}
+					if ($vo['over_time'] == 0 && $vo['flow_status'] < 4) {
+						$vo['delay'] = countDays($vo['end_time']);
+					}
+				}
+				else{
+					$vo['end_time'] = '-';
+				}
+                $vo['priority_name'] = TaskList::$Priority[(int) $vo['priority']];
+                $vo['flow_name'] = TaskList::$FlowStatus[(int) $vo['flow_status']];
+                $vo['type_name'] = TaskList::$Type[(int) $vo['type']];
+		}
+        $res['total'] = count($list);
+        $res['data'] = table_tree_list(0, $list);
+        return table_assign(0, '', $res);
+	}
+	
+	//子任务新增
+    public function task_add_son()
+    {
+		$param = get_params();
+		$parent_task_array = admin_parent_task($param['id']);
+		if (in_array($param['pid'], $parent_task_array)) {
+			return to_assign(1, '子任务不能是该任务的父级以上的任务');
+		}
+		$after_task_array = admin_after_task_son($param['id']);
+		if (in_array($param['pid'], $after_task_array)) {
+			return to_assign(1, '子任务不能是该任务本身或其前置任务');
+		}
+		$res = Db::name('ProjectTask')->where(['id'=>$param['id']])->update(['pid'=>$param['pid']]);
+		if ($res) {
+			return to_assign(0, "操作成功");
+		} else {
+			return to_assign(1, "操作失败");
+		}
+	}
+	
+	//子任务删除
+    public function task_del_son()
+    {
+		$param = get_params();
+		$res = Db::name('ProjectTask')->where(['id'=>$param['id']])->update(['pid'=>0]);
+		if ($res) {
+			return to_assign(0, "操作成功");
+		} else {
+			return to_assign(1, "操作失败");
+		}
+	}
 	//编辑阶段
     public function reset_check()
     {

@@ -72,6 +72,7 @@ return [
 		'get'        => '获取',
 		'allot'      => '分配',
 		'remove'     => '移除',
+		'hand'       => '交接',
 		'tosea'      => '公海移入',
 		'totrash'    => '废弃池移入',
 		'reset'      => '重新设置',

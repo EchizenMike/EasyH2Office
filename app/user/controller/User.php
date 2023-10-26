@@ -28,10 +28,12 @@ class User extends BaseController
             if (!empty($param['keywords'])) {
                 $where[] = ['id|username|name|nickname|mobile|desc', 'like', '%' . $param['keywords'] . '%'];
             }
-            $where[] = ['status', '<', 2];
             if (isset($param['status']) && $param['status']!='') {
                 $where[] = ['status', '=', $param['status']];
             }
+			else{
+				$where[] = ['status', '<', 2];
+			}
             if (!empty($param['type'])) {
                 $where[] = ['type', '=', $param['type']];
             }

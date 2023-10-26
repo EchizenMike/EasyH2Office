@@ -75,8 +75,18 @@ class ProjectTask extends Model
         }
         if (!empty($param['keywords'])) {
             $where[] = ['title|content', 'like', '%' . $param['keywords'] . '%'];
+        }		
+		if (!empty($param['task_id'])) {
+            $where[] = ['id', '<>', $param['task_id']];
         }
-		
+		if (!empty($param['set_pid'])) {
+            $where[] = ['pid', '=', 0];
+            $where[] = ['id', '<>', $param['set_pid']];
+            $where[] = ['before_task', '<>', $param['set_pid']];
+        }
+		if (!empty($param['before_task'])) {
+            $where[] = ['before_task', '=', $param['before_task']];
+        }
         $where[] = ['delete_time', '=', 0];
 		
         $rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
@@ -96,7 +106,6 @@ class ProjectTask extends Model
 					$item['director_name'] = Db::name('Admin')->where(['id' => $item['director_uid']])->value('name');
 				}
                 $assist_admin_names = Db::name('Admin')->where([['id', 'in', $item['assist_admin_ids']]])->column('name');
-                $item['cate_name'] = Db::name('WorkCate')->where(['id' => $item['cate']])->value('title');
                 if (empty($assist_admin_names)) {
                     $item['assist_admin_names'] = '-';
                 } else {
@@ -105,9 +114,13 @@ class ProjectTask extends Model
 				if ($item['project_id'] == 0) {
                     $item['project_name'] = '-';
                 } else {
-                    $item['project_name'] = Db::name('Project')->where(['id' => $item['project_id']])->value('name');
+                    $item['project_name'] = Db::name('Project')->where(['id' => $item['project_id'],'delete_time' => 0])->value('name');
                 }
-
+                $item['cate_name'] = Db::name('WorkCate')->where(['id' => $item['cate']])->value('title');
+				$item['after_num'] = Db::name('ProjectTask')->where(['before_task'=>$item['id'],'delete_time' => 0])->count();
+				if($item['after_num']==1){
+					$item['after_id'] = Db::name('ProjectTask')->where(['before_task'=>$item['id'],'delete_time' => 0])->value('id');
+				}
 				$item['delay'] = 0;
 				if ($item['end_time'] > 0) {
 					$item['end_time'] = date('Y-m-d', $item['end_time']);
@@ -133,11 +146,19 @@ class ProjectTask extends Model
     {
         $detail = Db::name('ProjectTask')->where(['id' => $id])->find();
         if (!empty($detail)) {
-            $detail['product_name'] = '';
+            $detail['before_task_name'] = '';
             $detail['project_name'] = '';
             if ($detail['project_id'] > 0) {
                 $detail['project_name'] = Db::name('Project')->where(['id' => $detail['project_id']])->value('name');
             }
+			
+			if ($detail['before_task'] > 0) {
+                $before_task = Db::name('ProjectTask')->where(['id' => $detail['before_task']])->find();
+                $detail['before_task_name'] = $before_task['title'];
+                $detail['before_task_flow_status'] = $before_task['flow_status'];
+                $detail['before_task_flow_name'] = self::$FlowStatus[(int) $before_task['flow_status']];
+            }
+			
             $detail['admin_name'] = Db::name('Admin')->where(['id' => $detail['admin_id']])->value('name');
             $detail['work_hours'] = Db::name('Schedule')->where(['delete_time' => 0, 'tid' => $detail['id']])->sum('labor_time');
             $detail['cate_name'] = Db::name('WorkCate')->where(['id' => $detail['cate']])->value('title');

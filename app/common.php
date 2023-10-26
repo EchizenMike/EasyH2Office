@@ -1014,6 +1014,25 @@ function create_tree_list($pid, $arr, $group, &$tree = [])
     return $tree;
 }
 
+function table_tree_list($before_task, $arr, $name='pid', &$tree = [])
+{
+    foreach ($arr as $key => $vo) {
+        if ($vo[$name] == $before_task) {
+            $child = table_tree_list($vo['id'], $arr, $name);
+            if ($child) {
+				$vo['isParent'] = true;
+                $vo['children'] = $child;
+            }
+			else{
+				$vo['isParent'] = false;
+                $vo['children'] = [];
+			}
+            $tree[] = $vo;
+        }
+    }
+    return $tree;
+}
+
 
 //递归排序，用于分类选择
 function set_recursion($result, $pid = 0, $level=-1)

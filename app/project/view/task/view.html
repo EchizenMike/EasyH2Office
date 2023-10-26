@@ -24,6 +24,11 @@
 .log-item i{font-weight:800; color:#323232}
 .log-content strong{margin:0 4px; color:#323232}
 .layui-unselect dl {max-height:188px;}
+.layui-table-form{margin-top:8px;}
+
+.task-son{padding:3px 0;}
+.task-son .red{margin-left:8px; cursor:pointer; display:none;}
+.task-son:hover .del-son{display:inline;}
 </style>
 {/block}
 {block name="body"}
@@ -34,7 +39,7 @@
 			<i class="iconfont icon-wodedianping" title="编辑" data-name="title"></i>
 		</h2>
 		<div>
-			<span class="layui-badge layui-bg-gray">#P{$detail.id}</span>
+			<span class="layui-badge layui-bg-gray">#T{$detail.id}</span>
 			<span class="mx-2">{$detail.admin_name}</span>
 			<span class="gray">创建于{$detail.times}<span id="editTips">{gt name="$detail.update_time" value="0"}，最近更新于 {:time_trans($detail.update_time)}{/gt}</span></span>
 			{eq name="$detail.admin_id" value="$login_admin.id"}
@@ -77,20 +82,43 @@
 				</tr>
 				<tr>	
 					<td class="layui-td-gray-2">实际完成日期</td>
-					<td class="hover-edit">{eq name="$detail.over_time" value="0"}-{else/}{$detail.over_time|
-						date='Y-m-d'}{/eq}</td>	
+					<td class="hover-edit">{eq name="$detail.over_time" value="0"}-{else/}{$detail.over_time|date='Y-m-d'}{/eq}</td>	
 					<td class="layui-td-gray">实际工时</td>
 					<td class="hover-edit">{eq name="$detail.work_hours" value="0"}-{else/}{$detail.work_hours}{/eq}
 					</td>	
 					<td class="layui-td-gray">任务状态</td>
 					<td class="hover-edit">
-						<span class="layui-color-{$detail.flow_status}" id="flow_status_{$detail.id}"
-							data-val="{$detail.flow_status}">{$detail.flow_name}</span><i
-							class="iconfont icon-wodedianping" title="编辑" data-name="flow_status"></i>
+						<span class="layui-color-{$detail.flow_status}" id="flow_status_{$detail.id}" data-val="{$detail.flow_status}">『{$detail.flow_name}』</span><i class="iconfont icon-wodedianping" title="编辑" data-name="flow_status"></i>
 					</td>					
 					<td class="layui-td-gray">完成进度</td>
-					<td class="hover-edit"><span class="layui-color-{$detail.done_ratio}" id="done_ratio_{$detail.id}" data-val="{$detail.done_ratio}">{$detail.done_ratio}%</span><i class="iconfont icon-wodedianping" title="编辑" data-name="done_ratio"></i>
+					<td class="hover-edit"><span class="layui-color-{$detail.done_ratio}" id="done_ratio_{$detail.id}" data-val="{$detail.done_ratio}">{$detail.done_ratio}%</span>{neq name="$detail.done_ratio" value="100"}<i class="iconfont icon-wodedianping" title="编辑" data-name="done_ratio"></i>{/neq}
 					</td>						
+				</tr>
+				<tr>
+					<td class="layui-td-gray-2">前置任务</td>
+					<td colspan="7" class="hover-edit">					
+					<span id="project_id_{$detail.id}" data-val="{$detail.before_task}">
+					{gt name="$detail.before_task" value="0"}
+					<span class="layui-badge layui-bg-gray">#T{$detail.before_task}</span><span class="layui-color-{$detail.before_task_flow_status}">『{$detail.before_task_flow_name}』</span><a href="/project/task/view/id/{$detail.before_task}">{$detail.before_task_name}</a>
+					{else/}
+					<span class="gray">未设置</span>{/gt}
+					</span>
+					<i class="iconfont icon-wodedianping" title="编辑" data-name="before_task"></i>
+					</td>
+				</tr>
+				<tr>
+					<td class="layui-td-gray-2">子任务<span class="layui-btn layui-btn-xs add-son">+ 新增</span></td>
+					<td colspan="7" class="hover-edit">					
+					<span id="project_id_{$detail.id}" data-val="{$detail.before_task}">
+					{empty name="$son_task"}
+					<span class="gray">暂无子任务</span>
+					{else/}
+						{volist name="son_task" id="vo"}
+						<p class="task-son"><span class="layui-badge layui-bg-gray">#T{$vo.id}</span><span class="layui-color-{$vo.flow_status}">『{$vo.flow_name}』</span><a href="/project/task/view/id/{$vo.id}">{$vo.title}</a><span class="del-son red" title="取消父子关系" data-id="{$vo.id}">✘</span></p>
+						{/volist}
+					{/empty}
+					</span>
+					</td>
 				</tr>
 			</table>
 			<div class="content hover-edit">
@@ -115,8 +143,7 @@
 			<div class="pb-4 hover-{$role_edit}">
 				<p class="gray mb-2">关联项目</p>
 				<span id="project_id_{$detail.id}" data-val="{$detail.project_id}">
-					{gt name="$detail.project_id" value="0"}{$detail.project_name}{else/}<span
-						class="gray">未设置</span>{/gt}
+					{gt name="$detail.project_id" value="0"}{$detail.project_name}{else/}<span class="gray">未设置</span>{/gt}
 				</span>
 				<i class="iconfont icon-wodedianping" title="编辑" data-name="project_id"></i>
 			</div>
@@ -185,8 +212,7 @@
 				{ 'id': 40, 'title': '40%' },
 				{ 'id': 50, 'title': '50%' },
 				{ 'id': 60, 'title': '60%' },
-				{ 'id': 80, 'title': '80%' },
-				{ 'id': 100, 'title': '100%' }
+				{ 'id': 80, 'title': '80%' }
 			]
 		}
 		const edit = layui.oaEdit,work = layui.oaSchedule,comment = layui.oaComment, oaTool = layui.oaTool, tool = layui.tool;
@@ -221,6 +247,35 @@
 				tool.delete("/project/task/delete", postData, callback);
 			});
 		})
+		
+		$('.add-son').on('click', function () {
+			let callback = function(data){
+				tool.post("/project/api/task_add_son", {'pid': detail_id, 'id': data.id}, function(e){
+					layer.msg(e.msg);
+					if(e.code==0){
+						location.reload();
+					}
+				})
+			}
+			oaTool.taskPicker(callback,{set_pid:detail_id});			
+		});
+		
+		$('.del-son').on('click', function () {
+			let id = $(this).data('id');
+			layer.confirm('确定取消该任务的父子关系吗?', {
+				icon: 3,
+				title: '提示'
+			}, function(index) {
+				let callback = function (e) {
+					layer.msg(e.msg);
+					if (e.code == 0) {
+						location.reload();
+					}
+				}
+				tool.delete("/project/api/task_del_son", {id: id}, callback);
+				layer.close(index);
+			});	
+		});
 
 		oaTool.addFile({
 			type:1,
@@ -281,11 +336,11 @@
 			let callback = function (e) {
 				layer.closeAll();
 				if (e.code == 0) {
-					location.reload();
-					if (layui.pageTable) {
-						setTimeout(function () {
-							layui.pageTable.reload();
-						}, 400)
+					setTimeout(function () {
+						location.reload();
+					}, 400)
+					if (parent.layui.taskTable) {
+						parent.layui.taskTable.reload();
 					}
 				}
 				else {
@@ -330,7 +385,14 @@
 			}
 			if (name == "project_id") {
 				if (admin_id == login_admin) {
-					edit.select_table(id, name, real_txt, "/project/api/get_project", editPost, 1);
+					edit.select_table(id, name, real_txt, editPost, 1);
+				} else {
+					layer.msg('您没权限修改，请联系创建人或负责人修改');
+				}
+			}
+			if (name == "before_task") {
+				if (admin_id == login_admin) {
+					edit.select_task(id, name, real_txt, editPost, 1);
 				} else {
 					layer.msg('您没权限修改，请联系创建人或负责人修改');
 				}

@@ -47,6 +47,7 @@ class ProjectLog extends Model
                 'cate' => array('icon' => 'icon-wodedianping', 'title' => '任务类别'),
                 'done_ratio' => array('icon' => 'icon-wodedianping', 'title' => '完成进度'),
                 'project_id' => array('icon' => 'icon-wodedianping', 'title' => '关联项目'),
+                'before_task' => array('icon' => 'icon-wodedianping', 'title' => '前置任务'),
                 'content' => array('icon' => 'icon-wodedianping', 'title' => '描述'),
                 'file' => array('icon' => 'icon-sucaiziyuan', 'title' => '文件'),
                 'new' => array('icon' => 'icon-zidingyishezhi', 'title' => '任务'),
@@ -99,6 +100,10 @@ class ProjectLog extends Model
             if ($v['field'] == 'project_id') {
                 $v['old_content'] = Db::name('Project')->where(['id' => $v['old_content']])->value('name');
                 $v['new_content'] = Db::name('Project')->where(['id' => $v['new_content']])->value('name');
+            }
+			if ($v['field'] == 'before_task') {
+                $v['old_content'] = Db::name('ProjectTask')->where(['id' => $v['old_content']])->value('title');
+                $v['new_content'] = Db::name('ProjectTask')->where(['id' => $v['new_content']])->value('title');
             }
             if ($v['field'] == 'cate') {
                 $v['old_content'] = Db::name('WorkCate')->where(['id' => $v['old_content']])->value('title');

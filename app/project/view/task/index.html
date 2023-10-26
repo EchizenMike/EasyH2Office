@@ -89,8 +89,8 @@
 					}
 				}
 				, {
-					field: 'flow_name', title: '状态', align: 'center', width: 80, templet: function (d) {
-						var html = '<span class="layui-badge layui-bg-' + d.flow_status + '">' + d.flow_name + '</span>';
+					field: 'flow_name', title: '状态', align: 'center', width: 90, templet: function (d) {
+						var html = '<span class="layui-color-' + d.flow_status + '">『' + d.flow_name + '』</span>';
 						return html;
 					}
 				}
@@ -101,12 +101,31 @@
 						return html;
 					}
 				}
+				, { field: 'before_task', title: '前置任务编号',align: 'center', width: 100, templet: function (d) {
+						var html = '-';
+						if(d.before_task > 0){
+							html = '<a class="side-a" data-href="/project/task/view/id/' + d.before_task + '">T' + d.before_task + '</a>';
+						}
+						return html;
+					}
+				  }
+				, { field: 'after_num', title: '后置任务数', align: 'center',width: 90, templet: function (d) {
+						var html = '-';
+						if(d.after_num > 0){
+							html = '<a class="blue" lay-event="more" style="cursor:pointer;">'+d.after_num+'</a>';
+							if(d.after_num == 1){
+								html = ' <a class="side-a" data-href="/project/task/view/id/' + d.after_id + '">'+d.after_num+'</a>';
+							}
+						}
+						return html;
+					}
+				}
 				, { field: 'project_name', title: '关联项目', width: 200 }
 				, { field: 'director_name', title: '负责人', align: 'center', width: 80 }
 				, { field: 'assist_admin_names', title: '协作人', width: 200 }
 				, { field: 'plan_hours', title: '预估工时', align: 'center', width: 80 }
 				, {
-					field: 'end_time', title: '预计结束日期', width: 150, templet: function (d) {
+					field: 'end_time', title: '计划完成日期', width: 150, templet: function (d) {
 						var html = d.end_time;
 						if (d.delay > 0) {
 							html += '<span class="red ml-1" style="font-size:12px;">逾期' + d.delay + '天</span>';
@@ -117,6 +136,35 @@
 			]]
 		});
 		
+		//触发事件
+		table.on('tool(task)', function(obj){
+			if(obj.event === 'more'){
+				layer.open({
+					title: '后置任务列表',
+					area: ['666px', '550px'],
+					type: 1,
+					content: '<div class="picker-table"><div id="taskTable"></div></div>',
+					success: function () {
+						taskTable = table.render({
+							elem: '#taskTable'
+							, url: '/project/api/get_task'
+							, page: true //开启分页
+							, limit: 10
+							, where:{'before_task':obj.data.id}
+							, cols: [[
+								{ field: 'id', width: 90, title: '编号', align: 'center' }
+								, {field: 'title', title: '任务主题',minWidth:240, rowspan: 2, templet: function (d) {
+									var html = '<span class="layui-badge layui-bg-' + d.priority + '">' + d.priority_name + '</span> <a class="side-a" data-href="/project/task/view/id/' + d.id + '">' + d.title + '</a>';
+									return html;
+								}}
+								, { field: 'project_name', width: 200, title: '关联项目' }
+							]]
+						});
+					}
+				})
+				return;
+			}
+		});
 		//触发事件
 		table.on('toolbar(task)', function(obj){
 			if(obj.event === 'add'){

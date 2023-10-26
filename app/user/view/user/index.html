@@ -29,6 +29,7 @@
 				<select name="status">
 					<option value="">选择员工状态</option>
 					<option value="1">正常状态</option>
+					<option value="2">离职状态</option>
 					<option value="0">禁止登录</option>
 				</select>
 			</div>
@@ -334,7 +335,10 @@
 				uploadImport();	
 				return;				
 			}
-
+			if(obj.config.where.status == 2){
+				layer.msg('离职员工不支持操作');
+				return false;
+			}
 			var uidArray=[],msg='是否执行该操作？',type=0;
 			for(var i=0;i<data.length;i++){
 				uidArray.push(data[i].id);
@@ -388,6 +392,10 @@
 			if (obj.event === 'view') {
 				tool.side('/user/user/view?id='+data.id);
 				return;
+			}
+			if(obj.data.status == 2){
+				layer.msg('离职员工不支持操作');
+				return false;
 			}
 			if(obj.event === 'edit'){
 				tool.side('/user/user/add?id='+data.id);

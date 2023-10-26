@@ -169,7 +169,7 @@ a.tab-a:hover,a:hover,a.open-a:hover,a.link-a:hover,a.right-a:hover{color:#1A75F
 
 .layui-bg-0{background-color:#648A8D !important;}/*灰青*/
 .layui-bg-1,.layui-bg-green{background-color:#16b777 !important;}/*亮绿*/
-.layui-bg-2{background-color:#1A75FF !important;}/*亮蓝*/
+.layui-bg-2{background-color:#1E9FFF !important;}/*亮蓝*/
 .layui-bg-3{background-color:#FEC939 !important;}/*亮黄*/
 .layui-bg-4{background-color:#FD6206 !important;}/*亮橙*/
 .layui-bg-5{background-color:#FF5823 !important;}/*亮红*/
@@ -180,7 +180,7 @@ a.tab-a:hover,a:hover,a.open-a:hover,a.link-a:hover,a.right-a:hover{color:#1A75F
 
 .layui-color-0{color:#648A8D !important;}/*灰青*/
 .layui-color-1{color:#16b777 !important;}/*亮绿*/
-.layui-color-2{color:#1A75FF !important;}/*亮蓝*/
+.layui-color-2{color:#1E9FFF !important;}/*亮蓝*/
 .layui-color-3{color:#FEC939 !important;}/*亮黄*/
 .layui-color-4{color:#FD6206 !important;}/*亮橙*/
 .layui-color-5{color:#FF5823 !important;}/*亮红*/
@@ -216,6 +216,7 @@ a.tab-a:hover,a:hover,a.open-a:hover,a.link-a:hover,a.right-a:hover{color:#1A75F
 .gray-disabled{color:#c6c6c6;}
 .gray-light{color:#f1f1f1;}
 
+.layui-bg-gray { background-color: #f1f1f1!important; color: #686868!important;}
 /* 滚动条 */
 ::-webkit-scrollbar {
 	width: 8px;

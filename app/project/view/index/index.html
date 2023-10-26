@@ -59,8 +59,8 @@
 					}
 				}
 				, {
-					field: 'status', title: '状态', align: 'center', width: 70, rowspan: 2, templet: function (d) {
-						var html = '<span class="layui-btn layui-btn-xs layui-bg-' + d.status + '">' + d.status_name + '</span>';
+					field: 'status', title: '状态', align: 'center', width: 90, rowspan: 2, templet: function (d) {
+						var html = '<span class="layui-color-' + d.status + '">『' + d.status_name + '』</span>';
 						return html;
 					}
 				}

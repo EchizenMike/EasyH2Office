@@ -20,8 +20,8 @@ function layoutTask(table){
 					return 'T' + d.id;
 				}
 			},
-			{field: 'flow_status', title: '状态', align: 'center', width: 80, templet: function (d) {
-					var html = '<span class="layui-btn layui-btn-xs layui-bg-' + d.flow_status + '">' + d.flow_name + '</span>';
+			{field: 'flow_status', title: '状态', align: 'center', width: 90, templet: function (d) {
+					var html = '<span class="layui-color-' + d.flow_status + '">『' + d.flow_name + '』</span>';
 					return html;
 				}
 			},

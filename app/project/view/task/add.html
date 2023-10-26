@@ -30,13 +30,11 @@
 			</td>
 			<td class="layui-td-gray">预估工时<span style="color: red">*</span></td>
 			<td>
-				<input type="text" name="plan_hours" lay-verify="required" lay-reqText="请填写预估工时" placeholder="请填写预估工时"
-					class="layui-input" value="">
+				<input type="text" name="plan_hours" lay-verify="required" lay-reqText="请填写预估工时" placeholder="请填写预估工时" class="layui-input" value="">
 			</td>
 			<td class="layui-td-gray-2">预计结束日期<span style="color: red">*</span></td>
 			<td>
-				<input type="text" id="end_time" name="end_time" readonly lay-verify="required" lay-reqText="请选择结束时间"
-					placeholder="请选择时间" class="layui-input" value="">
+				<input type="text" id="end_time" name="end_time" readonly lay-verify="required" lay-reqText="请选择结束时间" placeholder="请选择时间" class="layui-input" value="">
 			</td>
 		</tr>
 		<tr>
@@ -45,30 +43,37 @@
 				<input type="text" name="director_name" placeholder="请选择" readonly class="layui-input picker-one" value="">
 				<input type="hidden" name="director_uid" readonly value="">
 			</td>
-			{empty name="$project_id"}
-			<td class="layui-td-gray">协作人</td>
-			<td>
-				<input type="text" name="assist_admin_names" placeholder="请选择" readonly class="layui-input picker-more" value="">
-				<input type="hidden" name="assist_admin_ids" readonly value="">
-			</td>
-			<td class="layui-td-gray">关联项目</td>
-			<td>
-				<select id="projectId" name="project_id" lay-filter="project_id">
-					<option value="">请选择关联项目</option>
-					{volist name=":get_project()" id="v"}
-					<option value="{$v.id}">{$v.name}</option>
-					{/volist}
-				</select>
-			</td>
-			{else/}
 			<td class="layui-td-gray">协作人</td>
 			<td colspan="3">
-				<input type="hidden" name="project_id" readonly value="{$project_id}">
 				<input type="text" name="assist_admin_names" placeholder="请选择" readonly class="layui-input picker-more" value="">
 				<input type="hidden" name="assist_admin_ids" readonly value="">
 			</td>
-			{/empty}
 		</tr>
+		{empty name="$project_id"}
+		<tr>
+			<td class="layui-td-gray">前置任务</td>
+			<td>
+				<input type="text" name="before_task_name" readonly placeholder="请选择前置任务" class="layui-input picker-task" value="">
+				<input type="hidden" name="before_task" readonly value="">
+			</td>
+		</tr>
+		<tr>
+			<td class="layui-td-gray">关联项目</td>
+			<td colspan="3">
+				<input type="text" name="project_name" readonly placeholder="请选择关联项目" class="layui-input picker-project" value="">
+				<input type="hidden" name="project_id" readonly value="">
+			</td>
+		</tr>
+		{else/}
+			<tr>
+				<td class="layui-td-gray">前置任务</td>
+				<td colspan="5">
+					<input type="text" name="before_task_name" readonly placeholder="请选择前置任务" class="layui-input picker-task" value="">
+					<input type="hidden" name="before_task" readonly value="">
+					<input type="hidden" name="project_id" readonly value="{$project_id}">
+				</td>
+			</tr>
+		{/empty}
 		<tr>
 			<td class="layui-td-gray" style="vertical-align:top;">详细描述<font>*</font></td>
 			<td colspan="5">
@@ -76,7 +81,7 @@
 			</td>
 		</tr>
 	</table>
-	<div style="padding: 10px 0">
+	<div style="padding-top: 10px">
 		<input type="hidden" name="id" value="0" />
 		<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform">立即提交</button>
 		<button type="reset" class="layui-btn layui-btn-primary">重置</button>
@@ -88,16 +93,16 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
-	const moduleInit = ['tool','tinymce','employeepicker'];
+	const moduleInit = ['tool','tinymce','employeepicker','oaTool'];
 	function gouguInit() {
-		var form = layui.form,tool=layui.tool, laydate = layui.laydate, employeepicker = layui.employeepicker;
+		var form = layui.form,tool=layui.tool, laydate = layui.laydate;
 		
 		//编辑器初始化
 		var editor = layui.tinymce;
 		var edit = editor.render({
 			selector: "#container",
 			images_upload_url: '/api/index/upload/sourse/tinymce',//图片上传接口
-			height: 500
+			height: 492
 		});
 
 		//日期范围

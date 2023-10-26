@@ -22,20 +22,20 @@ return [
 		[
 			'id'       => 4,
 			'row'       => 1,
-			'name'       => 'article',
-			'title'       => '知识列表',
-        ],
-		[
-			'id'       => 5,
-			'row'       => 1,
 			'name'       => 'project',
 			'title'       => '项目列表',
         ],
         [
-			'id'       => 6,
+			'id'       => 5,
 			'row'       => 1,
 			'name'       => 'task',
 			'title'       => '任务列表',
+        ],
+		[
+			'id'       => 6,
+			'row'       => 1,
+			'name'       => 'article',
+			'title'       => '知识列表',
         ],
         [
 			'id'       => 7,

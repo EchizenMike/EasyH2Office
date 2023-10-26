@@ -14,7 +14,7 @@ function project_document(){
 	$('#projectTab').find('li').eq(3).data('load','true');
 	let tool = layui.tool, table = layui.table;
 	//项目任务
-	parent.layui.documentTable = table.render({
+	layui.documentTable = table.render({
 		elem: '#document',
 		title: '文档列表',
 		toolbar: '#toolbardocument',
@@ -57,7 +57,7 @@ function project_document(){
 	  var checkStatus = table.checkStatus(obj.config.id);
 	  switch(obj.event){
 		case 'add':
-		  parent.layui.tool.side('/project/document/add?project_id='+project_id);
+		  tool.side('/project/document/add?project_id='+project_id);
 		break;
 	  };
 	});
@@ -66,10 +66,10 @@ function project_document(){
 		var data = obj.data; //获得当前行数据		
 		if(obj.event === 'detail'){ //查看
 			let url = '/project/document/view/id/'+data.id;
-			parent.layui.tool.side(url);
+			tool.side(url);
 		}
 		if(obj.event === 'edit'){
-			parent.layui.tool.side('/project/document/add?id='+data.id);
+			tool.side('/project/document/add?id='+data.id);
 			return;
 		}
 		if (obj.event === 'del') {

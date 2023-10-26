@@ -40,12 +40,6 @@ class Task extends BaseController
         if (request()->isPost()) {
             if (isset($param['end_time'])) {
                 $param['end_time'] = strtotime(urldecode($param['end_time']));
-            }if (isset($param['flow_status'])) {
-                if ($param['flow_status'] == 3) {
-                    $param['over_time'] = time();
-                } else {
-                    $param['over_time'] = 0;
-                }
             }
             if (!empty($param['id']) && $param['id'] > 0) {
                 $task = (new TaskList())->detail($param['id']);
@@ -55,8 +49,31 @@ class Task extends BaseController
                     // 验证失败 输出错误信息
                     return to_assign(1, $e->getError());
                 }
+				if (isset($param['flow_status'])) {
+					if ($param['flow_status'] == 3) {
+						$param['over_time'] = time();
+						$param['done_ratio'] = 100;
+						if($task['before_task']>0){
+							$flow_status = Db::name('ProjectTask')->where(['id' => $task['before_task']])->value('flow_status');
+							if($flow_status !=3){
+								return to_assign(1, '前置任务未完成，不能设置已完成');
+							}
+						}
+					} else {
+						$param['over_time'] = 0;
+						$param['done_ratio'] = 0;
+					}
+				}
+				if(isset($param['before_task'])){
+					$after_task_array = admin_after_task_son($param['id']);
+					//包括自己在内
+					$after_task_array[] = $param['id'];
+					if (in_array($param['before_task'], $after_task_array)) {
+						return to_assign(1, '前置任务不能是该任务本身或其后置任务');
+					}
+				}
                 $param['update_time'] = time();
-                $res = TaskList::where('id', $param['id'])->strict(false)->field(true)->update($param);
+                $res = TaskList::where('id', $param['id'])->strict(false)->save($param);
                 if ($res) {
                     add_log('edit', $param['id'], $param);
 					add_project_log($this->uid,'task',$param, $task);
@@ -124,7 +141,13 @@ class Task extends BaseController
                 ->order('mf.create_time desc')
                 ->where(array('mf.topic_id' => $id, 'mf.module' => 'task'))
                 ->select()->toArray();
+							
+				$son_task = Db::name('ProjectTask')->where(['pid' => $detail['id']])->select()->toArray();				
+				foreach ($son_task as $key => &$vo) {
+					$vo['flow_name'] = TaskList::$FlowStatus[(int) $vo['flow_status']];
+				}
 
+                View::assign('son_task', $son_task);
                 View::assign('detail', $detail);
                 View::assign('file_array', $file_array);
                 View::assign('role_edit', $role_edit);
