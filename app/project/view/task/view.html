@@ -27,7 +27,7 @@
 .layui-table-form{margin-top:8px;}
 
 .task-son{padding:3px 0;}
-.task-son .red{margin-left:8px; cursor:pointer; display:none;}
+.task-son .del-son{margin-left:8px; cursor:pointer; display:none;}
 .task-son:hover .del-son{display:inline;}
 </style>
 {/block}
@@ -108,16 +108,14 @@
 				</tr>
 				<tr>
 					<td class="layui-td-gray-2">子任务<span class="layui-btn layui-btn-xs add-son">+ 新增</span></td>
-					<td colspan="7" class="hover-edit">					
-					<span id="project_id_{$detail.id}" data-val="{$detail.before_task}">
-					{empty name="$son_task"}
-					<span class="gray">暂无子任务</span>
-					{else/}
-						{volist name="son_task" id="vo"}
-						<p class="task-son"><span class="layui-badge layui-bg-gray">#T{$vo.id}</span><span class="layui-color-{$vo.flow_status}">『{$vo.flow_name}』</span><a href="/project/task/view/id/{$vo.id}">{$vo.title}</a><span class="del-son red" title="取消父子关系" data-id="{$vo.id}">✘</span></p>
-						{/volist}
-					{/empty}
-					</span>
+					<td colspan="7">					
+						{empty name="$son_task"}
+						<span class="gray">暂无子任务</span>
+						{else/}
+							{volist name="son_task" id="vo"}
+							<p class="task-son"><span class="layui-badge layui-bg-gray">#T{$vo.id}</span><span class="layui-color-{$vo.flow_status}">『{$vo.flow_name}』</span><a href="/project/task/view/id/{$vo.id}">{$vo.title}</a><span class="del-son red" title="取消父子关系" data-id="{$vo.id}">✘</span></p>
+							{/volist}
+						{/empty}
 					</td>
 				</tr>
 			</table>
@@ -250,12 +248,14 @@
 		
 		$('.add-son').on('click', function () {
 			let callback = function(data){
-				tool.post("/project/api/task_add_son", {'pid': detail_id, 'id': data.id}, function(e){
-					layer.msg(e.msg);
-					if(e.code==0){
-						location.reload();
-					}
-				})
+				if(data.id!=0){
+					tool.post("/project/api/task_add_son", {'pid': detail_id, 'id': data.id}, function(e){
+						layer.msg(e.msg);
+						if(e.code==0){
+							location.reload();
+						}
+					})
+				}
 			}
 			oaTool.taskPicker(callback,{set_pid:detail_id});			
 		});
