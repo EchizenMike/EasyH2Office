@@ -12,6 +12,26 @@ return [
             'content' => '您有一个新公告：{title}。',
             'link' => '<a class="link-a" data-href="/note/index/view/id/{action_id}">查看详情</a>',
         ],
+		2 => [
+			'title'       => '{from_user}给您发了一个『会议邀请』通知，请及时查看',
+            'content' => '您有一个新的会议邀请：{title}。',
+            'link' => '<a class="link-a" data-href="/adm/meeting/view/id/{action_id}">查看详情</a>',
+        ],
+		3 => [
+			'title'       => '{from_user}给您发了一个『会议取消』通知，请及时查看',
+            'content' => '您有一个会议取消通知：{title}。',
+            'link' => '<a class="link-a" data-href="/adm/meeting/view/id/{action_id}">查看详情</a>',
+        ],
+		4 => [
+			'title'       => '{from_user}给您发了一个『会议审批』通知，请及时查看',
+            'content' => '您有一个会议审批通知：{title}。',
+            'link' => '<a class="link-a" data-href="/adm/meeting/check/id/{action_id}">查看详情</a>',
+        ],
+		5 => [
+			'title'       => '{from_user}给您发了一份『工作汇报』，请及时查看',
+            'content' => '您有一份新的工作汇报待查看：{title}。',
+            'link' => '<a class="link-a" data-href="/oa/work/read/id/{action_id}">查看详情</a>',
+        ],
         21 => [
 			'title'       => '{from_user}提交了一个『{title}申请』，请及时审批',
             'content' => '您有一个新的『{title}审批』需要处理。',

@@ -314,6 +314,14 @@ class Work extends BaseController
 					'send_time' => time()
                 );
             }
+			//组合要发的消息
+			$types=['','日报','周报','月报','其他'];
+			$msg=[
+				'from_uid'=>$this->uid,
+				'title' => $types[$param['type']],
+				'action_id'=>$wid
+			];
+			sendMessage($users,5,$msg);
             $res = Db::name('WorkRecord')->strict(false)->field(true)->insertAll($send_data);
 			add_log('send',$wid);
             return to_assign(0, '发送成功');
