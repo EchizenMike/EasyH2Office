@@ -1757,6 +1757,7 @@ CREATE TABLE `oa_project_document`  (
   `project_id` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '关联项目id',
   `admin_id` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建人',
   `title` varchar(255) NOT NULL DEFAULT '' COMMENT '标题',
+  `file_ids` varchar(500) NOT NULL DEFAULT '' COMMENT '附件ids',
   `content` text NULL COMMENT '文档内容',
   `md_content` text NULL COMMENT 'markdown文档内容',
   `create_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '添加时间',

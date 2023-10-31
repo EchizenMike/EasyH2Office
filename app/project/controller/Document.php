@@ -36,6 +36,9 @@ class Document extends BaseController
     {
         $param = get_params();
         if (request()->isPost()) {
+			if (isset($param['file'])) {
+				unset($param['file']);
+			}
             if (isset($param['end_time'])) {
                 $param['end_time'] = strtotime(urldecode($param['end_time']));
             }if (isset($param['flow_status'])) {
@@ -89,7 +92,12 @@ class Document extends BaseController
 			$id = isset($param['id']) ? $param['id'] : 0;
 			$project_id = isset($param['project_id']) ? $param['project_id'] : 0;
 			if($id>0){
-				View::assign('detail', (new DocumentList())->detail($param['id']));
+				$detail = (new DocumentList())->detail($param['id']);
+				if($detail['file_ids'] !=''){
+					$fileArray = Db::name('File')->where('id','in',$detail['file_ids'])->select();
+					$detail['fileArray'] = $fileArray;
+				}
+				View::assign('detail', $detail);
 			}
             View::assign('project_id', $project_id);
             View::assign('id', $id);
@@ -104,10 +112,12 @@ class Document extends BaseController
         $id = isset($param['id']) ? $param['id'] : 0;
         $detail = (new DocumentList())->detail($id);
         if (empty($detail)) {
-			if (empty($detail)) {
-				echo '<div style="text-align:center;color:red;margin-top:20%;">该文档不存在</div>';exit;
-			}
+			echo '<div style="text-align:center;color:red;margin-top:20%;">该文档不存在</div>';exit;
         } else {
+			if($detail['file_ids'] !=''){
+				$fileArray = Db::name('File')->where('id','in',$detail['file_ids'])->select();
+				$detail['fileArray'] = $fileArray;
+			}
             $project_ids = Db::name('ProjectUser')->where(['uid' => $this->uid, 'delete_time' => 0])->column('project_id');
             if (in_array($detail['project_id'], $project_ids) || ($this->uid = $detail['admin_id'])) {
                 View::assign('detail', $detail);
