@@ -30,6 +30,7 @@ layui.define(function (exports) {
 				skin:'layui-layer-gougu-admin',
 				end: function(){
 					$('body').removeClass('right-open');
+					$(parent.$('.express-close')).show();
 					if (layui.pageTable && layui.pageTable.resize) {
 						layui.pageTable.resize();
 					}
@@ -38,6 +39,8 @@ layui.define(function (exports) {
 					var btn = '<div data-index="'+index+'" class="express-close" title="关闭">关闭</div>';
 					obj.append(btn);
 					$('body').addClass('right-open');
+					//console.log($(parent.$('.express-close')));
+					$(parent.$('.express-close')).hide();
 					that.loading = false;
 					obj.on('click','.express-close', function () {					
 						layer.close(index);
