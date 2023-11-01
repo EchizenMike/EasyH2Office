@@ -127,7 +127,7 @@ body{color:#323232}
 .layout-menu-expand .layui-layout-left {left: 120px;}
 .layout-menu-expand .layui-logo{width:120px;}
 
-.layout-menu-expand .layui-body.sub-menu{left: 240px;}
+.layout-menu-expand .layui-body.expand-menu{left: 240px;}
 
 .page-tabs,
 .gg-layout .layui-body,
@@ -196,7 +196,7 @@ body{color:#323232}
 .side-spread .gg-layout .layui-footer,
 .side-spread .gg-layout .layui-layout-left {left: 52px}
 
-.side-spread .layout-menu-expand .layui-body.sub-menu{left: 172px;}
+.side-spread .layout-menu-expand .layui-body.expand-menu{left: 172px;}
 
 .side-spread .layui-side .layui-nav {position: static; width: 52px}
 .side-spread .layui-side .layui-nav-item {position: static}

@@ -153,7 +153,7 @@ layui.define(['element'], function (exports) {
 			$gouguMenuList.find('dd').removeClass('layui-this').removeClass('layui-nav-itemed');
 			$gouguMenuList.find('.menu-li').removeClass('layui-nav-itemed');
 			$gouguMenuList.find('.gg-second-menu').removeClass('current');
-			$('#GouguAppBody').removeClass('sub-menu');
+			$('#GouguAppBody').removeClass('expand-menu');
 			$('.side-menu-item').each(function (index,item){
 				if($(item).data("id") == id) {
 					//console.log(item);
@@ -171,7 +171,7 @@ layui.define(['element'], function (exports) {
 						// 子级菜单
 						$menuli.siblings().find('.gg-second-menu').removeClass('current');
 						if ($menuli.children('.gg-second-menu').length) {
-							$('#GouguAppBody').addClass('sub-menu');
+							$('#GouguAppBody').addClass('expand-menu');
 							let second_menu = $(this).parent().parent();
 							second_menu.removeClass('show-up');
 							//console.log(second_menu.html());
