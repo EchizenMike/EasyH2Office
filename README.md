@@ -14,7 +14,8 @@
 4. [开源项目系列：勾股BLOG —— 个人&工作室博客系统](https://gitee.com/gougucms/blog)
 5. [开源项目系列：勾股Admin —— 基于Layui的Web UI解决方案](https://gitee.com/gouguopen/guoguadmin)
 
- **左手研发，右手开源，我们也很需要您的鼓励！右上角的Star⭐，期待您点亮哟！ **
+
+ ** 左手研发，右手开源，我们也很需要您的鼓励！右上角的Star⭐，期待您点亮哟！ **
 
 ### 📋 系统介绍
  **我们的愿景是：助力企业数智化。** 

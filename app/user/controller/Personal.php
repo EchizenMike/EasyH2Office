@@ -209,9 +209,9 @@ class Personal extends BaseController
             Db::name('Contract')->where([['admin_id','=',$uid],['check_status','<',3]])->update(['admin_id' => $connect_uid]);
 			
             add_log('hand', $id);
-            return to_assign(0, "删除成功");
+            return to_assign(0, "交接成功");
         } else {
-            return to_assign(1, "删除失败");
+            return to_assign(1, "交接失败");
         }
     }
 }
