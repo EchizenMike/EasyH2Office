@@ -45,16 +45,13 @@
 	  <tr>
         <td class="layui-td-gray">归属员工<font>*</font></td>
         <td>
-			<div class="layui-input-inline" style="width:50%;">
-				<input type="text" name="belong_name" value="{$userinfo.name}" autocomplete="off" readonly  lay-verify="required" lay-reqText="请选择客户归属人" placeholder="请选择客户归属人" class="layui-input">
-			</div>
-			<div class="layui-input-inline gray" style="width:42%;">部门：<span id="department_name">{$userinfo.department}</span></div>
+			<input type="text" name="belong_name" value="{$userinfo.name}" autocomplete="off" readonly  lay-verify="required" lay-reqText="请选择客户归属人" placeholder="请选择客户归属人" class="layui-input">
 			<input type="hidden" name="belong_uid" value="{$userinfo.id}">
 			<input type="hidden" name="belong_did" value="{$userinfo.did}">
         </td>
         <td class="layui-td-gray">归属部门</td>
         <td>
-          <input type="text" name="belong_department" value="{$userinfo.department}" autocomplete="off" readonly class="layui-input">
+          <input type="text" id="department_name" name="belong_department" value="{$userinfo.department}" autocomplete="off" readonly class="layui-input">
         </td>
 		<td class="layui-td-gray">共享员工</td>
         <td>
@@ -145,7 +142,7 @@
 					$('[name="belong_uid"]').val(ids);
 					$('[name="belong_name"]').val(names);
 					$('[name="belong_did"]').val(dids);
-					$('#department_name').html(departments);
+					$('#department_name').val(departments);
 				}
 			});
 		});	
