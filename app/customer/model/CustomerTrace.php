@@ -22,7 +22,7 @@ class CustomerTrace extends Model
     const SEVEN = 7;
 	
 	public static $Type = [
-        self::ZERO => '未设置',
+        self::ZERO => '其他',
         self::ONE => '电话',
         self::TWO => '微信',
         self::THREE => 'QQ',
@@ -44,6 +44,11 @@ class CustomerTrace extends Model
     {
         $detail = Db::name('CustomerTrace')->where(['id' => $id])->find();
         if (!empty($detail)) {
+			$detail['chance_name'] ='-';
+			if($detail['chance_id'] >0){
+				$detail['chance_name'] =Db::name('CustomerChance')->where(['id' => $detail['chance_id']])->value('title');
+			}
+			$detail['contact_name'] =Db::name('CustomerContact')->where(['id' => $detail['contact_id']])->value('name');
             $detail['stage_name'] = self::$Stage[(int) $detail['stage']];
             $detail['type_name'] = self::$Type[(int) $detail['type']];
             $detail['create_time'] = date('Y-m-d H:i:s', $detail['create_time']);

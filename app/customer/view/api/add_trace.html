@@ -1,23 +1,23 @@
 {extend name="../../base/view/common/base" /}
 <!-- 主体 -->
 {block name="body"}
-<form class="layui-form p-4">
+<form class="layui-form p-4" lay-filter="demo-val-filter">
 	<h3 class="pb-3">新增跟进记录</h3>
     <table class="layui-table layui-table-form">
       <tr>
         <td class="layui-td-gray">客户名称</td>
-        <td colspan="5">{$customer_name}</td>
-      </tr>
-      <tr>
-        <td class="layui-td-gray">联 系 人<font>*</font></td>
+        <td colspan="3">{$customer_name}</td>
+        <td class="layui-td-gray">客户联系人<font>*</font></td>
         <td>
-          <select name="contact_id" lay-verify="required" lay-reqText="请选择联系人">
+          <select name="contact_id" lay-verify="required" lay-reqText="请选择客户联系人">
             <option value="">请选择</option>
             {volist name=":customer_contact($customer_id)" id="v"}
             <option value="{$v.id}">{$v.name}</option>
             {/volist}
           </select>
         </td>
+      </tr>
+      <tr>
 	    <td class="layui-td-gray">跟进方式<font>*</font></td>
         <td>
           <select name="type" lay-verify="required" lay-reqText="请选择跟进方式">
@@ -27,11 +27,15 @@
             {/volist}
           </select>
         </td>
-        <td class="layui-td-gray">跟进时间<font>*</font></td>
+	    <td class="layui-td-gray">跟进时间<font>*</font></td>
         <td>
-          <input type="text" id="follow_time" name="follow_time" autocomplete="off" lay-verify="required" lay-reqText="请选择跟进时间" placeholder="请选择跟进时间" class="layui-input">
+          <input type="text" id="follow_time" name="follow_time" readonly autocomplete="off" lay-verify="required" lay-reqText="请选择跟进时间" placeholder="请选择跟进时间" class="layui-input">
         </td>
-      </tr>
+        <td class="layui-td-gray-2">下次沟通时间<font>*</font></td>
+        <td>
+          <input type="text" id="next_time" name="next_time" readonly autocomplete="off" lay-verify="required" lay-reqText="请选择下次沟通时间" placeholder="请选择下次沟通时间" class="layui-input">
+        </td>
+	  </tr>
 	  <tr>
 		<td class="layui-td-gray" style="vertical-align:top">沟通内容<font>*</font></td>
         <td colspan="5">
@@ -39,27 +43,23 @@
         </td>
       </tr>
       <tr>
-        <td class="layui-td-gray">当前阶段<font>*</font></td>
-        <td>
-          <select name="stage" lay-verify="required" lay-reqText="请选择">
-            <option value="">请选择</option>
-            {volist name=":trace_stage()" id="v"}
-            <option value="{$key}">{$v}</option>
-            {/volist}
-          </select>
-        </td>
 	    <td class="layui-td-gray">销售机会</td>
-        <td>
-          <select name="grade_id">
-            <option value="">请选择</option>
+        <td colspan="3">
+          <select name="chance_id" lay-filter="chance">
+            <option value="" title="0">请选择</option>
             {volist name=":customer_chance($customer_id)" id="v"}
-            <option value="{$v.id}">{$v.title}</option>
+            <option value="{$v.id}" title="{$v.id}">{$v.title}</option>
             {/volist}
           </select>
         </td>
-        <td class="layui-td-gray-2">下次沟通时间<font>*</font></td>
+        <td class="layui-td-gray">当前阶段</td>
         <td>
-          <input type="text" id="next_time" name="next_time" autocomplete="off" lay-verify="required" lay-reqText="请选择下次沟通时间" placeholder="请选择下次沟通时间" class="layui-input">
+          <select name="stage" id="stage" disabled="true">
+            <option value="" title="0">请选择</option>
+            {volist name=":trace_stage()" id="v"}
+            <option value="{$key}" title="{$key}">{$v}</option>
+            {/volist}
+          </select>
         </td>
       </tr>
     </table>
@@ -80,15 +80,35 @@
 		var form = layui.form,tool=layui.tool,laydate = layui.laydate;
 		laydate.render({
 			elem: '#follow_time'
+			,fullPanel:true
 			,type: 'datetime'
 		});
 		laydate.render({
 			elem: '#next_time'
+			,fullPanel:true
 			,min: 0
 			,type: 'datetime'
 		});
+		
+		form.on('select(chance)', function(data){
+			var check_type = data.elem[data.elem.selectedIndex].title;
+			if(check_type == 0){
+				form.val('demo-val-filter', {
+					"stage": ""
+				});
+				$("#stage").attr("disabled",true);
+			}
+			else{
+				$("#stage").removeAttr("disabled");
+			}
+			form.render();
+		});
 		//监听提交
 		form.on('submit(webform)', function (data) {
+			if(data.field.chance_id!='' && data.field.stage==''){
+				layer.msg('请选择当前阶段');
+				return false;
+			}
 			let callback = function (e) {
 				layer.msg(e.msg);
 				if (e.code == 0) {

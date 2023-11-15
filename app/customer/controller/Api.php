@@ -96,6 +96,9 @@ class Api extends BaseController
                 $param['admin_id'] = $this->uid;
 				$tid = CustomerTrace::strict(false)->field(true)->insertGetId($param);
 				if ($tid) {
+					if(!empty($param['chance_id'])){
+						Db::name('CustomerChance')->where('id',$param['chance_id'])->update(['stage'=>$param['stage']]);
+					}
 					add_log('add', $tid, $param,'客户跟进记录');
 					$log_data = array(
 						'field' => 'new',
