@@ -9,9 +9,9 @@
 	<table class="layui-table layui-table-form">
 		<tr>
 			<td class="layui-td-gray">加班时间</td>
-			<td>{$detail.start_time} 至 {$detail.end_time}</td>
-			<td class="layui-td-gray">加班时长</td>
-			<td>共{$detail.duration}工时</td>
+			<td>{$detail.start_time} 的{$detail.start_time_span==1?'上午':'下午'} 至 {$detail.end_time} 的{$detail.end_time_span==1?'上午':'下午'}</td>
+			<td class="layui-td-gray">请假天数</td>
+			<td>共{$detail.duration}天</td>
 		</tr>
 		<tr>
 			<td class="layui-td-gray">加班事由</td>

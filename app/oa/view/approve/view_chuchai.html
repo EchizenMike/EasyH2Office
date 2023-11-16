@@ -9,11 +9,13 @@
 	<table class="layui-table layui-table-form">
 		<tr>
 			<td class="layui-td-gray">出差地点</td>
-			<td>{$detail.address}</td>
+			<td colspan="3">{$detail.address}</td>
 		</tr>
 		<tr>
 			<td class="layui-td-gray">出差日期</td>
-			<td>{$detail.start_time} 至 {$detail.end_time}</td>
+			<td>{$detail.start_time} 的{$detail.start_time_span==1?'上午':'下午'} 至 {$detail.end_time} 的{$detail.end_time_span==1?'上午':'下午'}</td>
+			<td class="layui-td-gray">出差天数</td>
+			<td>共{$detail.duration}天</td>
 		</tr>
 		<tr>
 			<td class="layui-td-gray">出差事由</td>

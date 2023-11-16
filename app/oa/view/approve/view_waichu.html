@@ -13,13 +13,9 @@
 		</tr>
 		<tr>
 			<td class="layui-td-gray">外出日期</td>
-			<td colspan="3">{$detail.start_time} 至 {$detail.end_time}</td>
-		</tr>
-		<tr>
-			<td class="layui-td-gray">外出时长</td>
-			<td>共{$detail.duration}工时</td>
+			<td>{$detail.start_time} 的{$detail.start_time_span==1?'上午':'下午'} 至 {$detail.end_time} 的{$detail.end_time_span==1?'上午':'下午'}</td>
 			<td class="layui-td-gray">外出天数</td>
-			<td>共{$detail.days}天,{$detail.hours}小时</td>
+			<td>共{$detail.duration}天</td>
 		</tr>
 		<tr>
 			<td class="layui-td-gray">外出事由</td>

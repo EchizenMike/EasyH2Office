@@ -4,7 +4,7 @@
 {/block}
 <!-- 主体 -->
 {block name="body"}
-<form class="layui-form p-4">
+<form class="layui-form p-4" lay-filter="demo-val-filter">
 	<h3 class="pb-3">外出审批</h3>
 	{eq name="$id" value="0"}
 	<table class="layui-table layui-table-form">
@@ -15,18 +15,28 @@
 		<tr>
 			<td class="layui-td-gray">开始时间<font>*</font></td>
 			<td>
-				<input id="start_time" name="start_time" autocomplete="off" class="layui-input select-time" value="" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
+				<div class="layui-input-inline" style="width:120px; margin-right:16px;">
+					<input id="start_time" name="start_time" autocomplete="off" class="layui-input select-time" value="" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
+				</div>
+				<div class="layui-input-inline">
+					<input type="radio" name="start_time_span" value="1" title="上午" checked lay-filter="starttype">
+					<input type="radio" name="start_time_span" value="2" title="下午" lay-filter="starttype">
+				</div>
 			</td>
 			<td class="layui-td-gray">结束时间<font>*</font></td>
 			<td>
-				<input id="end_time" name="end_time" autocomplete="off" class="layui-input select-time" value="" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
+				<div class="layui-input-inline" style="width:120px; margin-right:16px;">
+					<input id="end_time" name="end_time" autocomplete="off" class="layui-input select-time" value="" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
+				</div>
+				<div class="layui-input-inline">
+					<input type="radio" name="end_time_span" value="1" title="上午" lay-filter="endtype">
+					<input type="radio" name="end_time_span" value="2" title="下午" checked lay-filter="endtype">
+				</div>
 			</td>
 		</tr>
 		<tr>
-			<td class="layui-td-gray">外出时长</td>
-			<td><input name="duration" value="" class="layui-input" lay-verify="required|number" placeholder="请完善请外出时长" lay-reqText="请完善请外出时长"></td>
 			<td class="layui-td-gray">外出天数</td>
-			<td id="days">-</td>
+			<td colspan="3"><span id="days">-</span><input type="hidden" id="duration" name="duration" value="0"></td>
 		</tr>
 		<tr>
 			<td class="layui-td-gray">外出事由<font>*</font></td>
@@ -52,19 +62,28 @@
 		<tr>
 			<td class="layui-td-gray">开始时间<font>*</font></td>
 			<td>
-				<input id="start_time" name="start_time" autocomplete="off" class="layui-input select-time" value="{$detail.start_time|date='Y-m-d H:i:s'}" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
+				<div class="layui-input-inline" style="width:120px; margin-right:16px;">
+					<input id="start_time" name="start_time" autocomplete="off" class="layui-input select-time" value="{$detail.start_time|date='Y-m-d'}" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
+				</div>
+				<div class="layui-input-inline">
+					<input type="radio" name="start_time_span" value="1" title="上午" lay-filter="starttype" {eq name="$detail.start_time_span" value="1"} checked{/eq}>
+					<input type="radio" name="start_time_span" value="2" title="下午" lay-filter="starttype" {eq name="$detail.start_time_span" value="2"} checked{/eq}>
+				</div>
 			</td>
 			<td class="layui-td-gray">结束时间<font>*</font></td>
 			<td>
-				<input type="hidden" name="duration" value="">
-				<input id="end_time" name="end_time" autocomplete="off" class="layui-input select-time" value="{$detail.end_time|date='Y-m-d H:i:s'}" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
+				<div class="layui-input-inline" style="width:120px; margin-right:16px;">
+					<input id="end_time" name="end_time" autocomplete="off" class="layui-input select-time" value="{$detail.end_time|date='Y-m-d'}" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
+				</div>
+				<div class="layui-input-inline">
+					<input type="radio" name="end_time_span" value="1" title="上午" lay-filter="endtype" {eq name="$detail.end_time_span" value="1"} checked{/eq}>
+					<input type="radio" name="end_time_span" value="2" title="下午" lay-filter="endtype" {eq name="$detail.end_time_span" value="2"} checked{/eq}>
+				</div>
 			</td>
 		</tr>
 		<tr>
-			<td class="layui-td-gray">外出时长</td>
-			<td><input name="duration" value="{$detail.duration}" class="layui-input" lay-verify="required|number" placeholder="请完善请外出时长" lay-reqText="请完善外出时长"></td>
 			<td class="layui-td-gray">外出天数</td>
-			<td id="days">共{$detail.days}天,{$detail.hours}小时</td>
+			<td colspan="3">共 <span id="days">{$detail.duration|default='-'}</span> 天<input type="hidden" id="duration" name="duration" value="{$detail.duration|default='0'}"></td>
 		</tr>
 		<tr>
 			<td class="layui-td-gray">外出事由<font>*</font></td>
@@ -95,62 +114,22 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
-/**
- * 工时计算
+/*
+ * 时长计算
   */
-const WORKDAY_HOURS = 8;
-const START_HOUR = 9;
-const END_HOUR = 18;
-const START_BREAK_HOUR = 12;
-const END_BREAK_HOUR = 13;
-const WEEKEND_DAYS = [0, 6];
-
-function isWeekend(day) {
-  return WEEKEND_DAYS.includes(day);
+function daysBetweenDates(date1, date2) {
+	var date1 = $('#start_time').val();
+	var date2 = $('#end_time').val();
+	if(date1=='' || date2==''){
+		return -1;
+	}
+    var startDate = new Date(date1);
+    var endDate = new Date(date2);
+    var millisecondsPerDay = 24 * 60 * 60 * 1000;
+    var differenceInMilliseconds = endDate - startDate;
+    var differenceInDays = differenceInMilliseconds / millisecondsPerDay;
+    return Math.round(differenceInDays);
 }
-
-function calculateWorkHours() {
-  var startDate = new Date($('#start_time').val());
-  var endDate = new Date($('#end_time').val());
-
-  const start = startDate.getTime();
-  const end = endDate.getTime();
-  const startDay = startDate.getDay();
-  const endDay = endDate.getDay();
-
-  let totalHours = 0;
-
-  for (let time = start; time < end; time += 3600000 /* 1 hour in milliseconds */) {
-    const date = new Date(time);
-    const dayOfWeek = date.getDay();
-    const hour = date.getHours();
-
-    if (!isWeekend(dayOfWeek)) {
-		if (hour >= START_HOUR && hour < END_HOUR) {
-			if (hour < START_BREAK_HOUR || hour >= END_BREAK_HOUR) {
-				console.log(totalHours);
-				totalHours += 1;
-			}
-		}
-	}
-  }
-  return totalHours;
-}
-
-function isNumber(str, type) {
-	var t = type || 0;
-	var patn = /^[0-9]+$/;
-	if (t > 0) {
-		patn = /^\d+(\.\d+)?$/;
-	}
-	if (!patn.test(str)){
-		return false;
-	}
-	else{
-		return true;
-	}
-}
-
 
 const moduleInit = ['tool','employeepicker','oaTool'];
 	function gouguInit() {
@@ -166,45 +145,51 @@ const moduleInit = ['tool','employeepicker','oaTool'];
 	
 		if (typeof (flowStep) == "function") {
 			flowStep();
-		}	
+		}
+		
+		function countDuration(){
+			let hours = daysBetweenDates();
+			if(hours < 0){
+				$('#duration').val(0);
+				$('#days').html('-');
+			}
+			else{
+				let formData = form.val('demo-val-filter');
+				if(formData.start_time_span==1){
+					hours=hours+1;
+				}
+				if(formData.start_time_span==2){
+					hours=hours+0.5;
+				}
+				if(formData.end_time_span==1){
+					hours=hours-0.5;
+				}
+				if(hours<0){
+					hours=0;
+				}
+				$('#duration').val(hours);
+				$('#days').html(hours);
+			}
+		}
+		
+		
 		//日期时间范围
 		lay('.select-time').each(function () {
 			laydate.render({
 				elem: this,
 				trigger: 'click',
-				fullPanel:true,
-				type:'datetime',
 				done:function(){
-					var hours = calculateWorkHours();
-					if(hours == 0){
-						$('[name="duration"]').val('');
-						$('#days').html('-');
-					}
-					else{
-						$('[name="duration"]').val(hours);
-						var days = 0;
-						if(hours>=8){
-							days = parseInt(hours/8);
-						}
-						$('#days').html('共'+days+'天，'+(hours%8).toFixed(1)+'小时');
-					}					
+					countDuration();
 				}
 			});
 		});
 		
-		$('[name="duration"]').on('input',function(){
-			let hours = $(this).val();
-			if(isNumber(hours,1) && hours>0){
-				var days = 0;
-				if(hours>=8){
-					days = parseInt(hours/8);
-				}
-				$('#days').html('共'+days+'天，'+((hours%8).toFixed(1))+'小时');
-			}
-			else{
-				$('#days').html('-');
-			}			
-		})
+		form.on('radio(starttype)',function(data){
+			countDuration();
+		});
+		form.on('radio(endtype)',function(data){
+			countDuration();
+		});
 	}
 </script>
 {/block}

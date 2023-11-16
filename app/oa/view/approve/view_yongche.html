@@ -9,12 +9,12 @@
 	<table class="layui-table layui-table-form">
 		<tr>
 			<td class="layui-td-gray">用车时间</td>
-			<td>{$detail.start_time} 至 {$detail.end_time}</td>
-			<td class="layui-td-gray">用车时长</td>
-			<td>共{$detail.duration}小时</td>
+			<td>{$detail.start_time} 的{$detail.start_time_span==1?'上午':'下午'} 至 {$detail.end_time} 的{$detail.end_time_span==1?'上午':'下午'}</td>
+			<td class="layui-td-gray">用车天数</td>
+			<td>共{$detail.duration}天</td>
 		</tr>
 		<tr>
-			<td class="layui-td-gray">用车目的地</td>
+			<td class="layui-td-gray">目的地</td>
 			<td>{$detail.address}</td>
 			<td class="layui-td-gray">车辆</td>
 			<td>

@@ -644,8 +644,11 @@ function time_trans($time, $format = 'd')
 /**
  * 计算按天数
  */
-function countDays($a, $b = 0)
+function countDays($a=0, $b = 0)
 {
+	if ($a == 0) {
+		$a = date("Y-m-d");
+	}
 	if ($b == 0) {
 		$b = date("Y-m-d");
 	}

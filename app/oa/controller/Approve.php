@@ -239,16 +239,12 @@ class Approve extends BaseController
 			if (isset($param['end_time'])) {
                 $param['end_time'] = strtotime($param['end_time']);
 				if ($param['end_time'] < $param['start_time']) {
-					return to_assign(1, "时间选择有误");
+					return to_assign(1, "结束时间不能小于开始时间");
 				}
             }
-			if (isset($param['start_time_a'])) {
-                $param['start_time'] = strtotime($param['start_time_a'] . '' . $param['start_time_b']);
-            }
-            if (isset($param['end_time_a'])) {
-                $param['end_time'] = strtotime($param['end_time_a'] . '' . $param['end_time_b']);
-				if ($param['end_time'] <= $param['start_time']) {
-					return to_assign(1, "结束时间需要大于开始时间");
+            if (isset($param['duration'])) {
+				if ($param['duration'] <=0) {
+					return to_assign(1, "时间区间选择错误");
 				}
             }
 			$flow_list = Db::name('Flow')->where('id',$param['flow_id'])->value('flow_list');
@@ -435,12 +431,15 @@ class Approve extends BaseController
 		$detail = Db::name('Approve')->where('id',$param['id'])->find();
 		$check_record = [];
 		if($detail['start_time']>0){
-			$detail['start_time'] = date('Y-m-d H:i',$detail['start_time']);
+			$detail['start_time_hour'] = date('Y-m-d H:i:s',$detail['start_time']);
+			$detail['start_time'] = date('Y-m-d',$detail['start_time']);
 		}
 		if($detail['end_time']>0){
-			$detail['end_time'] = date('Y-m-d H:i',$detail['end_time']);
+			$detail['end_time_hour'] = date('Y-m-d H:i:s',$detail['end_time']);
+			$detail['end_time'] = date('Y-m-d',$detail['end_time']);
 		}
 		if($detail['detail_time']>0){
+			$detail['detail_time_hour'] = date('Y-m-d H:i:s',$detail['detail_time']);
 			$detail['detail_time'] = date('Y-m-d',$detail['detail_time']);
 		}
 		
