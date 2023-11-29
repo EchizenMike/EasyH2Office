@@ -229,7 +229,7 @@
 								<div class="layui-form-item">\
 								  <label class="layui-form-label">开票日期</label>\
 								  <div class="layui-input-inline">\
-									<input type="text" id="open_time" name="open_time" autocomplete="off" value="'+data.open_time+'" placeholder="请选择实际开票日期" class="layui-input">\
+									<input type="text" name="open_time" autocomplete="off" value="'+data.open_time+'" placeholder="请选择实际开票日期" class="layui-input tool-time">\
 								  </div>\
 								</div>\
 								<div class="layui-form-item">\
@@ -240,10 +240,7 @@
 								</div>\
 							  </div>'
 					,success:function(){
-						laydate.render({
-							elem: '#open_time',
-							showBottom:false
-						});
+
 					}
 					,yes: function(index){
 						let code = $('#LAY_module').find('[name="code"]').val();
