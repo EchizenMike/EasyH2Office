@@ -208,6 +208,7 @@ return [
         if (false == file_put_contents(CMS_ROOT . "config/install.lock", '勾股OA安装鉴定文件，请勿删除！！！！！此次安装时间为：' . date('Y-m-d H:i:s', time()))) {
             return to_assign(1, '创建安装鉴定文件失败，请检查目录权限');
         }
-        return to_assign();
+		$domain = get_system_config('web','domain');
+        return to_assign(0,'安装完成',$domain);
     }
 }

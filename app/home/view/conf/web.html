@@ -87,13 +87,23 @@
 		</tr>
 		<tr>
 			<td class="layui-td-gray-3">开启新消息声音提醒</td>
-			<td colspan="3">
+			<td>
 				{empty name="$config.msg_sound"}
-					<input type="radio" name="msg_sound" value="1" title="开启">
-					<input type="radio" name="msg_sound" value="0" title="不开启" checked>
+					<input type="radio" name="msg_sound" value="1" title="开启" checked>
+					<input type="radio" name="msg_sound" value="2" title="不开启">
 				{else/}
 					<input type="radio" name="msg_sound" value="1" title="开启" {eq name="$config.msg_sound" value="1"}checked{/eq}>
-					<input type="radio" name="msg_sound" value="0" title="不开启" {eq name="$config.msg_sound" value="0"}checked{/eq}>
+					<input type="radio" name="msg_sound" value="2" title="不开启" {eq name="$config.msg_sound" value="2"}checked{/eq}>
+				{/empty}				
+			</td>
+			<td class="layui-td-gray-3">开启系统页面水印</td>
+			<td colspan="3">
+				{empty name="$config.watermark"}
+					<input type="radio" name="watermark" value="1" title="开启" checked>
+					<input type="radio" name="watermark" value="2" title="不开启">
+				{else/}
+					<input type="radio" name="watermark" value="1" title="开启" {eq name="$config.watermark" value="1"}checked{/eq}>
+					<input type="radio" name="watermark" value="2" title="不开启" {eq name="$config.watermark" value="2"}checked{/eq}>
 				{/empty}				
 			</td>
 		</tr>

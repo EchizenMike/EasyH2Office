@@ -46,7 +46,7 @@ class Index extends BaseController
                 \think\facade\Cache::tag('adminMenu')->set('menu' . $this->uid, $list);
             }
             View::assign('menu', $list);
-			View::assign('theme',$admin['theme']);
+			View::assign('admin',$admin);
 			View::assign('web',get_system_config('web'));			
             return View();
         }

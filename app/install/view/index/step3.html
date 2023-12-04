@@ -133,9 +133,9 @@
 				form = layui.form,
 				element = layui.element;
 			var n = 0;
-			function install_ajax(){
+			function install_ajax(data){
 				$.ajax({  
-					url:"https://www.gougucms.com/index.php?s=home/get_module/install_ajax",
+					url:data+"/index.php?s=home/get_module/install_ajax",
 					dataType:'jsonp',  
 					data:{'name':'勾股OA'},  
 					jsonp:'callback',  
@@ -175,7 +175,7 @@
 							element.progress('demo', 100 + '%');
 							$('#form').hide();
 							$('#complete').show();
-							install_ajax();
+							install_ajax(res.data);
 							return false;
 						}
 					},
@@ -186,7 +186,6 @@
 				})
 				return false;
 			});
-
 		});
 	</script>
 </body>

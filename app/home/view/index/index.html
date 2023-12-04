@@ -122,7 +122,9 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
-	const msg_sound = {$web.msg_sound|default=0};
+	const msg_sound = {$web.msg_sound|default=1};
+	const watermark = {$web.watermark|default=1};
+	const watermarkTxt = '{$admin.name|default="勾股OA"} {:substr($admin.mobile, -4)}';
 	const moduleInit = ['tool','admin'];
 	function gouguInit() {
 		let admin = layui.admin;
@@ -141,7 +143,9 @@
 		}
 		admin.loading();
 		menuInit();
-	
+		if(watermark==1){
+			createWatermark();
+		}
 		$('#GouguApp').on("click",'[gg-event="logout"]',function () {
 			layer.confirm('确认注销登录吗?', { icon: 7, title: '警告' }, function (index) {
 				//注销
@@ -229,6 +233,32 @@
 				}
 			})
 		}, 10000);
+	}
+	function createWatermark(){
+		var canvas = document.createElement('canvas');
+		canvas.width = 300;
+		canvas.height = 200;
+		var ctx = canvas.getContext('2d');
+		ctx.font = '14px Arial';
+		ctx.fillStyle = '#dddddd';
+		ctx.textAlign = 'left';
+		ctx.textBaseline = 'top';
+		ctx.rotate(15 * Math.PI / 180);
+		ctx.fillText(watermarkTxt, 20, 50);
+		ctx.fillText(watermarkTxt, 180, 120);
+		var dataURL = canvas.toDataURL('image/png');
+		let node = document.createElement("div");
+		node.style.pointerEvents = "none";
+		node.style.position = "fixed";
+		node.style.width = "100%";
+		node.style.height = "100%";
+		node.style.top = "0";
+		node.style.left = "0";
+		node.style.opacity = "0.382";
+		node.style.zIndex = "998";
+		node.style.background = 'url("' + dataURL + '")  0 0 repeat';
+		// 将创建的元素插入body中，作为body的子元素
+		document.body.appendChild(node);
 	}
 </script>
 {/block}
