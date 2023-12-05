@@ -6,6 +6,34 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "24056343",
+      "name": "更多",
+      "font_class": "gengduo1",
+      "unicode": "e624",
+      "unicode_decimal": 58916
+    },
+    {
+      "icon_id": "31461117",
+      "name": "更多",
+      "font_class": "gengduo3",
+      "unicode": "e608",
+      "unicode_decimal": 58888
+    },
+    {
+      "icon_id": "10157356",
+      "name": "更多",
+      "font_class": "gengduo",
+      "unicode": "e638",
+      "unicode_decimal": 58936
+    },
+    {
+      "icon_id": "12557244",
+      "name": "考试模式",
+      "font_class": "kaoshimoshi-",
+      "unicode": "e639",
+      "unicode_decimal": 58937
+    },
+    {
       "icon_id": "11833364",
       "name": "导出",
       "font_class": "daochu",
