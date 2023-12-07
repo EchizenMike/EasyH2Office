@@ -69,6 +69,9 @@ class User extends BaseController
             $username = $pinyin->name($param['name'], PINYIN_UMLAUT_V);
             $param['username'] = implode('', $username);
             if (!empty($param['id']) && $param['id'] > 0) {
+				if($param['id'] == 1){
+					return to_assign(1, '超级员工资料不支持修改');
+				}
 				$count = Db::name('Admin')->where([['username','=',$param['username']],['id','<>',$param['id']],['status','>=',0]])->count();
 				if ($count > 0) {
 					$count_e = Db::name('Admin')->where([['username', 'like', $param['username'].'%']])->count();

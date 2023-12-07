@@ -1095,7 +1095,7 @@ CREATE TABLE `oa_position`  (
 -- ----------------------------
 -- Records of oa_position
 -- ----------------------------
-INSERT INTO `oa_position` VALUES (1, '超级岗位', 1000, '超级岗位，不能轻易修改权限', 1, 0, 0);
+INSERT INTO `oa_position` VALUES (1, '超级岗位', 1000, '超级岗位，不能修改', 1, 0, 0);
 INSERT INTO `oa_position` VALUES (2, '人事总监', 1000, '人事部的最大领导', 1, 0, 0);
 INSERT INTO `oa_position` VALUES (3, '普通员工', 500, '普通员工', 1, 0, 0);
 

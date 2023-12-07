@@ -39,6 +39,9 @@ class Position extends BaseController
         $param = get_params();
         if (request()->isAjax()) {
             if (!empty($param['id']) && $param['id'] > 0) {
+				if ($param['id'] == 1) {
+					return to_assign(1, "超级岗位，不能修改");
+				}
                 try {
                     validate(PositionCheck::class)->scene('edit')->check($param);
                 } catch (ValidateException $e) {
@@ -162,7 +165,7 @@ class Position extends BaseController
     {
         $id = get_params("id");
         if ($id == 1) {
-            return to_assign(0, "超级岗位，不能删除");
+            return to_assign(1, "超级岗位，不能删除");
         }
         $data['status'] = '-1';
         $data['id'] = $id;
