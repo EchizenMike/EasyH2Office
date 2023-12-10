@@ -169,6 +169,10 @@ class Task extends BaseController
             if ($detail['admin_id'] != $this->uid) {
                 return to_assign(1, "你不是该任务的创建人，无权限删除");
             }
+			$count_schedule = Db::name('Schedule')->where(['tid'=>$id,'delete_time'=>0])->count();
+			if($count_schedule>0){
+				return to_assign(1, "该任务已经关联的工作记录，无法删除，如果不需要可以关闭该任务即可");
+			}
             if (Db::name('ProjectTask')->where('id', $id)->update(['delete_time' => time()]) !== false) {
                 $log_data = array(
                     'module' => 'task',

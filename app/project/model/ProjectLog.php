@@ -24,6 +24,7 @@ class ProjectLog extends Model
                 'status' => array('icon' => 'icon-wodedianping', 'title' => '状态'),
                 'content' => array('icon' => 'icon-wodedianping', 'title' => '描述'),
                 'file' => array('icon' => 'icon-sucaiziyuan', 'title' => '文件'),
+				'file_ids' => array('icon' => 'icon-sucaiziyuan', 'title' => '文件'),
                 'contract_id' => array('icon' => 'icon-hetongguanli', 'title' => '合同'),
                 'customer_id' => array('icon' => 'icon-jiaoshiguanli', 'title' => '客户'),
                 'link' => array('icon' => 'icon-sucaiziyuan', 'title' => '链接'),
@@ -50,6 +51,7 @@ class ProjectLog extends Model
                 'before_task' => array('icon' => 'icon-wodedianping', 'title' => '前置任务'),
                 'content' => array('icon' => 'icon-wodedianping', 'title' => '描述'),
                 'file' => array('icon' => 'icon-sucaiziyuan', 'title' => '文件'),
+				'file_ids' => array('icon' => 'icon-sucaiziyuan', 'title' => '文件'),
                 'new' => array('icon' => 'icon-zidingyishezhi', 'title' => '任务'),
                 'delete' => array('icon' => 'icon-shanchu', 'title' => '任务'),
             ]],
@@ -58,6 +60,7 @@ class ProjectLog extends Model
                 'title' => array('icon' => 'icon-wodedianping', 'title' => '标题'),
                 'project_id' => array('icon' => 'icon-wodedianping', 'title' => '关联项目'),
                 'content' => array('icon' => 'icon-wodedianping', 'title' => '描述'),
+				'file_ids' => array('icon' => 'icon-sucaiziyuan', 'title' => '文件'),
                 'new' => array('icon' => 'icon-zidingyishezhi', 'title' => '任务'),
                 'delete' => array('icon' => 'icon-shanchu', 'title' => '任务'),
             ]]
