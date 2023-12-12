@@ -32,12 +32,9 @@ class Login
             return to_assign(1, $e->getError());
         }
 
-        $admin = Db::name('Admin')->where(['username' => $param['username']])->find();
+        $admin = Db::name('Admin')->where(['username|mobile|email' => $param['username']])->find();
         if (empty($admin)) {
-            $admin = Db::name('Admin')->where(['mobile' => $param['username']])->find();
-            if (empty($admin)) {
-                return to_assign(1, '用户名或手机号码错误');
-            }
+            return to_assign(1, '用户名或手机号码错误');
         }
         $param['pwd'] = set_password($param['password'], $admin['salt']);
         if ($admin['pwd'] !== $param['pwd']) {
