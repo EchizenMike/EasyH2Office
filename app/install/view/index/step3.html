@@ -167,16 +167,14 @@
 						$("#install").attr({disabled: "disabled"}).html('安装中...');
 					},
 					success: function (res) {
-						clearInterval(timer);
-						if (res.code == 1) {
-							$('#progress').css('display', 'none');
-							layer.msg(res.msg);
-						} else {
+						if (res.code == 0) {
 							element.progress('demo', 100 + '%');
 							$('#form').hide();
 							$('#complete').show();
 							install_ajax(res.data);
-							return false;
+						} else {
+							$('#progress').css('display', 'none');
+							layer.msg(res.msg);
 						}
 					},
 					complete: function () {
