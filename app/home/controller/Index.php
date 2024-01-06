@@ -221,10 +221,7 @@ class Index extends BaseController
             if (!empty($param['keywords'])) {
                 $where[] = ['id|username|name|nickname|mobile|desc', 'like', '%' . $param['keywords'] . '%'];
             }
-            $where[] = ['status', '<', 2];
-            if (isset($param['status']) && $param['status']!='') {
-                $where[] = ['status', '=', $param['status']];
-            }
+            $where[] = ['status', '=', 1];
             if (!empty($param['did'])) {
                 $department_array = get_department_son($param['did']);
                 $where[] = ['did', 'in', $department_array];

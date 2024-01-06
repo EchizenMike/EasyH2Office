@@ -21,13 +21,6 @@
 	</div>
 	<div class="body-table" style="margin-left:228px; overflow:hidden;">
 		<form class="layui-form gg-form-bar border-t border-x" lay-filter="barsearchform">
-			<div class="layui-input-inline" style="width:136px">
-				<select name="status">
-					<option value="">选择员工状态</option>
-					<option value="1">正常状态</option>
-					<option value="0">禁止登录</option>
-				</select>
-			</div>
 			<div class="layui-input-inline" style="width:240px">
 				<input type="text" name="keywords" placeholder="输入关键字，如：ID/姓名/手机号码" class="layui-input" autocomplete="off" />
 			</div>
@@ -68,9 +61,6 @@
 							   ,page:{curr:1}
 							});
 							$('[name="keywords"]').val('');
-							$('[name="status"]').val('');
-							$('[name="type"]').val('');
-							layui.form.render('select');
 						}
 					});	
 				}
@@ -85,23 +75,7 @@
 			page: true, //开启分页
 			limit: 20,
 			cols: [
-				[
-					{
-						field: 'status',
-						title: '状态',
-						align: 'center',
-						width: 80,
-						templet: function (d) {
-							var html = '<span class="layui-badge layui-bg-green">正常</span>';
-							if(d.status == 2){
-								html = '<span class="layui-badge layui-bg-orange">已离职</span>'
-							}
-							else if(d.status == 0){
-								html = '<span class="layui-badge">被禁用</span>'
-							}
-							return html;
-						}
-					},{
+				[{
 						field: 'thumb',
 						title: '头像',
 						toolbar: '#thumb',
@@ -119,8 +93,7 @@
 						width: 120
 					},{
 						field: 'email',
-						title: '电子邮箱',
-						align: 'center'
+						title: '电子邮箱'
 					},{
 						field: 'sex',
 						title: '性别',
@@ -178,8 +151,7 @@
 		form.on('submit(webform)', function (data) {
 			layui.pageTable.reload({
 				where: {
-					keywords: data.field.keywords,
-					status: data.field.status
+					keywords: data.field.keywords
 				},
 				page: {
 					curr: 1
