@@ -57,7 +57,7 @@ function get_project($uid = 0)
 //读取工作分类列表
 function work_cate()
 {
-    $cate = Db::name('WorkCate')->order('id desc')->select()->toArray();
+    $cate = Db::name('WorkCate')->where(['status' => 1])->order('id desc')->select()->toArray();
     return $cate;
 }
 
