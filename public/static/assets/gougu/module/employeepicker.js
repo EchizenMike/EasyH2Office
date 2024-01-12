@@ -77,7 +77,7 @@ layui.define(['layer','dtree'],function(exports){
 										data:{did:obj.param.nodeId},
 										success:function(res){
 											dataList=res.data;
-											if(dataList.length>2 && me.settings.type == 1){
+											if(dataList.length>1 && me.settings.type == 1){
 												$('.layui-tags-all').show();
 											}
 											else{
@@ -114,7 +114,7 @@ layui.define(['layer','dtree'],function(exports){
 													}
 												}
 												dataList=letterData;
-												if(dataList.length>2 && me.settings.type == 1){
+												if(dataList.length>1 && me.settings.type == 1){
 													$('.layui-tags-all').show();
 												}
 												else{

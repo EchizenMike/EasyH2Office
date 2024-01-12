@@ -192,7 +192,7 @@ layui.define(['tool'], function (exports) {
 		//选择岗位	
 		positionPicker:function(type,callback){
 			let select_type = type==1?'radio':'checkbox',positionTable;
-			layer.open({
+			var positionLayer = layer.open({
 				title:'选择岗位',
 				type:1,
 				area:['390px','436px'],
@@ -216,7 +216,7 @@ layui.define(['tool'], function (exports) {
 					var data = checkStatus.data;
 					if(data.length>0){
 						callback(data);
-						layer.closeAll();
+						layer.close(positionLayer);
 					}else{
 						layer.msg('请选择岗位');
 						return;
@@ -228,7 +228,7 @@ layui.define(['tool'], function (exports) {
 		servicePicker:function(type,callback){	
 		let select_type = type==1?'radio':'checkbox',departmentTable;		
 		var serviceTable;
-			layer.open({
+		var serviceLayer = layer.open({
 				title: '选择服务类型',
 				area: ['500px', '536px'],
 				type: 1,
@@ -252,7 +252,7 @@ layui.define(['tool'], function (exports) {
 					var data = checkStatus.data;
 					if(data.length>0){
 						callback(data);
-						layer.closeAll();
+						layer.close(serviceLayer);
 					}else{
 						layer.msg('请选择服务类型');
 						return;
@@ -263,7 +263,7 @@ layui.define(['tool'], function (exports) {
 		//选择客户
 		customerPicker:function(callback){
 			var customeTable;
-			layer.open({
+			var customeLayer = layer.open({
 				title: '选择客户',
 				area: ['600px', '580px'],
 				type: 1,
@@ -305,7 +305,7 @@ layui.define(['tool'], function (exports) {
 					var data = checkStatus.data;
 					if (data.length > 0) {
 						callback(data[0]);
-						layer.closeAll();
+						layer.close(customeLayer);
 					}
 					else {
 						layer.msg('请先选择客户');
@@ -317,7 +317,7 @@ layui.define(['tool'], function (exports) {
 		//选择合同
 		contractPicker:function(callback){
 			var contractTable;
-			layer.open({
+			var contractLayer = layer.open({
 				title: '选择合同',
 				area: ['720px', '580px'],
 				type: 1,
@@ -355,7 +355,7 @@ layui.define(['tool'], function (exports) {
 					var data = checkStatus.data;
 					if (data.length > 0) {
 						callback(data[0]);
-						layer.closeAll();
+						layer.close(contractLayer);
 					}
 					else {
 						layer.msg('请先选择合同');
@@ -413,7 +413,7 @@ layui.define(['tool'], function (exports) {
 				},
 				btn2: function () {
 					callback({'id':0,'title':''});
-					layer.closeAll();
+					layer.close(projectLayer);
 				}
 			})
 		},
@@ -470,7 +470,7 @@ layui.define(['tool'], function (exports) {
 				},
 				btn2: function () {
 					callback({'id':0,'title':''});
-					layer.closeAll();
+					layer.close(taskLayer);
 				}
 			})
 		}
