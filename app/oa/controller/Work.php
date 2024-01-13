@@ -150,7 +150,7 @@ class Work extends BaseController
 					->order('wf.create_time desc')
 					->where(['wf.wid' => $id])
 					->select()->toArray();
-				$interfix_ids = array_column($file_array, 'file_id');
+				$interfix_ids = array_column($file_array, 'id');
 				$detail['file_ids'] = implode(",", $interfix_ids);
 				$type = $detail['type'];
 				View::assign('file_array', $file_array);
