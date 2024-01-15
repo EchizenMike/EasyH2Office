@@ -101,7 +101,7 @@
 						return html;
 					}
 				}
-				, { field: 'before_task', title: '前置任务编号',align: 'center', width: 100, templet: function (d) {
+				, { field: 'before_task', title: '前置任务编号',align: 'center', width: 110, templet: function (d) {
 						var html = '-';
 						if(d.before_task > 0){
 							html = '<a class="side-a" data-href="/project/task/view/id/' + d.before_task + '">T' + d.before_task + '</a>';
@@ -109,7 +109,7 @@
 						return html;
 					}
 				  }
-				, { field: 'after_num', title: '后置任务数', align: 'center',width: 90, templet: function (d) {
+				, { field: 'after_num', title: '后置任务数', align: 'center',width: 100, templet: function (d) {
 						var html = '-';
 						if(d.after_num > 0){
 							html = '<a class="blue" lay-event="more" style="cursor:pointer;">'+d.after_num+'</a>';
@@ -120,7 +120,7 @@
 						return html;
 					}
 				}
-				, { field: 'project_name', title: '关联项目', width: 200 }
+				, { field: 'project_name', title: '关联项目', width: 300 }
 				, { field: 'director_name', title: '负责人', align: 'center', width: 80 }
 				, { field: 'assist_admin_names', title: '协作人', width: 200 }
 				, { field: 'plan_hours', title: '预估工时', align: 'center', width: 80 }

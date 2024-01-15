@@ -39,7 +39,7 @@ function project_task(){
 				var html = '<span class="layui-badge layui-bg-'+d.priority+'">'+d.priority_name+'</span> <a class="side-a" lay-event="detail">'+d.title+'</a>';
 				return html;
 			}}
-			, { field: 'before_task', title: '前置任务编号',align: 'center', width: 100, templet: function (d) {
+			, { field: 'before_task', title: '前置任务编号',align: 'center', width: 110, templet: function (d) {
 					var html = '-';
 					if(d.before_task > 0){
 						html = '<a class="blue" lay-event="before" style="cursor:pointer">T' + d.before_task + '</a>';
@@ -47,7 +47,7 @@ function project_task(){
 					return html;
 				}
 			  }
-			, { field: 'after_num', title: '后置任务数', align: 'center',width: 90, templet: function (d) {
+			, { field: 'after_num', title: '后置任务数', align: 'center',width: 100, templet: function (d) {
 					var html = '-';
 					if(d.after_num > 0){
 						html = '<a class="blue" lay-event="more" style="cursor:pointer;">'+d.after_num+'</a>';
