@@ -365,9 +365,7 @@ function overview(){
 				layer.closeAll();
 				layer.msg(e.msg);
 				if(e.code==0){
-					setTimeout(function () {
-						location.href='/project/index/index';
-					}, 1000)
+					tool.sideClose(1000);
 				}
 			}
 			let postData = { "id": project_id };
