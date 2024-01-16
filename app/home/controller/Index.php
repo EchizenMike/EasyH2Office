@@ -233,6 +233,10 @@ class Index extends BaseController
                 ->each(function ($item, $key) {
                     $item->department = Db::name('Department')->where(['id' => $item->did])->value('title');
                     $item->position = Db::name('Position')->where(['id' => $item->position_id])->value('title');
+					if($item->is_hide ==1){
+						$item->mobile = hidetel($item->mobile);
+						$item->email = hidetel($item->email);
+					}
                     $item->entry_time = empty($item->entry_time) ? '-' : date('Y-m-d', $item->entry_time);
                 });
             return table_assign(0, '', $admin);

@@ -75,10 +75,15 @@
 		</tr>
 		<tr>
 			<td class="layui-td-gray">账号状态</td>
-			<td colspan="5">
+			<td>
 				<input type="radio" name="status" value="0" title="禁止登录">
 				<input type="radio" name="status" value="1" title="正常" checked>
 				<input type="radio" name="status" value="2" title="离职">
+			</td>
+			<td class="layui-td-gray-3">是否隐藏联系方式</td>
+			<td colspan="3">
+				<input type="radio" name="is_hide" value="0" title="否" checked>
+				<input type="radio" name="is_hide" value="1" title="是">
 			</td>
 		</tr>
 		<tr>
@@ -162,16 +167,21 @@
 			</td>
 		</tr>
 		<tr>
+			<td class="layui-td-gray">员工性别<font>*</font></td>
+			<td>
+				<input type="radio" name="sex" value="1" title="男" {eq name="$detail.sex" value="1"}checked{/eq}>
+				<input type="radio" name="sex" value="2" title="女" {eq name="$detail.sex" value="2"}checked{/eq}>
+			</td>
+			<td class="layui-td-gray-3">是否隐藏联系方式<font>*</font></td>
+			<td>
+				<input type="radio" name="is_hide" value="0" title="否" {eq name="$detail.is_hide" value="0"}checked{/eq}>
+				<input type="radio" name="is_hide" value="1" title="是" {eq name="$detail.is_hide" value="1"}checked{/eq}>
+			</td>
 			<td class="layui-td-gray">账号状态</td>
 			<td>
 				{eq name="$detail.status" value="0"}<span style="color:#FF5722">禁止登录</span>{/eq}
 				{eq name="$detail.status" value="1"}<span style="color:#009688">正常</span>{/eq}
 				{eq name="$detail.status" value="2"}<span style="color:#FFB800">已离职</span>{/eq}
-			</td>
-			<td class="layui-td-gray">员工性别<font>*</font></td>
-			<td colspan="3">
-				<input type="radio" name="sex" value="1" title="男" {eq name="$detail.sex" value="1"}checked{/eq}>
-				<input type="radio" name="sex" value="2" title="女" {eq name="$detail.sex" value="2"}checked{/eq}>
 			</td>
 		</tr>
 		<tr>

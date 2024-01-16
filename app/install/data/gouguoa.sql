@@ -44,6 +44,7 @@ CREATE TABLE `oa_admin`  (
   `bank_account` varchar(255) NOT NULL DEFAULT '' COMMENT '银行账号',
   `bank_info` varchar(255) NOT NULL DEFAULT '' COMMENT '银行卡信息',
   `desc` text NULL COMMENT '员工个人简介',
+  `is_hide` int(1) NOT NULL DEFAULT 0 COMMENT '是否隐藏联系方式:0否,1是',
   `entry_time` int(11) NOT NULL DEFAULT 0 COMMENT '员工入职日期',
   `create_time` int(11) NOT NULL DEFAULT 0 COMMENT '注册时间',
   `update_time` int(11) NOT NULL DEFAULT 0 COMMENT '更新信息时间',

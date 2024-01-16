@@ -22,7 +22,7 @@
 	<div class="body-table" style="margin-left:228px; overflow:hidden;">
 		<form class="layui-form gg-form-bar border-t border-x" lay-filter="barsearchform">
 			<div class="layui-input-inline" style="width:240px">
-				<input type="text" name="keywords" placeholder="输入关键字，如：ID/姓名/手机号码" class="layui-input" autocomplete="off" />
+				<input type="text" name="keywords" placeholder="输入关键字，如：ID/姓名" class="layui-input" autocomplete="off" />
 			</div>
 			<div class="layui-input-inline" style="width:150px;">
 				<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform"><i class="layui-icon layui-icon-search mr-1"></i>搜索</button>
@@ -61,6 +61,8 @@
 							   ,page:{curr:1}
 							});
 							$('[name="keywords"]').val('');
+							$('[name="type"]').val('');
+							layui.form.render('select');
 						}
 					});	
 				}
@@ -75,7 +77,8 @@
 			page: true, //开启分页
 			limit: 20,
 			cols: [
-				[{
+				[
+					{
 						field: 'thumb',
 						title: '头像',
 						toolbar: '#thumb',
@@ -150,9 +153,7 @@
 		//监听搜索提交
 		form.on('submit(webform)', function (data) {
 			layui.pageTable.reload({
-				where: {
-					keywords: data.field.keywords
-				},
+				where: data.field,
 				page: {
 					curr: 1
 				}
