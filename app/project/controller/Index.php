@@ -61,10 +61,7 @@ class Index extends BaseController
                     if ($item->tasks_total > 0) {
                         $item->tasks_pensent = round($item->tasks_finish / $item->tasks_total * 100, 2) . "％";
                     } else {
-                        $item->tasks_pensent = "100％";
-						if($item->status<2){
-							$item->tasks_pensent = "0%";
-						}
+                        $item->tasks_pensent = "0％";
                     }
 					
 					$step = Db::name('Step')->where(['action_id' => $item->id,'sort'=>$item->step_sort,'type'=>2,'delete_time'=>0])->find();
