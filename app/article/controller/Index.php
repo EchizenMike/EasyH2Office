@@ -238,6 +238,10 @@ class Index extends BaseController
     public function delete()
     {
         $id = get_params("id");
+		$admin_id = Db::name('Article')->where('id',$id).value('uid');
+		if($admin_id!=$this->uid){
+			return to_assign(1, "你不是该知识的创建人，没权限删除");
+		}
         $data['id'] = $id;
         $data['delete_time'] = time();
         if (Db::name('Article')->update($data) !== false) {
