@@ -111,7 +111,7 @@ layui.define(['tool'], function (exports) {
 		},
 		load: function (topic_id, module) {
 			let callback = function (res) {
-				if (res.code == 0 && res.data.length > 0) {
+				if (res.code == 0) {
 					let itemComment = '';
 					$.each(res.data, function (index, item) {
 						let pAdmin = '', ops = '';
