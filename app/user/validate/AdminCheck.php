@@ -29,7 +29,7 @@ class AdminCheck extends Validate
     }
 	
     protected $rule = [
-        'name' => 'require|chs',
+        'name' => 'require|chs|min:2',
         'username' => 'require|regex:checkUser',
         'mobile' => 'require|mobile|checkUnique:Admin,mobile,id',
         'email' => 'require|email|checkUnique:Admin,email,id',
@@ -47,6 +47,7 @@ class AdminCheck extends Validate
     protected $message = [
 	    'name.require' => '员工姓名不能为空',
         'name.chs' => '员工姓名只能是汉字',
+		'name.min' => '员工姓名至少是两个汉字',
         'username.require' => '登录账号不能为空',
         'username.regex' => '登录账号必须是以字母开头，只能包含字母数字下划线和减号，4到20位',
 		'mobile.require' => '手机不能为空',
