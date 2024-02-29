@@ -12,7 +12,7 @@ function contact(){
 	$('#customerTab').find('li').eq(1).data('load','true');
 	let tool = layui.tool, table = layui.table;
 	//项目任务
-	parent.layui.contactTable = table.render({
+	layui.contactTable = table.render({
 		elem: '#contact',
 		title: '联系人列表',
 		cellMinWidth:80,
@@ -58,7 +58,7 @@ function contact(){
 		]]
 	});
 	$('.add-contact').on('click',function(){
-		parent.layui.tool.side('/customer/contact/contact_add?cid='+customer_id);
+		tool.side('/customer/contact/contact_add?cid='+customer_id);
 	});
 	
 	table.on('tool(contact)', function(obj){
@@ -66,14 +66,14 @@ function contact(){
 		var layEvent = obj.event;		 
 		if(layEvent === 'edit'){ //编辑
 			let url = '/customer/contact/contact_add/id/'+data.id;
-			parent.layui.tool.side(url);
+			tool.side(url);
 		}
 		if(layEvent === 'set'){ //查看
 			layer.confirm('确定要设置该联系人为首要联系人吗?', {icon: 3, title:'提示'}, function(index){
 				let callback = function (e) {
 					layer.msg(e.msg);
 					if (e.code == 0) {
-						parent.layui.contactTable.reload();
+						layui.contactTable.reload();
 					}
 				}
 				tool.delete("/customer/api/set_contact",{"id":data.id},callback);
@@ -85,7 +85,7 @@ function contact(){
 				let callback = function (e) {
 					layer.msg(e.msg);
 					if (e.code == 0) {
-						parent.layui.contactTable.reload();
+						layui.contactTable.reload();
 					}
 				}
 				tool.delete("/customer/contact/contact_del",{"id":data.id},callback);

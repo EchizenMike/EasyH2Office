@@ -12,7 +12,7 @@ function trace(){
 	$('#customerTab').find('li').eq(0).data('load','true');
 	let tool = layui.tool, table = layui.table;
 	//项目任务
-	parent.layui.traceTable = table.render({
+	layui.traceTable = table.render({
 		elem: '#trace',
 		title: '跟进记录列表',
 		cellMinWidth:80,
@@ -41,7 +41,7 @@ function trace(){
 		]]
 	});
 	$('.add-trace').on('click',function(){
-		parent.layui.tool.side('/customer/api/add_trace?cid='+customer_id);
+		tool.side('/customer/api/add_trace?cid='+customer_id);
 	});
 	
 	table.on('tool(trace)', function(obj){
@@ -49,18 +49,18 @@ function trace(){
 		var layEvent = obj.event;		 
 		if(layEvent === 'edit'){ //编辑
 			let url = '/customer/api/add_trace/id/'+data.id;
-			parent.layui.tool.side(url);
+			tool.side(url);
 		}
 		if(layEvent === 'view'){ //查看
 			let url = '/customer/api/view_trace/id/'+data.id;
-			parent.layui.tool.side(url);
+			tool.side(url);
 		}
 		if(layEvent === 'del'){ //删除
 			layer.confirm('确定要删除该跟进记录吗?', {icon: 3, title:'提示'}, function(index){
 				let callback = function (e) {
 					layer.msg(e.msg);
 					if (e.code == 0) {
-						parent.layui.traceTable.reload();
+						layui.traceTable.reload();
 					}
 				}
 				tool.delete("/customer/api/delete_trace",{"id":data.id},callback);

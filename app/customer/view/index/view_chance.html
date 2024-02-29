@@ -12,7 +12,7 @@ function chance(){
 	$('#customerTab').find('li').eq(2).data('load','true');
 	let tool = layui.tool, table = layui.table;
 	//项目任务
-	parent.layui.chanceTable = table.render({
+	layui.chanceTable = table.render({
 		elem: '#chance',
 		title: '销售机会列表',
 		cellMinWidth:80,
@@ -38,7 +38,7 @@ function chance(){
 		]]
 	});
 	$('.add-chance').on('click',function(){
-		parent.layui.tool.side('/customer/api/add_chance?cid='+customer_id);
+		tool.side('/customer/api/add_chance?cid='+customer_id);
 	});
 	
 	table.on('tool(chance)', function(obj){
@@ -46,18 +46,18 @@ function chance(){
 		var layEvent = obj.event;		 
 		if(layEvent === 'edit'){ //编辑
 			let url = '/customer/api/add_chance/id/'+data.id;
-			parent.layui.tool.side(url);
+			tool.side(url);
 		}
 		if(layEvent === 'view'){ //查看
 			let url = '/customer/api/view_chance/id/'+data.id;
-			parent.layui.tool.side(url);
+			tool.side(url);
 		}
 		if(layEvent === 'del'){ //删除
 			layer.confirm('确定要删除该销售机会吗?', {icon: 3, title:'提示'}, function(index){
 				let callback = function (e) {
 					layer.msg(e.msg);
 					if (e.code == 0) {
-						parent.layui.chanceTable.reload();
+						layui.chanceTable.reload();
 					}
 				}
 				tool.delete("/customer/api/delete_chance",{"id":data.id},callback);
