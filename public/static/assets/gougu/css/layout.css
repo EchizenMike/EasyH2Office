@@ -138,7 +138,7 @@ body{color:#323232}
 .gg-layout .layui-logo,
 .gg-layout .layui-side {transition: all .3s;-webkit-transition: all .3s}
 
-.gg-layout .layui-body {top: 90px;bottom: 0;position: fixed;}
+.gg-layout .layui-body {top: 90px;bottom: 0; height:calc(100% - 90px); position: fixed;}
 .gg-layout .gg-tab-page {position: absolute; top: 0; bottom: 0;left: 0; right: 0; display: none; overflow: hidden;}
 .gg-layout .layui-footer {padding: 10px 0;text-align: center; box-shadow: 0 -1px 2px 0 rgba(0, 0, 0, .05)}
 .gg-body-shade {position: fixed; display: none;left: 0; right: 0; top: 0; bottom: 0; background-color: rgba(0, 0, 0, .3); z-index: 1000}
