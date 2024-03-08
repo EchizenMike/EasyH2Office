@@ -23,6 +23,10 @@ class Index extends BaseController
         if (request()->isAjax()) {
             $param = get_params();
 			$tab = isset($param['tab']) ? $param['tab'] : 0;
+			$belong_uid = isset($param['uid']) ? $param['uid'] : 0;
+			$uid = $this->uid;
+			$auth = isAuth($uid,'customer_admin');
+			$dids = get_department_role($uid);
             $where = array();
             $whereOr = array();
             if (!empty($param['keywords'])) {
@@ -47,61 +51,42 @@ class Index extends BaseController
 			if (!empty($param['next_time'])) {
 				$next_time =explode('~', $param['next_time']);
                 $where[] = ['ct.next_time', 'between', [strtotime(urldecode($next_time[0])),strtotime(urldecode($next_time[1]))]];
-            }
-			
+            }			
             $where[] = ['a.delete_time', '=', 0];
-			
-			$uid = $this->uid;
-			$auth = isAuth($uid,'customer_admin');
-			if (!empty($param['uid']) && $auth == 1) {
-				$where[] =['a.belong_uid', '=', $param['uid']];	
+			if($tab == 0){
+				if($auth == 1){
+					if($belong_uid>0 ){
+						$where[] =['a.belong_uid', '=', $belong_uid];
+					}
+					else{
+						$where[] =['a.belong_uid', '>',0];
+					}
+				}
+				else{
+					//属于我的
+					$whereOr[] =['a.belong_uid', '=', $uid];
+					//共享给我的
+					$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',a.share_ids)")];
+					//我的下属的
+					if(!empty($dids)){
+						$whereOr[] =['a.belong_did', 'in', $dids];
+					}					
+				}
 			}
-			else{
-				$dids = get_department_role($uid);
-				if($auth == 0){
-					if($tab == 1){
-						$whereOr[] =['a.belong_uid', '=', $uid];
-					}
-					else if($tab == 2){
-						if(!empty($dids)){
-							$whereOr[] =['a.belong_did', 'in', $dids];
-						}
-						else{
-							$whereOr[] =['a.belong_did', '=', 0];
-							$where[] =['a.belong_uid', '>', 0];
-						}
-					}
-					else if($tab == 3){
-						$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',a.share_ids)")];
-					}
-					else{
-						$whereOr[] =['a.belong_uid', '=', $uid];	
-						if(!empty($dids)){
-							$whereOr[] =['a.belong_did', 'in', $dids];
-						}			
-						$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',a.share_ids)")];
-					}
+			else if($tab == 1){
+				$where[] =['a.belong_uid', '=', $uid];
+			}
+			else if($tab == 2){
+				if(!empty($dids)){
+					$where[] =['a.belong_did', 'in', $dids];
 				}
-				else if($auth ==1 ){
-					if($tab == 1){
-						$whereOr[] =['a.belong_uid', '=', $uid];
-					}
-					else if($tab == 2){
-						if(!empty($dids)){
-							$whereOr[] =['a.belong_did', 'in', $dids];
-						}
-						else{
-							$whereOr[] =['a.belong_did', '=', 0];
-							$where[] =['a.belong_uid', '>', 0];
-						}
-					}
-					else if($tab == 3){
-						$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',a.share_ids)")];
-					}
-					else{
-						$whereOr[] =['a.belong_uid', '>', 0];
-					}
+				else{
+					$where[] =['a.belong_did', '=', 0];
+					$where[] =['a.belong_uid', '>', 0];
 				}
+			}
+			else if($tab == 3){
+				$where[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',a.share_ids)")];
 			}
 			$cc_sql= Db::name('CustomerContact')->group('cid,name,mobile,qq,wechat,email')->field('cid,name,mobile,qq,wechat,email')->buildSql();
 			$ct_sql= Db::name('CustomerTrace')->group('cid')->field('cid,MAX(follow_time) AS follow_time,MAX(next_time) AS next_time')->buildSql();
@@ -112,7 +97,9 @@ class Index extends BaseController
             $rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
             $content = CustomerList::where($where)
 				->where(function ($query) use($whereOr) {
-					$query->whereOr($whereOr);
+					if (!empty($whereOr)){
+						$query->whereOr($whereOr);
+					}
 				})
                 ->field('a.*,d.title as belong_department,g.title as grade,s.title as source,i.title as industry,ct.follow_time,ct.next_time')
                 ->alias('a')
