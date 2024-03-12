@@ -15,11 +15,11 @@
 		</tr>
 		<tr>
 			<td class="layui-td-gray">奖励事由</td>
-			<td colspan="5">{$detail.content}</td>
+			<td colspan="5">{:nl2br($detail.content)}</td>
 		</tr>
 		<tr>
 			<td class="layui-td-gray">备注</td>
-			<td colspan="5">{$detail.remark}</td>
+			<td colspan="5">{:nl2br($detail.remark)}</td>
 		</tr>
 		{notempty name="$detail.file_ids"}
 		<tr>

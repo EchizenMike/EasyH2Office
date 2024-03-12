@@ -42,7 +42,7 @@
 		</tr>
 		<tr>
 			<td class="layui-td-gray">所借档案用途</td>
-			<td colspan="3">{$detail.content}</td>
+			<td colspan="3">{:nl2br($detail.content)}</td>
 		</tr>
 		<tr>
 			<td class="layui-td-gray">借用日期</td>
@@ -52,11 +52,11 @@
 		</tr>
 		<tr>
 			<td class="layui-td-gray">借用档案明细</td>
-			<td colspan="3">{$detail.remark}</td>
+			<td colspan="3">{:nl2br($detail.remark)}</td>
 		</tr>
 		<tr>
 			<td class="layui-td-gray">备注</td>
-			<td colspan="3">{$detail.remark1}</td>
+			<td colspan="3">{:nl2br($detail.remark1)}</td>
 		</tr>
 	</table>	
 	{include file="/approve/view_step" /}
