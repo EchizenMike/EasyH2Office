@@ -368,7 +368,7 @@ layui.define(['element'], function (exports) {
 		$.ajax({
 			url: url,
 			success: function (res) {
-				if (res.code == 1) {
+				if (res.code == 0) {
 					setTimeout(function () {
 						that.attr('class', '');
 						layer.tips(res.msg, that);
