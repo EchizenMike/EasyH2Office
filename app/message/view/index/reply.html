@@ -3,9 +3,9 @@
 {block name="body"}
 <form class="layui-form p-4">
 	{if condition="$type eq 1"}
-	<h3 class="pb-3">回复消息</h3>
+	<h3 class="pb-1">回复消息</h3>
 	{else/}
-	<h3 class="pb-3">转发消息</h3>
+	<h3 class="pb-1">转发消息</h3>
 	{/if}
 	<table class="layui-table">
 		<tr>
@@ -60,11 +60,11 @@
 					<td class="layui-td-gray-2">原消息内容</td>
 					<td>{$detail.content}</td>
 				</tr>
-				{notempty name="$file_array"}
+				{notempty name="$detail.file_ids"}
 				<tr>
 					<td class="layui-td-gray-2" style="vertical-align:top">原消息附件</td>
 					<td style="line-height:inherit">
-						{volist name="$detail.from_file_array" id="vo"}
+						{volist name="$detail.file_array" id="vo"}
 							<div class="layui-col-md4" id="uploadImg{$vo.id}">{:file_card($vo,'view')}</div>
 						{/volist}
 					</td>
@@ -77,17 +77,12 @@
 			<td class="layui-td-gray"><div class="layui-input-inline">附件</div> <div class="layui-input-inline"><button type="button" class="layui-btn layui-btn-xs" id="upFile"><i class="layui-icon"></i></button></div></td>
 			<td colspan="5" style="line-height:inherit">
 				<div class="layui-row" id="fileList">
-					<input type="hidden" name="file_ids" data-type="file" value="{$detail.file_ids}">
-					{notempty name="$detail.file_ids"}
-					{volist name="$detail.file_array" id="vo"}
-					<div class="layui-col-md4" id="uploadImg{$vo.id}">{:file_card($vo)}</div>
-					{/volist}
-					{/notempty}
+					<input type="hidden" name="file_ids" data-type="file" value="">
 				</div>
 			</td>
 		</tr>
 	</table>
-	<div class="py-3">
+	<div class="pt-2">
 		<input type="hidden" value="0" name="id">
 		<input type="hidden" value="{$fid}" name="fid">
 		<button class="layui-btn" lay-submit="" lay-filter="draftform">存为草稿</button>
