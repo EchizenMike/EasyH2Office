@@ -38,9 +38,9 @@
 <!-- 脚本 -->
 {block name="script"}
 	<script>
-	const moduleInit = ['tool','employeepicker','oaSchedule','laydatePlus'];
+	const moduleInit = ['tool','tablePlus','employeepicker','oaSchedule','laydatePlus'];
 	function gouguInit() {
-		var form = layui.form,table = layui.table,tool=layui.tool,laydatePlus = layui.laydatePlus, laydate = layui.laydate,work = layui.oaSchedule;
+		var form = layui.form,table = layui.tablePlus,tool=layui.tool,laydatePlus = layui.laydatePlus, laydate = layui.laydate,work = layui.oaSchedule;
 		
 		//日期范围
 		var diff_time = new laydatePlus({'target':'diff_time'});
@@ -62,12 +62,13 @@
 		layui.scheduleTable = table.render({
 			elem: '#test'
 			,toolbar: '#toolbarDemo'
-			,defaultToolbar:['filter', {title:'导出EXCEL',layEvent: 'LAYTABLE_EXCEL',icon: 'layui-icon-export'}]
+			,is_excel:true
 			,title:'工作记录列表'
 			,url: "/oa/schedule/index"
 			,page: true //开启分页
 			,limit: 20
 			,cellMinWidth: 80
+			,height: 'full-82'
 			,cols: [[ //表头
 				{field: 'id', title: '序号',fixed: 'left', width:80, align:'center'}
 				,{field: 'labor_type_string', title: '工作类型', align:'center',width:90,templet:function(d){
@@ -102,22 +103,6 @@
 				}}
 			]]
 		});
-		
-		//表头工具栏事件
-		table.on('toolbar(test)', function(obj){
-			if(obj.event === 'LAYTABLE_EXCEL'){
-				var formSelect = form.val('barsearchform');
-				formSelect.limit=99999;
-				$.ajax({
-					url: '/oa/schedule/index',
-					data: formSelect,
-					success:function(res){
-						table.exportFile('test', res.data,'xls');
-					}
-				});
-				return;
-			}
-		})
 
 		//更改工时
 		table.on('tool(test)', function(obj){

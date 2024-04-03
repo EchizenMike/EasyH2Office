@@ -19,18 +19,19 @@
 <!-- 脚本 -->
 {block name="script"}
 	<script>
-	const moduleInit = ['tool'];
+	const moduleInit = ['tool','tablePlus'];
 	function gouguInit() {
-		var table = layui.table, tool = layui.tool, form = layui.form;
+		var table = layui.tablePlus, tool = layui.tool, form = layui.form;
 		layui.pageTable = table.render({
 			elem: '#test'
 			,toolbar: '#toolbarDemo'
-			,defaultToolbar:['filter', {title:'导出EXCEL',layEvent: 'LAYTABLE_EXCEL',icon: 'layui-icon-export'}]
 			,title:'联系人列表'
 			,url: "/customer/contact/index"
 			,cellMinWidth: 80
 			,page: true //开启分页
+			,is_excel:true
 			,limit: 20
+			,height: 'full-82'
 			,cols: [[
 					{field:'id',width:80, title: 'ID号', align:'center'}
 					,{field:'name',width:100,title: '联系人姓名', align:'center'}
@@ -82,22 +83,6 @@
 					});
 				}
 			});
-			
-			//表头工具栏事件
-			table.on('toolbar(test)', function(obj){
-				if(obj.event === 'LAYTABLE_EXCEL'){
-					var formSelect = form.val('barsearchform');
-					formSelect.limit=99999;
-					$.ajax({
-						url: '/customer/contact/index',
-						data: formSelect,
-						success:function(res){
-							table.exportFile('test', res.data,'xls');
-						}
-					});
-					return;
-			}
-			})
 			
 			//监听搜索提交
 			form.on('submit(webform)', function(data) {

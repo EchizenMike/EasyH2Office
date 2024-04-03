@@ -2,63 +2,63 @@
 <!-- 主体 -->
 {block name="body"}
 <div class="p-3">
-	<div class="layui-card">
-	<div class="layui-tab layui-tab-brief" lay-filter="demoTab">
-	  <ul class="layui-tab-title">
-		<li class="layui-this" style="font-size:15px;"><strong>发送的汇报</strong></li>
-		<li style="font-size:15px;"><strong>接受的汇报</strong></li>
-	  </ul>
-	  <div class="layui-tab-content" style="padding:0">
-		<div class="layui-tab-item layui-show">
-			<form class="layui-form gg-form-bar border-x border-t" lay-filter="barsearchform">
-				<div class="layui-input-inline" style="width:300px;">
-					<input type="text" class="layui-input" id="diff_time" placeholder="接收日期范围" readonly name="diff_time">
+	<div class="layui-card" style="padding:0;margin:0">
+		<div class="layui-tab layui-tab-brief" lay-filter="demoTab">
+			<ul class="layui-tab-title">
+				<li class="layui-this" style="font-size:15px;"><strong>发送的汇报</strong></li>
+				<li style="font-size:15px;"><strong>接受的汇报</strong></li>
+			</ul>
+			<div class="layui-tab-content" style="padding:0;margin:0">
+				<div class="layui-tab-item layui-show">
+					<form class="layui-form gg-form-bar border-x" lay-filter="barsearchform">
+						<div class="layui-input-inline" style="width:300px;">
+							<input type="text" class="layui-input" id="diff_time" placeholder="接收日期范围" readonly name="diff_time">
+						</div>
+						<div class="layui-input-inline" style="width:136px">
+							<select name="type">
+								<option value="">选择类型</option>
+								<option value="1">日报</option>
+								<option value="2">周报</option>
+								<option value="3">月报</option>
+							</select>
+						</div>
+						<div class="layui-input-inline" style="width:150px;">
+							<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform"><i class="layui-icon layui-icon-search mr-1"></i>搜索</button>
+							<button type="reset" class="layui-btn layui-btn-reset" lay-filter="reset">清空</button>
+						</div>
+					</form>
+					<table class="layui-hide" id="test" lay-filter="test"></table>
 				</div>
-				<div class="layui-input-inline" style="width:136px">
-					<select name="type">
-						<option value="">选择类型</option>
-						<option value="1">日报</option>
-						<option value="2">周报</option>
-						<option value="3">月报</option>
-					</select>
+				<div class="layui-tab-item">
+					<form class="layui-form gg-form-bar border-x" lay-filter="barsearchform2">
+						<div class="layui-input-inline" style="width:300px;">
+							<input type="text" class="layui-input" id="diff_time1" placeholder="接收日期范围" readonly name="diff_time1">
+						</div>
+						<div class="layui-input-inline" style="width:136px">
+							<select name="read">
+								<option value="">选择状态</option>
+								<option value="1">未读</option>
+								<option value="2">已读</option>
+							</select>
+						</div>
+						<div class="layui-input-inline" style="width:136px">
+							<select name="type">
+								<option value="">选择类型</option>
+								<option value="1">日报</option>
+								<option value="2">周报</option>
+								<option value="3">月报</option>
+							</select>
+						</div>
+						<div class="layui-input-inline" style="width:150px;">
+							<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform1"><i class="layui-icon layui-icon-search mr-1"></i>搜索</button>
+							<button type="reset" class="layui-btn layui-btn-reset" lay-filter="reset">清空</button>
+						</div>
+					</form>
+					<table class="layui-hide" id="test1" lay-filter="test1"></table>
 				</div>
-				<div class="layui-input-inline" style="width:150px;">
-					<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform"><i class="layui-icon layui-icon-search mr-1"></i>搜索</button>
-					<button type="reset" class="layui-btn layui-btn-reset" lay-filter="reset">清空</button>
-				</div>
-			</form>
-			<table class="layui-hide" id="test" lay-filter="test"></table>
+			</div>
 		</div>
-		<div class="layui-tab-item">
-			<form class="layui-form gg-form-bar border-x border-t" lay-filter="barsearchform2">
-				<div class="layui-input-inline" style="width:300px;">
-					<input type="text" class="layui-input" id="diff_time1" placeholder="接收日期范围" readonly name="diff_time1">
-				</div>
-				<div class="layui-input-inline" style="width:136px">
-					<select name="read">
-						<option value="">选择状态</option>
-						<option value="1">未读</option>
-						<option value="2">已读</option>
-					</select>
-				</div>
-				<div class="layui-input-inline" style="width:136px">
-					<select name="type">
-						<option value="">选择类型</option>
-						<option value="1">日报</option>
-						<option value="2">周报</option>
-						<option value="3">月报</option>
-					</select>
-				</div>
-				<div class="layui-input-inline" style="width:150px;">
-					<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform1"><i class="layui-icon layui-icon-search mr-1"></i>搜索</button>
-					<button type="reset" class="layui-btn layui-btn-reset" lay-filter="reset">清空</button>
-				</div>
-			</form>
-			<table class="layui-hide" id="test1" lay-filter="test1"></table>
-		</div>
-	  </div>
 	</div>
-</div>
 </div>
 
 <script type="text/html" id="toolbarDemo">
@@ -81,9 +81,9 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
-	const moduleInit = ['tool','employeepicker','laydatePlus'];
+	const moduleInit = ['tool','tablePlus','employeepicker','laydatePlus'];
 	function gouguInit() {
-		var form = layui.form,table = layui.table,tool=layui.tool, laydatePlus = layui.laydatePlus;
+		var form = layui.form,table = layui.tablePlus,tool=layui.tool, laydatePlus = layui.laydatePlus;
 	  
 		//日期范围
 		var diff_time = new laydatePlus({'target':'diff_time'});
@@ -91,11 +91,12 @@
 		layui.pageTable = table.render({
 			elem: '#test',
 			toolbar: '#toolbarDemo',
-			defaultToolbar:['filter', {title:'导出EXCEL',layEvent: 'LAYTABLE_EXCEL',icon: 'layui-icon-export'}],
 			title:'工作汇报列表',
 			url: "/oa/work/index", //数据接口
 			where:{'send':1},
+			is_excel:true,
 			page: true ,//开启分页
+			height: 'full-122',
 			limit: 20,
 			cellMinWidth: 80, //全局定义常规单元格的最小宽度
 			cols: [[ //表头
@@ -143,19 +144,6 @@
 			if(obj.event === 'add'){
 				addNew();
 				return;
-			}
-			if(obj.event === 'LAYTABLE_EXCEL'){
-				var formSelect = form.val('barsearchform');
-				formSelect.limit=99999;
-				formSelect.send=1;
-				$.ajax({
-					url: '/oa/work/index',
-					data: formSelect,
-					success:function(res){
-						table.exportFile('test', res.data,'xls');
-					}
-				});
-				return;
 			}			
 		});
 		 
@@ -173,12 +161,13 @@
 		layui.pageTable1 = table.render({
 			elem: '#test1',
 			toolbar: '#toolbarDemo',
-			defaultToolbar:['filter', {title:'导出EXCEL',layEvent: 'LAYTABLE_EXCEL',icon: 'layui-icon-export'}],
 			title:'工作汇报列表',
 			url: "/oa/work/index", //数据接口
 			where:{'send':0},
 			page: true ,//开启分页
 			limit: 20,
+			is_excel:true,
+			height: 'full-122',
 			cellMinWidth: 80, //全局定义常规单元格的最小宽度
 			cols: [[ //表头
 			  {field:'id',title: '序号',width:80,align:'center'},
@@ -236,19 +225,6 @@
 			if(obj.event === 'add'){
 				addNew();
 				return;
-			}
-			if(obj.event === 'LAYTABLE_EXCEL'){
-				var formSelect = form.val('barsearchform1');
-				formSelect.limit=99999;
-				formSelect.send=0;
-				$.ajax({
-					url: '/oa/work/index',
-					data: formSelect,
-					success:function(res){
-						table.exportFile('test1', res.data,'xls');
-					}
-				});
-				return;
 			}			
 		});
 		
@@ -262,6 +238,7 @@
 				success:function(){
 					tableid=table.render({
 						elem: '#selectCoursr',
+						page: false,
 						cols: [[ //标题栏
 							{type:'radio',title: '选择'},
 							{field: 'title', title: '汇报类型'}

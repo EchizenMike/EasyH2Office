@@ -33,9 +33,9 @@
 {block name="script"}
 <script>
 	const auth = "{$auth}";
-	const moduleInit = ['tool','laydatePlus'];
+	const moduleInit = ['tool','tablePlus','laydatePlus'];
 	function gouguInit() {
-		var form = layui.form,table = layui.table,tool=layui.tool, laydatePlus = layui.laydatePlus;
+		var form = layui.form,table = layui.tablePlus,tool=layui.tool, laydatePlus = layui.laydatePlus;
 		//日期范围
 		var diff_time = new laydatePlus({'target':'diff_time'});
 		
@@ -52,11 +52,12 @@
 			elem: '#test',
 			title: '到账列表',
 			toolbar: '#toolbarDemo',
-			defaultToolbar:['filter', {title:'导出EXCEL',layEvent: 'LAYTABLE_EXCEL',icon: 'layui-icon-export'}],
 			url: "/finance/income/index", //数据接口	
 			cellMinWidth: 80,			
 			page: true, //开启分页
 			limit: 20,
+			is_excel:true,
+			height: 'full-82',
 			cols: [
 				[
 					{
@@ -175,22 +176,6 @@
 				]
 			]
 		});
-		
-		//表头工具栏事件
-		table.on('toolbar(test)', function(obj){
-			if(obj.event === 'LAYTABLE_EXCEL'){
-				var formSelect = form.val('barsearchform');
-				formSelect.limit=99999;
-				$.ajax({
-					url: '/finance/income/index',
-					data: formSelect,
-					success:function(res){
-						table.exportFile('test', res.data,'xls');
-					}
-				});
-				return;
-			}
-		})
 
 		//监听行工具事件
 		table.on('tool(test)', function(obj) {

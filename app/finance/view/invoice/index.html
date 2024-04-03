@@ -35,9 +35,9 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
-	const moduleInit = ['tool','laydatePlus'];
+	const moduleInit = ['tool','tablePlus','laydatePlus'];
 	function gouguInit() {
-		var form = layui.form,table = layui.table,tool=layui.tool, laydatePlus = layui.laydatePlus;
+		var form = layui.form,table = layui.tablePlus,tool=layui.tool, laydatePlus = layui.laydatePlus;
 		//日期范围
 		var diff_time = new laydatePlus({'target':'diff_time'});
 		
@@ -54,11 +54,12 @@
 			elem: '#test',
 			title: '发票列表',
 			toolbar: '#toolbarDemo',
-			defaultToolbar:['filter', {title:'导出EXCEL',layEvent: 'LAYTABLE_EXCEL',icon: 'layui-icon-export'}],
 			url: "/finance/invoice/index", //数据接口		
 			page: true, //开启分页
 			cellMinWidth: 80,
 			limit: 20,
+			is_excel:true,
+			height: 'full-82',
 			cols: [
 				[
 					{

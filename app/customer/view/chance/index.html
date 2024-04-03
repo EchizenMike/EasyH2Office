@@ -34,9 +34,9 @@
 <!-- 脚本 -->
 {block name="script"}
 	<script>
-	const moduleInit = ['tool','employeepicker','laydatePlus'];
+	const moduleInit = ['tool','tablePlus','employeepicker','laydatePlus'];
 	function gouguInit() {
-		var table = layui.table, tool = layui.tool, form = layui.form,laydatePlus=layui.laydatePlus;
+		var table = layui.tablePlus, tool = layui.tool, form = layui.form,laydatePlus=layui.laydatePlus;
 		//日期范围
 		var diff_time = new laydatePlus({'target':'diff_time'});
 		
@@ -48,6 +48,7 @@
 			,cellMinWidth: 80
 			,page: true //开启分页
 			,limit: 20
+			,height: 'full-82'
 			,cols:  [[
 					{field: 'id', title: '编号', width: 80, align: 'center'}
 					,{field:'belong_name',title: '归属人',align:'center',width: 80}

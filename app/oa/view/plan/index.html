@@ -38,9 +38,9 @@
 <!-- 脚本 -->
 {block name="script"}
 	<script>
-	const moduleInit = ['tool','employeepicker','laydatePlus'];
+	const moduleInit = ['tool','tablePlus','employeepicker','laydatePlus'];
 	function gouguInit() {
-		var form = layui.form,table = layui.table,tool=layui.tool,laydatePlus = layui.laydatePlus,laydate = layui.laydate,dropdown = layui.dropdown;	  
+		var form = layui.form,table = layui.tablePlus,tool=layui.tool,laydatePlus = layui.laydatePlus,laydate = layui.laydate,dropdown = layui.dropdown;	  
 
 		//日期范围
 		var diff_time = new laydatePlus({'target':'diff_time'});
@@ -62,12 +62,13 @@
 		layui.pageTable = table.render({
 			elem: '#test'
 			,toolbar: '#toolbarDemo'
-			,defaultToolbar:['filter', {title:'导出EXCEL',layEvent: 'LAYTABLE_EXCEL',icon: 'layui-icon-export'}]
 			,title:'日程安排列表'
 			,url: "/oa/plan/index"
 			,page: true //开启分页
+			,is_excel:true
 			,limit: 20
 			,cellMinWidth: 80
+			,height: 'full-82'
 			,cols: [[ //表头
 				{field: 'id', title: '序号',fixed: 'left', width:80, align:'center'}
 				,{field: 'type', title: '优先级', align:'center',width:80,templet:function(d){
@@ -107,22 +108,6 @@
 				}}
 			]]
 		});
-		
-		//表头工具栏事件
-		table.on('toolbar(test)', function(obj){
-			if(obj.event === 'LAYTABLE_EXCEL'){
-				var formSelect = form.val('barsearchform');
-				formSelect.limit=99999;
-				$.ajax({
-					url: '/oa/plan/index',
-					data: formSelect,
-					success:function(res){
-						table.exportFile('test', res.data,'xls');
-					}
-				});
-				return;
-			}
-		})
 
 		//操作
 		table.on('tool(test)', function(obj){
