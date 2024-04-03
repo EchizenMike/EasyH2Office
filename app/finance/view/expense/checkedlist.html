@@ -150,22 +150,6 @@
 				]
 			]
 		});
-		
-		//表头工具栏事件
-		table.on('toolbar(test)', function(obj){
-			if(obj.event === 'LAYTABLE_EXCEL'){
-				var formSelect = form.val('barsearchform');
-				formSelect.limit=99999;
-				$.ajax({
-					url: '/finance/expense/checkedlist',
-					data: formSelect,
-					success:function(res){
-						table.exportFile('test', res.data,'xls');
-					}
-				});
-				return;
-			}
-		});
 
 		//监听行工具事件
 		table.on('tool(test)', function(obj) {
