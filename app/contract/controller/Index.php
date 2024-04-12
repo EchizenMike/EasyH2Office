@@ -22,6 +22,7 @@ class Index extends BaseController
     {
         if (request()->isAjax()) {
             $param = get_params();
+			$uid = $this->uid;
             $where = array();
             $whereOr = array();
             if (!empty($param['keywords'])) {
@@ -39,17 +40,32 @@ class Index extends BaseController
             $where[] = ['a.delete_time', '=', 0];
             $where[] = ['a.archive_status', '=', 0];
 			
-			$uid = $this->uid;
-			$auth = isAuth($uid,'contract_admin');
-			if($auth==0){
-				$whereOr[] =['a.admin_id|a.prepared_uid|a.sign_uid|a.keeper_uid', '=', $uid];
-				$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',a.share_ids)")];
-				$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',a.check_admin_ids)")];
-				$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',a.flow_admin_ids)")];
-				$dids = get_department_role($this->uid);
-				if(!empty($dids)){
-					$whereOr[] =['a.sign_did', 'in', $dids];
+			if (!empty($param['tab'])) {
+				if ($param['tab']==1) {
+					$where[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',a.check_admin_ids)")];
 				}
+				if ($param['tab']==2) {
+					$where[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',a.flow_admin_ids)")];
+				}
+			}
+			else{
+				$auth = isAuth($uid,'contract_admin');
+				if($auth==0){
+					$whereOr[] =['a.admin_id|a.prepared_uid|a.sign_uid|a.keeper_uid', '=', $uid];
+					$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',a.share_ids)")];
+					$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',a.check_admin_ids)")];
+					$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',a.flow_admin_ids)")];
+					$dids = get_department_role($this->uid);
+					if(!empty($dids)){
+						$whereOr[] =['a.sign_did', 'in', $dids];
+					}
+				}
+			}
+            //按时间检索
+			if (!empty($param['diff_time'])) {
+				$diff_time =explode('~', $param['diff_time']);
+				$where[] = ['a.start_time', '>=', strtotime(urldecode($diff_time[0]))];
+				$where[] = ['a.end_time', '<=', strtotime(urldecode($diff_time[1]))];
 			}
 			
             $model = new ContractList();

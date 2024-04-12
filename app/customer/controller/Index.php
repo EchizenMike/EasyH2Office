@@ -556,7 +556,7 @@ class Index extends BaseController
 				return to_assign(1, "只有客户管理员才有权限操作");
 			}			
 			$data['id'] = $params['id'];
-			$data['delete_time'] = -1;
+			$data['delete_time'] = time();
 			$log_data = array(
 				'field' => 'del',
 				'action' => 'delete',

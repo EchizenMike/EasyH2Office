@@ -6,7 +6,7 @@
 		<div class="layui-input-inline" style="width:150px;">
 			<select name="type">
 				<option value="">选择审批类别</option>
-				{volist name="type" id="vo"}
+				{volist name="type" id="vo" length='22'}
 				<option value="{$vo.id}">{$vo.title}</option>
 				{/volist}
 			</select>

@@ -2,7 +2,16 @@
 <!-- 主体 -->
 {block name="body"}
 <div class="p-3">
-	<form class="layui-form gg-form-bar border-x border-t" lay-filter="barsearchform">
+	<div class="layui-card border-x border-t" style="margin-bottom:0; box-shadow:0 0 0 0 rgb(5 32 96 / 0%)">
+		<div class="body-table layui-tab layui-tab-brief" lay-filter="tab">
+			<ul class="layui-tab-title">
+				<li class="layui-this">全部</li>
+				<li>待我审批</li>
+				<li>我已审批</li>
+			</ul>
+		</div> 
+	</div> 
+	<form class="layui-form gg-form-bar border-x" id="barsearchform">
 		<div class="layui-input-inline" style="width:150px;">
 			<select name="cate_id">
 				<option value="">请选择合同类别</option>
@@ -32,10 +41,14 @@
 				<option value="6">已作废</option>
 			</select>
 		</div>
+		<div class="layui-input-inline" style="width:300px;">
+			<input type="text" class="layui-input" id="diff_time" placeholder="合同有效时间期间" readonly name="diff_time">
+		</div>
 		<div class="layui-input-inline" style="width:240px;">
 			<input type="text" name="keywords" placeholder="输入关键字" class="layui-input" autocomplete="off" />
 		</div>
 		<div class="layui-input-inline" style="width:150px;">
+			<input type="hidden" name="tab" value="0" />
 			<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform"><i class="layui-icon layui-icon-search mr-1"></i>搜索</button>
 			<button type="reset" class="layui-btn layui-btn-reset" lay-filter="reset">清空</button>
 		</div>
@@ -54,19 +67,27 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
-	const moduleInit = ['tool'];
+	const moduleInit = ['tool','tablePlus','laydatePlus'];
 	function gouguInit() {
-		var table = layui.table, tool = layui.tool ,form = layui.form;
+		var table = layui.tablePlus, tool = layui.tool ,form = layui.form,element = layui.element, laydatePlus = layui.laydatePlus;
+		element.on('tab(tab)', function(data){
+			$("#barsearchform")[0].reset();
+			layui.pageTable.reload({where:{tab:data.index},page:{curr:1}});
+			$('[name="tab"]').val(data.index);
+			return false;
+		});	
+		//日期范围
+		var diff_time = new laydatePlus({'target':'diff_time'});
 		layui.pageTable = table.render({
 			elem: '#test',
 			title: '合同列表',
-			toolbar: '#toolbarDemo',
-			defaultToolbar:['filter', {title:'导出EXCEL',layEvent: 'LAYTABLE_EXCEL',icon: 'layui-icon-export'}],	
+			toolbar: '#toolbarDemo',	
 			url: "/contract/index/index", //数据接口
 			cellMinWidth: 80,
 			page: true, //开启分页
+			is_excel: true,
 			limit: 20,
-			height: 'full-82',
+			height: 'full-123',
 			cols: [
 				[ //表头
 					{
@@ -163,18 +184,6 @@
 		table.on('toolbar(test)', function(obj){
 			if (obj.event === 'add') {
 				selectType();
-				return;
-			}
-			if(obj.event === 'LAYTABLE_EXCEL'){
-				var formSelect = form.val('barsearchform');
-				formSelect.limit=99999;
-				$.ajax({
-					url: '/contract/index/index',
-					data: formSelect,
-					success:function(res){
-						table.exportFile('test', res.data,'xls');
-					}
-				});
 				return;
 			}
 		});

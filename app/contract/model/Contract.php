@@ -48,8 +48,10 @@ class Contract extends Model
     {
         $rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
         $list = self::where($where)
-            ->where(function ($query) use($whereOr) {
+			->where(function ($query) use($whereOr) {
+				if (!empty($whereOr)){
 					$query->whereOr($whereOr);
+				}
 			})
 			->field('a.*,a.type as type_a, c.title as cate_title,d.title as sign_department')
 			->alias('a')
