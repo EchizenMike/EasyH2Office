@@ -1,5 +1,5 @@
 {
-    "name": "gougu/dev",
+    "name": "gougu/oa",
     "description": "the gouguoa project",
     "type": "project",
     "keywords": [
@@ -11,7 +11,7 @@
     "license": "GPL-3.0",
     "authors": [
         {
-            "name": "dev",
+            "name": "oa",
             "email": "hdm58@qq.com"
         }        
     ],
