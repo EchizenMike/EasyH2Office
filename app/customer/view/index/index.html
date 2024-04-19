@@ -81,7 +81,7 @@
 </div>
 
 <script type="text/html" id="toolbarDemo">
-<div class="layui-btn-container">
+<div class="layui-btn-group">
    <span class="layui-btn layui-btn-sm" title="添加客户" lay-event="add">+ 添加客户</span>
    <button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="import"><i class="layui-icon">&#xe66f;</i>批量导入</button>
 </div>
@@ -186,17 +186,18 @@
 						field: 'right',
 						fixed:'right',
 						title: '操作',
-						width: 120,
+						width: 150,
 						align: 'center',
 						templet: function (d) {
 							var html = '<div class="layui-btn-group">';
-							var btn0='<span class="layui-btn layui-btn-xs" lay-event="edit">编辑</span>';
-							var btn1='<span class="layui-btn layui-btn-danger layui-btn-xs" lay-event="remove">移入公海</span>';
+							var btn0='<span class="layui-btn layui-bg-blue layui-btn-xs" lay-event="view">查看</span>';
+							var btn1='<span class="layui-btn layui-btn-xs" lay-event="edit">编辑</span>';
+							var btn2='<span class="layui-btn layui-btn-danger layui-btn-xs" lay-event="remove">移入公海</span>';
 							if(d.belong_uid == login_admin){
-								return html+btn0+btn1+'</div>';
+								return html+btn0+btn1+btn2+'</div>';
 							}
 							else{
-								return btn0;
+								return html+btn0+btn1+'</div>';
 							}
 						}						
 					}
@@ -232,7 +233,10 @@
 				tool.side('/customer/index/add?id='+data.id);
 				return;
 			}
-			
+			if(obj.event === 'view'){
+				tool.side('/customer/index/view?id='+data.id);
+				return;
+			}
 			if (obj.event === 'remove') {
 				layer.confirm('确定要把该客户移入公海吗?', {
 					icon: 3,

@@ -1300,9 +1300,9 @@ function format_money($money)
 {
     $data = '0元';
     if (($money / 10000) > 1) {
-        $data = is_int($money / 10000) ? ($money / 10000) . '万' : rand(($money / 10000), 2) . '万';
+        $data = is_int($money / 10000) ? ($money / 10000) . '万' : round(($money / 10000), 2) . '万';
     } elseif (($money / 1000) > 1) {
-        $data = is_int($money / 1000) ? ($money / 1000) . '千' : rand(($money / 1000), 2) . '千';
+        $data = is_int($money / 1000) ? ($money / 1000) . '千' : round(($money / 1000), 2) . '千';
     } else {
         $data = $money . '元';
     }
