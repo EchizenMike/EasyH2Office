@@ -12,7 +12,7 @@ use think\Validate;
 class CustomerCheck extends Validate
 {
     protected $rule = [
-        'name' => 'require|unique:customer',
+        'name' => 'require',
         'id'   => 'require',
     ];
 

@@ -53,6 +53,7 @@ class Index extends BaseController
                 $where[] = ['ct.next_time', 'between', [strtotime(urldecode($next_time[0])),strtotime(urldecode($next_time[1]))]];
             }			
             $where[] = ['a.delete_time', '=', 0];
+            $where[] = ['a.discard_time', '=', 0];
 			if($tab == 0){
 				if($auth == 1){
 					if($belong_uid>0 ){
@@ -179,6 +180,7 @@ class Index extends BaseController
                 $where[] = ['a.source_id', '=', $param['source_id']];
             }
             $where[] = ['a.delete_time', '=', 0];
+            $where[] = ['a.discard_time', '=', 0];
             $where[] = ['a.belong_uid', '=', 0];
 			
             $rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
@@ -267,7 +269,8 @@ class Index extends BaseController
 			if (!empty($param['status'])) {
                 $where[] = ['a.status', '=', $param['status']];
             }
-            $where[] = ['a.delete_time', '>', 0];
+            $where[] = ['a.delete_time', '=', 0];
+            $where[] = ['a.discard_time', '>', 0];
             $where[] = ['a.belong_uid', '=', 0];
 			
             $rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
@@ -319,6 +322,7 @@ class Index extends BaseController
             $param = get_params();
             $where = array();
             $where[] = ['a.delete_time', '=', 0];
+            $where[] = ['a.discard_time', '=', 0];
             $where[] = ['a.belong_uid', '=', 0];
             $content = CustomerList::where($where)
                 ->field('a.*,d.title as belong_department,g.title as grade,s.title as source,i.title as industry')
@@ -504,7 +508,7 @@ class Index extends BaseController
 				'admin_id' => $this->uid,
 				'create_time' => time(),
 			);
-			$data['delete_time'] = time();
+			$data['discard_time'] = time();
 			$log_data['action'] = 'totrash';
 			if (Db::name('Customer')->update($data) !== false) {
 				add_log('totrash', $params['id']);
@@ -524,7 +528,7 @@ class Index extends BaseController
 		if (request()->isAjax()) {
 			$params = get_params();		
 			$data['id'] = $params['id'];
-			$data['delete_time'] = 0;
+			$data['discard_time'] = 0;
 			if (Db::name('Customer')->update($data) !== false) {
 				add_log('recovery', $params['id']);
 				$log_data = array(
