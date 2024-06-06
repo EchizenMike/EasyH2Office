@@ -6,8 +6,9 @@ layui.define(function(exports) {
     var tablePlus=$.extend({},table);	
     tablePlus._render = tablePlus.render;	
 	tablePlus.excel = function(data,page_size,obj){
+		console.log(obj);
 		//表头工具栏导出按钮
-		$('[lay-id="'+obj.id+'"]').find('[lay-event="LAYTABLE_EXCEL"]').off().on('click',function(){
+		$('[lay-table-id="'+obj.id+'"]').find('[lay-event="LAYTABLE_EXCEL"]').off().on('click',function(){
 			if(data.count==0){
 				layer.msg('暂无数据');
 				return false;
@@ -47,7 +48,7 @@ layui.define(function(exports) {
 				return false;
 			}
 		});
-		$('[lay-id="'+obj.id+'"]').find('[lay-event="LAYTABLE_HELP"]').off().on('click',function(){
+		$('[lay-table-id="'+obj.id+'"]').find('[lay-event="LAYTABLE_HELP"]').off().on('click',function(){
 			let content = obj.help||'无帮助说明';
 			layer.open({
 				shadeClose: true,
@@ -94,7 +95,7 @@ layui.define(function(exports) {
 								,value: input.checked
 							})
 						});
-					}					
+					}		
 					tablePlus.excel(data,excel_limit,obj);
 				}
 			}
@@ -136,15 +137,14 @@ layui.define(function(exports) {
 			return false;
 		});
 		//重置搜索提交
-		$('body').on('click', '[lay-filter="table-search-reset"]', function () {
+		$('body').on('click', '[lay-filter="table-reset"]', function () {
 			let prev = $(this).prev();
 			if (typeof(prev) != "undefined" ) {
 				setTimeout(function () {
 					prev.click();
 				}, 10)
 			}
-		});
-		
+		});		
 		return init;
 		//console.log(params);
     };

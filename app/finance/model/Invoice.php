@@ -5,60 +5,37 @@ use think\facade\Db;
 class Invoice extends Model
 {
 	//发票列表检索
-	public function get_list($param=[],$where = [], $type='and')
+	public function get_list($param=[],$where = [],$whereOr = [])
     {
 		$rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
-		if($type == 'or'){
-			$list = Invoice::field('i.*,a.name,d.title as department_name')
-				->alias('i')
-				->join('Admin a', 'a.id = i.admin_id', 'left')
-				->join('Department d', 'd.id = i.did', 'left')
-				->whereOr($where)
-				->order('i.id desc')
-				->group('i.id')
-				->paginate(['list_rows' => $rows, 'query' => $param])
-				->each(function($item, $key){
-					if ($item['open_time'] > 0) {
-						$item['open_time'] = empty($item['open_time']) ? '0' : date('Y-m-d', (int)$item['open_time']);
-						$item['open_name'] = Db::name('Admin')->where('id',$item['open_admin_id'])->value('name');
-					}
-					else{
-						$item['open_time'] = '';
-						$item['open_name'] = '-';
-					}
-					$item['check_user'] = '-';
-					if($item['check_status']==1 && !empty($item['check_admin_ids'])){
-						$check_user = Db::name('Admin')->where('id','in',$item['check_admin_ids'])->column('name');
-						$item['check_user'] = implode(',',$check_user);
-					}
-					return $item;
-				});
-		}
-		else{
-			$list = Invoice::field('i.*,a.name,d.title as department_name')
-				->alias('i')
-				->join('Admin a', 'a.id = i.admin_id', 'left')
-				->join('Department d', 'd.id = i.did', 'left')
-				->where($where)
-				->order('i.id desc')
-				->paginate(['list_rows' => $rows, 'query' => $param])
-				->each(function($item, $key){
-					$item['check_user'] = '-';
-					if ($item['open_time'] > 0) {
-						$item['open_time'] = empty($item['open_time']) ? '0' : date('Y-m-d', (int)$item['open_time']);
-						$item['open_name'] = Db::name('Admin')->where('id',$item['open_admin_id'])->value('name');
-					}
-					else{
-						$item['open_time'] = '';
-						$item['open_name'] = '-';
-					}
-					if($item['check_status'] == 1 && !empty($item['check_admin_ids'])){
-						$check_user = Db::name('Admin')->where('id','in',$item['check_admin_ids'])->column('name');
-						$item['check_user'] = implode(',',$check_user);
-					}
-					return $item;
-				});
-		}
+		$list = Invoice::field('i.*,a.name,d.title as department_name')
+			->alias('i')
+			->join('Admin a', 'a.id = i.admin_id', 'left')
+			->join('Department d', 'd.id = i.did', 'left')
+			->where($where)
+			->where(function ($query) use($whereOr) {
+				if (!empty($whereOr)){
+					$query->whereOr($whereOr);
+				}
+			})
+			->order('i.id desc')
+			->paginate(['list_rows' => $rows, 'query' => $param])
+			->each(function($item, $key){
+				$item['check_user'] = '-';
+				if ($item['open_time'] > 0) {
+					$item['open_time'] = empty($item['open_time']) ? '0' : date('Y-m-d', (int)$item['open_time']);
+					$item['open_name'] = Db::name('Admin')->where('id',$item['open_admin_id'])->value('name');
+				}
+				else{
+					$item['open_time'] = '';
+					$item['open_name'] = '-';
+				}
+				if($item['check_status'] == 1 && !empty($item['check_admin_ids'])){
+					$check_user = Db::name('Admin')->where('id','in',$item['check_admin_ids'])->column('name');
+					$item['check_user'] = implode(',',$check_user);
+				}
+				return $item;
+			});
         return $list;
     }
 	

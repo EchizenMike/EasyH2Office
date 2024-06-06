@@ -22,76 +22,39 @@ class Expense extends BaseController
     {
         if (request()->isAjax()) {
             $param = get_params();
+			$tab = isset($param['tab']) ? $param['tab'] : 0;
             $where = [];
+            $whereOr = [];
+			$uid = $this->uid;
             $where[] = ['delete_time', '=', 0];
 			//按时间检索
 			if (!empty($param['diff_time'])) {
 				$diff_time =explode('~', $param['diff_time']);
 				$where[] = ['expense_time', 'between', [strtotime(urldecode($diff_time[0])),strtotime(urldecode($diff_time[1]))]];
 			}
-
-			$where[] = ['admin_id','=',$this->uid];
             if (!empty($param['check_status']) && $param['check_status']!='') {
                 $where[] = ['check_status', '=', $param['check_status']];
-            }    
-			$model = new ExpenseList;
-            $list = $model->get_list($param,$where);
-            return table_assign(0, '', $list);
-        } else {
-            return view();
-        }
-    }
-	
-	//待审批的报销
-    public function list()
-    {
-        if (request()->isAjax()) {
-			$param = get_params();
-			$status = isset($param['status'])?$param['status']:0;
-			$user_id = $this->uid;
-			//查询条件
-			$map1 = [];
-			$map2 = [];
-			$map1[] = ['', 'exp', Db::raw("FIND_IN_SET('{$user_id}',check_admin_ids)")];
-			$map1[] = ['delete_time', '=', 0];
-			
-			$map2[] = ['', 'exp', Db::raw("FIND_IN_SET('{$user_id}',flow_admin_ids)")];
-			$map2[] = ['delete_time', '=', 0];
-			
-			if($status == 0){
-				$model = new ExpenseList;
-				$list = $model->get_list($param,[$map1,$map2],'or');
-			}			
-			if($status == 1){
-				$model = new ExpenseList;
-				$list = $model->get_list($param,$map1);
+            } 
+			if($tab == 0){
+				$whereOr[] = ['admin_id','=',$uid];
+				$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',check_admin_ids)")];
+				$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',flow_admin_ids)")];
+				$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',copy_uids)")];
 			}
-			if($status == 2){
-				$model = new ExpenseList;
-				$list = $model->get_list($param,$map2);
-            }	
-            return table_assign(0, '', $list);
-        } else {
-            return view();
-        }
-    }
-	
-	public function copy()
-    {
-        if (request()->isAjax()) {
-			$param = get_params();
-			$user_id = $this->uid;
-			//查询条件
-			$map = [];
-			//按时间检索
-			if (!empty($param['diff_time'])) {
-				$diff_time =explode('~', $param['diff_time']);
-				$map[] = ['expense_time', 'between', [strtotime(urldecode($diff_time[0])),strtotime(urldecode($diff_time[1]))]];
-			}	
-			$map[] = ['check_status', 'in', [2,3,5]];			
-			$map[] = ['', 'exp', Db::raw("FIND_IN_SET('{$user_id}',copy_uids)")];
+			if($tab == 1){
+				$where[] = ['admin_id','=',$uid];
+			}
+			if($tab == 2){
+				$where[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',check_admin_ids)")];
+			}
+			if($tab == 3){
+				$where[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',flow_admin_ids)")];
+			}
+			if($tab == 4){
+				$where[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',copy_uids)")];
+			}   
 			$model = new ExpenseList;
-			$list = $model->get_list($param,$map);		
+            $list = $model->get_list($param,$where,$whereOr);
             return table_assign(0, '', $list);
         } else {
             return view();
@@ -104,6 +67,7 @@ class Expense extends BaseController
         if (request()->isAjax()) {
 			$param = get_params();
 			$where = [];
+			$whereOr = [];
 			if (!empty($param['check_status'])) {
 				$where[] = ['check_status','=',$param['check_status']];
             }
@@ -116,7 +80,7 @@ class Expense extends BaseController
 				$where[] = ['expense_time', 'between', [strtotime(urldecode($diff_time[0])),strtotime(urldecode($diff_time[1]))]];
 			}		
 			$model = new ExpenseList;
-			$list = $model->get_list($param,$where);	
+			$list = $model->get_list($param,$where,$whereOr);	
             return table_assign(0, '', $list);
         } else {
 			$auth = isAuthExpense($this->uid);

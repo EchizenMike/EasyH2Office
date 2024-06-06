@@ -2,7 +2,18 @@
 <!-- 主体 -->
 {block name="body"}
 <div class="p-3">
-	<form class="layui-form gg-form-bar border-x border-t" lay-filter="barsearchform">
+	<div class="layui-card border-x border-t" style="margin-bottom:0; box-shadow:0 0 0 0 rgb(5 32 96 / 0%)">
+		<div class="body-table layui-tab layui-tab-brief" lay-filter="tab">
+			<ul class="layui-tab-title">
+				<li class="layui-this">全部</li>
+				<li>我申请的</li>
+				<li>待我审批</li>
+				<li>我已审批</li>
+				<li>抄送我的</li>
+			</ul>
+		</div>
+	</div>
+	<form class="layui-form gg-form-bar border-x" id="barsearchform">
 		<div class="layui-input-inline" style="width:300px;">
 			<input type="text" class="layui-input" id="diff_time" placeholder="选择时间区间" readonly name="diff_time">
 		</div>
@@ -17,6 +28,7 @@
 			</select>
 		</div>
 		<div class="layui-input-inline" style="width:150px;">
+			<input type="hidden" name="tab" value="0"/>
 			<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform"><i class="layui-icon layui-icon-search mr-1"></i>搜索</button>
 			<button type="reset" class="layui-btn layui-btn-reset" lay-filter="reset">清空</button>
 		</div>
@@ -36,7 +48,14 @@
 <script>
 	const moduleInit = ['tool','tablePlus','laydatePlus'];
 	function gouguInit() {
-		var form = layui.form,table = layui.tablePlus,tool=layui.tool, laydatePlus = layui.laydatePlus;
+		var form = layui.form,table = layui.tablePlus,tool=layui.tool,element = layui.element,laydatePlus = layui.laydatePlus;
+		//tab切换
+		element.on('tab(tab)', function(data){
+			$('[name="tab"]').val(data.index);
+			$("#barsearchform")[0].reset();
+			layui.pageTable.reload({where:{tab:data.index},page:{curr:1}});
+			return false;
+		});
 		//日期范围
 		var diff_time = new laydatePlus({'target':'diff_time'});
 		//监听搜索提交
@@ -57,7 +76,7 @@
 			cellMinWidth: 100,
 			limit: 20,
 			is_excel:true,
-			height: 'full-82',
+			height: 'full-122',
 			cols: [
 				[
 					{

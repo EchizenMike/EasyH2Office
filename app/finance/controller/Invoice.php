@@ -23,7 +23,10 @@ class Invoice extends BaseController
     {
         if (request()->isAjax()) {
 			$param = get_params();
-			$where = [];
+			$tab = isset($param['tab']) ? $param['tab'] : 0;
+            $where = [];
+            $whereOr = [];
+			$uid = $this->uid;
 			if (!empty($param['check_status'])) {
 				$where[] = ['i.check_status','=',$param['check_status']];
             }
@@ -31,64 +34,28 @@ class Invoice extends BaseController
 			if (!empty($param['diff_time'])) {
 				$diff_time =explode('~', $param['diff_time']);
 				$where[] = ['i.create_time', 'between', [strtotime(urldecode($diff_time[0])),strtotime(urldecode($diff_time[1]))]];
-			}		
-			$where[] = ['i.admin_id','=',$this->uid];
+			}		;
 			$where[] = ['i.delete_time','=',0];
-			$model = new InvoiceList();
-            $list = $model->get_list($param, $where);
-            return table_assign(0, '', $list);
-        } else {
-            return view();
-        }
-    }
-	
-	//待审批的发票
-    public function list()
-    {
-        if (request()->isAjax()) {
-			$param = get_params();
-			$status = isset($param['status'])?$param['status']:0;
-			$user_id = $this->uid;
-			//查询条件
-			$map1 = [];
-			$map2 = [];
-			$map1[] = ['', 'exp', Db::raw("FIND_IN_SET('{$user_id}',i.check_admin_ids)")];
-			$map1[] = ['i.delete_time','=',0];
-			$map2[] = ['', 'exp', Db::raw("FIND_IN_SET('{$user_id}',i.flow_admin_ids)")];
-			$map2[] = ['i.delete_time','=',0];
-			$model = new InvoiceList();
-			if($status == 0){
-				$list = $model->get_list($param,[$map1,$map2],'or');
-			}			
-			if($status == 1){
-				$list = $model->get_list($param,$map1);
+			if($tab == 0){
+				$whereOr[] = ['i.admin_id','=',$uid];
+				$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',i.check_admin_ids)")];
+				$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',i.flow_admin_ids)")];
+				$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',i.copy_uids)")];
 			}
-			if($status == 2){
-				$list = $model->get_list($param,$map2);
-            }	
-            return table_assign(0, '', $list);
-        } else {
-            return view();
-        }
-    }
-	
-	public function copy()
-    {
-        if (request()->isAjax()) {
-			$param = get_params();
-			$user_id = $this->uid;
-			//查询条件
-			$map = [];
-			//按时间检索
-			if (!empty($param['diff_time'])) {
-				$diff_time =explode('~', $param['diff_time']);
-				$map[] = ['i.create_time', 'between', [strtotime(urldecode($diff_time[0])),strtotime(urldecode($diff_time[1]))]];
+			if($tab == 1){
+				$where[] = ['i.admin_id','=',$uid];
 			}
-			$map[] = ['i.delete_time','=',0];
-			$map[] = ['i.check_status', '=', 2];			
-			$map[] = ['', 'exp', Db::raw("FIND_IN_SET('{$user_id}',i.copy_uids)")];
+			if($tab == 2){
+				$where[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',i.check_admin_ids)")];
+			}
+			if($tab == 3){
+				$where[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',i.flow_admin_ids)")];
+			}
+			if($tab == 4){
+				$where[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',i.copy_uids)")];
+			}
 			$model = new InvoiceList();
-			$list = $model->get_list($param,$map);			
+            $list = $model->get_list($param, $where,$whereOr);
             return table_assign(0, '', $list);
         } else {
             return view();
