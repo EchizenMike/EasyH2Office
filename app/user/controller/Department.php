@@ -46,6 +46,13 @@ class Department extends BaseController
                     return to_assign(1, $e->getError());
                 }
                 $param['update_time'] = time();
+				if(!empty($param['leader_id'])){
+					$leader_did = Db::name('Department')->where([['leader_id','=',$param['leader_id']],['id','<>',$param['id']]])->value('id');
+					if(!empty($leader_did)){
+						return to_assign(1, '部门负责人选择有误，不能选择其他部门负责人');
+					}
+				}
+
                 $department_array = get_department_son($param['id']);
                 if (in_array($param['pid'], $department_array)) {
                     return to_assign(1, '上级部门不能是该部门本身或其下属部门');
@@ -61,6 +68,12 @@ class Department extends BaseController
                     // 验证失败 输出错误信息
                     return to_assign(1, $e->getError());
                 }
+				if(!empty($param['leader_id'])){
+					$leader_did = Db::name('Department')->where([['leader_id','=',$param['leader_id']]])->value('id');
+					if(!empty($leader_did)){
+						return to_assign(1, '部门负责人选择有误，不能选择其他部门负责人');
+					}
+				}
                 $did = Db::name('Department')->strict(false)->field(true)->insertGetId($param);
                 add_log('add', $did, $param);
                 return to_assign();
