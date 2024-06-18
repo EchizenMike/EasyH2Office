@@ -636,6 +636,7 @@ class Api extends BaseController
 				$flowUidsData = isset($param['chargeIds']) ? $param['chargeIds'] : '';
 				$flowIdsData = isset($param['membeIds']) ? $param['membeIds'] : '';
 				$flowDateData = isset($param['cycleDate']) ? $param['cycleDate'] : '';
+				$step_idData = isset($param['step_id']) ? $param['step_id'] : 0;
 				$flow = [];
 				$time_1 = $detail['start_time'];
 				$time_2 = $detail['end_time'];
@@ -671,17 +672,22 @@ class Api extends BaseController
 					$item['sort'] = $key;
 					$item['start_time'] = $start_time;
 					$item['end_time'] = $end_time;
+					$item['id'] = $step_idData[$key];
 					$item['create_time'] = time();
 					$flow[]=$item;	
 				}
-				//删除原来的阶段步骤
-				Db::name('Step')->where(['action_id'=>$id,'type'=>2,'delete_time'=>0])->update(['delete_time'=>time()]);
-				Db::name('StepRecord')->where(['action_id'=>$id,'type'=>2,'delete_time'=>0])->update(['delete_time'=>time()]);
-				$res = Db::name('Step')->strict(false)->field(true)->insertAll($flow);	
-				if ($res) {
-					$res = Db::name('Project')->where('id', $id)->strict(false)->field(true)->update(['step_sort'=>0,'status'=>2,'update_time'=>time()]);
-					add_log('reset', $param['id'], $param,'项目阶段');
+				//原来的阶段步骤
+				foreach ($flow as $key => $value) {
+					if($value['id'] == 0){
+						Db::name('Step')->strict(false)->field(true)->insert($value);
+					}
+					else{
+						$value['update_time'] = time();
+						Db::name('Step')->strict(false)->field(true)->update($value);
+					}
 				}
+				$res = Db::name('Project')->where('id', $id)->strict(false)->field(true)->update(['status'=>2,'update_time'=>time()]);
+				add_log('reset', $param['id'], $param,'项目阶段');
 				return to_assign();
 			} else {
 				return to_assign(1, '只有创建人或者负责人才有权限编辑');
