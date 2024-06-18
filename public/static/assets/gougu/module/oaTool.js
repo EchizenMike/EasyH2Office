@@ -448,7 +448,7 @@ layui.define(['tool'], function (exports) {
 						]]
 					});
 					//任务搜索提交
-					form.on('submit(search_project)', function (data) {
+					form.on('submit(task_project)', function (data) {
 						let maps = $.extend({}, map, data.field);
 						taskTable.reload({ where: maps, page: { curr: 1 } });
 						return false;
