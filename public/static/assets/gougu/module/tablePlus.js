@@ -4,65 +4,49 @@ layui.define(function(exports) {
 	var form = layui.form;	
     var MOD_NAME='tablePlus';	
     var tablePlus=$.extend({},table);	
-    tablePlus._render = tablePlus.render;	
-	tablePlus.excel = function(data,page_size,obj){
-		console.log(obj);
-		//表头工具栏导出按钮
-		$('[lay-table-id="'+obj.id+'"]').find('[lay-event="LAYTABLE_EXCEL"]').off().on('click',function(){
-			if(data.count==0){
-				layer.msg('暂无数据');
-				return false;
-			}
-			else{
-				let _page = parseInt(data.count/page_size);
-				let page = data.count%page_size>0?(_page+1):_page;
-				let pageHtml='<p style="padding:16px 10px 0; text-align:center; color:red">由于导出数据比较消耗服务器资源，建议使用搜索功能筛选好数据再导出</p><p style="padding:5px 10px 10px; text-align:center; color:red">如果点击导出后，没有立即导出文件，请耐心等待一下，30秒内请勿重复点击。</p><p style="padding:0 10px; text-align:center;">共查询到<strong> '+data.count+' </strong>条数据，每次最多导出<strong>'+page_size+'</strong>条，共<strong>'+page+'</strong>页，请点击下面的页码导出</p><div id="exportPage" class="layui-box layui-laypage" style="padding:10px 0; width:100%;text-align:center;">';
-				for (i = 1; i <= page; i++) {
-					pageHtml += '<a href="javascript:;" data-page="'+i+'">'+i+'</a>';
-				}
-				pageHtml+='</div>';							
-				layer.open({
-					  type: 1,
-					  title: '导出数据',
-					  area:['580px','240px'],
-					  content: pageHtml,
-					  success:function(res){
-							var tableWhere = JSON.parse(JSON.stringify(obj.where));
-							tableWhere.limit=page_size;										
-							$('#exportPage').on('click','a',function(){
-								tableWhere.page=$(this).data('page');
-								let msg = layer.msg('正在导出数据...', {time:5000});
-								$.ajax({
-									url: obj.url,
-									data: tableWhere,
-									success:function(res){
-										table.exportFile(obj.id, res.data,'xls');
-										setTimeout(function(){
-											layer.msg('导出完成');			
-										},3000)	
-									}
-								});
-							})
+    tablePlus._render = tablePlus.render;
+	tablePlus.excel = function(total,options){
+		//console.log(options);
+		let _page = parseInt(total/options.excel_limit);
+		let page = total%options.excel_limit>0?(_page+1):_page;
+		let pageHtml='<p style="padding:16px 10px 0; text-align:center; color:red">由于导出数据比较消耗服务器资源，建议使用搜索功能筛选好数据再导出</p><p style="padding:5px 10px 10px; text-align:center; color:red">如果点击导出后，没有立即导出文件，请耐心等待一下，30秒内请勿重复点击。</p><p style="padding:0 10px; text-align:center;">共查询到<strong> '+total+' </strong>条数据，每次最多导出<strong>'+options.excel_limit+'</strong>条，共<strong>'+page+'</strong>页，请点击下面的页码导出</p><div id="exportPage" class="layui-box layui-laypage" style="padding:10px 0; width:100%;text-align:center;">';
+		for (i = 1; i <= page; i++) {
+			pageHtml += '<a href="javascript:;" data-page="'+i+'">'+i+'</a>';
+		}
+		pageHtml+='</div>';							
+		layer.open({
+			type: 1,
+			title: '导出数据',
+			area:['580px','240px'],
+			content: pageHtml,
+			success:function(res){
+				let tableWhere = JSON.parse(JSON.stringify(options.where));
+				tableWhere.limit=options.excel_limit;										
+				$('#exportPage').on('click','a',function(){
+					tableWhere.page=$(this).data('page');
+					let msg = layer.msg('正在导出数据...', {time:3000});
+					$.ajax({
+						url: options.url,
+						data: tableWhere,
+						success:function(res){
+							table.exportFile(options.id, res.data,'xls');
+							setTimeout(function(){
+								layer.msg('导出完成');			
+							},2000)	
 						}
 					});
-				return false;
+				})
 			}
 		});
-		$('[lay-table-id="'+obj.id+'"]').find('[lay-event="LAYTABLE_HELP"]').off().on('click',function(){
-			let content = obj.help||'无帮助说明';
-			layer.open({
-				shadeClose: true,
-				title:'帮助说明',
-				type: 1,
-				content: '<div style="padding:20px 15px; min-width:300px; line-height:1.8">'+content+'</div>'
-			})
-		})
 	}
 	//重写渲染方法
     tablePlus.render=function(params){
-		let is_excel = params.is_excel||false;
-		let cols_save = params.cols_save||false;
-		let excel_limit = params.excel_limit||1000;
+		if(params.excel_limit === undefined){
+			params.excel_limit = 10000;
+		}
+		if(params.cols_save === undefined){
+			params.cols_save = false;
+		}
 		if(params.limit === undefined){
 			params.limit = 20;
 		}
@@ -71,51 +55,79 @@ layui.define(function(exports) {
 		}
 		if(params.cellMinWidth === undefined){
 			params.cellMinWidth = 80;
-		}	
-		if(is_excel){
-			let toolbar = ['filter', {title:'导出EXCEL',layEvent: 'LAYTABLE_EXCEL',icon: 'layui-icon-export'},{title:'数据说明',layEvent: 'LAYTABLE_HELP',icon: 'layui-icon-help'}];
-			if(params.defaultToolbar == false){
-				params.defaultToolbar = toolbar;
-			}	
-			else{
-				let _toolbar = params.defaultToolbar||[];
-				params.defaultToolbar = _toolbar.concat(toolbar);
-			}
-			
-			if(typeof params.done === "function"){
-				let _done = params.done;
-				params.done = function(data, curr, count){
-					let obj = this;
-					_done(data, curr, count);					
-					if(cols_save){
-						obj.elem.next().on('mousedown', 'input[lay-filter="LAY_TABLE_TOOL_COLS"]+', function(){
-							var input = $(this).prev()[0];
-							layui.data ('col-filter-'+params.url,{
-								key: input.name
-								,value: input.checked
-							})
-						});
-					}		
-					tablePlus.excel(data,excel_limit,obj);
-				}
-			}
-			else{
-				params.done = function(data){
-					let obj = this;
-					if(cols_save){
-						obj.elem.next().on('mousedown', 'input[lay-filter="LAY_TABLE_TOOL_COLS"]+', function(){
-							var input = $(this).prev()[0];
-							layui.data ('col-filter-'+params.url,{
-								key: input.name
-								,value: input.checked
-							})
+		}
+		if(params.help === undefined){
+			params.help = '无帮助说明';
+		}		
+		let defaultToolbar = [
+		  'filter',
+		  {
+			name: 'exports',
+			onClick: function(obj) {
+				// 当前示例配置项
+				let options = obj.config;
+				let total = obj.data.length;
+				// 弹出面板
+				obj.openPanel({
+					list: [ // 列表
+						'<li data-type="page">导出当前页</li>',
+						'<li data-type="all">导出全部</li>'
+					].join(''),
+					done: function(panel, list) { 
+						list.on('click', function() {
+							if(total==0){
+								layer.msg('暂无数据');
+								return false;
+							}
+							let type = $(this).data('type')
+							if(type === 'page') {
+								// 调用内置导出方法
+								let msg = layer.msg('正在导出数据...', {time:1000});
+								table.exportFile(options.id, null, 'xlsx');
+							}else if(type === 'all') {
+								let tableWhere = JSON.parse(JSON.stringify(options.where));
+								tableWhere.limit=options.excel_limit;
+								if(total<=tableWhere.limit){
+									tableWhere.page=1;
+									let msg = layer.msg('正在导出数据...', {time:3000});
+									$.ajax({
+										url: options.url,
+										data: tableWhere,
+										success:function(res){
+											table.exportFile(options.id, res.data,'xls');
+											setTimeout(function(){
+												layer.msg('导出完成');			
+											},3000)	
+										}
+									});
+								}
+								else{
+									tablePlus.excel(total,options)
+								}
+							}
 						});
 					}
-					tablePlus.excel(data,excel_limit,obj);
-				}
-			}
-		}
-		if(cols_save){
+				 });
+			 }
+		  },{
+			  title:'数据说明',
+			  icon: 'layui-icon-help',
+			  layEvent: 'LAYTABLE_HELP',
+			  onClick: function(obj) {
+				layer.open({
+					shadeClose: true,
+					title:'帮助说明',
+					type: 1,
+					content: '<div style="padding:20px 15px; min-width:300px; line-height:1.8">'+obj.config.help+'</div>'
+				})
+			  }
+		  }
+		]
+		
+		if(params.defaultToolbar != false){
+			params.defaultToolbar = defaultToolbar;
+		}		
+		if(params.cols_save == true){
 			// 从本地存储获取用户保存的列显示设置
 			let savedCols = localStorage.getItem('col-filter-'+params.url);
 			let colsStatus = savedCols ? JSON.parse(savedCols) : {};
@@ -126,6 +138,33 @@ layui.define(function(exports) {
                 }
             }
 			params.cols = cols;
+			
+			if(typeof params.done === "function"){
+				let _done = params.done;
+				params.done = function(data, curr, count){
+					let obj = this;
+					_done(data, curr, count);	
+					obj.elem.next().on('mousedown', 'input[lay-filter="LAY_TABLE_TOOL_COLS"]+', function(){
+						var input = $(this).prev()[0];
+						layui.data ('col-filter-'+params.url,{
+							key: input.name,
+							value: input.checked
+						})
+					});
+				}
+			}
+			else{
+				params.done = function(data){
+					let obj = this;
+					obj.elem.next().on('mousedown', 'input[lay-filter="LAY_TABLE_TOOL_COLS"]+', function(){
+						var input = $(this).prev()[0];
+						layui.data ('col-filter-'+params.url,{
+							key: input.name,
+							value: input.checked
+						})
+					});
+				}
+			}			
 		}
 		var init = tablePlus._render(params);
 		//监听搜索提交
