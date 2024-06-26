@@ -554,7 +554,7 @@ class Api extends BaseController
     //获取树形任务列表
     public function get_project_task(){
 	    $param = get_params();
-		$list = Db::name('ProjectTask')->withoutField('content,md_content')->where('project_id',$param['project_id'])->order('id desc')->select()->toArray();
+		$list = Db::name('ProjectTask')->withoutField('content,md_content')->where(['project_id'=>$param['project_id'],'delete_time'=>0])->order('id desc')->select()->toArray();
 		foreach ($list as $key => &$vo) {
 				$vo['director_name'] = '-';
 				if ($vo['director_uid'] > 0) {
