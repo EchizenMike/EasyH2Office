@@ -135,28 +135,14 @@ layui.define(['layer','dtree'],function(exports){
 						
 						if(me.settings.type == 1){
 							$('.layui-tags-all').on('click',function(){
-								var sIds = me.settings.ids.join(',');
-								var sNames = me.settings.names.join(',');
-								var sDids = me.settings.dids.join(',');
-								var sDepartments = me.settings.departments.join(',');
 								for(var a=0; a<dataList.length;a++){
-									if(sIds.indexOf(dataList[a].id)<0){
-										sIds+=','+dataList[a].id;
-										sNames+=','+dataList[a].nickname;
-										sDids+=','+dataList[a].did;
-										sDepartments+=','+dataList[a].department;
+									if(me.settings.ids.includes(dataList[a].id+'')==false){
+										me.settings.ids.push(dataList[a].id+'');
+										me.settings.names.push(dataList[a].nickname);
+										me.settings.dids.push(dataList[a].did);
+										me.settings.departments.push(dataList[a].department);
 									}
 								}
-								if(me.settings.ids.length==0){
-									sIds=sIds.substr(1);
-									sNames=sNames.substr(1);
-									sDids=sDids.substr(1);
-									sDepartments=sDepartments.substr(1);
-								}
-								me.settings.ids=sIds.split(',');
-								me.settings.names=sNames.split(',');
-								me.settings.dids=sDids.split(',');
-								me.settings.departments=sDepartments.split(',');
 								$('#selectTags').html(me.initSelect());	
 							});
 						}
