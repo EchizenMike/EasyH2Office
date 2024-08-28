@@ -175,7 +175,9 @@
 							element.progress('demo', 100 + '%');
 							$('#form').hide();
 							$('#complete').show();
-							install_ajax(res.code.data);
+							setTimeout(function(){
+								install_ajax(res.data);
+							},2000)					
 							return false;
 						}
 					},
