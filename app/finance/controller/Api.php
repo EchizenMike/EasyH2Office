@@ -61,7 +61,7 @@ class Api extends BaseController
 				$msg=[
 					'from_uid'=>$this->uid,//发送人
 					'to_uids'=>$detail['admin_id'],//接收人
-					'template_id'=>23,//消息模板ID
+					'template_id'=>'expense_pay',//消息模板标识
 					'content'=>[ //消息内容
 						'create_time'=>date('Y-m-d H:i:s'),
 						'action_id'=>$detail['id'],

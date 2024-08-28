@@ -96,16 +96,27 @@
 		
 		//选择员工弹窗	
 		$('body').on('click','[name="name"]',function () {
-			var ids=$('[name="uid"]').val(),names=$('[name="name"]').val();
+			let that = $(this);
+			let ids=that.next().val()+'',names = that.val()+'';
 			oaPicker.employeeInit({
 				ids:ids,
-				ids:names,
-				type:0,
-				callback:function(seleted){
-					$('[name="uid"]').val(seleted.id);
-					$('[name="name"]').val(seleted.name);
-					$('[name="from_did"]').val(seleted.did);
-					$('[name="from_department"]').val(seleted.department);
+				names:names,
+				type:1,//1是单选，2是多选
+				callback:function(data){
+					//这里是选择后的回调方法，可以根据具体需求自定义写哦
+					let select_id=[],select_name=[],select_did=[],select_department=[];
+					for(var a=0; a<data.length;a++){
+						select_id.push(data[a].id);
+						select_name.push(data[a].name);
+						select_did.push(data[a].did);
+						select_department.push(data[a].department);
+					}
+					that.val(select_name.join(','));
+					that.next().val(select_id.join(','));
+					$('[name="uid"]').val(select_id.join(','));
+					$('[name="name"]').val(select_name.join(','));
+					$('[name="from_did"]').val(select_did.join(','));
+					$('[name="from_department"]').val(select_department.join(','));
 				}
 			});
 		}); 

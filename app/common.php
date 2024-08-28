@@ -270,7 +270,12 @@ function add_log($type, $param_id = '', $param = [] ,$subject='')
  */
 function send_message($msg=[])
 {
-	$template = Db::name('Template')->where('id',$msg['template_id'])->find();
+	if(is_numeric($msg['template_id'])){
+		$template = Db::name('Template')->where('id',$msg['template_id'])->find();
+	}
+	else{
+		$template = Db::name('Template')->where('name',$msg['template_id'])->find();
+	}
 	if(empty($template)){
 		return true;
 	}
@@ -297,7 +302,7 @@ function send_message($msg=[])
 			'action_id' => $data['action_id'],
 			'title' => $title,
 			'content' => $content,
-			'template' => $msg['template_id'],
+			'template' => $template['id'],
 			'create_time' => time()
 		);
 	}

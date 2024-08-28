@@ -143,7 +143,7 @@ class Work extends BaseController
 						$msg=[
 							'from_uid'=>$this->uid,//发送人
 							'to_uids'=>$param['to_uids'],//接收人
-							'template_id'=>34,//消息模板ID
+							'template_id'=>'work',//消息模板标识
 							'content'=>[ //消息内容
 								'create_time'=>date('Y-m-d H:i:s'),
 								'action_id'=>$id
@@ -185,7 +185,7 @@ class Work extends BaseController
 						$msg=[
 							'from_uid'=>$this->uid,//发送人
 							'to_uids'=>$param['to_uids'],//接收人
-							'template_id'=>34,//消息模板ID
+							'template_id'=>'work',//消息模板ID
 							'content'=>[ //消息内容
 								'create_time'=>date('Y-m-d H:i:s'),
 								'action_id'=>$wid

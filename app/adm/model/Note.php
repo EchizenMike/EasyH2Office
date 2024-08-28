@@ -55,11 +55,16 @@ class Note extends Model
 			add_log('add', $insertId, $param);
 			$users= Db::name('Admin')->field('id as from_uid')->where(['status' => 1])->column('id');
 			$msg=[
-				'from_uid'=>$param['admin_id'],
-				'title' => $param['title'],
-				'action_id'=>$insertId
+				'from_uid'=>$param['admin_id'],//发送人
+				'to_uids'=>$users,//接收人
+				'template_id'=>'note',//消息模板ID
+				'content'=>[ //消息内容
+					'create_time'=>date('Y-m-d H:i:s'),
+					'title' => $param['title'],
+					'action_id'=>$insertId
+				]
 			];
-			send_message($users,1,$msg);
+			send_message($msg);
         } catch(\Exception $e) {
 			return to_assign(1, '操作失败，原因：'.$e->getMessage());
         }
