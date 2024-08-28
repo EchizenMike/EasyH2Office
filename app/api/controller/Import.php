@@ -1,9 +1,16 @@
 <?php
 /**
- * @copyright Copyright (c) 2021 勾股工作室
- * @license https://opensource.org/licenses/GPL-3.0
- * @link https://www.gougucms.com
- */
++-----------------------------------------------------------------------------------------------
+* GouGuOPEN [ 左手研发，右手开源，未来可期！]
++-----------------------------------------------------------------------------------------------
+* @Copyright (c) 2021~2024 http://www.gouguoa.com All rights reserved.
++-----------------------------------------------------------------------------------------------
+* @Licensed 勾股OA，开源且可免费使用，但并不是自由软件，未经授权许可不能去除勾股OA的相关版权信息
++-----------------------------------------------------------------------------------------------
+* @Author 勾股工作室 <hdm58@qq.com>
++-----------------------------------------------------------------------------------------------
+*/
+
 declare (strict_types = 1);
 namespace app\api\controller;
 
@@ -96,7 +103,6 @@ class Import extends BaseController
 			$department_array = Db::name('Department')->where(['status' => 1])->column('title', 'id');
 			$position_array = Db::name('Position')->where(['status' => 1])->column('title', 'id');
             //循环读取excel表格，整合成数组。如果是不指定key的二维，就用$data[i][j]表示。
-			$pinyin = new Pinyin();
             for ($j = 3; $j <= $highestRow; $j++) {
 				$salt = set_salt(20);
 				$reg_pwd  = '123456';
@@ -105,12 +111,12 @@ class Import extends BaseController
 					continue;
 				}
 				$char = mb_substr($name, 0, 1, 'utf-8');
-				$sex = arraySearch($sex_array,$objPHPExcel->getActiveSheet()->getCell("D" . $j)->getValue());
-				$department = arraySearch($department_array,$objPHPExcel->getActiveSheet()->getCell("E" . $j)->getValue());
-				$position = arraySearch($position_array,$objPHPExcel->getActiveSheet()->getCell("f" . $j)->getValue());
-				$type = arraySearch($type_array,$objPHPExcel->getActiveSheet()->getCell("G" . $j)->getValue());
-				$pinyinname = $pinyin->name($name,PINYIN_UMLAUT_V);
-				$username = implode('', $pinyinname);
+				$sex = array_search_plus($sex_array,$objPHPExcel->getActiveSheet()->getCell("D" . $j)->getValue());
+				$department = array_search_plus($department_array,$objPHPExcel->getActiveSheet()->getCell("E" . $j)->getValue());
+				$position = array_search_plus($position_array,$objPHPExcel->getActiveSheet()->getCell("f" . $j)->getValue());
+				$type = array_search_plus($type_array,$objPHPExcel->getActiveSheet()->getCell("G" . $j)->getValue());
+				$username = Pinyin::name($name,'none')->join('');
+				//$username = implode('-', $pinyinname);
 				$mobile = $objPHPExcel->getActiveSheet()->getCell("B" . $j)->getValue();
 				$email = $objPHPExcel->getActiveSheet()->getCell("C" . $j)->getValue();
 				$file_check['mobile'] = $mobile;
@@ -154,6 +160,9 @@ class Import extends BaseController
 				if(empty($position)){
 					return to_assign(1, '第'.($j - 2).'行的所属职位错误');
 				}
+				
+				$newusername = $this->check_name($username,$username_array);
+				array_push($username_array,$newusername);				
                 $data[$j - 3] = [		
                     'name' => $name,
                     'nickname' => $name,
@@ -164,7 +173,7 @@ class Import extends BaseController
                     'position_id' => $position,
                     'type' => $type,
 					'entry_time' => Shared::excelToTimestamp($objPHPExcel->getActiveSheet()->getCell("H" . $j)->getValue(),'Asia/Shanghai'),
-					'username' => $this->check_name($username,$username_array),
+					'username' => $newusername,
                     'salt' => $salt,
 					'pwd' => set_password($reg_pwd, $salt),
                     'reg_pwd' => $reg_pwd,
@@ -172,13 +181,15 @@ class Import extends BaseController
                 ];
             }
            //dd($data);exit;
-            // 批量添加数据
-            if ((new Admin())->saveAll($data)) {
-                return to_assign(0, '导入成功');
-            }
-			else{
-				return to_assign(1, '导入失败，请检查excel文件再试');
+			$count=0;
+			foreach ($data as $a => $aa) {	
+				$aid = Admin::strict(false)->field(true)->insertGetId($aa);
+				if($aid>0){
+					//Db::name('DepartmentAdmin')->insert(['admin_id'=>$aid,'department_id'=>$aa['did'],'create_time' => time()]);
+					$count++;
+				}
 			}
+            return to_assign(0, '共成功导入了'.$count.'条员工数据');
         } catch (\think\exception\ValidateException $e) {
 			return to_assign(1, $e->getMessage());
         }
@@ -244,9 +255,9 @@ class Import extends BaseController
 					return to_assign(1, '上传的文件存在相同的客户名称，请删除再操作');
 				}
 				array_push($name_array,$name);
-				$source_id = arraySearch($source_array,$objPHPExcel->getActiveSheet()->getCell("B" . $j)->getValue());
-				$grade_id = arraySearch($grade_array,$objPHPExcel->getActiveSheet()->getCell("C" . $j)->getValue());
-				$industry_id = arraySearch($industry_array,$objPHPExcel->getActiveSheet()->getCell("D" . $j)->getValue());	
+				$source_id = array_search_plus($source_array,$objPHPExcel->getActiveSheet()->getCell("B" . $j)->getValue());
+				$grade_id = array_search_plus($grade_array,$objPHPExcel->getActiveSheet()->getCell("C" . $j)->getValue());
+				$industry_id = array_search_plus($industry_array,$objPHPExcel->getActiveSheet()->getCell("D" . $j)->getValue());	
 				
 				$c_name = $objPHPExcel->getActiveSheet()->getCell("E" . $j)->getValue();
 				$c_mobile = $objPHPExcel->getActiveSheet()->getCell("F" . $j)->getValue();
@@ -337,7 +348,8 @@ class Import extends BaseController
                     'belong_did' => $belong_did,
                     'c_mobile' => $c_mobile,
                     'c_name' => $c_name,
-                    'create_time' => time()
+                    'create_time' => time(),
+                    'update_time' => time()
                 ];
             }
             //dd($data);exit;

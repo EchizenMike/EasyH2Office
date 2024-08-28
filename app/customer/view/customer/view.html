@@ -1,0 +1,240 @@
+{extend name="../../base/view/common/base" /}
+{block name="style"}
+<style>
+html{background-color:#fff;}
+.log-timeline{ position: relative; padding-left: 48px; background-color:#fff;}
+.log-timeline:after {content: ""; position: absolute; top: 0; left: 24px; width: 1px; height: 100%; background: #e3e9ed;}
+.log-timeline dl{padding-bottom: 8px; position: relative;}
+.log-timeline dt{font-size: 16px; line-height: 2.4; color: #323232; font-weight:600}
+.log-timeline dd{font-size: 14px; line-height: 1.6; padding:5px 0}
+.log-timeline .date-second-point{width: 10px; height: 10px; display: block; border-radius: 50%; border: 3px solid #FBBC05; background: #fff; position: absolute; z-index: 99; left:-32px; top:9px}
+.log-timeline .log-thumb{width: 24px; height: 24px; border-radius: 50%; margin-right:4px;}
+.log-timeline .open-a{margin:0 4px;}
+.log-item i{font-weight:800; color:#323232}
+.log-content strong{margin:0 4px; color:#323232}
+</style>
+{/block}
+<!-- 主体 -->
+{block name="body"}
+<div class="layui-form p-page">
+	<h3 class="pb-3">
+	客户详情	
+	{eq name="$detail.is_lock" value="1"}
+		<div class="layui-input-inline"><button type="button" class="layui-btn layui-btn-warm layui-btn-xs" id="lock" title="去解锁" data-lock="0"><i class="iconfont icon-suozhu"></i></button></div>
+	{else/}
+		<div class="layui-input-inline"><button type="button" class="layui-btn layui-btn-xs" id="lock" title="去锁定" data-lock="1"><i class="iconfont icon-jiesuo"></i></button></div>
+	{/eq}
+	</h3>
+	<table class="layui-table layui-table-form">
+	  <tr>
+		<td class="layui-td-gray">客户名称</td>
+		<td colspan="3">{$detail.name}</td>
+		<td class="layui-td-gray">录入人</td>
+		<td>{$detail.admin_name}</td>
+	  </tr>
+	  <tr>
+		<td class="layui-td-gray">联系地址</td>
+		<td colspan="3">{$detail.address}</td>
+		<td class="layui-td-gray">录入时间</td>
+		<td>{$detail.create_time}</td>
+	  </tr>
+	  {gt name="$detail.belong_uid" value="0"}
+	  <tr>
+		<td class="layui-td-gray">归属员工</td>
+		<td>{$detail.belong_name}</td>
+		<td class="layui-td-gray">归属部门</td>
+		<td>{$detail.belong_department}</td>
+		<td class="layui-td-gray">共享员工</td>
+		<td>{$detail.share_names|default="-"}</td>
+	  </tr>
+	  {/gt}
+	  <tr>
+		<td class="layui-td-gray">客户等级</td>
+		<td>{$detail.grade}</td>
+		<td class="layui-td-gray">所属行业</td>
+		<td>{$detail.industry}</td>
+		<td class="layui-td-gray-2">最后更新时间</td>
+		<td>{$detail.update_time}</td>
+	</tr>
+	<tr>
+		<td class="layui-td-gray">客户来源</td>
+		<td>{$detail.source}</td>
+		<td class="layui-td-gray">客户状态</td>
+		<td>{$detail.customer_status_name}</td>
+		<td class="layui-td-gray">客户意向</td>
+		<td>{$detail.intent_status_name}</td>
+	  </tr>
+	  <tr>
+		<td class="layui-td-gray">客户介绍</td>
+		<td colspan="5">{$detail.content|default=""}</td>
+	  </tr>
+	  {notempty name="$detail.market"}
+	  <tr>
+		<td class="layui-td-gray">经营业务</td>
+		<td colspan="5">{$detail.market}</td>
+	  </tr>
+	  {/notempty}
+	  {notempty name="$detail.remark"}
+	  <tr>
+		<td class="layui-td-gray">备注信息</td>
+		<td colspan="5">{$detail.remark}</td>
+	  </tr>
+	  {/notempty}
+	  <tr>
+		<td class="layui-td-gray-2">
+			<div class="layui-input-inline">相关附件</div>
+			<div class="layui-input-inline"><button type="button" class="layui-btn layui-btn-xs" id="uploadBtn"><i class="layui-icon"></i></button></div>
+		</td>
+		<td colspan="5" style="line-height:inherit">
+			<div class="row" id="uploadBox">
+			{volist name="$detail.file_array" id="vo"}
+			<div class="layui-col-md4" id="file_{$vo.id}">{:file_card($vo)}</div>
+			{/volist}
+			</div>
+		</td>
+	   </tr>
+	  {notempty name="$contact"}
+	  <tr>
+		<td colspan="8"><strong>首要联系人信息</strong></td>
+	  </tr>
+	  <tr>
+		<td class="layui-td-gray">姓名称呼</td>
+		<td>{$contact.name} </td>
+		<td class="layui-td-gray">手机号码</td>
+		<td>{$contact.mobile}</td>
+		<td class="layui-td-gray">QQ号码</td>
+		<td>{$contact.qq}</td>
+		<td class="layui-td-gray">微信号码</td>
+		<td>{$contact.wechat}</td>
+		</tr>
+	   {/notempty}
+	  {notempty name="$detail.trace"}
+	  <tr>
+		<td colspan="8"><strong>最近沟通记录</strong></td>
+	  </tr>
+		<tr>
+		<td class="layui-td-gray">沟通时间</td>
+		<td>{$detail.trace.follow_time}</td>
+		<td class="layui-td-gray">沟通人</td>
+		<td>{$detail.trace.contact_name}</td>
+		<td class="layui-td-gray">跟进方式</td>
+		<td>{$detail.trace.type_name}</td>
+		<td class="layui-td-gray">当前阶段</td>
+		<td>{$detail.trace.stage_name}</td>
+	  </tr>
+	  <tr>	
+		<td class="layui-td-gray-2">下次联系时间</span></td>
+		<td>{$detail.trace.next_time}</td>	  
+		<td class="layui-td-gray">沟通内容</td>
+		<td colspan="5">{$detail.trace.content}</td>
+	  </tr>	
+	  {/notempty}
+	</table>
+	<div class="layui-tab" lay-filter="customer" id="customerTab">
+		<ul class="layui-tab-title">
+			<li class="layui-this" data-load="true">跟进记录</li>
+			<li>线索机会</li>
+			<li>联 系 人</li>
+			<li>操作记录</li>
+		</ul>
+		<div class="layui-tab-content">
+			<div class="layui-tab-item layui-show">
+				{include file="/customer/view_trace" /}
+			</div>
+			<div class="layui-tab-item">
+				{include file="/customer/view_chance" /}
+			</div>
+			<div class="layui-tab-item">
+				{include file="/customer/view_contact" /}
+			</div>
+			<div class="layui-tab-item">
+				{include file="/customer/view_log" /}
+			</div>
+		</div>
+	</div>
+</div>
+{/block}
+<!-- /主体 -->
+
+<!-- 脚本 -->
+{block name="script"}
+<script>
+const customer_id = '{$detail.id}';
+const moduleInit = ['tool','oaPicker','uploadPlus'];
+	function gouguInit() {
+		var form = layui.form,tool=layui.tool, upload = layui.upload,element = layui.element,uploadPlus = layui.uploadPlus;	
+		trace();
+		element.on('tab(customer)', function(data){
+			let index = data.index;
+			if(index == 1){
+				chance();	
+			}
+			if(index == 2){
+				contact();	
+			}
+			if(index == 3){
+				log();	
+			}
+		});
+		//客户加锁
+		$('#lock').on('click',function () {
+			let is_lock=$(this).data('lock');
+			let tips = '确定要锁住该客户信息吗？锁住后该客户的基本信息不能编辑。';
+			if(is_lock==0){
+				tips = '确定要解锁该客户信息吗？';
+			}
+			layer.confirm(tips, {
+				icon: 3,
+				title: '提示'
+			}, function(index) {
+				let callback = function (e) {
+					layer.msg(e.msg);
+					if (e.code == 0) {	
+						parent.layui.pageTable.reload();
+						setTimeout(function(){
+							location.reload();
+						},1000);						
+					}
+				}
+				tool.post("/customer/api/customer_lock", {id: customer_id,is_lock:is_lock}, callback);
+				layer.close(index);
+			});
+		})
+		var attachment = new uploadPlus({
+			"attachment":{
+				"type":1,//0ajax多文件模式，1ajax单文件单记录模式
+				"uidDelete":true,//是否开启只有上传人自己才能删除自己的附件
+				"ajaxSave":function(res){
+					$.ajax({
+						url: "/customer/api/add_file",
+						type:'post',
+						data:{
+							'customer_id':customer_id,
+							'file_id':res.data.id,
+							'file_name':res.data.name
+						},
+						success: function (e) {
+							layer.msg(e.msg);
+							if (e.code == 0) {
+								setTimeout(function(){
+									location.reload();
+								},1000)							
+							}
+						}
+					})
+				},
+				"ajaxDelete":function(file_id){
+					let callback = function (e) {
+						layer.msg(e.msg);
+						if (e.code == 0) {						
+							$('#file_' + file_id).remove();
+						}
+					}
+					tool.delete("/customer/api/delete_file", {id: file_id}, callback);
+				}
+			}
+		})		
+	}
+</script>
+{/block}
+<!-- /脚本 -->

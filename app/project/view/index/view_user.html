@@ -12,12 +12,12 @@ function project_user(){
 		return false;
 	}
 	$('#projectTab').find('li').eq(4).data('load','true');
-	let tool = layui.tool, table = layui.table,employeepicker=layui.employeepicker;
+	let tool = layui.tool, table = layui.tablePlus,oaPicker = layui.oaPicker;
 	//项目成员
 	layui.userTable = table.render({
 		elem: '#user',
 		title: '项目成员列表',
-		cellMinWidth: 80,
+		cellMinWidth: 60,
 		toolbar: '#toolbaruser',
 		url: "/project/api/project_user", //数据接口
 		where: { 'tid': project_id },
@@ -39,10 +39,9 @@ function project_user(){
 			, { field: 'position', title: '职位', align: 'center', width: 100, rowspan: 2 }
 			, { field: 'department', title: '所在部门', align: 'center', width: 120, rowspan: 2 }
 			, { field: 'mobile', title: '手机号码', align: 'center', width: 110, rowspan: 2 }
-			, { field: 'email', title: '电子邮箱', align: 'center', rowspan: 2 }
 			, { align: 'center', title: '工作记录', colspan: 2 }
 			, { align: 'center', title: '项目任务', colspan: 3 }
-			, { field: 'delete_time', title: '移除日期', align: 'center', width: 110, rowspan: 2 }
+			, { field: 'delete_time', title: '移除日期', align: 'center', minWidth: 120, rowspan: 2 }
 			, { field: 'status',fixed: 'right', title: '状态', align: 'center', width: 60, rowspan: 2, templet: function (d) {
 					var html = '<span style="color:#EE6666">✘</span>';
 					if(d.delete_time == '-')
@@ -70,17 +69,20 @@ function project_user(){
 		var checkStatus = table.checkStatus(obj.config.id);
 		switch(obj.event){
 			case 'add':
-			  employeepicker.init({
-				type: 0,
-				department_url: "/api/index/get_department_tree",
-				employee_url: "/api/index/get_employee",
-				callback: function (ids, names, dids, departments) {
+			  oaPicker.employeeInit({
+				type: 1,
+				callback: function (data) {
 					let callback = function (e) {
 						layer.msg(e.msg);
 						if(e.code == 0){
 							layui.userTable.reload();
 						}						
 					}
+					let select_id=[];
+					for(var a=0; a<data.length;a++){
+						select_id.push(data[a].id);
+					}
+					let ids = select_id.join(',');
 					tool.post("/project/api/add_user", {uid: ids,project_id: project_id}, callback);
 				}
 			})			

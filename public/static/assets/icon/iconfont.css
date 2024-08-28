@@ -1,9 +1,9 @@
 @font-face {
   font-family: "iconfont"; /* Project id 2936988 */
-  src: url('iconfont.woff2?t=1701747381700') format('woff2'),
-       url('iconfont.woff?t=1701747381700') format('woff'),
-       url('iconfont.ttf?t=1701747381700') format('truetype'),
-       url('iconfont.svg?t=1701747381700#iconfont') format('svg');
+  src: url('iconfont.woff2?t=1718354526075') format('woff2'),
+       url('iconfont.woff?t=1718354526075') format('woff'),
+       url('iconfont.ttf?t=1718354526075') format('truetype'),
+       url('iconfont.svg?t=1718354526075#iconfont') format('svg');
 }
 
 .iconfont {
@@ -12,6 +12,14 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-shanchu:before {
+  content: "\e615";
+}
+
+.icon-fenxiang:before {
+  content: "\e8b0";
 }
 
 .icon-gengduo1:before {
@@ -26,7 +34,7 @@
   content: "\e638";
 }
 
-.icon-kaoshimoshi-:before {
+.icon-working:before {
   content: "\e639";
 }
 
@@ -50,7 +58,7 @@
   content: "\e62b";
 }
 
-.icon-QQ:before {
+.icon-qq:before {
   content: "\e651";
 }
 
@@ -70,12 +78,8 @@
   content: "\e642";
 }
 
-.icon-charulianjie-:before {
+.icon-lianjie:before {
   content: "\e67b";
-}
-
-.icon-shanchu:before {
-  content: "\e607";
 }
 
 .icon-chakanxiangqing:before {

@@ -1,12 +1,12 @@
 {extend name="../../base/view/common/base" /}
 <!-- 主体 -->
 {block name="body"}
-<div class="p-3">
-	<div class="gg-form-bar border-t border-x" style="background-color:#FAFAFA">
-		<h3>数据还原</h3>
+<div class="p-page">
+	<div class="gg-form-bar border-t border-x">
+		<h3 class="pb-3">数据还原</h3>
 	</div>
 	<table cellspacing="0" cellpadding="0" border="0" class="layui-table layui-table-form">
-		<tr>
+		<tr style="background-color:#FAFAFA">
 			<th style=" text-align: center; font-weight: 800;"><span>文件名称</span></th>
 			<th style=" text-align: center; font-weight: 800;"><span>文件格式</span></th>
 			<th style=" text-align: center; font-weight: 800;"><span>分隔符</span></th>
@@ -16,13 +16,12 @@
 		</tr>
 		{empty name="list"}
 		<tr>
-			<td colspan="6" align="center">暂无备份数据</td>
+			<td colspan="6" align="center" style="padding:20px 0; color:#999">暂无备份数据</td>
 		</tr>
 		{/empty}
 		{volist name="list" id="vo" key="k"}
 		<tr style="background-color: #fafafa;">
-			<td><strong>备份时间：{$vo.time}</strong>{if $vo.timespan == $lock_time}<span
-					style="color:red; margin-left:20px;">该备份不是完整备份，请删除重新备份</span>{/if}</td>
+			<td><strong>备份时间：{$vo.time}</strong>{if $vo.timespan == $lock_time}<span style="color:red; margin-left:20px;">该备份不是完整备份，请删除重新备份</span>{/if}</td>
 			<td align="center"><span>.sql</span></td>
 			<td align="center"><span>{$vo.data.compress}</span></td>
 			<td align="center"><span>{:format_bytes($vo.data.size)}</span></td>
@@ -44,8 +43,7 @@
 				{:date("Ymd",$vo.timespan)}{$vo.data.compress}{:date("His",$vo.timespan)}{$vo.data.compress}{$i+1}.sql
 			</td>
 			<td align="center">
-				<a class="layui-btn layui-btn-xs"
-					href='/home/database/downfile?time={$vo.data.time}&part={$i+1}'>下载备份(分卷{$i+1})</a>
+				<a class="layui-btn layui-btn-xs" href='/home/database/downfile?time={$vo.data.time}&part={$i+1}'>下载备份(分卷{$i+1})</a>
 			</td>
 		</tr>
 		{/for}

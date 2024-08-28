@@ -1,17 +1,25 @@
 <?php
 /**
- * @copyright Copyright (c) 2021 勾股工作室
- * @license https://opensource.org/licenses/GPL-3.0
- * @link https://www.gougucms.com
- */
++-----------------------------------------------------------------------------------------------
+* GouGuOPEN [ 左手研发，右手开源，未来可期！]
++-----------------------------------------------------------------------------------------------
+* @Copyright (c) 2021~2024 http://www.gouguoa.com All rights reserved.
++-----------------------------------------------------------------------------------------------
+* @Licensed 勾股OA，开源且可免费使用，但并不是自由软件，未经授权许可不能去除勾股OA的相关版权信息
++-----------------------------------------------------------------------------------------------
+* @Author 勾股工作室 <hdm58@qq.com>
++-----------------------------------------------------------------------------------------------
+*/
+
 // 应用公共文件,内置主要的数据处理方法
 use think\facade\Config;
 use think\facade\Request;
 use think\facade\Cache;
 use think\facade\Db;
 
+/***************************************************系统相关*****************************************************/
 //设置缓存
-function set_cache($key, $value, $date = 86400)
+function set_cache($key='', $value='', $date = 86400)
 {
     Cache::set($key, $value, $date);
 }
@@ -28,8 +36,14 @@ function clear_cache($key)
     Cache::clear($key);
 }
 
+//读取文件配置
+function get_config($key)
+{
+    return Config::get($key);
+}
+
 //读取系统配置
-function get_system_config($name, $key = '')
+function get_system_config($name='', $key = '')
 {
     $config = [];
     if (get_cache('system_config' . $name)) {
@@ -54,7 +68,7 @@ function get_system_config($name, $key = '')
 }
 
 //设置系统配置
-function set_system_config($name, $key, $value='')
+function set_system_config($name='', $key='', $value='')
 {
     $config = [];
 	$conf = Db::name('config')->where('name', $name)->find();
@@ -68,13 +82,7 @@ function set_system_config($name, $key, $value='')
 }
 
 
-//读取文件配置
-function get_config($key)
-{
-    return Config::get($key);
-}
-
-//判断cms是否完成安装
+//判断系统是否已安装
 function is_installed()
 {
     static $isInstalled;
@@ -84,7 +92,7 @@ function is_installed()
     return $isInstalled;
 }
 
-//判断cms是否存在模板
+//判断系统是否存在模板
 function isTemplate($url='')
 {
     static $isTemplate;
@@ -94,87 +102,62 @@ function isTemplate($url='')
     return $isTemplate;
 }
 
-//判断模块是否存在
+//判断模块是否禁用
 function isModule($name)
 {
 	$map = [];
 	$map[] = ['name', '=', $name];
+	$map[] = ['status', '=', 1];
     $count = Db::name('AdminModule')->where($map)->count();
     return $count;
 }
-//是否是某数据权限,count>1即有权限
-function isAuth($uid,$name)
+
+//获取某模块的某数据配置
+function valueAuth($name,$conf)
+{
+	$map = [];
+	$map[] = ['name', '=', $name];
+    $val = Db::name('DataAuth')->where($map)->value($conf);
+    return $val;
+}
+
+//是否是某模块的数据权限,>1即有权限,$uid,要鉴别的用户，$name模块名称，$conf权限类型(字段),
+function isAuth($uid,$name,$conf)
 {
 	if($uid == 1){
 		return 1;
 	}
 	$map = [];
 	$map[] = ['name', '=', $name];
-	$map[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',uids)")];
+	$map[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',$conf)")];
     $count = Db::name('DataAuth')->where($map)->count();
     return $count;
 }
 
-//获取服务器信息
-function get_system_info($key)
+//判断是否是部门负责人,
+function isLeader($uid = 0,$did='')
 {
-    $system = [
-        'os' => PHP_OS,
-        'php' => PHP_VERSION,
-        'upload_max_filesize' => get_cfg_var("upload_max_filesize") ? get_cfg_var("upload_max_filesize") : "不允许上传附件",
-        'max_execution_time' => get_cfg_var("max_execution_time") . "秒 ",
-    ];
-    if (empty($key)) {
-        return $system;
-    } else {
-        return $system[$key];
-    }
+	if($uid == 1){
+		return 1;
+	}
+	$map = [];
+	$map[] = ['status','=',1];
+	if(!empty($did)){
+		$map[] = ['id','in',$did];
+	}
+	$map[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',leader_ids)")];
+	$count = Db::name('Department')->where($map)->count();
+	return $count;
 }
 
-//获取url参数
+//获取url参数,$key为空时返回所有参数数组
 function get_params($key = "")
 {
     return Request::instance()->param($key);
 }
 
-//生成一个不会重复的字符串
-function make_token()
-{
-    $str = md5(uniqid(md5(microtime(true)), true));
-    $str = sha1($str); //加密
-    return $str;
-}
-
-//随机字符串，默认长度10
-function set_salt($num = 10)
-{
-    $str = 'qwertyuiopasdfghjklzxcvbnm1234567890';
-    $salt = substr(str_shuffle($str), 10, $num);
-    return $salt;
-}
-//密码加密
-function set_password($pwd, $salt)
-{
-    return md5(md5($pwd . $salt) . $salt);
-}
-
-//获取指定管理员的信息
-function get_admin($id)
-{
-    $admin = Db::name('Admin')
-	->alias('a')
-	->field('a.*,d.title as department,p.title as position')
-	->leftJoin ('Department d ','d.id= a.did')
-	->leftJoin ('Position p ','p.id= a.position_id')
-	->where(['a.id' => $id])
-	->cache(true,60)
-	->find();
-    $admin['last_login_time'] = empty($admin['last_login_time']) ? '-' : date('Y-m-d H:i', $admin['last_login_time']);
-    return $admin;
-}
-
 /**
- * 节点权限判断
+ * 菜单节点权限判断
  * @rule String
  * @uid Int
  * @return bool
@@ -189,6 +172,256 @@ function check_auth($rule, $uid)
     }
 }
 
+/**
+ * 返回json数据，用于接口
+ * @param    integer    $code
+ * @param    string     $msg
+ * @param    array      $data
+ * @param    string     $url
+ * @param    integer    $httpCode
+ * @param    array      $header
+ * @param    array      $options
+ * @return   json
+ */
+function to_assign($code = 0, $msg = "操作成功", $data = [], $action = '', $url = '', $httpCode = 200, $header = [], $options = [])
+{
+    $res = ['code' => $code];
+    $res['msg'] = $msg;
+    $res['action'] = $action;
+    $res['url'] = $url;
+    if (is_object($data)) {
+        $data = $data->toArray();
+    }
+    $res['data'] = $data;
+    $response = \think\Response::create($res, "json", $httpCode, $header, $options);
+    throw new \think\exception\HttpResponseException($response);
+}
+
+/**
+ * 适配layui table数据列表的返回数据方法，用于接口
+ * @param    integer    $code
+ * @param    string     $msg
+ * @param    array      $data
+ * @param    integer    $httpCode
+ * @param    array      $header
+ * @param    array      $options
+ * @return   json
+ */
+function table_assign($code = 0, $msg = '请求成功', $data = [],$totalRow = [], $httpCode = 200, $header = [], $options = [])
+{
+    $res['code'] = $code;
+    $res['msg'] = $msg;
+    $res['totalRow'] = $totalRow;
+    if (is_object($data)) {
+        $data = $data->toArray();
+    }
+    if (!empty($data['total'])) {
+        $res['count'] = $data['total'];
+    } else {
+        $res['count'] = 0;
+    }
+    $res['data'] = $data['data'];
+    $response = \think\Response::create($res, "json", $httpCode, $header, $options);
+    throw new \think\exception\HttpResponseException($response);
+}
+
+//写入操作日主
+function add_log($type, $param_id = '', $param = [] ,$subject='')
+{
+	$title = '操作';
+	$session_admin = get_config('app.session_admin');
+	$uid = \think\facade\Session::get($session_admin);
+	$type_action = get_config('log.type_action');
+	if($type_action[$type]){
+		$title = $type_action[$type];
+	}
+	$data = [
+		'uid' => $uid,
+		'type' => $type,
+		'action' => $title,
+		'param_id' => $param_id,
+		'param' => json_encode($param),
+		'module' => strtolower(app('http')->getName()),
+		'controller' => strtolower(app('request')->controller()),
+		'function' => strtolower(app('request')->action()),
+		'ip' => app('request')->ip(),
+		'create_time' => time(),
+		'subject' => '系统'
+	];
+	if($subject!=''){
+		$data['subject'] =$subject;
+	}
+	else{
+		$rule = $data['module'] . '/' . $data['controller'] . '/' . $data['function'];
+		$rule_menu = Db::name('AdminRule')->where(array('src' => $rule))->find();
+		if($rule_menu){
+			$data['subject'] = $rule_menu['name'];
+		}
+	}
+	Db::name('AdminLog')->strict(false)->field(true)->insert($data);
+}
+
+/**
+ * 发送系统消息
+ * @param  $user_id 接收人
+ * @param  $template_id 消息模板
+ * @param  $data 操作内容
+ * @return
+ */
+function send_message($msg=[])
+{
+	$template = Db::name('Template')->where('id',$msg['template_id'])->find();
+	if(empty($template)){
+		return true;
+	}
+    $title = $template['msg_title'];
+    $content = $template['msg_content'];
+	$data = $msg['content'];
+	$data['from_user'] = Db::name('Admin')->where('id',$msg['from_uid'])->value('name');
+	$data['date'] = date('Y-m-d');
+	foreach ($data as $key => $val) {
+		$title = str_replace('{' . $key . '}', $val, $title);
+		$content = str_replace('{' . $key . '}', $val, $content);
+	}
+    if (!is_array($msg['to_uids'])) {
+        $users = explode(",", strval($msg['to_uids']));
+    } else {
+        $users = $msg['to_uids'];
+    }
+    $users = array_unique(array_filter($users));
+	//组合要发的消息
+	$send_data = [];
+	foreach ($users as $key => $value) {
+		$send_data[] = array(
+			'to_uid' => $value,//接收人
+			'action_id' => $data['action_id'],
+			'title' => $title,
+			'content' => $content,
+			'template' => $msg['template_id'],
+			'create_time' => time()
+		);
+	}
+	$res = Db::name('Msg')->strict(false)->field(true)->insertAll($send_data);
+    return $res;
+}
+
+//消息链接信息转换
+function get_message_link($template_id,$action_id){
+	$content='';
+	$template = Db::name('Template')->where('id',$template_id)->find();
+	$link = $template['msg_link'];
+	$content = str_replace('{action_id}', $action_id, $link);
+	return $content;
+}
+
+/**
+ * 邮件发送
+ * @param $to    接收人
+ * @param string $subject 邮件标题
+ * @param string $content 邮件内容(html模板渲染后的内容)
+ * @throws Exception
+ * @throws phpmailerException
+ */
+function send_email($to, $subject = '', $content = '')
+{
+    $mail = new PHPMailer\PHPMailer\PHPMailer();
+    $email_config = Db::name('config')->where('name', 'email')->find();
+    $config = unserialize($email_config['content']);
+
+    $mail->CharSet = 'UTF-8'; //设定邮件编码，默认ISO-8859-1，如果发中文此项必须设置，否则乱码
+    $mail->isSMTP();
+    $mail->SMTPDebug = 0;
+
+    //调试输出格式
+    //$mail->Debugoutput = 'html';
+    //smtp服务器
+    $mail->Host = $config['smtp'];
+    //端口 - likely to be 25, 465 or 587
+    $mail->Port = $config['smtp_port'];
+    if ($mail->Port == '465') {
+        $mail->SMTPSecure = 'ssl'; // 使用安全协议
+    }
+    //Whether to use SMTP authentication
+    $mail->SMTPAuth = true;
+    //发送邮箱
+    $mail->Username = $config['smtp_user'];
+    //密码
+    $mail->Password = $config['smtp_pwd'];
+    //Set who the message is to be sent from
+    $mail->setFrom($config['email'], $config['from']);
+    //回复地址
+    //$mail->addReplyTo('replyto@example.com', 'First Last');
+    //接收邮件方
+    if (is_array($to)) {
+        foreach ($to as $v) {
+            $mail->addAddress($v);
+        }
+    } else {
+        $mail->addAddress($to);
+    }
+
+    $mail->isHTML(true); // send as HTML
+    //标题
+    $mail->Subject = $subject;
+    //HTML内容转换
+    $mail->msgHTML($content);
+    $status = $mail->send();
+    if ($status) {
+        return true;
+    } else {
+        //  echo "Mailer Error: ".$mail->ErrorInfo;// 输出错误信息
+        //  die;
+        return false;
+    }
+}
+
+/***************************************************员工相关*****************************************************/
+//获取指定用户的信息
+function get_admin($uid)
+{
+    $admin = Db::name('Admin')
+    ->alias('a')
+    ->field('a.*,d.title as department,p.title as position')
+    ->leftJoin ('Department d ','d.id= a.did')
+    ->leftJoin ('Position p ','p.id= a.position_id')
+    ->where(['a.id' => $uid])
+    ->find();
+    return $admin;
+}
+
+//获取指定部门所有的员工信息(包含主部门、次要部门，如果son=1，则包含当前子部门)
+function get_department_employee($did=0,$son=0)
+{
+	$admin_array = [];
+	$department_array = [];
+	$department_array[] = $did;
+	if($son==1){
+		$department_array = get_department_son($did);
+		$admin_array = Db::name('DepartmentAdmin')->whereIn('department_id',$department_array)->column('admin_id');
+	}
+	else{
+		$admin_array = Db::name('DepartmentAdmin')->where('department_id',$did)->column('admin_id');
+	}
+	
+	$map1=[
+		['id','in',$admin_array],
+	];
+	$map2=[
+		['did','in',$department_array],
+	];
+	$where=[['id','>',1],['status','=',1]];
+	$whereOr =[$map1,$map2];
+	$admin = Db::name('Admin')
+		->where(function ($query) use($whereOr) {
+			if (!empty($whereOr)){
+				$query->whereOr($whereOr);
+			}
+		})
+		->where($where)->select()->toArray();
+    return $admin;
+}
+
+/***************************************************部门相关*****************************************************/
 //读取部门列表
 function get_department()
 {
@@ -196,7 +429,19 @@ function get_department()
     return $department;
 }
 
-//获取某部门的子部门id.$is_self时候包含自己
+//读取部门名称
+function get_department_name($dids)
+{
+	$departments = Db::name('Department')->where([['id','in',$dids],['status','=',1]])->column('title');
+	if(!empty($departments)){
+		return implode(',',$departments);
+	}else{
+		return '';
+	}
+}
+
+//获取某部门的子部门id，$is_self是否包含自己
+//输出部门数组，如:['1,2,3']
 function get_department_son($did = 0, $is_self = 1)
 {
     $department = get_department();
@@ -209,87 +454,63 @@ function get_department_son($did = 0, $is_self = 1)
     return $department_array;
 }
 
-//读取员工所在部门的负责人（pid=1，上一级负责人）
+//读取某员工所在主部门的负责人（pid=1，上一级部门负责人）
+//输出负责人数组，如:1,2,3
 function get_department_leader($uid=0,$pid=0)
 {
 	$did = get_admin($uid)['did'];
-	if($pid==0){
-		$leader = Db::name('Department')->where(['id' => $did])->value('leader_id');
+	if($pid==1){
+		$did = Db::name('Department')->where('id',$did)->value('pid');
 	}
-	else{
-		$pdid = Db::name('Department')->where(['id' => $did])->value('pid');
-		if($pdid == 0){
-			$leader = 0;
-		}
-		else{
-			$leader = Db::name('Department')->where(['id' => $pdid])->value('leader_id');
-		}		
-	}    
-    return $leader;
+	$leader_ids = Db::name('Department')->where('id',$did)->value('leader_ids');
+    return $leader_ids;
 }
 
-//读取部门负责人所在部门的数据权限【包括员工所在部门+其子部门】
-function get_department_role($uid = 0)
+//获取某负责人所负责的部门的数据集(ids)
+//传入某员工uid，输出部门数组，如:['1,2,3'],逻辑：先判断传入的uid是否是负责人，如果是负责人再读取对应的部门数据。
+function get_leader_departments($uid = 0)
 {
-	$did = get_admin($uid)['did'];
+	if($uid==1){
+		$dids = Db::name('Department')->where('status',1)->column('id');
+		return $dids;
+	}
+	$map = [];
+	$map[] = ['status','=',1];
+	$map[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',leader_ids)")];
+	$dids = Db::name('Department')->where($map)->column('id');
 	//判断是否是部门负责人
-	$is_leader = Db::name('Department')->where(['id' => $did,'leader_id'=>$uid])->count();
-	if($is_leader==0){
+	if(empty($dids)){
 		return [];
 	}
 	else{
 		//获取子部门
 		$department = get_department();
-		$department_list = get_data_node($department, $did);
-		$department_array = array_column($department_list, 'id');
-		//包括自己部门在内
-		$department_array[] = $did;
-		return $department_array;
+		$list_array = [];
+		foreach ($dids as $key => $value) {
+			$department_list = get_data_node($department, $value);
+			$department_array = array_column($department_list, 'id');
+			//包括自己部门在内
+			$department_array[] = $value;
+			$list_array = array_merge($list_array,$department_array);
+		}
+		return $list_array;
 	}
 }
 
-//读取是否是某员工的上级领导
-function get_user_role($leader_id=0,$uid = 0)
+/***************************************************审批相关*****************************************************/
+
+//获取全部审批状态
+function get_check_status()
 {
-	$did = get_admin($uid)['did'];
-	//获取子部门
-	$department = get_department();
-	$department_list = get_data_node($department, $did);
-	$department_array = array_column($department_list, 'id');
-	//包括自己部门在内
-	$department_array[] = $did;
-	//判断是否是部门负责人
-	$is_leader = Db::name('Department')->where([['id','in',$did],['leader_id','=',$leader_id]])->count();
-	return $is_leader;
+	$check_status_array = ['待提交审批','审批中','审批通过','审批不通过','已撤回'];
+	return $check_status_array;
 }
 
-//读取根据uid返回所在部门和所管理的子部门did
-function get_user_dids($uid = 0)
+//根据审批状态读取审批状态名称
+function check_status_name($check_status=0)
 {
-	$did = get_admin($uid)['did'];
-	$department_array = [];
-	//判断是否是部门负责人
-	$is_leader = Db::name('Department')->where(['id'=>$did,'leader_id'=>$uid])->count();
-	if($is_leader > 0 || $uid == 1){
-		//获取子部门
-		$department = get_department();
-		$department_list = get_data_node($department, $did);
-		$department_array = array_column($department_list, 'id');
-		//包括自己部门在内
-		$department_array[] = $did;
-	}
-	else{
-		//包括自己部门在内
-		$department_array[] = $did;
-	}
-	return $department_array;
-}
-
-//读取职位
-function get_position()
-{
-    $position = Db::name('Position')->where(['status' => 1])->select()->toArray();
-    return $position;
+	$check_status_array = get_check_status();
+	return $check_status_array[$check_status];
 }
 
 //根据流程类型读取某部门某模块的审核流程
@@ -326,10 +547,11 @@ function get_type_department_flows($type=6,$department=0)
     return $list;
 }
 
-
 /**
  * 初始化审批流程数据
  * @param  $flow_id 审批流程id
+ * @param  $check_admin_ids 传入当前审批人ids，用于设置当前审批步骤的审批人
+ * @param  $uid 传入当前登录用户id，用于查找其所在部门的负责人或者上一部门负责人
  * @return
  */
 function set_flow($flow_id,$check_admin_ids,$uid)
@@ -402,140 +624,19 @@ function get_flow($uid,$flows)
     return $res;
 }
 
-
-/**
- * 隐藏电话号码中间4位和邮箱
- */
-function hidetel($phone)
+/***************************************************常规数据获取*****************************************************/
+//读取基础数据
+function get_base_data($table)
 {
-	//隐藏邮箱
-	if (strpos($phone, '@')) {
-		$email_array = explode("@", $phone);
-		$prevfix = (strlen($email_array[0]) < 4) ? "" : substr($phone, 0, 3); //邮箱前缀
-		$count = 0;
-		$str = preg_replace('/([\d\w+_-]{0,100})@/', '***@', $phone, -1, $count);
-		$rs = $prevfix . $str;
-		return $rs;
-	} else {
-		//隐藏联系方式中间4位
-		$Istelephone = preg_match('/(0[0-9]{2,3}[\-]?[2-9][0-9]{6,7}[\-]?[0-9]?)/i', $phone); //固定电话
-		if ($Istelephone) {
-			return preg_replace('/(0[0-9]{2,3}[\-]?[2-9])[0-9]{3,4}([0-9]{3}[\-]?[0-9]?)/i', '$1****$2', $phone);
-		} else {
-			return preg_replace('/(1[0-9]{1}[0-9])[0-9]{4}([0-9]{4})/i', '$1****$2', $phone);
-		}
-	}
+    $data = Db::name($table)->where(['status' => 1])->select()->toArray();
+    return $data;
 }
 
-/**
- * @Method: 文件格式大小
- * @param[type] $file_size [文件大小]
- */
-function to_size($file_size){
-	$file_size = $file_size-1;
-	if ($file_size >= 1099511627776){
-		$show_filesize = number_format(($file_size / 1099511627776),2) . " TB";
-	}
-	elseif ($file_size >= 1073741824) {
-		$show_filesize = number_format(($file_size / 1073741824),2) . " GB";
-	}
-	elseif ($file_size >= 1048576) {
-		$show_filesize = number_format(($file_size / 1048576),2) . " MB";
-	}
-	elseif ($file_size >= 1024) {
-		$show_filesize = number_format(($file_size / 1024),2) . " KB";
-	}
-	elseif ($file_size > 0) {
-		$show_filesize = $file_size . " b";
-	}
-	elseif ($file_size == 0 || $file_size == -1) {
-		$show_filesize = "0 b";
-	}
-	return $show_filesize;
-}
-
-//格式化附件展示
-function file_card($file,$view=''){
-	$image=['jpg','jpeg','png','gif'];
-	$type_icon = 'icon-sucaiziyuan';
-	$view_btn = '<a class="blue" href="'.$file['filepath'].'" download="'.$file['name'].'" target="_blank" title="下载查看"><i class="iconfont icon-tuiguangshezhi"></i></a>';
-	if($file['fileext'] == 'pdf'){
-		$type_icon = 'icon-lunwenguanli';
-		$view_btn = '<span class="file-view-pdf blue" data-href="'.$file['filepath'].'" title="在线查看"><i class="iconfont icon-yuejuan"></i></span>';
-	}
-	if(in_array($file['fileext'], $image)){
-		$type_icon = 'icon-sucaiguanli';
-		$view_btn = '<span class="file-view-img blue" data-href="'.$file['filepath'].'" title="在线查看"><i class="iconfont icon-tupianguanli"></i></span>';
-	}
-	$file_del='';
-	if(!empty($file['delete_time'])){
-		$file_del = 'file-hasdelete';
-	}
-	$item = '<div class="file-card '.$file_del.' file-'.$view.'" id="fileItem'.$file['id'].'">
-		<i class="file-icon iconfont '.$type_icon.'"></i>
-		<div class="file-info">
-			<div class="file-title" title="'.$file['name'].'">'.$file['name'].'</div>
-			<div class="file-ops">'.to_size($file['filesize']).'，'.date('Y-m-d H:i',$file['create_time']).'</div>
-		</div>
-		<div class="file-tool">'.$view_btn.'<span class="btn-delete red" data-id="'.$file['id'].'" data-uid="'.$file['admin_id'].'" title="删除"><i class="iconfont icon-shanchu"></i></span></div>
-	</div>';
-	return $item;
-}
-
-//读取报销类型
-function get_expense_cate()
+//读取模块基础数据
+function get_base_type_data($table,$type)
 {
-    $expense = Db::name('ExpenseCate')->where(['status' => 1])->select()->toArray();
-    return $expense;
-}
-
-//读取费用类型
-function get_cost_cate()
-{
-    $cost = Db::name('CostCate')->where(['status' => 1])->select()->toArray();
-    return $cost;
-}
-
-//读取印章类型
-function get_seal_cate()
-{
-    $seal = Db::name('SealCate')->where(['status' => 1])->select()->toArray();
-    return $seal;
-}
-
-//读取车辆类型
-function get_car_cate()
-{
-    $car = Db::name('CarCate')->where(['status' => 1])->select()->toArray();
-    return $car;
-}
-
-//读取企业主体
-function get_subject()
-{
-    $subject = Db::name('Subject')->where(['status' => 1])->select()->toArray();
-    return $subject;
-}
-
-//读取行业类型
-function get_industry()
-{
-    $industry = Db::name('Industry')->where(['status' => 1])->select()->toArray();
-    return $industry;
-}
-
-//读取服务类型
-function get_services()
-{
-    $services = Db::name('Services')->where(['status' => 1])->select()->toArray();
-    return $services;
-}
-
-//读取工作类型
-function get_work_cate()
-{
-    $work = Db::name('WorkCate')->where(['status' => 1])->select()->toArray();
-    return $work;
+    $data = Db::name($table)->where(['status' => 1,'types' => $type])->select()->toArray();
+    return $data;
 }
 
 //读取所属地区
@@ -547,6 +648,19 @@ function get_region_name($id){
 	else{
 		return $region['name'];
 	}
+}
+
+//读取分类子分类ids,返回id数组
+function get_cate_son($table='',$id=0,$is_self = 1)
+{
+    $cate = Db::name($table)->order('id desc')->select()->toArray();
+    $cate_list = get_data_node($cate, $id);
+    $ids_array = array_column($cate_list, 'id');
+    if ($is_self == 1) {
+        //包括自己在内
+        $ids_array[] = $id;
+    }
+    return $ids_array;
 }
 
 /**
@@ -571,6 +685,73 @@ function get_file($id)
         }
     }
     return false;
+}
+
+/***************************************************工具函数相关*****************************************************/
+
+//生成一个不会重复的字符串
+function make_token()
+{
+    $str = md5(uniqid(md5(microtime(true)), true));
+    $str = sha1($str); //加密
+    return $str;
+}
+
+//随机字符串，默认长度10
+function set_salt($num = 10)
+{
+    $str = 'qwertyuiopasdfghjklzxcvbnm1234567890';
+    $salt = substr(str_shuffle($str), 10, $num);
+    return $salt;
+}
+//密码加密
+function set_password($pwd, $salt)
+{
+    return md5(md5($pwd . $salt) . $salt);
+}
+
+/**
+ * 生成时间编号
+ * $prefix前缀
+ */
+function get_codeno($prefix=1){
+    $no = $prefix . date('YmdHis') . rand(1,9);
+    return $no;
+}
+
+/**
+ * 去除空格
+ * @param string $str 字符串
+ * @return string     字符串
+ */
+function trim_space($str=''){
+	$str = mb_ereg_replace('^(　| )+', '', $str);
+	$str = mb_ereg_replace('(　| )+$', '', $str);
+	return mb_ereg_replace('　　', "\n　　", $str);
+}
+
+/**
+ * 隐藏电话号码中间4位和邮箱
+ */
+function hidetel($phone)
+{
+	//隐藏邮箱
+	if (strpos($phone, '@')) {
+		$email_array = explode("@", $phone);
+		$prevfix = (strlen($email_array[0]) < 4) ? "" : substr($phone, 0, 3); //邮箱前缀
+		$count = 0;
+		$str = preg_replace('/([\d\w+_-]{0,100})@/', '***@', $phone, -1, $count);
+		$rs = $prevfix . $str;
+		return $rs;
+	} else {
+		//隐藏联系方式中间4位
+		$Istelephone = preg_match('/(0[0-9]{2,3}[\-]?[2-9][0-9]{6,7}[\-]?[0-9]?)/i', $phone); //固定电话
+		if ($Istelephone) {
+			return preg_replace('/(0[0-9]{2,3}[\-]?[2-9])[0-9]{3,4}([0-9]{3}[\-]?[0-9]?)/i', '$1****$2', $phone);
+		} else {
+			return preg_replace('/(1[0-9]{1}[0-9])[0-9]{4}([0-9]{4})/i', '$1****$2', $phone);
+		}
+	}
 }
 
 /**
@@ -642,13 +823,27 @@ function time_trans($time, $format = 'd')
 }
 
 /**
- * 计算按天数
+ * 时间戳格式化
+ * @param int    $time
+ * @param string $format 默认'Y-m-d H:i:s'
+ * @return string 完整的时间显示
  */
-function countDays($a=0, $b = 0)
+function to_date($time = NULL, $format = 'Y-m-d H:i:s')
 {
-	if ($a == 0) {
-		$a = date("Y-m-d");
-	}
+    $usec = $time = $time === null ? '' : $time;
+    if (strpos($time, '.')!==false) {
+        list($usec, $sec) = explode(".", $time);
+    } else {
+        $sec = 0;
+    }
+    return $time != '' ? str_replace('x', $sec, date($format, intval($usec))) : '';
+}
+
+/**
+ * 计算按相差天数
+ */
+function count_days($a=0, $b = 0)
+{
 	if ($b == 0) {
 		$b = date("Y-m-d");
 	}
@@ -664,6 +859,82 @@ function countDays($a=0, $b = 0)
 	}
 }
 
+/**
+ * @Method: 文件大小格式化
+ * @param[type] $file_size [文件大小]
+ */
+function to_size($file_size){
+	$file_size = $file_size-1;
+	if ($file_size >= 1099511627776){
+		$show_filesize = number_format(($file_size / 1099511627776),2) . " TB";
+	}
+	elseif ($file_size >= 1073741824) {
+		$show_filesize = number_format(($file_size / 1073741824),2) . " GB";
+	}
+	elseif ($file_size >= 1048576) {
+		$show_filesize = number_format(($file_size / 1048576),2) . " MB";
+	}
+	elseif ($file_size >= 1024) {
+		$show_filesize = number_format(($file_size / 1024),2) . " KB";
+	}
+	elseif ($file_size > 0) {
+		$show_filesize = $file_size . " b";
+	}
+	elseif ($file_size == 0 || $file_size == -1) {
+		$show_filesize = "0 b";
+	}
+	return $show_filesize;
+}
+
+//格式化附件展示
+function file_card($file,$view=''){
+	if(empty($file['file_id'])){
+		$file['file_id'] = $file['id'];
+	}
+	$image=['jpg','jpeg','png','gif'];
+	$office=['doc','docx','xls','xlsx','ppt','pptx'];
+	$type_icon = 'icon-sucaiziyuan';
+	$type = 0;//0下载+重命名+删除，1下载+查看+重命名+删除，2下载+查看+编辑+重命名+删除
+	$ext = 'zip';
+	$view_btn = '<a class="blue" href="'.$file['filepath'].'" download="'.$file['name'].'" target="_blank" title="下载"><i class="iconfont icon-xiazai"></i></a>';
+	
+	if($file['fileext'] == 'pdf'){
+		$type_icon = 'icon-kejian';
+		$ext = 'pdf';
+		$type = 1;
+	}
+	if(in_array($file['fileext'], $image)){
+		$type_icon = 'icon-sucaiguanli';
+		$ext = 'image';
+		$type = 1;
+	}
+	if(in_array($file['fileext'], $office)){
+		$type_icon = 'icon-lunwenshezhi';
+		$ext = 'office';
+		$type = 2;
+	}	
+	
+	if(empty($view)){
+		$view_btn = '<span class="file-ctrl blue" data-ctrl="edit" data-type="'.$type.'" data-fileid="'.$file['file_id'].'" data-ext="'.$ext.'" data-filename="'.$file['name'].'" data-href="'.$file['filepath'].'" data-id="'.$file['id'].'" data-uid="'.$file['admin_id'].'" title="附件操作"><i class="iconfont icon-gengduo1"></i></span><span class="name-edit green" style="display:none;" data-id="'.$file['id'].'" data-fileid="'.$file['file_id'].'" id="fileEdit'.$file['file_id'].'" data-name="'.$file['name'].'" data-fileext="'.$file['fileext'].'" title="重命名"></span><span class="file-delete red" style="display:none;" data-uid="'.$file['admin_id'].'" data-id="'.$file['id'].'" data-fileid="'.$file['file_id'].'" id="fileDel'.$file['file_id'].'" title="删除"></span>';
+	}
+	else{
+		$view_btn = '<span class="file-ctrl blue" data-ctrl="view" data-type="'.$type.'" data-fileid="'.$file['file_id'].'" data-ext="'.$ext.'" data-filename="'.$file['name'].'" data-href="'.$file['filepath'].'" title="附件操作"><i class="iconfont icon-gengduo1"></i></span>';
+	}
+	
+	$file_del='';
+	if(!empty($file['delete_time'])){
+		$file_del = 'file-hasdelete';
+	}
+	$item = '<div class="file-card '.$file_del.'" id="fileItem'.$file['file_id'].'">
+		<i class="file-icon iconfont '.$type_icon.'"></i>
+		<div class="file-info">
+			<div class="file-title" title="'.$file['name'].'">'.$file['name'].'</div>
+			<div class="file-ops">'.to_size($file['filesize']).'，'.date('Y-m-d H:i',$file['create_time']).'</div>
+		</div>
+		<div class="file-tool">'.$view_btn.'</div>
+	</div>';
+	return $item;
+}
 
 /**
  * fullcalendar日历控件方法1
@@ -684,170 +955,6 @@ function parseDateTime($string, $timeZone=null) {
  */
 function stripTime($datetime) {
   return new DateTime($datetime->format('Y-m-d'));
-}
-
-
-function add_log($type, $param_id = '', $param = [] ,$subject='')
-{
-	$title = '操作';
-	$session_admin = get_config('app.session_admin');
-	$uid = \think\facade\Session::get($session_admin);
-	$type_action = get_config('log.type_action');
-	if($type_action[$type]){
-		$title = $type_action[$type];
-	}
-	$data = [
-		'uid' => $uid,
-		'type' => $type,
-		'action' => $title,
-		'param_id' => $param_id,
-		'param' => json_encode($param),
-		'module' => strtolower(app('http')->getName()),
-		'controller' => strtolower(app('request')->controller()),
-		'function' => strtolower(app('request')->action()),
-		'ip' => app('request')->ip(),
-		'create_time' => time(),
-		'subject' => '系统'
-	];
-	if($subject!=''){
-		$data['subject'] =$subject;
-	}
-	else{
-		$rule = $data['module'] . '/' . $data['controller'] . '/' . $data['function'];
-		$rule_menu = Db::name('AdminRule')->where(array('src' => $rule))->find();
-		if($rule_menu){
-			$data['subject'] = $rule_menu['name'];
-		}
-	}
-	Db::name('AdminLog')->strict(false)->field(true)->insert($data);
-}
-
-/**
- * 发送站内信
- * @param  $user_id 接收人
- * @param  $template 消息模板
- * @param  $data 操作内容
- * @return
- */
-function sendMessage($user_id, $template, $data=[])
-{
-    $title = get_config('message.template')[$template]['title'];
-    $content = get_config('message.template')[$template]['content'];
-	foreach ($data as $key => $val) {
-		$title = str_replace('{' . $key . '}', $val, $title);
-		$content = str_replace('{' . $key . '}', $val, $content);
-	}
-	if(isset($data['from_uid'])){
-		$title = str_replace('{from_user}', get_admin($data['from_uid'])['name'], $title);
-		$content = str_replace('{from_user}', get_admin($data['from_uid'])['name'], $content);
-	}
-	$content = str_replace('{date}', date('Y-m-d'), $content);
-		
-    if (!$user_id) return false;
-    if (!$content) return false;
-    if (!is_array($user_id)) {
-        $users = explode(",", strval($user_id));
-    } else {
-        $users = $user_id;
-    }
-    $users = array_unique(array_filter($users));
-	//组合要发的消息
-	$send_data = [];
-	foreach ($users as $key => $value) {
-		$send_data[] = array(
-			'to_uid' => $value,//接收人
-			'action_id' => $data['action_id'],
-			'title' => $title,
-			'content' => $content,
-			'template' => $template,
-			'module_name' => strtolower(app('http')->getName()),
-			'controller_name' => strtolower(app('request')->controller()),
-			'action_name' => strtolower(app('request')->action()),
-			'send_time' => time(),
-			'create_time' => time()
-		);
-	}
-	$res = Db::name('Message')->strict(false)->field(true)->insertAll($send_data);
-    return $res;
-}
-
-function getMessageLink($template,$action_id){
-	$content='';
-	if(isset(get_config('message.template')[$template]['link'])){
-		$link = get_config('message.template')[$template]['link'];
-		$content = str_replace('{action_id}', $action_id, $link);
-	}	
-	return $content;
-}
-
-/**
- * 邮件发送
- * @param $to    接收人
- * @param string $subject 邮件标题
- * @param string $content 邮件内容(html模板渲染后的内容)
- * @throws Exception
- * @throws phpmailerException
- */
-function send_email($to, $subject = '', $content = '')
-{
-    $mail = new PHPMailer\PHPMailer\PHPMailer();
-    $email_config = Db::name('config')->where('name', 'email')->find();
-    $config = unserialize($email_config['content']);
-
-    $mail->CharSet = 'UTF-8'; //设定邮件编码，默认ISO-8859-1，如果发中文此项必须设置，否则乱码
-    $mail->isSMTP();
-    $mail->SMTPDebug = 0;
-
-    //调试输出格式
-    //$mail->Debugoutput = 'html';
-    //smtp服务器
-    $mail->Host = $config['smtp'];
-    //端口 - likely to be 25, 465 or 587
-    $mail->Port = $config['smtp_port'];
-    if ($mail->Port == '465') {
-        $mail->SMTPSecure = 'ssl'; // 使用安全协议
-    }
-    //Whether to use SMTP authentication
-    $mail->SMTPAuth = true;
-    //发送邮箱
-    $mail->Username = $config['smtp_user'];
-    //密码
-    $mail->Password = $config['smtp_pwd'];
-    //Set who the message is to be sent from
-    $mail->setFrom($config['email'], $config['from']);
-    //回复地址
-    //$mail->addReplyTo('replyto@example.com', 'First Last');
-    //接收邮件方
-    if (is_array($to)) {
-        foreach ($to as $v) {
-            $mail->addAddress($v);
-        }
-    } else {
-        $mail->addAddress($to);
-    }
-
-    $mail->isHTML(true); // send as HTML
-    //标题
-    $mail->Subject = $subject;
-    //HTML内容转换
-    $mail->msgHTML($content);
-    $status = $mail->send();
-    if ($status) {
-        return true;
-    } else {
-        //  echo "Mailer Error: ".$mail->ErrorInfo;// 输出错误信息
-        //  die;
-        return false;
-    }
-}
-
-/**
- * 生成时间编号
- * $prefix前缀
- */
-function get_codeno($prefix=1){
-    $no    =   $prefix . date('YmdHis') . rand(10,99);
-    return $no;
 }
 /**
  * 截取文章摘要
@@ -870,8 +977,46 @@ function get_desc_content($content, $count)
     return $res;
 }
 
-//查找数组索引
-function arraySearch($array, $searchFor) {
+/**
+ * 二维数组排序
+ * @param $array 要进行排序的select结果集
+ * @param $field  排序的字段
+ * @param $order 排序方式1降序2升序
+ */
+function sort_array($array = [], $field='', $order = 1)
+{
+    $count = count($select);
+    if ($order == 1) {
+        for ($i = 0; $i < $count; $i++) {
+            $k = $i;
+            for ($j = $i; $j < $count; $j++) {
+                if ($select[$k][$field] < $select[$j][$field]) {
+                    $k = $j;
+                }
+            }
+            $temp = $select[$i];
+            $select[$i] = $select[$k];
+            $select[$k] = $temp;
+        }
+        return $select;
+    } else {
+        for ($i = 0; $i < $count; $i++) {
+            $k = $i;
+            for ($j = $i; $j < $count; $j++) {
+                if ($select[$k][$field] > $select[$j][$field]) {
+                    $k = $j;
+                }
+            }
+            $temp = $select[$i];
+            $select[$i] = $select[$k];
+            $select[$k] = $temp;
+        }
+        return $select;
+    }
+}
+
+//查找数组索引,支持一维数组，二维数组查找
+function array_search_plus($array, $searchFor) {
     foreach($array as $key => $value) {
 		if(is_array($value)){
 			foreach($value as $key1 => $value1) {
@@ -889,18 +1034,54 @@ function arraySearch($array, $searchFor) {
     return false;
 }
 
-/**
- * PHP去除空格
- * @param string $str 字符串
- * @return string     字符串
- */
-function trim_space($str=''){
-	$str = mb_ereg_replace('^(　| )+', '', $str);
-	$str = mb_ereg_replace('(　| )+$', '', $str);
-	return mb_ereg_replace('　　', "\n　　", $str);
+//根据数据库查询出来二维数组获取某个字段拼接字符串
+function split_array_field($array = [], $field = '',$separator=',')
+{
+	$str='';
+    if (is_array($array)) {
+		if($field){
+			$ary = array();
+			foreach ($array as $value) {
+				$ary[] = $value[$field];
+			}
+		}
+		else{
+			$ary = $array;
+		}
+        $str = implode($separator, $ary);
+    }
+	return $str;
 }
+
+//数组转换字符串
+function array_to_string($array=[],$separator=',')
+{
+    if (!is_array($array)) {
+        $data_arr[] = $array;
+    } else {
+        $data_arr = $array;
+    }
+    $data_arr = array_filter($data_arr); //数组去空
+    $data_arr = array_unique($data_arr); //数组去重
+    $data_arr = array_merge($data_arr);
+    $string = $data_arr ? ',' . implode($separator, $data_arr) . ',' : '';
+    return $string ?: '';
+}
+
+//字符串转换数组
+function string_to_array($string='',$separator=',')
+{
+    if (is_array($string)) {
+        $data_arr = array_unique(array_filter($string));
+    } else {
+        $data_arr = $string ? array_unique(array_filter(explode($separator, $string))) : [];
+    }
+    $data_arr = $data_arr ? array_merge($data_arr) : [];
+    return $data_arr ?: [];
+}
+
 /**
- * PHP格式化字节大小
+ * 格式化字节大小
  * @param number $size      字节数
  * @param string $delimiter 数字和单位分隔符
  * @return string            格式化后的带单位的大小
@@ -920,7 +1101,7 @@ function format_bytes($size, $delimiter = '')
  * @param $length 截取长度
  * @return
  */
-function msubstr($str, $start = 0, $length=1, $charset = "utf-8", $suffix = true)
+function msubstr($str='', $start = 0, $length=1, $charset = "utf-8", $suffix = true)
 {
     if (function_exists("mb_substr")) {
         $slice = mb_substr($str, $start, $length, $charset);
@@ -941,6 +1122,7 @@ function msubstr($str, $start = 0, $length=1, $charset = "utf-8", $suffix = true
     return $suffix ? $slice . '...' : $slice;
 }
 
+//计算字符串长度
 function utf8_strlen($string = null)
 {
     preg_match_all("/./us", $string, $match);
@@ -948,17 +1130,38 @@ function utf8_strlen($string = null)
 }
 
 /**
- * PHP截取文字长度
+ * 截取文字长度
  * @return string
  */
 function sub_str($str,$len=20){
     $strlen=strlen($str)/3;#在编码utf8下计算字符串的长度，并把它交给变量$strlen
-    #echo $strlen;#输出字符串长度
     if($strlen<$len){
         return $str;
     }else{
         return mb_substr($str,0,$len,"utf-8")."...";
     }
+}
+
+/*
+* 下划线转驼峰
+* 思路:
+* step1.原字符串转小写,原字符串中的分隔符用空格替换,在字符串开头加上分隔符
+* step2.将字符串中每个单词的首字母转换为大写,再去空格,去字符串首部附加的分隔符.
+*/
+function camelize($uncamelized_words,$separator='_')
+{
+	$uncamelized_words = $separator. str_replace($separator, " ", strtolower($uncamelized_words));
+	return ltrim(str_replace(" ", "", ucwords($uncamelized_words)), $separator );
+}
+
+/**
+* 驼峰命名转下划线命名
+* 思路:
+* 小写和大写紧挨一起的地方,加上分隔符,然后全部转小写
+*/
+function uncamelize($camelCaps,$separator='_')
+{
+	return strtolower(preg_replace('/([a-z])([A-Z])/', "$1" . $separator . "$2", $camelCaps));
 }
 
 /**
@@ -1010,25 +1213,10 @@ function create_tree_list($pid, $arr, $group, &$tree = [])
             $child = create_tree_list($vo['id'], $arr, $group);
             if ($child) {
                 $vo['children'] = $child;
-            }
-            $tree[] = $vo;
-        }
-    }
-    return $tree;
-}
-
-function table_tree_list($before_task, $arr, $name='pid', &$tree = [])
-{
-    foreach ($arr as $key => $vo) {
-        if ($vo[$name] == $before_task) {
-            $child = table_tree_list($vo['id'], $arr, $name);
-            if ($child) {
-				$vo['isParent'] = true;
-                $vo['children'] = $child;
+                $vo['len'] = count($child);
             }
 			else{
-				$vo['isParent'] = false;
-                $vo['children'] = [];
+				$vo['len'] = 0;
 			}
             $tree[] = $vo;
         }
@@ -1060,31 +1248,31 @@ function set_recursion($result, $pid = 0, $level=-1)
 
 
 //递归返回树形菜单数据
-function get_tree($data, $pId ,$open=0,$deep=0)
-{
-	$tree = [];		
-	foreach($data as $k => $v)
-	{
-		$v['checkArr']=array('type'=>0, 'isChecked'=>0);	
-		$v['spread']=true;	
-		$v['parentId']=$v['pid'];	
-		if($deep>=$open){
-			$v['spread']=false;	
-		}			
-		$v['name']=$v['title'];	
-		if($v['pid'] == $pId){ 
-		//父亲找到儿子
-		$deep++;
-		$v['children'] = get_tree($data, $v['id'],$open,$deep);
-		$tree[] = $v;
-		//unset($data[$k]);
-	   }
+function get_tree($data, $pid = 0, $level = 1, $open = 1, $first = 0) {
+    $tree = array();
+    foreach ($data as $item) {
+		$item['checkArr']=array('type'=>0, 'isChecked'=>0);
+		$item['spread']=false;
+		if($level<=$open){
+			$item['spread']=true;
+		}
+		$item['level']=$level;
+        if ($item['pid'] == $pid) {
+            $children = get_tree($data, $item['id'],$level+1,$open);
+            if ($children) {
+                $item['children'] = $children;
+            }
+            $tree[] = $item;
+        }
+    }
+	if($first==1&&!empty($tree)){
+		$tree[0]['spread']=true;
 	}
-	return array_values($tree);
+    return $tree;
 }
 
 //递归返回树形菜单数据
-function get_select_tree($data, $pId ,$deep=0, $selected=[])
+function get_select_tree($data, $pid ,$deep=0, $selected=[])
 {
 	$tree = [];		
 	foreach($data as $k => $v)
@@ -1096,7 +1284,7 @@ function get_select_tree($data, $pId ,$deep=0, $selected=[])
 		if(in_array($v['id'],$selected)){
 			$vv['selected'] = 'selected';
 		}
-		if($v['pid'] == $pId){ 
+		if($v['pid'] == $pid){ 
 		//父亲找到儿子
 		$deep++;
 		$vv['children'] = get_select_tree($data, $v['id'],$deep,$selected);
@@ -1166,59 +1354,6 @@ function date_document($arrData)
         }
     }
     return $documents;
-}
-
-
-/**
- * 返回json数据，用于接口
- * @param    integer    $code
- * @param    string     $msg
- * @param    array      $data
- * @param    string     $url
- * @param    integer    $httpCode
- * @param    array      $header
- * @param    array      $options
- * @return   json
- */
-function to_assign($code = 0, $msg = "操作成功", $data = [], $action = '', $url = '', $httpCode = 200, $header = [], $options = [])
-{
-    $res = ['code' => $code];
-    $res['msg'] = $msg;
-    $res['action'] = $action;
-    $res['url'] = $url;
-    if (is_object($data)) {
-        $data = $data->toArray();
-    }
-    $res['data'] = $data;
-    $response = \think\Response::create($res, "json", $httpCode, $header, $options);
-    throw new \think\exception\HttpResponseException($response);
-}
-
-/**
- * 适配layui table数据列表的返回数据方法，用于接口
- * @param    integer    $code
- * @param    string     $msg
- * @param    array      $data
- * @param    integer    $httpCode
- * @param    array      $header
- * @param    array      $options
- * @return   json
- */
-function table_assign($code = 0, $msg = '请求成功', $data = [], $httpCode = 200, $header = [], $options = [])
-{
-    $res['code'] = $code;
-    $res['msg'] = $msg;
-    if (is_object($data)) {
-        $data = $data->toArray();
-    }
-    if (!empty($data['total'])) {
-        $res['count'] = $data['total'];
-    } else {
-        $res['count'] = 0;
-    }
-    $res['data'] = $data['data'];
-    $response = \think\Response::create($res, "json", $httpCode, $header, $options);
-    throw new \think\exception\HttpResponseException($response);
 }
 
 /**
@@ -1291,6 +1426,7 @@ function cny($amount){
     return implode('', $result);
 }
 
+
 /**
  * 金额展示规则,超过1万时以万为单位，低于1万时以千为单位，低于1千时以元为单位
  * @param string $money 金额
@@ -1309,98 +1445,7 @@ function format_money($money)
     return $data;
 }
 
-/**
- * 数组转换字符串（以逗号隔开）
- * @param
- * @return
- */
-function arrayToString($array)
-{
-    if (!is_array($array)) {
-        $data_arr[] = $array;
-    } else {
-        $data_arr = $array;
-    }
-    $data_arr = array_filter($data_arr); //数组去空
-    $data_arr = array_unique($data_arr); //数组去重
-    $data_arr = array_merge($data_arr);
-    $string = $data_arr ? ',' . implode(',', $data_arr) . ',' : '';
-    return $string ?: '';
-}
-
-/**
- * 字符串转换数组（以逗号隔开）
- * @param
- * @return
- */
-function stringToArray($string)
-{
-    if (is_array($string)) {
-        $data_arr = array_unique(array_filter($string));
-    } else {
-        $data_arr = $string ? array_unique(array_filter(explode(',', $string))) : [];
-    }
-    $data_arr = $data_arr ? array_merge($data_arr) : [];
-    return $data_arr ?: [];
-}
-
-/**
- * 二维数组排序(选择)
- * @param $select 要进行排序的select结果集
- * @param $field  排序的字段
- * @param $order 排序方式1降序2升序
- */
-function sort_select($select = array(), $field='', $order = 1)
-{
-    $count = count($select);
-    if ($order == 1) {
-        for ($i = 0; $i < $count; $i++) {
-            $k = $i;
-            for ($j = $i; $j < $count; $j++) {
-                if ($select[$k][$field] < $select[$j][$field]) {
-                    $k = $j;
-                }
-            }
-            $temp = $select[$i];
-            $select[$i] = $select[$k];
-            $select[$k] = $temp;
-        }
-        return $select;
-    } else {
-        for ($i = 0; $i < $count; $i++) {
-            $k = $i;
-            for ($j = $i; $j < $count; $j++) {
-                if ($select[$k][$field] > $select[$j][$field]) {
-                    $k = $j;
-                }
-            }
-            $temp = $select[$i];
-            $select[$i] = $select[$k];
-            $select[$k] = $temp;
-        }
-        return $select;
-    }
-}
-
-/**
- * 时间戳格式化
- * @param int    $time
- * @param string $format 默认'Y-m-d H:i'，x代表毫秒
- * @return string 完整的时间显示
- */
-function time_format($time = NULL, $format = 'Y-m-d H:i:s')
-{
-    $usec = $time = $time === null ? '' : $time;
-    if (strpos($time, '.')!==false) {
-        list($usec, $sec) = explode(".", $time);
-    } else {
-        $sec = 0;
-    }
-    return $time != '' ? str_replace('x', $sec, date($format, intval($usec))) : '';
-}
-
-
-
+/***************************************************校验相关*****************************************************/
 /**
  * 判断是否是手机浏览器
  *  @return bool
@@ -1439,10 +1484,11 @@ function is_email($user_email)
     }
 }
 
+
 /**
  * 获取客户浏览器类型
  */
-function getBrowser()
+function get_browser_name()
 {
     $Browser = $_SERVER['HTTP_USER_AGENT'];
     if (preg_match('/MSIE/i', $Browser)) {
@@ -1464,7 +1510,7 @@ function getBrowser()
 /**
  * 获取客户端系统
  */
-function getOS()
+function get_os_name()
 {
     $agent = $_SERVER['HTTP_USER_AGENT'];
     if (preg_match('/win/i', $agent)) {
@@ -1489,120 +1535,4 @@ function getOS()
         $OS = 'Other';
     }
     return $OS;
-}
-
-/**
- * 根据IP获取地址
- */
-function getAddress($ip)
-{
-    $res = file_get_contents("http://ip.360.cn/IPQuery/ipquery?ip=" . $ip);
-    $res = json_decode($res, 1);
-    if ($res && $res['errno'] == 0) {
-        return explode("\t", $res['data'])[0];
-    } else {
-        return '';
-    }
-}
-
-/**
- * 导出数据为excel表格
- * @param $data    一个二维数组,结构如同从数据库查出来的数组
- * @param $title   excel的第一行标题,一个数组,如果为空则没有标题
- * @param $filename 下载的文件名
- * @param exportexcel($arr,array('id','账户','密码','昵称'),'文件名!');
- */
-function exportexcel($data = array(), $title = array(), $filename = 'report')
-{
-    header("Content-type:application/octet-stream");
-    header("Accept-Ranges:bytes");
-    header("Content-type:application/vnd.ms-excel");
-    header("Content-Disposition:attachment;filename=" . $filename . ".xls");
-    header("Pragma: no-cache");
-    header("Expires: 0");
-    //导出xls 开始
-    if (!empty($title)) {
-        foreach ($title as $k => $v) {
-            $title[$k] = iconv("UTF-8", "GB2312", $v);
-        }
-        $title = implode("\t", $title);
-        echo "$title\n";
-    }
-    if (!empty($data)) {
-        foreach ($data as $key => $val) {
-            foreach ($val as $ck => $cv) {
-                $data[$key][$ck] = iconv("UTF-8", "GB2312", $cv);
-            }
-            $data[$key] = implode("\t", $data[$key]);
-        }
-        echo implode("\n", $data);
-    }
-}
-
-
-//根据数据库查询出来数组获取某个字段拼接字符串
-function getFieldArray($array = array(), $field = '')
-{
-    if (is_array($array) && $field) {
-        $ary = array();
-        foreach ($array as $value) {
-            $ary[] = $value[$field];
-        }
-        $str = implode(',', $ary);
-        return $str;
-    } else {
-        return false;
-    }
-}
-
-/**
- * curl 模拟GET请求
- * @author lee
- ***/
-function curl_get($url)
-{
-    //初始化
-    $ch = curl_init();
-    //设置抓取的url
-    curl_setopt($ch, CURLOPT_URL, $url);
-    //设置获取的信息以文件流的形式返回，而不是直接输出。
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE); // https请求 不验证证书
-    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE); // https请求 不验证hosts
-	curl_setopt($ch, CURLINFO_HEADER_OUT, TRUE);//添加这个获取请求头信息
-    //执行命令
-    $output = curl_exec($ch);
-	$meta = curl_getinfo($ch,CURLINFO_HEADER_OUT);
-	$accept = substr($meta,0,strpos($meta, 'Accept:'));
-	$host = substr($accept,strpos($accept, 'Host:')+5);
-    curl_close($ch); //释放curl句柄
-    return $output;
-}
-
-/**
- * 模拟post进行url请求
- * @param string $url
- * @param string $param
- */
-function curl_post($url = '', $post = array())
-{
-	$post['host'] = $_SERVER['HTTP_HOST'];
-    $curl = curl_init(); // 启动一个CURL会话
-    curl_setopt($curl, CURLOPT_URL, $url); // 要访问的地址
-    curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0); // 对认证证书来源的检查
-    curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0); // 从证书中检查SSL加密算法是否存在
-    curl_setopt($curl, CURLOPT_USERAGENT, $_SERVER['HTTP_USER_AGENT']); // 模拟用户使用的浏览器
-    curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1); // 使用自动跳转
-    curl_setopt($curl, CURLOPT_AUTOREFERER, 1); // 自动设置Referer
-    curl_setopt($curl, CURLOPT_POST, 1); // 发送一个常规的Post请求
-    curl_setopt($curl, CURLOPT_POSTFIELDS, $post); // Post提交的数据包
-    curl_setopt($curl, CURLOPT_TIMEOUT, 30); // 设置超时限制防止死循环
-    curl_setopt($curl, CURLOPT_HEADER, 0); // 显示返回的Header区域内容
-    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1); // 获取的信息以文件流的形式返回
-    $res = curl_exec($curl); // 执行操作
-    if (curl_errno($curl)) {
-        echo 'Errno' . curl_error($curl);//捕抓异常
-    }
-    curl_close($curl); // 关闭CURL会话
-    return $res; // 返回数据，json格式
 }

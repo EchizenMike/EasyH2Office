@@ -65,7 +65,15 @@
 			</td>
 		</tr>
 		<tr>
-			<td colspan="4"><strong class="red">注意：作为菜单显示类型时最多展示三级菜单，所以父级菜单/节点选项最大只能选择到2级，非菜单显示类型无限制；一级菜单需要填写菜单图标。</strong></td>
+			<td colspan="4" class="red" style="line-height:1.8">
+				<strong>注意：</strong>
+				<p><strong>1、作为菜单显示类型时最多展示三级菜单，所以父级菜单/节点选项最大只能选择到2级，非菜单显示类型无限制；一级菜单需要填写菜单图标。</strong></p>
+				<p><strong>2、节点URL的具体规则：“模块/控制器/方法”，模块只能是小写字母，控制器只能是小写字母，方法可以是小写字母，中间可以有"_"，示例如下：</strong></p>
+				<p class="green">『正确』user/rewardscate/datalist</p>
+				<p class="green">『正确』user/rewardscate/data_list</p>
+				<p class="red">『错误』user_a/rewardscate/datalist</p>
+				<p class="red">『错误』user/rewards_cate/datalist</p>
+			</td>
 		</tr>
 	</table>
 	{else/}
@@ -130,11 +138,19 @@
 			</td>
 		</tr>
 		<tr>
-			<td colspan="4"><strong class="red">注意：作为菜单显示类型时最多展示三级菜单，所以父级菜单/节点选项最大只能选择到2级，非菜单显示类型无限制；一级菜单需要填写菜单图标。</strong></td>
+			<td colspan="4" class="red" style="line-height:1.8">
+				<strong>注意：</strong>
+				<p><strong>1、作为菜单显示类型时最多展示三级菜单，所以父级菜单/节点选项最大只能选择到2级，非菜单显示类型无限制；一级菜单需要填写菜单图标。</strong></p>
+				<p><strong>2、节点URL的具体格式及规则：“模块/控制器/方法”，模块只能是小写字母，控制器只能是小写字母，方法可以是小写字母，中间可以有"_"，示例如下：</strong></p>
+				<p class="green">『正确』user/rewardscate/datalist</p>
+				<p class="green">『正确』user/rewardscate/data_list</p>
+				<p class="red">『错误』user_a/rewardscate/datalist</p>
+				<p class="red">『错误』user/rewards_cate/datalist</p>
+			</td>
 		</tr>
 	</table>
 	{/if}
-	<div class="py-3">
+	<div class="pt-4">
 		<input type="hidden" name="id" value="{$id}">
 		<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform">立即提交</button>
 		<button type="reset" class="layui-btn layui-btn-primary">重置</button>

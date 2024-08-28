@@ -1,48 +1,6 @@
-layui.define(['tool'], function (exports) {
+layui.define(['tool','oaPicker'], function (exports) {
 	const layer = layui.layer, tool = layui.tool;
 	const obj = {
-		addLink: function (id, topic_id, module, url, desc) {
-			let that = this;
-			layer.open({
-				title: '添加链接',
-				type: 1,
-				area: ['580px', '240px'],
-				content: '<div class="px-4 pt-4"><div class="layui-input-inline mr-3">URL</div><div class="layui-input-inline" style="width:500px;"><input type="text" id="box_url" placeholder="请输入URL" value="' + url + '" class="layui-input" autocomplete="off" /></div></div><div class="px-4 pt-4"><div class="layui-input-inline mr-3">说明 </div><div class="layui-input-inline" style="width:500px;"><input type="text" id="box_desc" placeholder="请输入链接说明" value="' + desc + '" class="layui-input" autocomplete="off" /></div></div>',
-				btnAlign: 'c',
-				btn: ['提交发布'],
-				yes: function () {
-					let callback = function (e) {
-						if(e.code==0){
-							layer.closeAll();
-							layer.msg(e.msg);
-							if(module == 'project'){
-								setTimeout(function(){
-									location.reload();
-								},2000)	
-							}
-							else{
-								tool.load('/' + module + '/index/view/id/' + topic_id);
-							}
-						}
-						else{
-							layer.msg(e.msg);
-						}				
-					}
-					let url = $('#box_url').val();
-					let desc = $('#box_desc').val();
-					if (url == '') {
-						layer.msg('请输入URL');
-						return false;
-					}
-					if (desc == '') {
-						layer.msg('请输入链接说明');
-						return false;
-					}
-					let postData = { id: id, topic_id: topic_id, module: module, url: url, desc: desc };
-					tool.post("/project/api/add_link", postData, callback);
-				}
-			})
-		},
 		log: function (topic_id, module) {
 			let callback = function (res) {
 				if (res.code == 0 && res.data.length > 0) {
@@ -111,15 +69,21 @@ layui.define(['tool'], function (exports) {
 		},
 		load: function (topic_id, module) {
 			let callback = function (res) {
-				if (res.code == 0) {
+				if (res.code == 0 && res.data.length > 0) {
 					let itemComment = '';
 					$.each(res.data, function (index, item) {
-						let pAdmin = '', ops = '';
-						if (item.padmin_id > 0) {
-							pAdmin = '<span class="blue">@' + item.pname + '</span>';
+						let to_names = '', ops = '' ,ptext='';
+						if (item.to_uids !='') {
+							to_names = '<span class="blue">@' + item.to_names + '</span>';
 						}
 						if (item.admin_id == login_admin) {
-							ops = '<a class="mr-4" data-event="edit" data-id="' + item.id + '">编辑</a><a class="mr-4" data-event="del" data-id="' + item.id + '">删除</a>';
+							ops = `<a class="mr-4" data-event="edit" data-id="${item.id}">编辑</a><a class="mr-4" data-event="del" data-id="${item.id}">删除</a>`;
+						}
+						else{
+							ops = `<a class="mr-4" data-event="replay" data-id="${item.id}" data-uid="${item.admin_id}" data-unames="${item.name}">引用</a>`;
+						}
+						if(item.pid>0){
+							ptext=`<div style="padding-bottom:8px;"><fieldset style="border:1px solid #eeeeee; background-color:#f9f9f9;"><legend>引用『${item.padmin}』${item.ptimes}的评论</legend>${item.pcontent}</fieldset></div>`;
 						}
 						itemComment += `
 							<div id="comment_${item.id}" class="comment-item py-3 border-t" data-content="${item.content}">
@@ -130,10 +94,9 @@ layui.define(['tool'], function (exports) {
 								<div class="comment-meta">
 									<strong class="comment-name">${item.name}</strong><span class="ml-2 gray" title="${item.create_time}">${item.times}${item.update_time}</span>
 								</div>
-								<div class="comment-content py-2">${pAdmin} ${item.content}</div>
-								<div class="comment-actions">
-									<a class="mr-4" data-event="replay" data-id="${item.id}" data-uid="${item.admin_id}">回复</a>${ops}
-								</div>
+								<div class="comment-content py-2">${to_names} ${item.content}</div>
+								${ptext}
+								<div class="comment-actions">${ops}</div>
 							</div>
 						</div>
 						`;
@@ -144,7 +107,7 @@ layui.define(['tool'], function (exports) {
 			}
 			tool.get("/project/api/project_comment", { tid: topic_id, m: module }, callback);
 		},
-		add: function (id, topic_id, pid, padmin_id, module, content, md_content) {
+		add: function (id,topic_id, module,content,pid,to_uids) {
 			let that = this;
 			let callback = function (res) {
 				that.load(topic_id, module);
@@ -153,7 +116,7 @@ layui.define(['tool'], function (exports) {
 				layer.msg('请完善评论内容');
 				return false;
 			}
-			let postData = { id: id, topic_id: topic_id, pid: pid, padmin_id: padmin_id, module: module, content: content, md_content: md_content };
+			let postData = { id: id, topic_id: topic_id, pid: pid, to_uids: to_uids, module: module, content: content};
 			tool.post("/project/api/add_comment", postData, callback);
 		},
 		del: function (id, topic_id, module) {
@@ -173,24 +136,38 @@ layui.define(['tool'], function (exports) {
 			});
 		},
 		//文本
-		textarea: function (id, topic_id, pid, padmin_id, module, txt) {
+		textarea: function (id, topic_id, module, txt, pid,to_uid,to_uname) {
 			let that = this;
+			let display='',usersInput='',height='286px';
+			if(id==0){
+				usersInput='<div class="layui-input-wrap" style="margin-bottom:5px;"><div class="layui-input-prefix"><i class="layui-icon layui-icon-at"></i></div><input type="text" placeholder="要提醒的员工" value="'+to_uname+'" readonly class="layui-input picker-admin" data-type="2" /><input type="hidden" id="to_uids" value="'+to_uid+'" /></div>';
+				height='320px';
+			}
 			layer.open({
 				type: 1,
-				title: '请输入内容',
-				area: ['800px', '360px'],
-				content: '<div style="padding:5px;"><textarea class="layui-textarea" id="editTextarea" style="width: 100%; height: 240px;">'+txt+'</textarea></div>',
+				title: '请输入评论内容',
+				area: ['600px', height],
+				content: '<div style="padding:5px;">'+usersInput+'<textarea class="layui-textarea" id="editTextarea" style="width: 100%; height: 160px;">'+txt+'</textarea></div>',
 				btnAlign: 'c',
 				btn: ['提交保存'],
 				yes: function () {
+					let to_uids = $("#to_uids").val();
 					let newval = $("#editTextarea").val();
 					if (newval != '') {
-						that.add(id, topic_id, pid, padmin_id, module, newval);
+						that.add(id,topic_id, module,newval,pid,to_uids);
 					} else {
-						layer.msg('请输入内容');
+						layer.msg('请输入评论内容');
 					}
 				}
 			})
+		},
+		parseUids: function (uids) {
+			uids=uids+'';
+			var numberArray = uids.split(',');
+			var uniqueArray = numberArray.filter((value, index, self) => {
+				return self.indexOf(value) === index;
+			});
+			return uniqueArray.join(',');
 		}
 	};
 	exports('oaComment', obj);

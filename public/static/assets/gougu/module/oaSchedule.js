@@ -1,8 +1,5 @@
 layui.define(['tool'], function (exports) {
-	const layer = layui.layer;
-	const form = layui.form;
-	const tool = layui.tool;
-	const laydate = layui.laydate;
+	const tool = layui.tool,layer = layui.layer,form = layui.form,laydate = layui.laydate;
 	const obj = {
 		loading:false,
 		load: function (tid) {
@@ -58,7 +55,7 @@ layui.define(['tool'], function (exports) {
 								</tr>
 							</table>`;
 			}
-			let content = `<div style="width:666px">
+			let content = `<div style="width:696px">
 							<table class="layui-table" style="margin:12px 12px 0;">
 								<tr>
 									<td class="layui-td-gray">执行员工</td>
@@ -88,7 +85,7 @@ layui.define(['tool'], function (exports) {
 			layer.open({
 				type: 1,
 				title: '工作记录详情',
-				area: ['692px', '432px'],
+				area: ['720px', '420px'],
 				content: content,
 				success: function () {
 
@@ -137,27 +134,23 @@ layui.define(['tool'], function (exports) {
 				detail['end_time_b'] = '09:30';
 				detail['remark'] = '';
 				
-				html_time = `<input id="start_time_a" name="start_time_a" style="width:160px; display:inline-block;" autocomplete="off" class="layui-input" value="${detail.start_time_a}" readonly lay-verify="required" lay-reqText="请选择"><div style="display: inline-block; margin-left:3px; width: 100px;"><select lay-filter="start_time_b" id="start_time_b"></select></div> 至 <input id="end_time_a" name="end_time_a" style="width:160px; display:inline-block;" autocomplete="off" class="layui-input" value="${detail.end_time_a}" readonly lay-verify="required" lay-reqText="请选择"><div style="display: inline-block; margin-left:3px; width: 100px;"><select lay-filter="end_time_b" id="end_time_b"></select></div>`;
+				html_time = `<input id="start_time_a" name="start_time_a" style="width:90px; display:inline-block;" autocomplete="off" class="layui-input" value="${detail.start_time_a}" readonly lay-verify="required" lay-reqText="请选择"><div style="display: inline-block; margin-left:3px; width: 80px;"><select lay-filter="start_time_b" id="start_time_b"></select></div> 至 <input id="end_time_a" name="end_time_a" style="width:90px; display:inline-block;" autocomplete="off" class="layui-input" value="${detail.end_time_a}" readonly lay-verify="required" lay-reqText="请选择"><div style="display: inline-block; margin-left:3px; width: 80px;"><select lay-filter="end_time_b" id="end_time_b"></select></div>`;
 			}			
 			let callback = function(e){
 				that.loading = false;
 				if(e.code==0){
 					let cate = e.data;	
-					let content = `<form class="layui-form" style="width:666px">
+					let content = `<form class="layui-form" style="width:696px">
 							<table class="layui-table" style="margin:12px 12px 0;">
 								<tr>
 									<td class="layui-td-gray">时间范围 <span style="color: red">*</span></td>
-									<td colspan="3">${html_time}</td>
+									<td>${html_time}</td>
+									<td class="layui-td-gray">工作类别<font>*</font></td>
+									<td style="width: 120px;"><select name="cid" lay-filter="work_cate" id="work_cate"></select></td>
 								</tr>
 								<tr>
 									<td class="layui-td-gray">工作类型<font>*</font></td>
-									<td>
-										<input type="radio" name="labor_type" lay-filter="labor_type" value="1" title="案头工作"><input type="radio" name="labor_type" value="2" lay-filter="labor_type" title="外勤工作">
-									</td>
-									<td class="layui-td-gray">工作类别<font>*</font></td>
-									<td>
-										<select name="cid" lay-filter="work_cate" id="work_cate"></select>
-									</td>
+									<td colspan="3"><input type="radio" name="labor_type" lay-filter="labor_type" value="1" title="案头工作"><input type="radio" name="labor_type" value="2" lay-filter="labor_type" title="外勤工作"></td>
 								</tr>
 								<tr>
 									<td class="layui-td-gray">工作内容 <span style="color: red">*</span></td>
@@ -175,7 +168,7 @@ layui.define(['tool'], function (exports) {
 					layer.open({
 						type: 1,
 						title: title,
-						area: ['692px', '432px'],
+						area: ['720px', '420px'],
 						content: content,
 						success: function () {
 							if (detail['id'] == 0) {

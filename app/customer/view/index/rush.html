@@ -1,17 +1,13 @@
 {extend name="../../base/view/common/base" /}
 <!-- 主体 -->
 {block name="body"}
-<div class="p-3">
+<div class="p-page">
 	<div class="layui-row gg-form-bar border-x border-t">
-		<div class="layui-input-inline">
-			<button class="layui-btn layui-btn-danger" lay-submit="" lay-filter="webform">去抢客</button>
-		</div>
+		<div class="layui-input-inline"><button class="layui-btn layui-btn-danger" lay-submit="" lay-filter="webform">去抢客</button></div>
+		<div class="layui-input-inline red">每点击一次随机获取20个公海客户的信息，每天最多可抢<strong class="mx-1">{$max_num|default="0"}</strong>个客户，你今天已抢了<strong class="mx-1" id="count">{$count}</strong>个客户</div>
     </div>
 	<table class="layui-hide" id="test" lay-filter="test"></table>
 </div>
-<script type="text/html" id="toolbarDemo">
-  <div class="red">每点击一次随机获取10个公海客户的信息，每天最多可抢<strong class="mx-1">{$max_num}</strong>个客户，你今天已抢了<strong class="mx-1" id="count">{$count}</strong>个客户</div>
-</script>
 {/block}
 <!-- /主体 -->
 
@@ -24,25 +20,24 @@
 		layui.pageTable = table.render({
 			elem: '#test',
 			title: '抢客宝列表',
-			toolbar: '#toolbarDemo',
+			toolbar: false,
 			defaultToolbar: false,
 			url: "/customer/index/rush", //数据接口
 			cellMinWidth: 80,
 			page: false, //开启分页
-			limit: 10,
-			height: 'full-82',
+			limit: 20,
+			height: 'full-112',
 			cols: [
 				[ //表头
 					{
-						field: 'id',title: '编号',align: 'center',width: 80,templet: function (d) {
-							return'C' + d.id;
-						}
+						field: 'id',title: 'ID号',align: 'center',width: 80
 					},{
 						field: 'name',
 						title: '客户名称',
-						templet: '<div><a data-href="/customer/index/view/id/{{d.id}}.html" class="side-a">{{d.name}}</a></div>'
+						minWidth:240,
+						templet: '<div><a data-href="/customer/customer/view/id/{{d.id}}.html" class="side-a">{{d.name}}</a></div>'
 					},{
-						field: 'user',
+						field: 'contacter',
 						title: '联系人',
 						align: 'center',
 						width: 80
@@ -52,25 +47,34 @@
 						align: 'center',
 						width: 100
 					},{
-						field: 'qq',
-						title: 'QQ号码',
+						field: 'email',
+						title: '电子邮箱',
+						width: 200
+					},{
+						field: 'grade',
+						title: '客户等级',
 						align: 'center',
 						width: 100
-					},{
-						field: 'wechat',
-						title: '微信号',
-						align: 'center',
-						width: 90
 					},{
 						field: 'source',
 						title: '来源渠道',
 						align: 'center',
 						width: 100
-					}, {
+					},{
 						field: 'industry',
-						title: '客户所属行业',
+						title: '所属行业',
 						align: 'center',
 						width: 120
+					},{
+						field: 'create_time',
+						title: '创建时间',
+						align: 'center',
+						width: 150
+					},{
+						field: 'update_time',
+						title: '最后编辑时间',
+						align: 'center',
+						width: 150
 					},{
 						field: 'right',
 						fixed:'right',

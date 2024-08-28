@@ -22,19 +22,19 @@
 					<span class="layui-btn layui-btn-normal layui-btn-xs reset-psw" data-id="{$detail.id}">重设新密码</span>
 				{else/}
 					{$detail.reg_pwd}
-					<span class="layui-btn layui-btn-normal layui-btn-xs" onclick="copyToClip('{$detail.reg_pwd}');">复制初始密码</span>
+					<span class="layui-btn layui-btn-normal layui-btn-xs copy-psw" data-pwd="{$detail.reg_pwd}">复制初始密码</span>
 				{/empty}
 			</td>
 			<td class="layui-td-gray">员工状态</td>
 			<td>
 				{eq name="$detail.status" value="0"}<span style="color:#FF5722">禁止登录</span>{/eq}
-				{eq name="$detail.status" value="1"}<span style="color:#009688">正常</span>{/eq}
+				{eq name="$detail.status" value="1"}<span style="color:#16b777">正常</span>{/eq}
 				{eq name="$detail.status" value="2"}<span style="color:#FFB800">已离职</span>{/eq}
 			</td>
-			<td rowspan="3" class="layui-td-gray">头像</td>
-			<td rowspan="3" valign="top" style="width: 100px;">
+			<td rowspan="5" class="layui-td-gray">头像</td>
+			<td rowspan="5" valign="top" style="width: 160px;">
 				<div class="layui-upload">
-					<img src="{$detail.thumb}" style="width:100px; height:100px; max-width:100%" />
+					<img src="{$detail.thumb}" style="width:160px; height:160px; max-width:100%" />
 				</div>
 			</td>
 		</tr>
@@ -55,22 +55,26 @@
 			</td>
 		</tr>
 		<tr>
-			<td class="layui-td-gray">所在部门</td>
+			<td class="layui-td-gray">所在主部门</td>
 			<td>{$detail.department}</td>
+			<td class="layui-td-gray">所在次部门</td>
+			<td colspan="3">{$detail.department_names|default=''}</td>
+		</tr>
+		<tr>
 			<td class="layui-td-gray">岗位职称</td>
 			<td>{$detail.position}</td>
 			<td class="layui-td-gray">入职日期</td>
 			<td>
 				{$detail.entry_time | date='Y-m-d'}
 			</td>
-		</tr>
-		<tr>
 			<td class="layui-td-gray">员工类型</td>
 			<td>
 				{eq name="$detail.type" value="3"}<span style="color:#5FB878">实 习 生</span>{/eq}
 				{eq name="$detail.type" value="2"}<span style="color:#01AAED">试用员工</span>{/eq}
 				{eq name="$detail.type" value="1"}<span style="color:#393D49">正式员工</span>{/eq}
 			</td>
+		</tr>
+		<tr>
 			<td class="layui-td-gray-2">最后登录时间</td>
 			<td>
 				{$detail.last_login_time}
@@ -130,7 +134,20 @@
 <script>
 	const moduleInit = ['tool'];
 	function gouguInit() {
-		var tool=layui.tool;	
+		var tool=layui.tool;
+		//拷贝密码
+		$('.copy-psw').on('click',function(){
+			let pwd=$(this).data('pwd');
+			lay.clipboard.writeText({
+				text:pwd,
+				done:function(){
+					layer.msg('已复制初始化密码');
+				},
+				error:function(){
+					layer.msg('复制失败，请点击详情手动复制');
+				}
+			});
+		});
 		//重设密码
 		$('.reset-psw').on('click',function(){
 			let id=$(this).data('id');
@@ -149,30 +166,10 @@
 						}	
 					}
 				}
-				tool.post("/user/user/reset_psw",{id: id}, callback);
+				tool.post("/user/admin/reset_psw",{id: id}, callback);
 				layer.close(index);
 			})	
 		});
-	}
-	
-	//拷贝密码
-	function copyToClip(content) {
-		if (navigator.clipboard) {
-			navigator.clipboard.writeText(content);
-		} else {
-			var copy_textarea = document.createElement('textarea');
-			copy_textarea.style.position = 'fixed';
-			copy_textarea.style.clip = 'rect(0 0 0 0)';
-			copy_textarea.style.top = '10px';
-			copy_textarea.value = content;
-			document.body.appendChild(copy_textarea);
-			copy_textarea.select();
-			document.execCommand('copy', true);
-			document.body.removeChild(copy_textarea);
-		}
-		if (content != '') {
-			layer.msg('复制成功');
-		}
 	}
 </script>
 {/block}

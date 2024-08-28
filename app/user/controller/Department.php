@@ -1,9 +1,15 @@
 <?php
 /**
- * @copyright Copyright (c) 2021 勾股工作室
- * @license https://opensource.org/licenses/GPL-3.0
- * @link https://www.gougucms.com
- */
++-----------------------------------------------------------------------------------------------
+* GouGuOPEN [ 左手研发，右手开源，未来可期！]
++-----------------------------------------------------------------------------------------------
+* @Copyright (c) 2021~2024 http://www.gouguoa.com All rights reserved.
++-----------------------------------------------------------------------------------------------
+* @Licensed 勾股OA，开源且可免费使用，但并不是自由软件，未经授权许可不能去除勾股OA的相关版权信息
++-----------------------------------------------------------------------------------------------
+* @Author 勾股工作室 <hdm58@qq.com>
++-----------------------------------------------------------------------------------------------
+*/
 
 declare (strict_types = 1);
 
@@ -20,14 +26,13 @@ class Department extends BaseController
     public function index()
     {
         if (request()->isAjax()) {
-            $cate = Db::name('Department')
-                ->field('d.*,a.name as leader')
-                ->alias('d')
-                ->join('Admin a', 'a.id = d.leader_id', 'LEFT')
-                ->order('d.sort desc,d.id asc')
-                ->select();
-			$list = generateTree($cate);
-            return to_assign(0, '', $list);
+            $list = Db::name('Department')->order('sort desc,id asc')->select()->toArray();
+			foreach ($list as $key => &$v) {
+				$admin_array = Db::name('Admin')->where([['id','in',$v['leader_ids']]])->column('name');
+				$v['leader'] = split_array_field($admin_array);
+			}
+			$res = generateTree($list);
+            return to_assign(0, '', $res);
         } else {
             return view();
         }
@@ -46,18 +51,11 @@ class Department extends BaseController
                     return to_assign(1, $e->getError());
                 }
                 $param['update_time'] = time();
-				if(!empty($param['leader_id'])){
-					$leader_did = Db::name('Department')->where([['leader_id','=',$param['leader_id']],['id','<>',$param['id']]])->value('id');
-					if(!empty($leader_did)){
-						return to_assign(1, '部门负责人选择有误，不能选择其他部门负责人');
-					}
-				}
-
                 $department_array = get_department_son($param['id']);
                 if (in_array($param['pid'], $department_array)) {
                     return to_assign(1, '上级部门不能是该部门本身或其下属部门');
                 } else {
-                    Db::name('Department')->strict(false)->field(true)->update($param);
+                    Db::name('Department')->strict(false)->field(true)->update($param);					
                     add_log('edit', $param['id'], $param);
                     return to_assign();
                 }
@@ -68,12 +66,6 @@ class Department extends BaseController
                     // 验证失败 输出错误信息
                     return to_assign(1, $e->getError());
                 }
-				if(!empty($param['leader_id'])){
-					$leader_did = Db::name('Department')->where([['leader_id','=',$param['leader_id']]])->value('id');
-					if(!empty($leader_did)){
-						return to_assign(1, '部门负责人选择有误，不能选择其他部门负责人');
-					}
-				}
                 $did = Db::name('Department')->strict(false)->field(true)->insertGetId($param);
                 add_log('add', $did, $param);
                 return to_assign();
@@ -85,12 +77,8 @@ class Department extends BaseController
             if ($id > 0) {
                 $detail = Db::name('Department')->where(['id' => $id])->find();
 				//获取子部门
-				$department = get_department();
-				$department_list = get_data_node($department, $id);
-				$department_array = array_column($department_list, 'id');
-				//包括自己部门在内
-				$department_array[] = $id;
-                $users = Db::name('Admin')->where([['did','in',$department_array], ['status','=',1]])->select();
+				$department_array = get_department_son($id);
+                $users = get_department_employee($id);
                 View::assign('users', $users);
                 View::assign('detail', $detail);
             }

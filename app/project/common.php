@@ -1,15 +1,103 @@
 <?php
 /**
- * @copyright Copyright (c) 2022 勾股工作室
- * @license https://opensource.org/licenses/GPL-3.0
- * @link https://www.gougucms.com
- */
-/**
-======================
- *模块数据获取公共文件
-======================
- */
++-----------------------------------------------------------------------------------------------
+* GouGuOPEN [ 左手研发，右手开源，未来可期！]
++-----------------------------------------------------------------------------------------------
+* @Copyright (c) 2021~2024 http://www.gouguoa.com All rights reserved.
++-----------------------------------------------------------------------------------------------
+* @Licensed 勾股OA，开源且可免费使用，但并不是自由软件，未经授权许可不能去除勾股OA的相关版权信息
++-----------------------------------------------------------------------------------------------
+* @Author 勾股工作室 <hdm58@qq.com>
++-----------------------------------------------------------------------------------------------
+*/
+
 use think\facade\Db;
+
+//获取项目状态
+function get_status($id=0)
+{
+	$status_array = ['未设置','未开始','进行中','已完成','已关闭'];
+	if($id==0){
+		return $status_array;
+	}
+	else{
+		$news_array=[];
+		foreach($status_array as $key => $value){
+			if($key>0){
+				$news_array[]=array(
+					'id'=>$key,
+					'title'=>$value,
+				);
+			}
+		}
+		return $news_array;
+	}
+}
+
+//根据状态读取审批状态名称
+function status_name($status=0)
+{
+	$status_array = get_status();
+	return $status_array[$status];
+}
+
+
+//获取任务全部状态
+function get_task_status($id=0)
+{
+	$status_task_array = ['未设置','未开始','进行中','已完成','已拒绝','已关闭'];
+	if($id==0){
+		return $status_task_array;
+	}
+	else{
+		$news_array=[];
+		foreach($status_task_array as $key => $value){
+			if($key>0){
+				$news_array[]=array(
+					'id'=>$key,
+					'title'=>$value,
+				);
+			}
+		}
+		return $news_array;
+	}
+}
+
+//根据任务状态读取审批状态名称
+function status_task_name($status=0)
+{
+	$status_task_array = get_task_status();
+	return $status_task_array[$status];
+}
+
+//获取任务紧急程度
+function get_priority($id=0)
+{
+	$priority_array = ['未设置','低','中','高','紧急'];
+	if($id==0){
+		return $priority_array;
+	}
+	else{
+		$news_array=[];
+		foreach($priority_array as $key => $value){
+			if($key>0){
+				$news_array[]=array(
+					'id'=>$key,
+					'title'=>$value,
+				);
+			}
+		}
+		return $news_array;
+	}
+}
+
+//根据任务紧急程度名称
+function priority_name($priority=0)
+{
+	$priority_array = get_priority();
+	return $priority_array[$priority];
+}
+
 //是否是项目管理员,count>1即有权限
 function isAuthProject($uid)
 {
@@ -18,7 +106,7 @@ function isAuthProject($uid)
 	}
 	$map = [];
 	$map[] = ['name', '=', 'project_admin'];
-	$map[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',uids)")];
+	$map[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',conf_1)")];
     $count = Db::name('DataAuth')->where($map)->count();
     return $count;
 }
@@ -26,7 +114,7 @@ function isAuthProject($uid)
 function add_project_log($uid,$module,$param,$old)
 {
 	$log_data = [];
-	$key_array = ['id', 'create_time', 'update_time', 'delete_time', 'over_time', 'md_content'];
+	$key_array = ['id','scene', 'create_time', 'update_time', 'delete_time', 'over_time', 'md_content'];
 	foreach ($param as $key => $value) {
 		if (!in_array($key, $key_array)) {
 			$log_data[] = array(
@@ -54,13 +142,6 @@ function get_project($uid = 0)
     $project = Db::name('Project')->where($map)->select()->toArray();
     return $project;
 }
-//读取工作分类列表
-function work_cate()
-{
-    $cate = Db::name('WorkCate')->where(['status' => 1])->order('id desc')->select()->toArray();
-    return $cate;
-}
-
 
 //任务分配情况统计
 function plan_count($arrData)
@@ -106,33 +187,4 @@ function cross_count($arrData)
         }
     }
     return $documents;
-}
-
-//读取后置任务的ids
-function admin_after_task_son($task_id = 0, $list = [])
-{
-    $task_ids = Db::name('ProjectTask')->where([['before_task','in',$task_id]])->column('id');
-	if(!empty($task_ids)){
-		$new_list = array_merge($list, $task_ids);
-		$list = admin_after_task_son($task_ids, $new_list);
-	}
-	return $list;
-}
-
-//读取父任务的ids
-function admin_parent_task($task_id = 0, $list = [])
-{
-    $pids = Db::name('ProjectTask')->where([['pid','in',$task_id]])->column('id');
-	if(!empty($pids)){
-		$new_list = array_merge($list, $pids);
-		$list = admin_parent_task($pids, $new_list);
-	}
-	return $list;
-}
-
-//获取后置任务
-function after_task($task_id)
-{
-    $list = Db::name('ProjectTask')->where('before_task',$task_id)->order('id desc')->select()->toArray();
-    return $list;
 }

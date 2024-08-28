@@ -1,9 +1,15 @@
 <?php
 /**
- * @copyright Copyright (c) 2022 勾股工作室
- * @license https://opensource.org/licenses/GPL-3.0
- * @link https://www.gougucms.com
- */
++-----------------------------------------------------------------------------------------------
+* GouGuOPEN [ 左手研发，右手开源，未来可期！]
++-----------------------------------------------------------------------------------------------
+* @Copyright (c) 2021~2024 http://www.gouguoa.com All rights reserved.
++-----------------------------------------------------------------------------------------------
+* @Licensed 勾股OA，开源且可免费使用，但并不是自由软件，未经授权许可不能去除勾股OA的相关版权信息
++-----------------------------------------------------------------------------------------------
+* @Author 勾股工作室 <hdm58@qq.com>
++-----------------------------------------------------------------------------------------------
+*/
 
 declare (strict_types = 1);
 namespace app\contract\model;
@@ -29,9 +35,9 @@ class ContractLog extends Model
 			'type' => '性质',
 			'subject_id' => '签约主体',
 			'customer' => '客户名称',
-			'customer_name' => '客户代表姓名',
-			'customer_mobile' => '客户电话',
-			'customer_address'=> '客户地址',
+			'contact_name' => '客户代表姓名',
+			'contact_mobile' => '客户电话',
+			'contact_address'=> '客户地址',
 			'start_time' => '开始时间',
 			'end_time' => '结束时间',
 			'prepared_uid' => '制定人',
@@ -40,9 +46,9 @@ class ContractLog extends Model
 			'share_ids'  => '共享人员',
 			'sign_time'  => '签订时间',
 			'cost' => '金额',
-			'is_tax' => '是否含税',
-			'tax' => '税点',
-			'check_status' => '状态',
+			'stop_status' => '中止状态',
+			'void_status' => '作废状态',
+			'check_status' => '审批状态',
 			'status' => '状态',
 			'archive_status' => '归档状态',
 			'file_ids' => '合同附件',
@@ -91,20 +97,20 @@ class ContractLog extends Model
                 $v['new_content'] = Db::name('ContractCate')->where(['id' => $v['new_content']])->value('title');
             }
 			if ($v['field'] == 'subject_id') {
-                $v['old_content'] = Db::name('InvoiceSubject')->where(['id' => $v['old_content']])->value('title');
-                $v['new_content'] = Db::name('InvoiceSubject')->where(['id' => $v['new_content']])->value('title');
-            }
-			if ($v['field'] == 'tax') {
-                $v['old_content'] = $v['old_content'] . '%';
-                $v['new_content'] = $v['new_content'] . '%';
-            }
-			if ($v['field'] == 'is_tax') {
-                $v['old_content'] = $v['old_content'] == 1?'是':'否';
-                $v['new_content'] = $v['new_content'] == 1?'是':'否';
+                $v['old_content'] = Db::name('Enterprise')->where(['id' => $v['old_content']])->value('title');
+                $v['new_content'] = Db::name('Enterprise')->where(['id' => $v['new_content']])->value('title');
             }
 			if ($v['field'] == 'archive_status') {
                 $v['old_content'] = $v['old_content'] == 1?'已归档':'未归档';
                 $v['new_content'] = $v['new_content'] == 1?'已归档':'未归档';
+            }
+			if ($v['field'] == 'stop_status') {
+                $v['old_content'] = $v['old_content'] == 1?'已中止':'未中止';
+                $v['new_content'] = $v['new_content'] == 1?'已中止':'未中止';
+            }
+			if ($v['field'] == 'void_status') {
+                $v['old_content'] = $v['old_content'] == 1?'已作废':'未作废';
+                $v['new_content'] = $v['new_content'] == 1?'已作废':'未作废';
             }
             if (strpos($v['field'], '_ids') !== false) {
                 $old_ids = Db::name('Admin')->where('id', 'in', $v['old_content'])->column('name');

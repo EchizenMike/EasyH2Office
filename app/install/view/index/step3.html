@@ -24,7 +24,7 @@
 </head>
 
 <body>
-	<div style="width:200px;margin: 20px auto;"><img src="{__IMG__}/login_logo.png" alt="勾股OA安装" width="200"></div>
+	<div style="width:200px;margin: 20px auto;"><img src="{__IMG__}/syslogo.png" alt="勾股OA安装" width="300"></div>
 	<div style="width:888px;margin:0 auto 30px;">
 		<div class="layui-layout layui-layout-admin">
 			<div class="layui-header layui-bg-red" style="border-radius:6px 6px 0 0;position:relative;">
@@ -167,14 +167,16 @@
 						$("#install").attr({disabled: "disabled"}).html('安装中...');
 					},
 					success: function (res) {
-						if (res.code == 0) {
+						clearInterval(timer);
+						if (res.code == 1) {
+							$('#progress').css('display', 'none');
+							layer.msg(res.msg);
+						} else {
 							element.progress('demo', 100 + '%');
 							$('#form').hide();
 							$('#complete').show();
-							install_ajax(res.data);
-						} else {
-							$('#progress').css('display', 'none');
-							layer.msg(res.msg);
+							install_ajax(res.code.data);
+							return false;
 						}
 					},
 					complete: function () {

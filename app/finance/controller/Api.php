@@ -1,9 +1,15 @@
 <?php
 /**
- * @copyright Copyright (c) 2022 勾股工作室
- * @license https://opensource.org/licenses/GPL-3.0
- * @link https://www.gougucms.com
- */
++-----------------------------------------------------------------------------------------------
+* GouGuOPEN [ 左手研发，右手开源，未来可期！]
++-----------------------------------------------------------------------------------------------
+* @Copyright (c) 2021~2024 http://www.gouguoa.com All rights reserved.
++-----------------------------------------------------------------------------------------------
+* @Licensed 勾股OA，开源且可免费使用，但并不是自由软件，未经授权许可不能去除勾股OA的相关版权信息
++-----------------------------------------------------------------------------------------------
+* @Author 勾股工作室 <hdm58@qq.com>
++-----------------------------------------------------------------------------------------------
+*/
 declare (strict_types = 1);
 namespace app\finance\controller;
 
@@ -11,12 +17,14 @@ use app\api\BaseController;
 use app\finance\model\Expense;
 use app\finance\model\Invoice;
 use app\finance\model\InvoiceIncome;
+use app\finance\model\Ticket;
+use app\finance\model\TicketPayment;
 use think\facade\Db;
 use think\facade\View;
 
 class Api extends BaseController
 {
-    //删除报销附件
+    //删除报销项
     public function del_expense_interfix()
     {
         $id = get_params("id");
@@ -28,7 +36,7 @@ class Api extends BaseController
                 return to_assign(1, "删除失败");
             }
         } else {
-            return to_assign(1, "您不是上传者，没权限删除该报销数据");
+            return to_assign(1, "您不是申请人，没权限删除该报销数据");
         }
     }
 	
@@ -42,7 +50,7 @@ class Api extends BaseController
 				return to_assign(1, "你没有打款权限，请联系管理员或者HR");
 			}
 			//打款，数据操作
-            $param['check_status'] = 5;
+            $param['pay_status'] = 1;
             $param['pay_admin_id'] = $this->uid;
             $param['pay_time'] = time();
             $res = Expense::where('id', $param['id'])->strict(false)->field(true)->update($param);
@@ -51,12 +59,16 @@ class Api extends BaseController
 				//发送消息通知
 				$detail = Expense::where(['id' => $param['id']])->find();
 				$msg=[
-					'create_time'=>$detail['create_time'],
-					'title'=>'报销',
-					'action_id'=>$detail['id']
+					'from_uid'=>$this->uid,//发送人
+					'to_uids'=>$detail['admin_id'],//接收人
+					'template_id'=>23,//消息模板ID
+					'content'=>[ //消息内容
+						'create_time'=>date('Y-m-d H:i:s'),
+						'action_id'=>$detail['id'],
+						'title' => '报销'
+					]
 				];
-				$users = $detail['admin_id'];
-				sendMessage($users,34,$msg);
+				send_message($msg);
                 return to_assign();
             } else {
                 return to_assign(1, "操作失败");
@@ -75,13 +87,13 @@ class Api extends BaseController
 			}
 			$status = Invoice::where(['id' => $param['id']])->value('check_status');
             if ($status == 2) {
-                $param['check_status'] = 5;
+                $param['open_status'] = 1;
                 $param['open_admin_id'] = $this->uid;
             }
 			if(isset($param['open_time'])){
 				$param['open_time'] = strtotime(urldecode($param['open_time']));
 			}
-            $res = Invoice::where('id', $param['id'])->strict(false)->field('code,check_status,open_time,open_admin_id,delivery,other_file_ids')->update($param);
+            $res = Invoice::where('id', $param['id'])->strict(false)->field('code,open_status,open_time,open_admin_id,delivery')->update($param);
             if ($res !== false) {
 				add_log('open', $param['id'],$param,'发票');
                 return to_assign();
@@ -100,16 +112,15 @@ class Api extends BaseController
 			if($auth == 0){
 				return to_assign(1, "你没有作废发票权限，请联系管理员或者HR");
 			}
-            if ($param['check_status'] == 10) {
-                $count = InvoiceIncome::where(['inid'=>$param['id'],'status'=>1])->count();
-                if($count>0){
-                    return to_assign(1, "发票已经新增有到账记录，请先反到账后再作废发票");
-                }
-                else{
-                    $param['update_time'] = time();
-                }
-            }
-            $res = Invoice::where('id', $param['id'])->strict(false)->field('check_status')->update($param);
+			$count = InvoiceIncome::where(['invoice_id'=>$param['id'],'status'=>1])->count();
+			if($count>0){
+				return to_assign(1, "发票已经新增有回款记录，请先反回款后再作废发票");
+			}
+			else{
+				$param['update_time'] = time();
+				$param['open_status'] = 2;
+			}
+            $res = Invoice::where('id', $param['id'])->strict(false)->field('update_time,open_status')->update($param);
             if ($res !== false) {
                 return to_assign();
                 add_log('tovoid', $param['id'],$param,'发票');
@@ -126,15 +137,101 @@ class Api extends BaseController
         if (request()->isAjax()) {
 			$auth = isAuthInvoice($this->uid);
 			if($auth == 0){
-				return to_assign(1, "你没有作废发票权限，请联系管理员或者HR");
+				return to_assign(1, "你没有反作废发票权限，请联系管理员或者HR");
 			}
-			$param['check_status'] = 5;
+			$param['open_status'] = 1;
 			$param['update_time'] = time();
-			add_log('tovoid', $param['id'],$param,'发票');
-            $res = Invoice::where('id', $param['id'])->strict(false)->field('check_status')->update($param);
+            $res = Invoice::where('id', $param['id'])->strict(false)->field('update_time,open_status')->update($param);
             if ($res !== false) {
                 return to_assign();
 				add_log('novoid', $param['id'],$param,'发票');
+            } else {
+                return to_assign(1, "操作失败");
+            }
+        }
+    }
+	
+    //上传电子发票
+    public function upload_invoice()
+    {
+        $param = get_params();
+        if (request()->isAjax()) {
+			$auth = isAuthInvoice($this->uid);
+			if($auth == 0){
+				return to_assign(1, "你没有开票权限，请联系管理员或者HR");
+			}
+			$param['update_time'] = time();
+            $res = Invoice::where('id', $param['id'])->strict(false)->field('update_time,other_file_ids')->update($param);
+            if ($res !== false) {
+                return to_assign();
+            } else {
+                return to_assign(1, "操作失败");
+            }
+        }
+    }
+	
+	
+    //作废收票
+    public function tovoid_ticket()
+    {
+        $param = get_params();
+        if (request()->isAjax()) {
+			$auth = isAuthInvoice($this->uid);
+			if($auth == 0){
+				return to_assign(1, "你没有作废发票权限，请联系管理员或者HR");
+			}
+			$count = TicketPayment::where(['ticket_id'=>$param['id'],'status'=>1])->count();
+			if($count>0){
+				return to_assign(1, "发票已经新增有付款记录，请先反付款后再作废发票");
+			}
+			else{
+				$param['update_time'] = time();
+				$param['open_status'] = 2;
+			}
+            $res = Ticket::where('id', $param['id'])->strict(false)->field('update_time,open_status')->update($param);
+            if ($res !== false) {
+                return to_assign();
+                add_log('tovoid', $param['id'],$param,'发票');
+            } else {
+                return to_assign(1, "操作失败");
+            }
+        }
+    }
+
+    //反作废收票
+    public function novoid_ticket()
+    {
+        $param = get_params();
+        if (request()->isAjax()) {
+			$auth = isAuthInvoice($this->uid);
+			if($auth == 0){
+				return to_assign(1, "你没有反作废发票权限，请联系管理员或者HR");
+			}
+			$param['open_status'] = 1;
+			$param['update_time'] = time();
+            $res = Ticket::where('id', $param['id'])->strict(false)->field('update_time,open_status')->update($param);
+            if ($res !== false) {
+                return to_assign();
+				add_log('novoid', $param['id'],$param,'发票');
+            } else {
+                return to_assign(1, "操作失败");
+            }
+        }
+    }
+	
+    //上传
+    public function upload_ticket()
+    {
+        $param = get_params();
+        if (request()->isAjax()) {
+			$auth = isAuthInvoice($this->uid);
+			if($auth == 0){
+				return to_assign(1, "你没有发票权限，请联系管理员或者HR");
+			}
+			$param['update_time'] = time();
+            $res = Ticket::where('id', $param['id'])->strict(false)->field('update_time,other_file_ids')->update($param);
+            if ($res !== false) {
+                return to_assign();
             } else {
                 return to_assign(1, "操作失败");
             }

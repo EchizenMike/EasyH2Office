@@ -16,19 +16,20 @@ function project_comment(){
 	//评论
 	comment.load(project_id,'project');
 	$('#commentInput').on('click', function () {
-		comment.textarea(0,project_id,0,0,'project','');
+		comment.textarea(0,project_id,'project','',0,0,'');
 	})
 	//回复
 	$('#comment_project_' + project_id).on('click', '[data-event="replay"]', function () {
 		let pid = $(this).data('id');
-		let padmin_id = $(this).data('uid');
-		comment.textarea(0, project_id, pid, padmin_id, 'project', '');
+		let to_uid = $(this).data('uid');
+		let to_unames = $(this).data('unames');
+		comment.textarea(0,project_id,'project','',pid,to_uid,to_unames);
 	})
 	//编辑
 	$('#comment_project_' + project_id).on('click', '[data-event="edit"]', function () {
 		let id = $(this).data('id');
 		let content = $('#comment_' + id).data('content');
-		comment.textarea(id, project_id, 0, 0, 'project', content);
+		comment.textarea(id, project_id, 'project', content,0,0,'');
 	})
 
 	//删除

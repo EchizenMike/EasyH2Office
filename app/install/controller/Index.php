@@ -1,9 +1,15 @@
 <?php
 /**
- * @copyright Copyright (c) 2021 勾股工作室
- * @license https://opensource.org/licenses/GPL-3.0
- * @link https://www.gougucms.com
- */
++-----------------------------------------------------------------------------------------------
+* GouGuOPEN [ 左手研发，右手开源，未来可期！]
++-----------------------------------------------------------------------------------------------
+* @Copyright (c) 2021~2024 http://www.gouguoa.com All rights reserved.
++-----------------------------------------------------------------------------------------------
+* @Licensed 勾股OA，开源且可免费使用，但并不是自由软件，未经授权许可不能去除勾股OA的相关版权信息
++-----------------------------------------------------------------------------------------------
+* @Author 勾股工作室 <hdm58@qq.com>
++-----------------------------------------------------------------------------------------------
+*/
 
 declare (strict_types = 1);
 namespace app\install\controller;
@@ -119,8 +125,14 @@ class Index
         $oa_sql = file_get_contents(CMS_ROOT . '/app/install/data/gouguoa.sql');
         $sql_array = preg_split("/;[\r\n]+/", str_replace("oa_", $data['DB_PREFIX'], $oa_sql));
         foreach ($sql_array as $k => $v) {
-            if (!empty($v)) {
-                $link->query($v);
+            if (!empty($v)) {				
+				try {
+					//var_dump($v);
+					$link->query($v);
+				} catch (\Exception $e) {
+					return to_assign(1, '数据写入失败，请联系官方！');
+					break;
+				}
             }
         }
         $isTable = $link->query('SHOW TABLES LIKE "'.$data['DB_PREFIX'] . 'admin"');
@@ -139,7 +151,7 @@ class Index
         $now_time = time();
 
         $create_admin_sql = "INSERT INTO " . $data['DB_PREFIX'] . "admin" .
-            "(username,salt,pwd,name,nickname,position_id,did,sex,mobile,email,type,thumb,entry_time,create_time,update_time)"
+            "(username,salt,pwd,name,nickname,did,position_id,sex,mobile,email,type,thumb,entry_time,create_time,update_time)"
             . "VALUES "
             . "('$username','$salt','$password','$name','$nickname',1,1,1,'13800138000','gouguoa@gougucms.com',1,'$thumb','$now_time','$now_time','$now_time')";
         if (!$link->query($create_admin_sql)) {
@@ -208,8 +220,7 @@ return [
         if (false == file_put_contents(CMS_ROOT . "config/install.lock", '勾股OA安装鉴定文件，请勿删除！！！！！此次安装时间为：' . date('Y-m-d H:i:s', time()))) {
             return to_assign(1, '创建安装鉴定文件失败，请检查目录权限');
         }
-		//$domain = get_system_config('web','domain');
-		$domain = 'https://www.gougucms.com';
+        $domain = get_system_config('web','domain');
         return to_assign(0,'安装完成',$domain);
     }
 }

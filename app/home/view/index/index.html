@@ -6,7 +6,7 @@
 {block name="body"}
 <div class="layui-layout-body">
     <div id="GouguApp">
-        <div class="layui-layout gg-layout layout-menu-{$web.menu_mode|default='classical'}">
+        <div class="layui-layout gg-layout layout-menu-{$system.menu_mode|default='classical'}">
             <div class="layui-header">
                 <!-- 头部区域 -->
                 <div class="layui-layout-left">
@@ -18,6 +18,9 @@
                     </span>
                     <span class="gg-head-item gg-head-home">
                         <a href="https://www.gougucms.com/home/pages/detail/s/gouguoa.html" target="_blank" title="前台首页"><i class="layui-icon layui-icon-website"></i></a>
+                    </span>
+					<span class="gg-head-item gg-head-home">
+                        <a class="tab-a" data-href="/crud/crud/index" data-title="简单CRUD" title="简单CRUD"><i class="layui-icon layui-icon-template"></i></a>
                     </span>
                 </div>
 
@@ -43,7 +46,7 @@
                         </a>
                     </span>
                     <span class="gg-head-item gg-head-message">
-                        <a href="javascript:;" data-href="/message/index/inbox" data-id="1000" data-title="消息中心" class="tab-a" title="消息中心">
+                        <a href="javascript:;" data-href="/home/message/inbox" data-id="1000" data-title="消息中心" class="tab-a" title="消息中心">
                             <i class="layui-icon layui-icon-notice"></i>
                             <!-- 如果有新消息，则显示 -->
                             <div class="gg-message-num" id="msgNum" style="display: none;"><span>0</span></div>
@@ -69,10 +72,10 @@
             </div>
 
             <!-- 侧边菜单 -->
-			{empty name="$web.menu_mode"}
+			{empty name="$system.menu_mode"}
 				{include file="/index/menu_classical" /}
 			{else/}
-				{if ($web.menu_mode == 'expand') }
+				{if ($system.menu_mode == 'expand') }
 					{include file="/index/menu_expand" /}
 				{else/}
 					{include file="/index/menu_classical" /}
@@ -109,10 +112,9 @@
             </div>
             <!-- 辅助元素，用于移动设备下遮罩 -->
             <div class="gg-body-shade" gg-event="shade"></div>
+			<!-- 新消息通知 -->
             <div class="notification" style="display:none;">
-				<audio id="msgSound">
-					<source src="{__STATIC__}/home/file/msg.mp3" type="audio/mpeg">
-				</audio>
+				<audio id="msgSound"><source src="{__STATIC__}/home/file/msg.mp3" type="audio/mpeg"></audio>
 			</div>
         </div>
     </div>
@@ -122,8 +124,8 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
-	const msg_sound = {$web.msg_sound|default=1};
-	const watermark = {$web.watermark|default=1};
+	const msg_sound = {$system.msg_sound|default=1};
+	const watermark = {$system.watermark|default=1};
 	const watermarkTxt = '{$admin.name|default="勾股OA"} {:substr($admin.mobile, -4)}';
 	const moduleInit = ['tool','admin'];
 	function gouguInit() {
@@ -192,7 +194,6 @@
 				})
 			}
 		});
-		
 		//轮循获取消息
 		let msg_num = 0,msg_bool=false;
 		const msgSound = document.getElementById("msgSound");
@@ -234,6 +235,7 @@
 			})
 		}, 10000);
 	}
+
 	function createWatermark(){
 		var canvas = document.createElement('canvas');
 		canvas.width = 300;
@@ -254,7 +256,7 @@
 		node.style.height = "100%";
 		node.style.top = "0";
 		node.style.left = "0";
-		node.style.opacity = "0.382";
+		node.style.opacity = "0.36";
 		node.style.zIndex = "998";
 		node.style.background = 'url("' + dataURL + '")  0 0 repeat';
 		// 将创建的元素插入body中，作为body的子元素

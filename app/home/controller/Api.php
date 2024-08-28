@@ -1,9 +1,15 @@
 <?php
 /**
- * @copyright Copyright (c) 2021 勾股工作室
- * @license https://opensource.org/licenses/GPL-3.0
- * @link https://www.gougucms.com
- */
++-----------------------------------------------------------------------------------------------
+* GouGuOPEN [ 左手研发，右手开源，未来可期！]
++-----------------------------------------------------------------------------------------------
+* @Copyright (c) 2021~2024 http://www.gouguoa.com All rights reserved.
++-----------------------------------------------------------------------------------------------
+* @Licensed 勾股OA，开源且可免费使用，但并不是自由软件，未经授权许可不能去除勾股OA的相关版权信息
++-----------------------------------------------------------------------------------------------
+* @Author 勾股工作室 <hdm58@qq.com>
++-----------------------------------------------------------------------------------------------
+*/
 declare (strict_types = 1);
 namespace app\home\controller;
 
@@ -52,98 +58,6 @@ class api extends BaseController
 		}
 		return table_assign(0, '', $res);
 	}
-
-	function isAuthProject($uid)
-	{
-		if($uid == 1){
-			return 1;
-		}
-		$map = [];
-		$map[] = ['name', '=', 'project_admin'];
-		$map[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',uids)")];
-		$count = Db::name('DataAuth')->where($map)->count();
-		return $count;
-	}
-    //首页项目
-    public function get_project_list()
-    {
-		$prefix = get_config('database.connections.mysql.prefix');//判断是否安装了项目模块
-		$exist = Db::query('show tables like "'.$prefix.'project"');
-		$res['data'] = [];
-		if($exist){
-			$project_ids = Db::name('ProjectUser')->where(['uid' => $this->uid, 'delete_time' => 0])->column('project_id');
-			$where =[];
-			$where[] = ['a.delete_time', '=', 0];
-			if($this->isAuthProject($this->uid)==0){
-				$where[] = ['a.id', 'in', $project_ids];
-			}
-			$list = Db::name('Project')
-				->field('a.id,a.name,a.status,a.create_time,a.start_time,a.end_time,u.name as director_name')
-				->alias('a')
-				->join('Admin u', 'a.director_uid = u.id')
-				->where($where)
-				->order('a.id desc')
-				->limit(8)
-				->select()->toArray();
-			foreach ($list as $key => &$val) {
-				$val['create_time'] = date('Y-m-d H:i', $val['create_time']);
-				if($val['end_time']>0){
-					$val['plan_time'] = date('Y-m-d', $val['start_time']) . ' 至 ' . date('Y-m-d', $val['end_time']);
-				}
-				else{
-					$val['plan_time'] = '-';
-				}
-				$val['status_name'] = \app\project\model\Project::$Status[(int) $val['status']];
-			}
-			$res['data'] = $list;
-		}
-        return table_assign(0, '', $res);
-    }
-	
-    //首页任务
-    public function get_task_list()
-    {
-		$prefix = get_config('database.connections.mysql.prefix');//判断是否安装了项目模块
-		$exist = Db::query('show tables like "'.$prefix.'project_task"');
-		$res['data'] = [];
-		if($exist){
-			$where = array();
-			$whereOr = array();
-			$map1 = [];
-			$map2 = [];
-			$map3 = [];
-			$map1[] = ['admin_id', '=', $this->uid];
-			$map2[] = ['director_uid', '=', $this->uid];
-			$map3[] = ['', 'exp', Db::raw("FIND_IN_SET({$this->uid},assist_admin_ids)")];
-			if($this->isAuthProject($this->uid)==0){
-				$whereOr =[$map1,$map2,$map3];
-			}
-			$where[] = ['delete_time', '=', 0];
-			$list = Db::name('ProjectTask')
-				->where(function ($query) use ($whereOr) {
-					if (!empty($whereOr))
-						$query->whereOr($whereOr);
-					})
-				->where($where)
-				->withoutField('content,md_content')
-				->order('flow_status asc')
-				->order('id desc')
-				->limit(8)
-				->select()->toArray();
-				foreach ($list as $key => &$val) {
-					$val['director_name'] = Db::name('Admin')->where(['id' => $val['director_uid']])->value('name');
-					if($val['end_time']>0){
-						$val['end_time'] = date('Y-m-d', $val['end_time']);
-					}
-					else{
-						$val['end_time'] = '-';
-					}
-					$val['flow_name'] = \app\project\model\ProjectTask::$FlowStatus[(int) $val['flow_status']];
-				}
-			$res['data'] = $list;
-		}
-        return table_assign(0, '', $res);
-    }
 	
     //获取访问记录
     public function get_view_data()
@@ -186,6 +100,30 @@ class api extends BaseController
         //攫取前10
         $data_logs = array_slice($logs, 0, 10);
         return to_assign(0, '', ['data_logs' => $data_logs]);
+    }
+	
+	public function areaJson($type)
+    {
+		if($type=='province'){
+			$data = Db::name('Area')->where(['level'=>1,'status'=>1])->column('name', 'id');
+		}
+		if($type=='city'){
+			$data = Db::name('Area')->where(['level'=>2,'status'=>1])->column('name', 'id');
+		}
+		if($type=='district'){
+			$data = Db::name('Area')->where(['level'=>3,'status'=>1])->column('name', 'id');
+		}
+        // 导出为 JSON 格式
+        $json = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+		return $json;
+		/*
+		输出Json文件
+        // 设置响应头
+        header('Content-Type: application/json');
+        header('Content-Disposition: attachment; filename="oa_area.json"');
+        // 输出 JSON 数据
+        echo $json;
+		*/
     }
 
 }

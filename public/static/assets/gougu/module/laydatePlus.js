@@ -3,6 +3,7 @@ layui.define(['layer'],function(exports){
 	let laydate = layui.laydate;	
 	const opts={
 		"target":'laydateplus',
+		"type":'date',
 		"rangeLinked":false,
 		"callback": null
 	};
@@ -160,13 +161,18 @@ layui.define(['layer'],function(exports){
 				];
 			  // 日期时间范围
 			laydate.render({
-				elem: '#'+this.settings.target,
-				type: 'datetime',
+				elem: '#'+me.settings.target,
+				type: me.settings.type,
 				range: '~',
 				trigger: 'none',
-				rangeLinked:this.settings.rangeLinked,
+				rangeLinked:me.settings.rangeLinked,
 				shortcuts: shortcuts,
-				show:true
+				show:true,
+				done: function(value, date, endDate){
+					if (typeof me.settings.callback === 'function') {
+						me.settings.callback(value, date, endDate);
+					}
+				}
 			});
 		}
 	}

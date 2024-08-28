@@ -35,7 +35,9 @@ return [
     // 显示错误信息
     'show_error_msg'   => false,
 	
-	'page_size'    => 20,
+	'page_size'    => 20,//分页默认数据长度
+	
+	'file_size'    => 50,//附件大小50M
 	
 	'session_user'    => 'gougu_user',
 	

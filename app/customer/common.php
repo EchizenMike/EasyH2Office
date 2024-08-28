@@ -1,9 +1,16 @@
 <?php
 /**
- * @copyright Copyright (c) 2021 勾股工作室
- * @license https://opensource.org/licenses/GPL-3.0
- * @link https://www.gougucms.com
- */
++-----------------------------------------------------------------------------------------------
+* GouGuOPEN [ 左手研发，右手开源，未来可期！]
++-----------------------------------------------------------------------------------------------
+* @Copyright (c) 2021~2024 http://www.gouguoa.com All rights reserved.
++-----------------------------------------------------------------------------------------------
+* @Licensed 勾股OA，开源且可免费使用，但并不是自由软件，未经授权许可不能去除勾股OA的相关版权信息
++-----------------------------------------------------------------------------------------------
+* @Author 勾股工作室 <hdm58@qq.com>
++-----------------------------------------------------------------------------------------------
+*/
+
 /**
 ======================
  *模块数据获取公共文件
@@ -16,7 +23,7 @@ function customer_auth($uid,$customer_id,$ajax=0,$level=0)
 {
 	$customer =  Db::name('Customer')->where(['id' => $customer_id])->find();
 	//是否是客户管理员
-    $auth = isAuth($uid,'customer_admin');
+    $auth = isAuth($uid,'customer_admin','conf_1');
 	if($customer['belong_uid']==0){
 		return $customer;
 	}
@@ -31,7 +38,7 @@ function customer_auth($uid,$customer_id,$ajax=0,$level=0)
 		}	
 		array_push($auth_array,$customer['belong_uid']);
 		//部门负责人
-		$dids = get_department_role($uid);
+		$dids = get_leader_departments($uid);
 		if(!in_array($uid,$auth_array) && !in_array($customer['belong_did'],$dids)){
 			if($ajax == 1){
 				to_assign(1,'无权限操作');
@@ -73,21 +80,6 @@ function customer_chance($cid)
     $chance = Db::name('CustomerChance')->where(['delete_time' => 0,'cid'=>$cid])->select()->toArray();
     return $chance;
 }
-
-//跟进方式
-function trace_type()
-{
-    $type = ['其他','电话','微信','QQ','上门'];
-    return $type;
-}
-
-//跟进阶段
-function trace_stage()
-{
-    $stage = ['未设置','立项评估','初期沟通','需求分析','商务谈判','方案制定','合同签订','失单'];
-    return $stage;
-}
-
 
 //写入日志
 function to_log($uid,$type,$new,$old)

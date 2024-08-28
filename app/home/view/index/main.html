@@ -48,21 +48,14 @@
 				{include file="/index/layout_note" /}	
 			{/if}
 			
-			{if ( $layout.row == 1) AND ( $layout.name == 'article') }
-				{include file="/index/layout_article" /}	
+			{if ( $layout.row == 1) AND ( $layout.name == 'project') }
+				{include file="/index/layout_project" /}	
 			{/if}
 			
-			{gt name=":isModule('project')" value="0"}
+			{if ( $layout.row == 1) AND ( $layout.name == 'task') }
+				{include file="/index/layout_task" /}	
+			{/if}
 			
-				{if ( $layout.row == 1) AND ( $layout.name == 'project') }
-					{include file="/index/layout_project" /}	
-				{/if}
-				
-				{if ( $layout.row == 1) AND ( $layout.name == 'task') }
-					{include file="/index/layout_task" /}	
-				{/if}
-			
-			{/gt}
 			
 			{if ( $layout.row == 1) AND ( $layout.name == 'chartview') }
 				{include file="/index/layout_chartview" /}	
@@ -75,9 +68,14 @@
 		{/volist}
 	</div>
 	<div class="layui-col-md4">
-		{volist name="$layout_selected" id="layout"}		
+		{volist name="$layout_selected" id="layout"}	
+		
 			{if ( $layout.row == 2) AND ( $layout.name == 'fastentry') }
 				{include file="/index/layout_fastentry" /}	
+			{/if}
+			
+			{if ( $layout.row == 2) AND ( $layout.name == 'approve') }
+				{include file="/index/layout_approve" /}	
 			{/if}
 			
 			{if ( $layout.row == 2) AND ( $layout.name == 'system') }
@@ -91,6 +89,7 @@
 			{if ( $layout.row == 2) AND ( $layout.name == 'action') }
 				{include file="/index/layout_action" /}	
 			{/if}
+			
 		{/volist}
 	</div>
 </div>
@@ -163,14 +162,6 @@
 		
 		if(typeof layoutNote ==='function'){
 			layoutNote(table);
-		}
-		
-		if(typeof layoutArticle ==='function'){
-			layoutArticle(table);
-		}
-		
-		if(typeof layoutArticle ==='function'){
-			layoutArticle(table);
 		}
 		
 		if(typeof layoutProject ==='function'){

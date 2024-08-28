@@ -31,29 +31,29 @@ return [
 			'name'       => 'task',
 			'title'       => '任务列表',
         ],
-		[
-			'id'       => 6,
-			'row'       => 1,
-			'name'       => 'article',
-			'title'       => '知识列表',
-        ],
         [
-			'id'       => 7,
+			'id'       => 6,
 			'row'       => 1,
 			'name'       => 'chartview',
 			'title'       => '今日员工活跃度',
         ],
         [
-			'id'       => 8,
+			'id'       => 7,
 			'row'       => 1,
 			'name'       => 'chartyear',
 			'title'       => '年度员工活跃度',
         ],
         [
-			'id'       => 9,
+			'id'       => 8,
 			'row'       => 2,
 			'name'       => 'fastentry',
 			'title'       => '快捷入口',
+        ],
+        [
+			'id'       => 9,
+			'row'       => 2,
+			'name'       => 'approve',
+			'title'       => '办公审批',
         ],
         [
 			'id'       => 10,

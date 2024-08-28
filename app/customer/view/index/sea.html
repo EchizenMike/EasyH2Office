@@ -9,8 +9,8 @@
 {/block}
 <!-- 主体 -->
 {block name="body"}
-<div class="p-3">
-	<form class="layui-form gg-form-bar border-x border-t">
+<div class="p-page">
+	<form class="layui-form gg-form-bar border-x border-t" id="barsearchform" lay-filter="barsearchform">
 		<div class="layui-input-inline" style="width:150px;">
 			<select name="source_id">
 				<option value="">请选择渠道来源</option>
@@ -19,28 +19,39 @@
 				{/volist}
 			</select>
 		</div>
-		<div class="layui-input-inline" style="width:150px;">
+		<div class="layui-input-inline" style="width:122px;">
 			<select name="industry_id">
-				<option value="">请选择行业</option>
-				{volist name=":get_industry()" id="v"}
+				<option value="">选择所属行业</option>
+				{volist name=":get_base_data('Industry')" id="v"}
 				<option value="{$v.id}">{$v.title}</option>
 				{/volist}
 			</select>
+		</div>
+		<div class="layui-input-inline" style="width:122px;">
+			<select name="grade_id">
+				<option value="">选择客户等级</option>
+				{volist name=":customer_grade()" id="v"}
+				<option value="{$v.id}">{$v.title}</option>
+				{/volist}
+			</select>
+		</div>
+		<div class="layui-input-inline" style="width:175px;">
+			<input type="text" class="layui-input" data-range="~" placeholder="最近跟进日期" readonly name="follow_time" id="follow_time">
 		</div>
 		<div class="layui-input-inline" style="width:240px;">
 			<input type="text" name="keywords" placeholder="输入关键字" class="layui-input" autocomplete="off" />
 		</div>
 		<div class="layui-input-inline" style="width:150px;">
-			<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform"><i class="layui-icon layui-icon-search mr-1"></i>搜索</button>
-			<button type="reset" class="layui-btn layui-btn-reset" lay-filter="reset">清空</button>
+			<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="table-search"><i class="layui-icon layui-icon-search mr-1"></i>搜索</button>
+			<button type="reset" class="layui-btn layui-btn-reset" lay-filter="table-reset">清空</button>
 		</div>
 	</form>
 	<table class="layui-hide" id="test" lay-filter="test"></table>
 </div>
 
 <script type="text/html" id="toolbarDemo">
-<div class="layui-btn-container">
-   <button class="layui-btn layui-btn-sm" title="添加客户" lay-event="add">+ 添加公海客户</button>
+<div class="layui-btn-group">
+   <button class="layui-btn layui-btn-sm" title="添加公海客户" lay-event="add">+ 添加公海客户</button>
    <button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="import"><i class="layui-icon">&#xe66f;</i>批量导入</button>
 </div>
 </script>
@@ -50,9 +61,10 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
-	const moduleInit = ['tool','employeepicker'];
+	const moduleInit = ['tool','tablePlus','oaPicker','uploadPlus','laydatePlus'];
 	function gouguInit() {
-		var table = layui.table, tool = layui.tool ,form = layui.form, employeepicker = layui.employeepicker,upload=layui.upload;
+		var table = layui.tablePlus, tool = layui.tool ,form = layui.form, oaPicker = layui.oaPicker,uploadPlus=layui.uploadPlus,laydatePlus=layui.laydatePlus;
+		var follow_time = new laydatePlus({'target':'follow_time'});
 		layui.pageTable = table.render({
 			elem: '#test',
 			title: '公海客户列表',
@@ -62,20 +74,18 @@
 			cellMinWidth: 80,
 			page: true, //开启分页
 			limit: 20,
-			height: 'full-82',
+			height: 'full-112',
 			cols: [
 				[ //表头
 					{
-						field: 'id',title: '编号',align: 'center',width: 80,templet: function (d) {
-							return'C' + d.id;
-						}
+						field: 'id',title: '编号',align: 'center',width: 80
 					},{
 						field: 'name',
 						title: '客户名称',
 						minWidth:240,
-						templet: '<div><a data-href="/customer/index/view/id/{{d.id}}.html" class="side-a">{{d.name}}</a></div>'
+						templet: '<div><a data-href="/customer/customer/view/id/{{d.id}}.html" class="side-a">{{d.name}}</a></div>'
 					},{
-						field: 'user',
+						field: 'contacter',
 						title: '联系人',
 						align: 'center',
 						width: 80
@@ -85,40 +95,39 @@
 						align: 'center',
 						width: 100
 					},{
-						field: 'qq',
-						title: 'QQ号',
+						field: 'email',
+						title: '电子邮箱',
+						width: 200
+					},{
+						field: 'grade',
+						title: '客户等级',
 						align: 'center',
 						width: 100
-					},{
-						field: 'wechat',
-						title: '微信号',
-						align: 'center',
-						width: 90
-					},{
-						field: 'create_time',
-						title: '创建时间',
-						align: 'center',
-						width: 136
-					},{
-						field: 'update_time',
-						title: '最后编辑时间',
-						align: 'center',
-						width: 136
 					},{
 						field: 'source',
 						title: '来源渠道',
 						align: 'center',
 						width: 100
-					}, {
+					},{
 						field: 'industry',
-						title: '客户所属行业',
+						title: '所属行业',
 						align: 'center',
 						width: 120
+					},{
+						field: 'create_time',
+						title: '创建时间',
+						align: 'center',
+						width: 150
+					},{
+						field: 'update_time',
+						title: '最后编辑时间',
+						align: 'center',
+						width: 150
 					},{
 						field: 'right',
 						fixed:'right',
 						title: '操作',
-						width: 200,
+						width: 190,
 						align: 'center',
 						templet: function (d) {
 							var html = '<div class="layui-btn-group">';
@@ -136,130 +145,56 @@
 		//表头工具栏事件
 		table.on('toolbar(test)', function(obj){
 			if (obj.event === 'add') {
-				tool.side("/customer/index/add?sea=1");
+				tool.side("/customer/customer/add?sea=1");
 				return;
 			}
 			if (obj.event === 'import') {
-				uploadImport();	
+				let importUpload = new uploadPlus({
+					"title":'批量导入公海客户',
+					"use":'import',
+					"url":'/api/import/import_customer',
+					"import":{
+						"template":'/static/home/file/勾股OA客户导入模板.xlsx',
+						"tips":'如果导入失败，请根据提示注意检查表格数据，客户来源、所属行业、需要是系统中存在的数据，如果不存在的话可能会导入失败。'
+					},
+					callback:function(res){
+						layui.pageTable.reload();
+					}
+				});	
 				return;				
 			}
 		});
-		
-		let uploadFiles;
-		function clearFile() {
-			for (let x in uploadFiles) {
-				delete uploadFiles[x];
-			}
-			$('#gougu-upload-choosed').html('');
-		}
-		function uploadImport(){
-			layer.open({
-				'title':'批量导入客户',
-				'type':1,
-				'area': ['640px', '320px'],
-				'content':'<div class="layui-form p-3">\
-						<div id="uploadType1">\
-							<div class="layui-form-item">\
-								<label class="layui-form-label">文件：</label>\
-								<div class="layui-input-block">\
-									<span class="gougu-upload-files">.xls,.xlsx</span><button type="button" class="layui-btn layui-btn-normal" id="uploadSelect">选择文件</button><a href="/static/home/file/勾股OA客户导入模板.xlsx" class="layui-btn ml-4">Execl表格模板下载</a>\
-								</div>\
-							</div>\
-							<div class="layui-form-item">\
-								<label class="layui-form-label"></label>\
-								<div class="layui-input-block">\
-									<span class="gougu-upload-tips">1、只有超级管理员才能进行批量导入操作；<br>2、只能上传 .xls、.xlsx文件；<br>3、数据请勿放在合并的单元格中；<br>4、文件大小请勿超过2MB，导入数据不能超过3000条</span>\
-								</div>\
-							</div>\
-							<div class="layui-form-item">\
-								<label class="layui-form-label"></label>\
-								<div class="layui-input-block green" id="gougu-upload-choosed"></div>\
-							</div>\
-							<div class="layui-form-item">\
-								<label class="layui-form-label"></label>\
-								<div class="layui-input-block red" id="gougu-upload-note"></div>\
-							</div>\
-							<div class="layui-form-item layui-form-item-sm">\
-								<label class="layui-form-label"></label>\
-								<div class="layui-input-block">\
-									<button type="button" class="layui-btn" id="uploadAjax">上传并导入</button>\
-								</div>\
-							</div>\
-						</div> \
-				</div>',
-				success: function(layero, idx){
-					form.render();
-					//选文件
-					let uploadImport = upload.render({
-						elem: '#uploadSelect'
-						,url: '/api/import/import_customer'
-						,auto: false
-						,accept: 'file' //普通文件
-						,acceptMime: 'application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' // 此处设置上传的文件格式
-						,exts: 'xls|xlsx' //只允许上传文件格式
-						,bindAction: '#uploadAjax'
-						,choose: function(obj){
-							uploadFiles = obj.pushFile();
-							// 清空,防止多次上传
-							clearFile();
-							obj.preview(function(index, file, result){
-								obj.pushFile();// 再添加
-								$('#gougu-upload-choosed').html('已选择：'+file.name);
-							});
-						}
-						,before: function(obj){
-						}
-						,progress: function(n, elem, e){
-							$('#gougu-upload-note').html('文件上转中...');
-							if(n==100){
-								$('#gougu-upload-note').html('数据导入中...');
-							}
-						}
-						,error: function(index, upload){
-							clearFile();
-							$('#gougu-upload-note').html('数据导入失败，请关闭重试');
-						}
-						,done: function(res, index, upload){
-							clearFile();
-							layer.msg(res.msg);
-							$('#gougu-upload-note').html(res.msg);
-							if(res.code==0){
-								layer.close(idx);
-								layui.pageTable.reload();
-							}						
-						}
-					});
-				}
-			});	
-		}
 		
 		//监听行工具事件
 		table.on('tool(test)', function(obj) {
 			var data = obj.data;
 			if(obj.event === 'view'){
-				tool.side('/customer/index/view?id='+data.id);
+				tool.side('/customer/customer/view?id='+data.id);
 			}
 			if(obj.event === 'edit'){
-				tool.side('/customer/index/add?sea=1&id='+data.id);
+				tool.side('/customer/customer/add?sea=1&id='+data.id);
 			}
 			if (obj.event === 'distribute') {
-				//选择归属人人弹窗	
-				employeepicker.init({
-					type:0,
-					department_url: "/api/index/get_department_tree",
-					employee_url: "/api/index/get_employee",
-					callback:function(ids,names,dids,departments){
-						layer.confirm('确定要把该客户分配给'+names+'?', {
+				oaPicker.employeeInit({
+					callback:function(selected){
+						//这里是选择后的回调方法，可以根据具体需求自定义写哦
+						let select_id=[],select_name=[],select_did=[];
+						for(var a=0; a<selected.length;a++){
+							select_id.push(selected[a].id);
+							select_name.push(selected[a].name);
+							select_did.push(selected[a].did);
+						}
+						layer.confirm('确定要把该客户分配给'+select_name.join(',')+'?', {
 							icon: 3,
 							title: '提示'
 						}, function(index) {
-							let callback = function (e) {
+							let callback1 = function (e) {
 								layer.msg(e.msg);
 								if (e.code == 0) {
 									layui.pageTable.reload();
 								}
 							}
-							tool.post("/customer/api/distribute", {id: data.id,uid:ids,did:dids}, callback);
+							tool.post("/customer/api/distribute", {id: data.id,uid:select_id.join(','),did:select_did.join(',')}, callback1);
 							layer.close(index);
 						});
 					}
@@ -276,7 +211,7 @@
 							layui.pageTable.reload();
 						}
 					}
-					tool.post("/customer/index/get", {id: data.id}, callback);
+					tool.post("/customer/index/to_get", {id: data.id}, callback);
 					layer.close(index);
 				});
 			}
@@ -296,15 +231,6 @@
 				});
 			}
 			return;
-		});
-
-		//监听搜索提交
-		form.on('submit(webform)', function(data) {
-			layui.pageTable.reload({
-				where: data.field,
-				page: {curr: 1}
-			});
-			return false;
 		});
 	}
 </script>

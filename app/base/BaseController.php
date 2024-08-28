@@ -1,16 +1,20 @@
 <?php
 /**
- * @copyright Copyright (c) 2021 勾股工作室
- * @license https://opensource.org/licenses/GPL-3.0
- * @link https://www.gougucms.com
- */
++-----------------------------------------------------------------------------------------------
+* GouGuOPEN [ 左手研发，右手开源，未来可期！]
++-----------------------------------------------------------------------------------------------
+* @Copyright (c) 2021~2024 http://www.gouguoa.com All rights reserved.
++-----------------------------------------------------------------------------------------------
+* @Licensed 勾股OA，开源且可免费使用，但并不是自由软件，未经授权许可不能去除勾股OA的相关版权信息
++-----------------------------------------------------------------------------------------------
+* @Author 勾股工作室 <hdm58@qq.com>
++-----------------------------------------------------------------------------------------------
+*/
 
 declare (strict_types = 1);
 
 namespace app\base;
 
-use think\App;
-use think\exception\HttpResponseException;
 use think\facade\Cache;
 use think\facade\Db;
 use think\facade\Request;
@@ -24,41 +28,38 @@ use systematic\Systematic;
 abstract class BaseController
 {
     /**
-     * Request实例
-     * @var \think\Request
-     */
-    protected $request;
-
-    /**
-     * 应用实例
-     * @var \think\App
-     */
-    protected $app;
-
-    /**
      * 是否批量验证
      * @var bool
      */
     protected $batchValidate = false;
-
+	
+    /**
+     * 分页数量
+     * @var string
+     */
+    protected $pageSize = 20;
     /**
      * 控制器中间件
      * @var array
      */
     protected $middleware = [];
-
+    protected $module;
+    protected $controller;
+    protected $action;
+    protected $uid;
+    protected $did;
+    protected $pid;
     /**
      * 构造方法
      * @access public
      * @param  App  $app  应用对象
      */
-    public function __construct(App $app)
+	protected $model;
+    public function __construct()
     {
-        $this->app = $app;
-        $this->request = $this->app->request;
         $this->module = strtolower(app('http')->getName());
-        $this->controller = strtolower($this->request->controller());
-        $this->action = strtolower($this->request->action());
+        $this->controller = strtolower(Request::controller());
+        $this->action = strtolower(Request::action());
         $this->uid = 0;
         $this->did = 0;
         $this->pid = 0;
@@ -70,6 +71,8 @@ abstract class BaseController
     {
         // 检测权限
         $this->checkLogin();
+		//每页显示数据量
+        $this->pageSize = Request::param('limit', \think\facade\Config::get('app.page_size'));
     }
 
     /**
@@ -80,7 +83,7 @@ abstract class BaseController
         if ($this->controller !== 'login' && $this->controller !== 'captcha') {
             $session_admin = get_config('app.session_admin');
             if (!Session::has($session_admin)) {
-                if ($this->request->isAjax()) {
+                if (request()->isAjax()) {
                     return to_assign(404, '请先登录');
                 } else {
                     redirect('/home/login/index.html')->send();
@@ -88,30 +91,31 @@ abstract class BaseController
                 }
             } else {
                 $this->uid = Session::get($session_admin);
-				$login_admin = Db::name('Admin')->where(['id' => $this->uid])->find();
+				$login_admin = get_admin($this->uid);
 				$this->did = $login_admin['did'];
-				$this->pid = $login_admin['position_id'];
-                View::assign('login_admin', $login_admin);				
+				$this->pid = $login_admin['pid'];			
 				$is_lock = $login_admin['is_lock'];
 				if($is_lock==1){
 					redirect('/home/login/lock.html')->send();
 					exit;
 				}
+	            View::assign('login_admin', $login_admin);	
                 // 验证用户访问权限
-                if (($this->module == 'api') || ($this->module == 'message') || ($this->module == 'home' && $this->controller == 'index')) {
+                if ($this->module == 'home' && $this->controller == 'index') {
 					return true;
 				}
 				else{
-					$reg_pwd = $login_admin['reg_pwd'];
-					if($reg_pwd!==''){
+					$regPwd = $login_admin['reg_pwd'];
+					if($regPwd!==''){
 						redirect('/home/index/edit_password.html')->send();
 						exit;
 					}
                     if (!$this->checkAuth()) {
-                        if ($this->request->isAjax()) {
-                            return to_assign(405, '你没有权限,请联系管理员或者HR');
+                        if (request()->isAjax()) {
+                            return to_assign(405, '你没有权限,请联系管理员或者人事部');
                         } else {
-                            echo '<div style="text-align:center;color:red;margin-top:20%;">你没有权限访问，请联系管理员或者人事部</div>';exit;
+							redirect('/home/index/role')->send();
+							exit;
                         }
                     }
                 }
@@ -134,7 +138,6 @@ abstract class BaseController
         $GOUGU->auth($uid);
 		$auth_list_all = Cache::get('RulesSrc0');
         $auth_list = Cache::get('RulesSrc' . $uid);
-		
         $pathUrl = $this->module . '/' . $this->controller . '/' . $this->action;
         if (!in_array($pathUrl, $auth_list)) {
             return false;

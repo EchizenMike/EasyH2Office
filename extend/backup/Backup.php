@@ -327,7 +327,6 @@ class Backup
             }
             //还有更多数据
             if ($count > $start + 1000) {
-                //return array($start + 1000, $count);
                 return $this->backup($table, $start + 1000);
             }
         }
@@ -447,5 +446,79 @@ class Backup
         if($this->fp){
             $this->config['compress'] ? @gzclose($this->fp) : @fclose($this->fp);
         }
+    }
+	
+	//判断某数据表是否存在
+	public function check_table($table){
+		$prefix = config('database.connections.mysql.prefix');
+		$db = self::connect();
+        $res = $db->query('SHOW TABLES LIKE '."'".$prefix.$table."'");
+        if($res){
+            return 1;
+        }else{
+            return 0;
+        }
+    }
+	//判断某数据表中某字段是否存在
+	public function check_column($table,$column){
+		$prefix = config('database.mysql.prefix');
+        $db = self::connect();
+        $res = $db->query('select count(*) from information_schema.columns where table_name = '."'".$table."' ". 'and column_name ='."'".$column."'");
+        if($res[0]['count(*)'] != 0){
+            return 1;
+        }else{
+            return 0;
+        }
+    }
+	
+	//添加字段
+	public function add_column($table,$column,$type,$condition,$after){
+        $db = self::connect();
+        $res = $db->execute('alter table'." `".$table."` ".'add'." `".$column."` ".$type." ".$condition." ".'after'." `".$after."`");
+        if($res){
+            return 1;
+        }else{
+            return 0;
+        }
+    }
+	
+	//删除字段
+	public function del_column($table,$column){
+        $db = self::connect();
+        $res = $db->execute('alter table '."`".$table."`".' drop column'."`".$column."`");
+        if($res){
+            return 1;
+        }else{
+            return 0;
+        }
+    }
+	
+	//修改字段
+	public function update_column($table,$old_column,$column,$type){
+        //字段名和类型同时修改才会返回1不然返回0
+        $db = self::connect();
+        $res = $db->execute('alter table' ." `".$table."` ". 'change' ." `".$old_column."` " ."`".$column."`" .$type);
+        if($res){
+            return 1;
+        }else{
+            return 0;
+        }
+    }
+	//执行sql
+	public function run_sql($sql){
+		$prefix = config('database.connections.mysql.prefix');
+		$db = self::connect();
+		$sql_array = preg_split("/;[\r\n]+/", str_replace("oa_", $prefix, $sql));
+		foreach ($sql_array as $k => $v) {
+			if (!empty($v)) {				
+				try {
+					$res = $db->query($v);
+				} catch (\Exception $e) {
+					return 0;
+					break;
+				}
+			}
+		}
+        return 1;
     }
 }

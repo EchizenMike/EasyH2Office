@@ -1,9 +1,15 @@
 <?php
 /**
- * @copyright Copyright (c) 2021 勾股工作室
- * @license https://opensource.org/licenses/GPL-3.0
- * @link https://www.gougucms.com
- */
++-----------------------------------------------------------------------------------------------
+* GouGuOPEN [ 左手研发，右手开源，未来可期！]
++-----------------------------------------------------------------------------------------------
+* @Copyright (c) 2021~2024 http://www.gouguoa.com All rights reserved.
++-----------------------------------------------------------------------------------------------
+* @Licensed 勾股OA，开源且可免费使用，但并不是自由软件，未经授权许可不能去除勾股OA的相关版权信息
++-----------------------------------------------------------------------------------------------
+* @Author 勾股工作室 <hdm58@qq.com>
++-----------------------------------------------------------------------------------------------
+*/
 
 declare (strict_types = 1);
 
@@ -56,23 +62,12 @@ class dataauth extends BaseController
 	public function auth_detail($id)
     {
         $detail = Db::name('DataAuth')->where('id',$id)->find();
-		if($detail['name'] =='user_admin'){
-			$uids = Db::name('Admin')->where('id', 'in', $detail['uids'])->column('name');
-			$detail['unames'] = implode(',', $uids);
-			
-			$conf_1_str = Db::name('Admin')->where('id', 'in', $detail['conf_1'])->column('name');
-			$detail['conf_1_str'] = implode(',', $conf_1_str);
-		}
-		if($detail['name'] =='oa_admin'){
-			$uids = Db::name('Admin')->where('id', 'in', $detail['uids'])->column('name');
-			$detail['unames'] = implode(',', $uids);
-			
+		//	日常办公
+		if($detail['name'] =='office_admin'){			
 			$conf_1_str = Db::name('Admin')->where('id', 'in', $detail['conf_1'])->column('name');
 			$detail['conf_1_str'] = implode(',', $conf_1_str);
 		}
 		if($detail['name'] =='finance_admin'){
-			$unames = Db::name('Admin')->where('id', 'in', $detail['uids'])->column('name');
-            $detail['unames'] = implode(',', $unames);
 			$conf_1_str = Db::name('Admin')->where('id', 'in', $detail['conf_1'])->column('name');
             $detail['conf_1_str'] = implode(',', $conf_1_str);
 			$conf_2_str = Db::name('Admin')->where('id', 'in', $detail['conf_2'])->column('name');
@@ -81,30 +76,18 @@ class dataauth extends BaseController
             $detail['conf_3_str'] = implode(',', $conf_3_str);
 			$conf_4_str = Db::name('Admin')->where('id', 'in', $detail['conf_4'])->column('name');
             $detail['conf_4_str'] = implode(',', $conf_4_str);
-			$conf_5_str = Db::name('Admin')->where('id', 'in', $detail['conf_5'])->column('name');
-            $detail['conf_5_str'] = implode(',', $conf_5_str);
 		}
 		if($detail['name'] =='customer_admin'){
-			$uids = Db::name('Admin')->where('id', 'in', $detail['uids'])->column('name');
-			$detail['unames'] = implode(',', $uids);
 			$conf_1_str = Db::name('Admin')->where('id', 'in', $detail['conf_1'])->column('name');
             $detail['conf_1_str'] = implode(',', $conf_1_str);
-			$conf_2_str = Db::name('Admin')->where('id', 'in', $detail['conf_2'])->column('name');
-            $detail['conf_2_str'] = implode(',', $conf_2_str);
-			$conf_3_str = Db::name('Admin')->where('id', 'in', $detail['conf_3'])->column('name');
-            $detail['conf_3_str'] = implode(',', $conf_3_str);
 		}
 		if($detail['name'] =='contract_admin'){
-			$uids = Db::name('Admin')->where('id', 'in', $detail['uids'])->column('name');
-			$detail['unames'] = implode(',', $uids);
 			$conf_1_str = Db::name('Admin')->where('id', 'in', $detail['conf_1'])->column('name');
             $detail['conf_1_str'] = implode(',', $conf_1_str);
-			$conf_2_str = Db::name('Admin')->where('id', 'in', $detail['conf_2'])->column('name');
-            $detail['conf_2_str'] = implode(',', $conf_2_str);
 		}
 		if($detail['name'] =='project_admin'){
-			$uids = Db::name('Admin')->where('id', 'in', $detail['uids'])->column('name');
-			$detail['unames'] = implode(',', $uids);
+			$conf_1_str = Db::name('Admin')->where('id', 'in', $detail['conf_1'])->column('name');
+            $detail['conf_1_str'] = implode(',', $conf_1_str);
 		}
 		return $detail;
     }

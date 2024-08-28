@@ -1,0 +1,78 @@
+{extend name="../../base/view/common/base" /}
+<!-- 主体 -->
+{block name="body"}
+<div class="p-page">
+	<h3 class="pb-1">公文详情</h3>
+	<table class="layui-table">
+		<tr>
+			<td class="layui-td-gray">公文名称</td>
+			<td colspan="3">{$detail.title}</td>
+			<td class="layui-td-gray">公文文号</td>
+			<td>{$detail.code}</td>
+		</tr>
+		<tr>
+			<td class="layui-td-gray">拟稿人</td>
+			<td>{$detail.draft_name}</td>
+			<td class="layui-td-gray">拟稿部门</td>
+			<td>{$detail.draft_dame}</td>
+			<td class="layui-td-gray">拟稿日期</td>
+			<td>{$detail.draft_time|date="Y-m-d"}</td>
+		</tr>
+		<tr>
+			<td class="layui-td-gray">主送人员</td>
+			<td colspan="3">{$detail.send_names}</td>
+			<td class="layui-td-gray">抄送人员</td>
+			<td>{$detail.copy_names|default='-'}</td>
+		</tr>
+		<tr>
+			<td class="layui-td-gray-2">其他可查阅人</td>
+			<td>{$detail.share_names|default='-'}</td>
+			<td class="layui-td-gray">密级程度</td>
+			<td>
+				{eq name="$detail.secrets" value="1"}公开{/eq}
+				{eq name="$detail.secrets" value="2"}秘密{/eq}
+				{eq name="$detail.secrets" value="3"}机密{/eq}
+			</td>
+			<td class="layui-td-gray">紧急程度</td>
+			<td>
+				{eq name="$detail.urgency" value="1"}普通{/eq}
+				{eq name="$detail.urgency" value="2"}紧急{/eq}
+				{eq name="$detail.urgency" value="3"}加急{/eq}
+			</td>
+		</tr>
+		{notempty name="$detail.fileArray"}
+		<tr>
+			<td class="layui-td-gray-2">相关附件</td>
+			<td colspan="5" style="line-height:inherit">
+				<div class="layui-row" id="uploadBox">
+					{volist name="$detail.fileArray" id="vo"}
+					<div class="layui-col-md4" id="fileItem{$vo.id}">{:file_card($vo,'view')}</div>
+					{/volist}
+				</div>
+			</td>
+		</tr>
+		{/notempty}
+		<tr>
+			<td class="layui-td-gray" style="vertical-align:top;">公文内容</td>
+			<td colspan="5">{$detail.content|raw}</td>
+		</tr>
+	</table>
+	
+	<div id="checkBox" data-status="{$detail.check_status}" data-id="{$detail.id}" data-checkflowid="{$detail.check_flow_id}"></div>
+</div>
+{/block}
+<!-- /主体 -->
+
+<!-- 脚本 -->
+{block name="script"}
+<script>
+	const moduleInit = ['tool','oaCheck'];
+	function gouguInit() {
+		var form = layui.form,tool=layui.tool,oaCheck=layui.oaCheck;	
+		oaCheck.init({
+			check_table:'official_docs'
+		});
+	}
+</script>
+{/block}
+<!-- /脚本 -->

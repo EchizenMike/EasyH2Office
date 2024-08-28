@@ -1,222 +1,85 @@
 <?php
 /**
- * @copyright Copyright (c) 2022 勾股工作室
- * @license https://opensource.org/licenses/GPL-3.0
- * @link https://www.gougucms.com
- */
++-----------------------------------------------------------------------------------------------
+* GouGuOPEN [ 左手研发，右手开源，未来可期！]
++-----------------------------------------------------------------------------------------------
+* @Copyright (c) 2021~2024 http://www.gouguoa.com All rights reserved.
++-----------------------------------------------------------------------------------------------
+* @Licensed 勾股OA，开源且可免费使用，但并不是自由软件，未经授权许可不能去除勾股OA的相关版权信息
++-----------------------------------------------------------------------------------------------
+* @Author 勾股工作室 <hdm58@qq.com>
++-----------------------------------------------------------------------------------------------
+*/
 declare (strict_types = 1);
 namespace app\contract\controller;
 
 use app\api\BaseController;
+use app\contract\model\Contract;
 use app\contract\model\ContractLog;
+use app\contract\model\Purchase;
+use app\contract\model\PurchaseLog;
+use app\contract\model\SupplierContact;
 use think\facade\Db;
 use think\facade\View;
 
 class Api extends BaseController
 {
-	//获取合同协议
+	//获取销售合同协议
 	public function get_contract()
     {
         $param = get_params();
+		$uid = $this->uid;
 		$where = array();
 		$whereOr = array();
 		if (!empty($param['keywords'])) {
-			$where[] = ['id|name', 'like', '%' . $param['keywords'] . '%'];
+			$where[] = ['id|name|code', 'like', '%' . $param['keywords'] . '%'];
 		}
 		$where[] = ['delete_time', '=', 0];
 		$where[] = ['check_status', '=', 2];
-		$uid = $this->uid;
-		$auth = isAuth($uid,'contract_admin');
+		$auth = isAuth($uid,'contract_admin','conf_1');
 		if($auth==0){
 			$whereOr[] =['admin_id|prepared_uid|sign_uid|keeper_uid', '=', $uid];
 			$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',share_ids)")];
-			$dids = get_department_role($this->uid);
+			$dids = get_leader_departments($uid);
 			if(!empty($dids)){
-				$whereOr[] =['sign_did', 'in', $dids];
+				$whereOr[] =['did', 'in', $dids];
 			}
 		}
-		$rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
-        $list = Db::name('Contract')
-			->field('id,name,code,customer_id,sign_uid,sign_time')
-			->order('id desc')
-			->where($where)
-			->where(function ($query) use($whereOr) {
-					$query->whereOr($whereOr);
-			})
-			->paginate($rows, false)->each(function($item, $key){
-				$item['sign_name'] = Db::name('Admin')->where('id',$item['sign_uid'])->value('name');
-                $item['sign_time'] = date('Y-m-d', $item['sign_time']);
-                $item['customer'] =  Db::name('Customer')->where('id',$item['customer_id'])->value('name');
-				return $item;
-			});
-        table_assign(0, '', $list);
+		$model = new Contract();
+        $list = $model->datalist($param,$where,$whereOr);
+        return table_assign(0, '', $list);
     }
 
-    //添加附件
-    public function add_file()
-    {
-        $param = get_params();
-        $param['create_time'] = time();
-        $param['admin_id'] = $this->uid;
-        $fid = Db::name('ContractFile')->strict(false)->field(true)->insertGetId($param);
-        if ($fid) {
-            $log_data = array(
-                'field' => 'file',
-                'action' => 'upload',
-                'contract_id' => $param['contract_id'],
-                'admin_id' => $param['admin_id'],
-                'old_content' => '',
-                'new_content' => $param['file_name'],
-                'create_time' => time(),
-            );
-            Db::name('ContractLog')->strict(false)->field(true)->insert($log_data);
-            return to_assign(0, '上传成功', $fid);
-        }
-    }
-    
-    //删除
-    public function delete_file()
-    {
-        if (request()->isDelete()) {
-			$id = get_params("id");
-			$data['id'] = $id;
-			$data['delete_time'] = time();
-			if (Db::name('ContractFile')->update($data) !== false) {
-				$detail = Db::name('ContractFile')->where('id', $id)->find();
-				$file_name = Db::name('File')->where('id', $detail['file_id'])->value('name');
-                $log_data = array(
-                    'field' => 'file',
-                    'action' => 'delete',
-                    'contract_id' => $detail['contract_id'],
-                    'admin_id' => $this->uid,
-                    'new_content' => $file_name,
-                    'create_time' => time(),
-                );
-                Db::name('ContractLog')->strict(false)->field(true)->insert($log_data);
-				return to_assign(0, "删除成功");
-			} else {
-				return to_assign(1, "删除失败");
-			}
-        } else {
-            return to_assign(1, "错误的请求");
-        }
-    } 
-
-	//状态改变等操作
-    public function check()
+	//销售合同归档操作
+    public function contract_archive()
     {
         if (request()->isPost()) {
 			$param = get_params();
-			if($param['check_status'] == 0){
-				$param['check_step_sort'] = 0;
-			}
-			if($param['check_status'] == 1){
-				$check_admin_ids = isset($param['check_admin_ids'])?$param['check_admin_ids']:'';
-				$flow_data = set_flow($param['flow_id'],$check_admin_ids,$this->uid);
-				$param['check_admin_ids'] = $flow_data['check_admin_ids'];
-				$flow = $flow_data['flow'];
-				$check_type = $flow_data['check_type'];
-				//删除原来的审核流程和审核记录
-				Db::name('FlowStep')->where(['action_id'=>$param['id'],'type'=>4,'delete_time'=>0])->update(['delete_time'=>time()]);
-				Db::name('FlowRecord')->where(['action_id'=>$param['id'],'type'=>4,'delete_time'=>0])->update(['delete_time'=>time()]);	
-				if($check_type == 2){
-					$flow_step = array(
-						'action_id' => $param['id'],
-						'type' => 4,
-						'flow_uids' => $param['check_admin_ids'],
-						'create_time' => time()
-					);
-					//增加审核流程
-					Db::name('FlowStep')->strict(false)->field(true)->insertGetId($flow_step);
-				}
-				else{
-					foreach ($flow as $key => &$value){
-						$value['action_id'] = $param['id'];
-						$value['sort'] = $key;
-						$value['type'] = 4;
-						$value['create_time'] = time();
-					}
-					//增加审核流程
-					Db::name('FlowStep')->strict(false)->field(true)->insertAll($flow);
-				}
-				$checkData=array(
-					'action_id' => $param['id'],
-					'step_id' => 0,
-					'check_user_id' => $this->uid,
-					'type' => 4,
-					'check_time' => time(),
-					'status' => 0,
-					'content' => '提交申请',
-					'create_time' => time()
-				);	
-				$aid = Db::name('FlowRecord')->strict(false)->field(true)->insertGetId($checkData);
-				//发送消息通知
-				$msg=[
-					'from_uid'=>$this->uid,
-					'title'=>'合同',
-					'action_id'=>$param['id']
-				];
-				$users = $param['check_admin_ids'];
-				sendMessage($users,51,$msg);
-			}
-			if($param['check_status'] == 3){
-				$param['check_uid'] = $this->uid;
-				$param['check_time'] = time();
-				$param['check_remark'] = $param['mark'];
-			}
-			if($param['check_status'] == 5){
-				$param['stop_uid'] = $this->uid;
-				$param['stop_time'] = time();
-				$param['stop_remark'] = $param['mark'];
-			}
-			if($param['check_status'] == 6){
-				$param['void_uid'] = $this->uid;
-				$param['void_time'] = time();
-				$param['void_remark'] = $param['mark'];
-			}
-			$old =  Db::name('Contract')->where('id', $param['id'])->find();
-			if (Db::name('Contract')->strict(false)->update($param) !== false) {
-                $log_data = array(
-                    'field' => 'check_status',
-                    'contract_id' => $param['id'],
-                    'admin_id' => $this->uid,
-                    'new_content' => $param['check_status'],
-                    'old_content' => $old['check_status'],
-                    'create_time' => time(),
-                );
-                Db::name('ContractLog')->strict(false)->field(true)->insert($log_data);
-				return to_assign(0, "操作成功");
-			} else {
-				return to_assign(1, "操作失败");
-			}
-        } else {
-            return to_assign(1, "错误的请求");
-        }
-    }
-
-	//归档等操作
-    public function archive()
-    {
-        if (request()->isPost()) {
-			$param = get_params();
-			$old = 1;
+			$old=0;
+			$new=1;
+			$tips='操作成功，合同已转入到归档合同列表';
 			if($param['archive_status'] == 1){
 				$param['archive_uid'] = $this->uid;
 				$param['archive_time'] = time();
-				$old = 0;
 			}
-			$old =  Db::name('Contract')->where('id', $param['id'])->find();
+			else{
+				$param['archive_uid'] = 0;
+				$param['archive_time'] = 0;
+				$old=1;
+				$new=0;
+				$tips='操作成功，合同已从归档合同列表转出';
+			}
 			if (Db::name('Contract')->strict(false)->update($param) !== false) {
                 $log_data = array(
                     'field' => 'archive_status',
                     'contract_id' => $param['id'],
                     'admin_id' => $this->uid,
-                    'new_content' => $param['archive_status'],
-                    'old_content' => $old['archive_status'],
+                    'new_content' => $new,
+                    'old_content' => $old,
                     'create_time' => time(),
                 );
                 Db::name('ContractLog')->strict(false)->field(true)->insert($log_data);
-				return to_assign(0, "操作成功");
+				return to_assign(0, $tips);
 			} else {
 				return to_assign(1, "操作失败");
 			}
@@ -225,7 +88,82 @@ class Api extends BaseController
         }
     }
 	
-	//合同操作日志列表
+	//销售合同中止等操作
+    public function contract_stop()
+    {
+        if (request()->isPost()) {
+			$param = get_params();
+			$old=0;
+			$new=1;
+			$tips='操作成功，合同已转入到中止合同列表';
+			if($param['stop_status'] == 1){
+				$param['stop_uid'] = $this->uid;
+				$param['stop_time'] = time();
+			}
+			else{
+				$param['stop_uid'] = 0;
+				$param['stop_time'] = 0;
+				$old=1;
+				$new=0;
+				$tips='操作成功，合同已从中止合同列表转出';
+			}
+			if (Db::name('Contract')->strict(false)->update($param) !== false) {
+                $log_data = array(
+                    'field' => 'stop_status',
+                    'contract_id' => $param['id'],
+                    'admin_id' => $this->uid,
+                    'new_content' => $new,
+                    'old_content' => $old,
+                    'create_time' => time(),
+                );
+                Db::name('ContractLog')->strict(false)->field(true)->insert($log_data);
+				return to_assign(0, $tips);
+			} else {
+				return to_assign(1, "操作失败");
+			}
+        } else {
+            return to_assign(1, "错误的请求");
+        }
+    }
+	//销售合同作废等操作
+    public function contract_tovoid()
+    {
+        if (request()->isPost()) {
+			$param = get_params();
+			$old=0;
+			$new=1;
+			$tips='操作成功，合同已转入到作废合同列表';
+			if($param['void_status'] == 1){
+				$param['void_uid'] = $this->uid;
+				$param['void_time'] = time();
+			}
+			else{
+				$param['void_uid'] = 0;
+				$param['void_time'] = 0;
+				$old=1;
+				$new=0;
+				$tips='操作成功，合同已从作废合同列表转出';
+			}
+			if (Db::name('Contract')->strict(false)->update($param) !== false) {
+                $log_data = array(
+                    'field' => 'void_status',
+                    'contract_id' => $param['id'],
+                    'admin_id' => $this->uid,
+                    'new_content' => $new,
+                    'old_content' => $old,
+                    'create_time' => time(),
+                );
+                Db::name('ContractLog')->strict(false)->field(true)->insert($log_data);
+				return to_assign(0, $tips);
+			} else {
+				return to_assign(1, "操作失败");
+			}
+        } else {
+            return to_assign(1, "错误的请求");
+        }
+    }
+	
+	//销售合同操作日志列表
     public function contract_log()
     {
 		$param = get_params();
@@ -234,28 +172,201 @@ class Api extends BaseController
 		return to_assign(0, '', $content);
     }
 	
-	//获取客户列表
-	public function get_customer()
+	//获取产品分类数据
+    public function get_productcate_tree()
+    {
+        $cate = get_base_data('ProductCate');
+        $list = get_tree($cate, 0, 2);
+        $data['trees'] = $list;
+        return json($data);
+    }
+	
+	//获取销售产品列表
+	public function get_product()
     {
         $param = get_params();
 		$where = array();
 		if (!empty($param['keywords'])) {
-			$where[] = ['id|name', 'like', '%' . $param['keywords'] . '%'];
+			$where[] = ['id|title', 'like', '%' . $param['keywords'] . '%'];
 		}
 		$where[] = ['delete_time', '=', 0];
-		$uid = $this->uid;
-		$auth = isAuth($uid,'customer_admin');
-		$dids = get_department_role($this->uid);
-		if($auth==0){
-			$whereOr[] =['belong_uid', '=', $uid];	
-			if(!empty($dids)){
-				$whereOr[] =['belong_did', 'in', $dids];
-			}			
-			$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',share_ids)")];
-		}
 		$rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
-        $list = Db::name('Customer')->field('id,name,address')->order('id asc')->where($where)->paginate($rows, false)->each(function($item, $key){
-			$contact = Db::name('CustomerContact')->where(['cid'=>$item['id'],'is_default'=>1])->find();
+        $list = Db::name('Product')->field('id,title,sale_price,purchase_price,base_price,unit,specs')->order('id asc')->where($where)->paginate(['list_rows'=> $rows]);
+        table_assign(0, '', $list);
+    }
+	
+	/*
+	-------------------------------------------------分割线---------------------------------------------------------
+	*/
+	//获取采购合同协议
+	public function get_purchase()
+    {
+        $param = get_params();
+		$uid = $this->uid;
+		$where = array();
+		$whereOr = array();
+		if (!empty($param['keywords'])) {
+			$where[] = ['id|name|code', 'like', '%' . $param['keywords'] . '%'];
+		}
+		$where[] = ['delete_time', '=', 0];
+		$where[] = ['check_status', '=', 2];
+		$auth = isAuth($uid,'contract_admin','conf_1');
+		if($auth==0){
+			$whereOr[] =['admin_id|prepared_uid|sign_uid|keeper_uid', '=', $uid];
+			$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',share_ids)")];
+			$dids = get_leader_departments($uid);
+			if(!empty($dids)){
+				$whereOr[] =['did', 'in', $dids];
+			}
+		}
+		$model = new Purchase();
+        $list = $model->datalist($param,$where,$whereOr);
+        return table_assign(0, '', $list);
+    }
+
+	//采购合同归档操作
+    public function purchase_archive()
+    {
+        if (request()->isPost()) {
+			$param = get_params();
+			$old=0;
+			$new=1;
+			$tips='操作成功，合同已转入到归档合同列表';
+			if($param['archive_status'] == 1){
+				$param['archive_uid'] = $this->uid;
+				$param['archive_time'] = time();
+			}
+			else{
+				$param['archive_uid'] = 0;
+				$param['archive_time'] = 0;
+				$old=1;
+				$new=0;
+				$tips='操作成功，合同已从归档合同列表转出';
+			}
+			if (Db::name('Purchase')->strict(false)->update($param) !== false) {
+                $log_data = array(
+                    'field' => 'archive_status',
+                    'purchase_id' => $param['id'],
+                    'admin_id' => $this->uid,
+                    'new_content' => $new,
+                    'old_content' => $old,
+                    'create_time' => time(),
+                );
+                Db::name('PurchaseLog')->strict(false)->field(true)->insert($log_data);
+				return to_assign(0, $tips);
+			} else {
+				return to_assign(1, "操作失败");
+			}
+        } else {
+            return to_assign(1, "错误的请求");
+        }
+    }
+	
+	//采购合同中止等操作
+    public function purchase_stop()
+    {
+        if (request()->isPost()) {
+			$param = get_params();
+			$old=0;
+			$new=1;
+			$tips='操作成功，合同已转入到中止合同列表';
+			if($param['stop_status'] == 1){
+				$param['stop_uid'] = $this->uid;
+				$param['stop_time'] = time();
+			}
+			else{
+				$param['stop_uid'] = 0;
+				$param['stop_time'] = 0;
+				$old=1;
+				$new=0;
+				$tips='操作成功，合同已从中止合同列表转出';
+			}
+			if (Db::name('Purchase')->strict(false)->update($param) !== false) {
+                $log_data = array(
+                    'field' => 'stop_status',
+                    'purchase_id' => $param['id'],
+                    'admin_id' => $this->uid,
+                    'new_content' => $new,
+                    'old_content' => $old,
+                    'create_time' => time(),
+                );
+                Db::name('PurchaseLog')->strict(false)->field(true)->insert($log_data);
+				return to_assign(0, $tips);
+			} else {
+				return to_assign(1, "操作失败");
+			}
+        } else {
+            return to_assign(1, "错误的请求");
+        }
+    }
+	//采购合同作废等操作
+    public function purchase_tovoid()
+    {
+        if (request()->isPost()) {
+			$param = get_params();
+			$old=0;
+			$new=1;
+			$tips='操作成功，合同已转入到作废合同列表';
+			if($param['void_status'] == 1){
+				$param['void_uid'] = $this->uid;
+				$param['void_time'] = time();
+			}
+			else{
+				$param['void_uid'] = 0;
+				$param['void_time'] = 0;
+				$old=1;
+				$new=0;
+				$tips='操作成功，合同已从作废合同列表转出';
+			}
+			if (Db::name('Purchase')->strict(false)->update($param) !== false) {
+                $log_data = array(
+                    'field' => 'void_status',
+                    'purchase_id' => $param['id'],
+                    'admin_id' => $this->uid,
+                    'new_content' => $new,
+                    'old_content' => $old,
+                    'create_time' => time(),
+                );
+                Db::name('PurchaseLog')->strict(false)->field(true)->insert($log_data);
+				return to_assign(0, $tips);
+			} else {
+				return to_assign(1, "操作失败");
+			}
+        } else {
+            return to_assign(1, "错误的请求");
+        }
+    }
+	
+	//采购合同操作日志列表
+    public function purchase_log()
+    {
+		$param = get_params();
+		$model = new PurchaseLog();
+		$content = $model->contract_log($param);
+		return to_assign(0, '', $content);
+    }
+	
+	//获取采购品分类数据
+    public function get_purchasedcate_tree()
+    {
+        $cate = get_base_data('PurchasedCate');
+        $list = get_tree($cate, 0, 2);
+        $data['trees'] = $list;
+        return json($data);
+    }
+	
+	//获取供应商列表
+	public function get_supplier()
+    {
+        $param = get_params();
+		$where = array();
+		if (!empty($param['keywords'])) {
+			$where[] = ['id|title', 'like', '%' . $param['keywords'] . '%'];
+		}
+		$where[] = ['delete_time', '=', 0];
+		$rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
+        $list = Db::name('Supplier')->field('id,title,address')->order('id asc')->where($where)->paginate(['list_rows'=> $rows])->each(function($item, $key){
+			$contact = Db::name('SupplierContact')->where(['sid'=>$item['id'],'is_default'=>1])->find();
 			if(!empty($contact)){
 				$item['contact_name'] = $contact['name'];
 				$item['contact_mobile'] = $contact['mobile'];
@@ -268,5 +379,55 @@ class Api extends BaseController
 		});
         table_assign(0, '', $list);
     }
-
+	
+	//获取采购物品列表
+	public function get_purchased()
+    {
+        $param = get_params();
+		$where = array();
+		if (!empty($param['keywords'])) {
+			$where[] = ['id|title', 'like', '%' . $param['keywords'] . '%'];
+		}
+		$where[] = ['delete_time', '=', 0];
+		$rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
+        $list = Db::name('Purchased')->field('id,title,purchase_price,sale_price,unit,specs')->order('id asc')->where($where)->paginate(['list_rows'=> $rows]);
+        table_assign(0, '', $list);
+    }	
+	
+	//获取供应商联系人数据
+	public function get_supplier_contact()
+    {
+		$param = get_params();
+		$where = array();
+		$where[] = ['delete_time', '=', 0];
+		$where[] = ['sid', '=', $param['supplier_id']];
+        $rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
+		$content = SupplierContact::where($where)
+			->order('create_time desc')
+            ->paginate(['list_rows'=> $rows])
+			->each(function ($item, $key) {					
+				$item->admin_name = Db::name('Admin')->where(['id' => $item->admin_id])->value('name');
+				$item->create_time = date('Y-m-d H:i:s', (int) $item->create_time);
+			});
+		return table_assign(0, '', $content);
+    }
+	
+	//设置供应商联系人
+	public function set_supplier_contact()
+    {
+        if (request()->isAjax()) {
+			$param = get_params();
+			$detail= SupplierContact::where(['id' => $param['id']])->find();
+			SupplierContact::where(['sid' => $detail['sid']])->strict(false)->field(true)->update(['is_default'=>0]);
+			$res = SupplierContact::where(['id' => $param['id']])->update(['is_default'=>1]);
+			if ($res) {
+				add_log('edit', $param['id'], $param,'供应商联系人');
+				return to_assign();
+			} else {
+				return to_assign(1, '操作失败');
+			}
+        } else {
+           return to_assign(1, '参数错误');
+        }
+    }
 }

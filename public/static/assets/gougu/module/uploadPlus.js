@@ -1,43 +1,264 @@
-layui.define(['layer'],function(exports){
-	//提示：模块也可以依赖其它模块，如：layui.define('layer', callback);
-	let layer = layui.layer,element = layui.element, form = layui.form, upload = layui.upload,uploadindex=0;
+layui.define(['tool'],function(exports){
+	let layer = layui.layer,element = layui.element,tool=layui.tool,form = layui.form,upload = layui.upload,uploadIndex=0;
+	// 查找指定的元素在数组中的位置
+	Array.prototype.indexOf = function (val) {
+		for (var i = 0; i < this.length; i++) {
+			if (this[i] == val) {
+				return i;
+			}
+		}
+		return -1;
+	};
+	// 通过索引删除数组元素
+	Array.prototype.remove = function (val) {
+		var index = this.indexOf(val);
+		if (index > -1) {
+			this.splice(index, 1);
+		}
+	};	
+	//格式化文件大小
+	function renderSize(value){
+		if(null==value||value==''){
+			 return "0 Bytes";
+		}
+		var unitArr = new Array("Bytes","KB","MB","GB","TB","PB","EB","ZB","YB");
+		var index=0;
+		var srcsize = parseFloat(value);
+		index=Math.floor(Math.log(srcsize)/Math.log(1024));
+		var size =srcsize/Math.pow(1024,index);
+		size=size.toFixed(2);//保留的小数位数
+		return size+unitArr[index];
+	}	
+	//是否是对象
 	let isObject = function(obj) {
 		return Object.prototype.toString.call(obj) === '[object Object]';
 	}
 	const opts={
-		"title":'上传图片',
-		"url":'/admin/api/upload/thumb/500',
-		"target":'gogoupload',
-		"type":1,
-		"max":31,
+		"title":'上传文件',
+		"url":'/api/index/upload',
+		"target":'uploadBtn',
+		"targetBox":'uploadBox',
+		"use":'attachment',//attachment(附件上传),shard(大文件分片上传),single(单图上传),multi(多图上传),import(excel导入上传)
+		"attachment":{
+			"type":0,//0ajax多文件模式，1ajax单文件单记录模式
+			"exts": 'png|jpg|gif|jpeg|doc|docx|ppt|pptx|xls|xlsx|pdf|zip|rar|7z|txt|wps|avi|wmv|mpg|mov|rm|flv|mp4|mp3|wav|wma|flac|midi|dwg|dxf|dwt|xmind', //只允许上传文件格式
+			"colmd":4,
+			"uidDelete":false,//是否开启只有上传人自己才能删除自己的附件
+			"ajaxSave":null,
+			"ajaxDelete":null
+		},
+		"shard":{
+			"exts": 'png|jpg|gif|jpeg|doc|docx|ppt|pptx|xls|xlsx|pdf|zip|rar|7z|txt|wps|avi|wmv|mpg|mov|rm|flv|mp4|mp3|wav|wma|flac|midi|dwg|dxf|dwt|xmind', //只允许上传文件格式
+		},
+		"single":{
+			"exts": 'png|jpg|gif|jpeg',
+		},
+		"multi":{
+			"exts": 'png|jpg|gif|jpeg',
+			"type":1,
+			"max":31,
+		},
+		"import":{
+			"exts": 'xls|xlsx',
+			"template":null,
+			"tips":'如果导入失败，请根据提示注意检查表格数据。'
+		},
 		"callback": null
 	};
 	var uploadPlus = function(options){
-		this.settings = $.extend({}, opts, options);
-		this.settings.index = uploadindex;
-		uploadindex++;
-		this.createStyle();
-		var me=this;
-		if(isObject(me.settings.target)){
-			me.init();
-		}
-		else{
-			$('#'+me.settings.target).click(function(){
-				me.init();
-			});
+		this.settings = $.extend(true,{},opts, options);
+		this.settings.index = uploadIndex;
+		uploadIndex++;
+		let me=this;
+		switch (me.settings.use) {
+			case "shard":
+				//分片上传
+				me.shardUpload();
+				break;
+			case "single":
+				me.singleImage();
+				break;
+			case "multi":
+				if(isObject(me.settings.target)){
+					me.multiImage();
+				}
+				else{
+					$('#'+me.settings.target).click(function(){
+						me.multiImage();
+					});
+				}
+				break;
+			case "import":
+				me.excelImport();
+				break;
+			default:
+				me.attachment();
 		}
 	};    
-	uploadPlus.prototype = {		
-		init: function () {
-			var me = this;
-			var area =[[],['640px','360px'],['928px','610px']];
+	uploadPlus.prototype = {
+		attachment: function () {
+			let me = this;
+			let box = $('#'+me.settings.targetBox);
+			let boxInput = box.find('[data-type="file"]');
+			let attachment = me.settings.attachment;
+			//删除附件
+			box.on('click', '.file-delete', function () {
+				let id = $(this).data('id'),file_id = $(this).data('fileid'),uid = $(this).data('uid');
+				if (uid != login_admin && attachment.uidDelete==true) {
+					layer.msg('你不是该文件的上传人，无权限删除');
+					return false;
+				}
+				let idsStr = boxInput.val(),idsArray = [];
+				if (typeof idsStr !== 'undefined' && idsStr != '') {
+					idsArray = idsStr.split(",");
+					idsArray.remove(file_id);
+				}
+				layer.confirm('确定删除该附件吗？', {
+					icon: 3,
+					title: '提示'
+				}, function(index) {
+					if (typeof (attachment.ajaxDelete) === "function") {
+						if(attachment.type==1){
+							//单文件，单记录删除
+							attachment.ajaxDelete(id,file_id);
+						}
+						else{
+							attachment.ajaxDelete(idsArray.join(','));
+						}						
+					}
+					else{
+						//虚拟删除
+						boxInput.val(idsArray.join(','));
+						$('#file_' + id).remove();
+					}
+					layer.close(index);
+				});
+			})
+			
+			//重命名附件
+			box.on('click','.name-edit',function(){
+				let file_id = $(this).data('fileid');
+				let uid = $(this).data('uid');
+				if (uid != login_admin && me.settings.uidDelete==true) {
+					layer.msg('你不是该文件的上传人，无权限修改');
+					return false;
+				}
+				let name = $(this).data('name');
+				let fileext = $(this).data('fileext');
+				layer.prompt({
+					title: '重命名',
+					value: name.replace(/\.[^.]+$/, ""),
+					yes: function(index, layero) {
+						// 获取文本框输入的值
+						var value = layero.find(".layui-layer-input").val();
+						if (value!='') {
+							let new_title = value+'.'+fileext;
+							let callback = function (e) {
+								layer.msg(e.msg);
+								$('#fileItem'+file_id).find('.file-title').html(new_title).attr('title',new_title);
+							}
+							tool.post("/api/index/file_edit", {id:file_id,title:new_title}, callback);
+							layer.close(index);
+						} else {
+							layer.msg('请填写文件名称');
+						}
+					}
+				})
+			})
+			//多附件上传
+			upload.render({
+				elem: '#'+me.settings.target,
+				url: me.settings.url,
+				accept: 'file',
+				exts: attachment.exts,
+				multiple: true,
+				before: function(obj){
+					layer.msg('上传中...', {icon: 16, time: 0});
+				},
+				done: function(res){
+					if (res.code == 0) {
+						//上传成功
+						if(attachment.type==0){
+							let image=['jpg','jpeg','png','gif'],office=['doc','docx','xls','xlsx','ppt','pptx'];
+							let idsStr = boxInput.val(),idsArray = [];
+							if (typeof idsStr !== 'undefined' && idsStr != '') {
+								idsArray = idsStr.split(",");
+							}
+							idsArray.push(res.data.id);
+							let filesize = renderSize(res.data.filesize),type=0,type_icon = 'icon-sucaiziyuan',ext = 'zip';
+							if(res.data.fileext == 'pdf'){
+								type=1;
+								type_icon = 'icon-kejian';								
+								ext = 'pdf';
+							}
+							if (image.indexOf(res.data.fileext) !== -1) {
+								type=1;
+								type_icon = 'icon-sucaiguanli';
+								ext = 'image';
+							}
+							if (office.indexOf(res.data.fileext) !== -1) {
+								type=2;
+								type_icon = 'icon-lunwenshezhi';
+								ext = 'office';
+							}
+							
+							let view_btn = '<span class="file-ctrl blue" data-ctrl="edit" data-type="'+type+'" data-fileid="'+res.data.id+'" data-ext="'+ext+'" data-filename="'+res.data.name+'" data-href="'+res.data.filepath+'" data-id="'+res.data.id+'" data-uid="'+res.data.uid+'" title="附件操作"><i class="iconfont icon-gengduo1"></i></span>';
+							
+							let temp = `<div class="layui-col-md${attachment.colmd}" id="file_${res.data.id}">
+									<div class="file-card" id="fileItem${res.data.id}">
+										<i class="file-icon iconfont ${type_icon}"></i>
+										<div class="file-info">
+											<div class="file-title" title="${res.data.name}">${res.data.name}</div>
+											<div class="file-ops">${filesize}，一分钟前</div>
+										</div>
+										<div class="file-tool">${view_btn}<span class="name-edit green" style="display:none;" data-id="${res.data.id}" data-fileid="${res.data.id}" id="fileEdit${res.data.id}" data-name="${res.data.name}" data-fileext="${res.data.fileext}" title="重命名"></span><span class="file-delete red" style="display:none;" data-id="${res.data.id}" data-fileid="${res.data.id}" id="fileDel${res.data.id}" title="删除"><i class="iconfont icon-shanchu"></i></span></div>
+									</div>
+								</div>`;
+							boxInput.val(idsArray.join(','));	
+							box.append(temp);					
+							if (typeof (attachment.ajaxSave) === "function") {
+								attachment.ajaxSave(idsArray.join(','));
+							}
+							else{
+								layer.msg(res.msg);
+							}
+						}
+						if(attachment.type==1){
+							//单文件，单记录保存
+							if (typeof (attachment.ajaxSave) === "function") {
+								attachment.ajaxSave(res);
+							}
+						}
+					}else{
+						layer.msg(res.msg);
+					}
+				}
+			});
+		},
+		//单图
+		singleImage: function () {
+			let me = this;
+			let single = upload.render({
+				elem: "#"+me.settings.target,
+				url: me.settings.url,
+				accept: 'images',
+				acceptMime:'image/*',
+				done: function (res) {
+					me.settings.callback(res);
+				}
+			});
+		},
+		//多图
+		multiImage: function () {
+			let me = this;
+			let area =[[],['640px','360px'],['928px','610px']];
 			this.layerindex = layer.open({
 				'title':me.settings.title,
-				'area':area[me.settings.type],
-				'content':me.render(),
+				'area':area[me.settings.multi.type],
+				'content':me.multiRender(),
 				'type':1,
 				'success':function(){
-					if(me.settings.type==1){
+					if(me.settings.multi.type==1){
 						me.uploadOne();	
 					}else{
 						me.uploadMore();	
@@ -45,9 +266,9 @@ layui.define(['layer'],function(exports){
 				}
 			});
 		},
-		render: function (){
-			var me = this;
-			var template_one = '<div class="layui-form p-3">\
+		multiRender: function (){
+			let me = this;
+			let template_one = '<div class="layui-form p-3">\
 						<div class="layui-form-item">\
 							<label class="layui-form-label">来源：</label>\
 							<div class="layui-input-block">\
@@ -98,12 +319,12 @@ layui.define(['layer'],function(exports){
 							<div class="layui-form-item layui-form-item-sm">\
 								<label class="layui-form-label"></label>\
 								<div class="layui-input-block">\
-									<span class="layui-btn" id="uploadAjax'+me.settings.index+'">确定保存</span>\
+									<span class="layui-btn" id="uploadSave'+me.settings.index+'">确定保存</span>\
 								</div>\
 							</div>\
 						</div>\
 				</div>';
-			var template_more = '<div class="layui-form p-3">\
+			let template_more = '<div class="layui-form p-3">\
 							<div id="gouguUploadBox'+me.settings.index+'" class="gougu-upload-box select">\
 								<div id="gouguUploadBtn'+me.settings.index+'" class="gougu-upload-btn"><div class="gougu-upload-btn-box"><i class="layui-icon layui-icon-addition"></i><br/>点击上传图片</div></div>\
 							</div>\
@@ -117,10 +338,10 @@ layui.define(['layer'],function(exports){
 								<button type="button" class="layui-btn layui-btn-normal" id="uploadOk'+me.settings.index+'">提交</button>\
 							</div>\
 						</div>';
-			return me.settings.type==1?template_one:template_more;
+			return me.settings.multi.type==1?template_one:template_more;
 		},
 		uploadOne:function(){
-			var me = this;
+			let me = this;
 			form.render();					
 			form.on('radio(type)', function(data){
 				if(data.value==1){
@@ -133,12 +354,12 @@ layui.define(['layer'],function(exports){
 				}
 			}); 					
 			//选文件
-			var uploadOne = upload.render({
+			let uploadOne = upload.render({
 				elem: '#gouguUploadBtn'+me.settings.index
 				,url: me.settings.url
 				,auto: false
-				,accept: 'file' //普通文件
-				,exts: 'png|jpg|gif|jpeg|bmp' //只允许上传文件格式
+				,accept: 'images'
+				,acceptMime:'image/*'
 				,bindAction: '#uploadNow'+me.settings.index
 				,choose: function(obj){
 					obj.preview(function(index, file, result){
@@ -162,7 +383,7 @@ layui.define(['layer'],function(exports){
 				}
 			});
 					
-			$('#uploadAjax'+me.settings.index).on('click',function(){
+			$('#uploadSave'+me.settings.index).on('click',function(){
 				let url=$('[name="img_url"]').val();
 				let name=$('[name="img_name"]').val();
 				if(url == ''){
@@ -183,25 +404,25 @@ layui.define(['layer'],function(exports){
 			})
 		},
 		uploadMore:function(){
-			var me = this,file_lists=[];
+			let me = this,file_lists=[];
 			console.log(file_lists);
-			var uploadList = upload.render({
+			let uploadList = upload.render({
 				elem: '#gouguUploadBtn'+me.settings.index
 				,elemList: $('#gouguUploadBox'+me.settings.index) //列表元素对象
 				,url: me.settings.url
-				,accept: 'file'
-				,exts: 'png|jpg|gif|jpeg|bmp' //只允许上传文件格式
+				,accept: 'images'
+				,acceptMime:'image/*'
 				,multiple: true
 				,number: me.settings.max
 				,auto: false
 				,bindAction: '#uploadNow'+me.settings.index
 				,choose: function(obj){
-					var that = this;
-					var files = this.files = obj.pushFile(); //将每次选择的文件追加到文件队列
+					let that = this;
+					let files = this.files = obj.pushFile(); //将每次选择的文件追加到文件队列
 					that.elemList.removeClass('select').addClass('selected');
 					//读取本地文件
 					obj.preview(function(index, file, result){
-						var card = $('<div class="gougu-upload-card" id="gouguUploadCard'+index+'">\
+						let card = $('<div class="gougu-upload-card" id="gouguUploadCard'+index+'">\
 												<div class="gougu-upload-card-box">\
 													<img alt="'+ file.name +'" class="gougu-upload-card-img" src="'+ result +'">\
 													<div class="gougu-upload-card-bar"><div class="layui-progress" lay-filter="progress-card-'+ index +'"><div class="layui-progress-bar" lay-percent=""></div></div></div>\
@@ -227,7 +448,7 @@ layui.define(['layer'],function(exports){
 					});
 				}
 				,done: function(res, index, upload){ //成功的回调
-					var that = this;
+					let that = this;
 					if(res.code==0){
 						delete this.files[index]; //删除文件队列已经上传成功的文件
 						that.elemList.find('#gouguUploadCard'+ index).addClass('uploadok');
@@ -245,8 +466,8 @@ layui.define(['layer'],function(exports){
 					layer.close(me.layerindex);
 				}
 				,error: function(index, upload){ //错误回调
-				  var that = this;
-				  var tr = that.elemList.find('#gouguUploadCard'+ index).addClass('reload'); //显示重传
+				  let that = this;
+				  let tr = that.elemList.find('#gouguUploadCard'+ index).addClass('reload'); //显示重传
 				}
 				,progress: function(n, elem, e, index){
 					element.progress('progress-card-'+ index, n + '%'); //执行进度条。n 即为返回的进度百分比
@@ -265,41 +486,91 @@ layui.define(['layer'],function(exports){
 					layer.msg('请先点击开始上传按钮上传');
 				}
 			})
-		},	
-		createStyle:function(){
-			var cssText='.gougu-upload-files{background-color: #ffffff; border:1px solid #e4e7ed;color: #c0c4cc;cursor: not-allowed; padding:0 12px; box-sizing: border-box; display: inline-block; font-size: inherit; height: 38px; line-height: 35px; margin-right:8px; border-radius:2px;}\
-			.gougu-upload-box{background-color:#f8f8f8; border:1px solid #eee; border-radius:6px; width:888px; height:440px; padding:5px; overflow-y:auto; margin:0 auto; position:relative;-webkit-user-select:none;-moz-user-select:none-ms-user-select:none;}\
-			.select .gougu-upload-btn{width:100%; height:100%; position:absolute;top:0;left:0; line-height:440px;}\
-			.select .gougu-upload-btn-box{width:100%; height:100%; box-sizing: border-box; padding-top:160px; line-height:1.2;text-align:center; cursor:pointer; color:#49bc85;font-size:22px;}\
-			.select .gougu-upload-btn-box i{font-size:60px;}\
-			.selected .gougu-upload-btn{width:100px; height:100px; float:left; padding:5px;}\
-			.selected .gougu-upload-btn-box{width:100px; height:100px; box-sizing: border-box; background-color:#eaf7f0; border:1px solid #49bc85; padding-top:16px; line-height:1.2;font-size:14px; text-align:center; cursor:pointer; color:#49bc85}\
-			.selected .gougu-upload-btn-box i{font-size:36px;}\
-			.gougu-upload-card{width:100px; height:100px; float:left; padding:5px;}\
-			.gougu-upload-card-box{width:100px; height:100px; box-sizing: border-box; background-color:#fff; border:1px solid #eee;position: relative;overflow: hidden;}\
-			.gougu-upload-card-box img {width: 100px; height: 100px; object-fit: cover;}\
-			.gougu-upload-card-text{background-color:rgba(0,0,0,.618); color:#fff; position:absolute;left:0; bottom:0; line-height:1.6; font-size:12px; width:100px; text-overflow:hidden; white-space: nowrap; text-overflow: ellipsis;}\
-			.gougu-upload-card-reload{width:50px; height:32px; position:absolute; top:5px; left:3px; font-size:12px;display:none;}\
-			.gougu-upload-card-del{width:32px; height:32px; position:absolute; top:5px; right:0; display:none;}\
-			.gougu-upload-card:hover .gougu-upload-card-del{display:block;}\
-			.uploadok.gougu-upload-card .gougu-upload-card-del{display:none;}\
-			.reload.gougu-upload-card .gougu-upload-card-reload{display:block;}\
-			.gougu-upload-card-bar{width:100%; position:absolute;left:0; bottom:16px;}\
-			.gougu-upload-tips{color:#969696; font-size:12px; margin-right:20px;}';
-			
-			var document = window.document;
-			var styleTag = document.createElement("style");
-			styleTag.setAttribute("type", "text/css");
-			if (styleTag.styleSheet) {    //ie
-				styleTag.styleSheet.cssText += cssText;
-			}
-			else{			
-				styleTag.innerHTML = cssText;
-			}        
-			document.getElementsByTagName("head").item(0).appendChild(styleTag);
+		},
+		//批量导入
+		excelImport:function(){
+			let me = this;
+			layer.open({
+				'title':me.settings.title,
+				'type':1,
+				'area': ['640px', '320px'],
+				'content':'<div class="layui-form layui-import">\
+								<div class="mt-4">\
+									<div class="layui-form-item">\
+										<label class="layui-form-label">选择文件：</label>\
+										<div class="layui-input-block">\
+											<div class="layui-input-inline" style="width:286px;"><input type="text" id="inputImport'+me.settings.index+'" placeholder=".xls,.xlsx" class="layui-input" readonly></div><button type="button" class="layui-btn layui-btn-normal" id="importSelect'+me.settings.index+'">选择文件</button><a href="'+me.settings.import.template+'" target="_blank" class="layui-btn ml-2">Excel模板下载</a>\
+										</div>\
+									</div>\
+								</div>\
+								<div class="layui-form-item py-2">\
+									<label class="layui-form-label"></label>\
+									<div class="layui-input-block gougu-import-tips">\
+										1、只能上传 .xls、.xlsx文件，文件大小 3MB 以内，每次导入不能超过3000条；<br>2、Excel表格数据请勿放在合并的单元格中，格式务必按照模版样本填写；<br>3、'+me.settings.import.tips+'\
+									</div>\
+								</div>\
+								<div class="layui-form-item">\
+									<label class="layui-form-label"></label>\
+									<div class="layui-input-block">\
+										<button type="button" class="layui-btn layui-bg-red" id="btnImport'+me.settings.index+'">上传并导入</button>\
+										<span class="red ml-3" id="noteImport'+me.settings.index+'"></span>\
+									</div>\
+								</div>\
+						</div>',
+				success: function(layero, idx){
+					form.render();
+					let noteImport = $('#noteImport'+me.settings.index);
+					//选文件
+					let uploadImport = upload.render({
+						elem: '#importSelect'+me.settings.index
+						,url: me.settings.url
+						,auto: false
+						,accept: 'file' //普通文件
+						,acceptMime: 'application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' // 此处设置上传的文件格式
+						,exts: 'xls|xlsx' //只允许上传文件格式
+						,bindAction: '#btnImport'+me.settings.index
+						,choose: function(obj){
+							obj.preview(function(index, file, result){
+								$('#importSelect'+me.settings.index).html('重新选择');
+								$('#inputImport'+me.settings.index).val(file.name);
+							});
+						}
+						,before: function(obj){
+							if($('#inputImport'+me.settings.index).val()==''){
+								layer.msg('请选择文件');
+								return false;
+							}
+						}
+						,progress: function(n, elem, e){
+							noteImport.html('文件上转中...');
+							if(n==100){
+								noteImport.html('数据导入中...');
+							}
+						}
+						,error: function(index, upload){
+							uploadImport.reload();
+							$('#importSelect'+me.settings.index).html('选择文件');
+							$('#inputImport'+me.settings.index).val('');
+							noteImport.html('数据导入失败，请重新选择文件或关闭弹层重试');
+						}
+						,done: function(res, index, upload){
+							uploadImport.reload();
+							noteImport.html(res.msg);
+							layer.msg(res.msg);
+							if(res.code==0){
+								layer.close(idx);
+								me.settings.callback(res);			
+							}
+							else{
+								$('#importSelect'+me.settings.index).html('选择文件');
+								$('#inputImport'+me.settings.index).val('');
+							}
+						}
+					});
+				}
+			});	
 		}
 	}
-
-  //输出接口
-  exports('uploadPlus', uploadPlus);
+	//输出接口
+	exports('uploadPlus', uploadPlus);
 });   

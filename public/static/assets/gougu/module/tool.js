@@ -1,8 +1,7 @@
 layui.define(function (exports) {
-	var MOD_NAME = 'tool';
-	var tool = {
+	let MOD_NAME = 'tool',dropdown=layui.dropdown;
+	let tool = {
 		loading: false,
-		//右侧iframe的方式打开页面，参考勾股CMS、勾股OA
 		side: function (url, width) {
 			let that = this;
 			if (that.loading == true) {
@@ -36,10 +35,9 @@ layui.define(function (exports) {
 					}
 				},
 				success: function (obj, index) {
-					var btn = '<div data-index="'+index+'" class="express-close" title="关闭">关闭</div>';
+					let btn = '<div data-index="'+index+'" class="express-close" title="关闭">关闭</div>';
 					obj.append(btn);
 					$('body').addClass('right-open');
-					//console.log($(parent.$('.express-close')));
 					$(parent.$('.express-close')).hide();
 					that.loading = false;
 					obj.on('click','.express-close', function () {					
@@ -66,7 +64,7 @@ layui.define(function (exports) {
 					}
 				},
 				success: function (obj, index) {
-					var btn = '<div data-index="'+index+'" class="express-close" style="display:none;" title="关闭">关闭</div>';
+					let btn = '<div data-index="'+index+'" class="express-close" style="display:none;" title="关闭">关闭</div>';
 					obj.append(btn);
 					that.loading = false;
 					obj.on('click','.express-close', function () {					
@@ -82,7 +80,7 @@ layui.define(function (exports) {
 				return false;
 			}
 			that.loading = true;
-			var countWidth = window.innerWidth-(window.innerWidth*0.5)+456;
+			let countWidth = window.innerWidth-(window.innerWidth*0.5)+456;
 			if(window.innerWidth<=1000){
 				countWidth = 750;
 			}
@@ -101,7 +99,7 @@ layui.define(function (exports) {
 						layer.msg(res.msg);
 						return false;
 					}
-					var express = '<section id="expressLayer" class="express-box" style="width:' + sideWidth + '"><article id="articleLayer">' + res + '</article><div id="expressClose" class="express-close" title="关闭">关闭</div></section><div id="expressMask" class="express-mask"></div>';
+					let express = '<section id="expressLayer" class="express-box" style="width:' + sideWidth + '"><article id="articleLayer">' + res + '</article><div id="expressClose" class="express-close" title="关闭">关闭</div></section><div id="expressMask" class="express-mask"></div>';
 
 					$('body').append(express).addClass('right-open');
 					$('#expressMask').fadeIn(200);
@@ -110,8 +108,7 @@ layui.define(function (exports) {
 							openInit();
 						}						
 					});					
-					that.loading = false;
-					
+					that.loading = false;					
 					//关闭
 					$('body').on('click','.express-close', function () {
 						$('#expressMask').fadeOut(100);
@@ -126,15 +123,14 @@ layui.define(function (exports) {
 						})
 					})
 					$(window).resize(function () {
-						var resizeWidth = window.innerWidth-(window.innerWidth*0.5)+456;
+						let resizeWidth = window.innerWidth-(window.innerWidth*0.5)+456;
 						if(window.innerWidth<=1000){
 							resizeWidth = 750;
 						}
 						$('#expressLayer').width(resizeWidth);
-					})					
-					
-				}
-				, error: function (xhr, textstatus, thrown) {
+					})
+				},
+				error: function (xhr, textstatus, thrown) {
 					console.log('错误');
 				},
 				complete: function () {
@@ -185,8 +181,8 @@ layui.define(function (exports) {
 					}
 					$('#pageBox').html(res);
 					pageInit();
-				}
-				, error: function (xhr, textstatus, thrown) {
+				},
+				error: function (xhr, textstatus, thrown) {
 					console.log('错误');
 				},
 				complete: function () {
@@ -194,7 +190,17 @@ layui.define(function (exports) {
 				}
 			});
 		},
-		close: function (delay) {
+		reload: function (delay) {
+			//延迟刷新，一般是在编辑完页面数据后需要自动关闭页面用到
+			if(delay && delay>0){
+				setTimeout(function () {
+					location.reload();
+				}, delay);
+			}else{
+				location.reload();
+			}
+		},
+		close: function (delay,table) {
 			//延迟关闭，一般是在编辑完页面数据后需要自动关闭页面用到
 			if(delay && delay>0){
 				setTimeout(function () {
@@ -203,22 +209,28 @@ layui.define(function (exports) {
 			}else{
 				$('.express-close').last().click();
 			}
-			if (layui.pageTable) {
-				layui.pageTable.reload();
+			if (typeof(table) == "undefined" || table == '') {
+				table = 'pageTable';
+			}
+			if (layui[table]) {
+				layui[table].reload();
+			}
+			else{
+				tool.reload(delay);
 			}
 		},
 		ajax: function (options, callback) {
-			var format = 'json';
+			let format = 'json';
 			if (options.hasOwnProperty('data')) {
 				format = options.data.hasOwnProperty('format') ? options.data.format : 'json';
 			}
 			callback = callback || options.success;
 			callback && delete options.success;
-			var optsetting = { timeout: 10000 };
+			let optsetting = { timeout: 10000 };
 			if (format == 'jsonp') {
 				optsetting = { timeout: 10000, dataType: 'jsonp', jsonp: 'callback' }
 			}
-			var opts = $.extend({}, optsetting, {
+			let opts = $.extend({}, optsetting, {
 				success: function (res) {
 					if (callback && typeof callback === 'function') {
 						callback(res);
@@ -228,124 +240,290 @@ layui.define(function (exports) {
 			$.ajax(opts);
 		},
 		get: function (url, data, callback) {
-			this.ajax({
-				url: url,
-				type: "GET",
-				data: data
-			}, callback);
+			this.ajax({url: url,type: "GET",data: data}, callback);
 		},
 		post: function (url, data, callback) {
-			this.ajax({
-				url: url,
-				type: "POST",
-				data: data
-			}, callback);
+			this.ajax({url: url,type: "POST",data: data}, callback);
 		},
 		put: function (url, data, callback) {
-			this.ajax({
-				url: url,
-				type: "PUT",
-				data: data
-			}, callback);
+			this.ajax({url: url,type: "PUT",data: data}, callback);
 		},
 		delete: function (url, data, callback) {
-			this.ajax({
-				url: url,
-				type: "DELETE",
-				data: data
-			}, callback);
+			this.ajax({url: url,type: "DELETE",data: data}, callback);
 		},
-		sideClose(delay){
+		parentAdmin:function () {
+			if(parent.layui.admin){
+				return parent.layui.admin;
+			}
+			else{
+				if(parent.parent.layui.admin){
+					return parent.parent.layui.admin;
+				}
+				else{
+					if(parent.parent.parent.layui.admin){
+						return parent.parent.parent.layui.admin;
+					}
+					else{
+						return false;
+					}
+				}
+			}
+		},
+		sideClose(delay,table){
 			if(parent.layui.tool){
-				parent.layui.tool.close(delay);
+				parent.layui.tool.close(delay,table);
 			}
 			else{
 				console.log('父页面没引用tool模块');
 			}		
 		},
 		tabAdd:function(url,title,id){
-			if(parent.layui.admin){
-				parent.layui.admin.sonAdd(url,title,id);
-			}
-			else{
-				console.log('父页面没引用admin模块');
-			}			
+			let parentAdmin = this.parentAdmin();
+			if(parentAdmin){
+				parentAdmin.sonAdd(url,title,id);
+			}		
 		},
 		tabClose:function(){
-			if(parent.layui.admin){
-				parent.layui.admin.sonClose();
-			}
-			else{
-				console.log('父页面没引用admin模块');
+			let parentAdmin = this.parentAdmin();
+			if(parentAdmin){
+				parentAdmin.sonClose();
 			}
 		},
 		tabDelete:function(id){
-			if(parent.layui.admin){
-				parent.layui.admin.tabDelete(id);
-			}
-			else{
-				console.log('父页面没引用admin模块');
+			let parentAdmin = this.parentAdmin();
+			if(parentAdmin){
+				parentAdmin.tabDelete(id);
 			}
 		},
 		tabChange:function(id){
-			if(parent.layui.admin){
-				parent.layui.admin.tabChange(id);
-			}
-			else{
-				console.log('父页面没引用admin模块');
+			let parentAdmin = this.parentAdmin();
+			if(parentAdmin){
+				parentAdmin.tabChange(id);
 			}
 		},
 		tabRefresh:function(id){
-			if(parent.layui.admin){
-				parent.layui.admin.refresh(id);
-			}
-			else{
-				console.log('父页面没引用admin模块');
+			let parentAdmin = this.parentAdmin();
+			if(parentAdmin){
+				parentAdmin.refresh(id);
 			}			
+		},
+		officeView:function(id,mode){
+			let parentAdmin = this.parentAdmin();
+			if(parentAdmin){
+				parentAdmin.officeView(id,mode);
+			}			
+		},
+		pdfView:function(href){
+			let parentAdmin = this.parentAdmin();
+			if(parentAdmin){
+				parentAdmin.pdfView(href);
+			}			
+		},
+		photoView:function(href){
+			let parentAdmin = this.parentAdmin();
+			if(parentAdmin){
+				parentAdmin.photoView(href);
+			}		
+		},
+		videoView:function(href){
+			let parentAdmin = this.parentAdmin();
+			if(parentAdmin){
+				parentAdmin.videoView(href);
+			}		
+		},
+		audioView:function(href){
+			let parentAdmin = this.parentAdmin();
+			if(parentAdmin){
+				parentAdmin.audioView(href);
+			}		
+		},
+		articleView:function(fileid) {
+			tool.side('/disk/index/view_article?id='+fileid);
+		},
+		articleEdit:function(fileid) {
+			tool.side('/disk/index/add_article?id='+fileid);
+		},
+		downloadFile:function(url, fileName) {
+			let link = document.createElement("a");
+			link.href = url;
+			link.download = fileName;
+			link.click();
+			layer.msg('文件下载中...', {time: 2000});
+		},
+		copyCtrl:function(content) {
+			var save = function(e){
+				e.clipboardData.setData('text/plain', content);
+				e.preventDefault();
+			}
+			document.addEventListener('copy', save);
+			document.execCommand('copy');
+			document.removeEventListener('copy',save);
+			if (content != '') {
+				layer.msg('复制成功');
+			}
 		}
 	};
 	//时间选择快捷操作
 	$('body').on('click', '.tool-time', function () {
 		let that = $(this);
         let type = that.data('type');
-		if (typeof(type) == "undefined" || type == '') {
+        let range = that.data('range');
+        let min = that.data('min');
+        let max = that.data('max');
+        let format = that.data('format');
+		if (typeof(type) == "undefined" || type === '') {
 			type = 'date';
 		}
-		layui.laydate.render({ 
-			elem: that,
-			show: true,
-			type: type,
-			fullPanel: true
-		});
+		if (typeof(range) == "undefined" || type === '') {
+			range = false;
+		}
+		if (typeof(min) == "undefined" || min === '') {
+			min = '1900-1-1';
+		}
+		if (typeof(max) == "undefined" || max === '') {
+			max = '2099-1-1';
+		}
+		if (typeof(format) == "undefined" || format === '') {
+			layui.laydate.render({ 
+				elem: that,
+				show: true,
+				type: type,
+				range: range,
+				min: min,
+				max: max,
+				fullPanel: true
+			});
+		}else{
+			layui.laydate.render({ 
+				elem: that,
+				show: true,
+				type: type,
+				range: range,
+				min: min,
+				max: max,
+				format:format,
+				fullPanel: true
+			});
+		}
+
 		return false;
-	});	
-	
-	//查看图片附件
-	$('body').on('click','.file-view-img',function () {
-		let href = $(this).data('href');
-		if(href){
-			let photos = { "data": [{"src": href}]};
-			layer.photos({
-				photos: photos
-				,anim: 5 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
-			});
+	});
+
+	//附件操作	
+	const ctrlBtn=function(ctrl){
+			//操作按钮'0下载','1查看','2编辑','3重命名','4删除','5移动','6分享','7取消分享','8标星','9取消标星','10还原','11清除'
+		let ctrl_types = ['下载','查看','编辑','重命名','删除','移动','分享','取消分享','标星','取消标星','还原','清除'];
+		let	ctrls=[];
+		for(let i=0;i<ctrl.length;i++){
+			ctrls.push({"id":ctrl[i]+'',"title":ctrl_types[ctrl[i]]});
 		}
-	});	
+		return ctrls;
+	}
 	
-	//查看pdf附件
-	$('body').on('click','.file-view-pdf',function () {
+	$('body').on('click','.file-ctrl',function () {
+		let that = this;
+		let ctrl = $(this).data('ctrl');
+		let fileid = $(this).data('fileid');
+		let filename = $(this).data('filename');
+		let type = $(this).data('type');
+		let ext = $(this).data('ext');
 		let href = $(this).data('href');
-		if(href){
-			layer.open({
-			  type: 2,
-			  title: '查看PDF文件，可以最大化看',
-			  shadeClose: true,
-			  shade: false,
-			  maxmin: true, //开启最大化最小化按钮
-			  area: ['900px', '600px'],
-			  content: href
-			});
+		let file_menu = ctrlBtn([0]);
+		//type:0下载+重命名+删除，1下载+查看+重命名+删除，2下载+查看+编辑+重命名+删除
+		if(ctrl=='edit'){
+			let types=[
+				[0,1,3,4],//下载+查看+重命名+删除
+				[0,1,3,4],//下载+查看+重命名+删除
+				[0,1,2,3,4]//下载+查看+编辑+重命名+删除
+			];
+			file_menu = ctrlBtn(types[type]);
 		}
+		if(ctrl=='view'){
+			if(type==0){
+				file_menu = ctrlBtn([0]);
+			}
+			else{
+				file_menu = ctrlBtn([0,1]);
+			}
+		}
+		if(ctrl=='disk'){
+			if(type!=''){
+				file_menu = ctrlBtn((type+'').split(","));
+			}
+		}
+		dropdown.render({
+			elem: that,
+			className:'file-menu',
+			align: 'right',
+			show: true, // 外部事件触发即显示
+			data: file_menu,
+			click: function(obj){
+				let click_t = obj.id;
+				switch (click_t) {
+				  case '0':
+					tool.downloadFile(href,filename);
+					break;
+				  case '1':
+					if(ext=='image'){
+						tool.photoView(href);
+					}
+					if(ext=='pdf'){
+						tool.pdfView(href);
+					}
+					if(ext=='video'){
+						tool.videoView(href);
+					}
+					if(ext=='audio'){
+						tool.audioView(href);
+					}
+					if(ext=='office'){
+						tool.officeView(fileid,'view');
+					}
+					if(ext=='article'){
+						tool.articleView(fileid);
+					}
+					break;
+				  case '2':
+					if(ext=='office'){
+						tool.officeView(fileid,'edit');
+					}
+					if(ext=='article'){
+						tool.articleEdit(fileid);
+					}
+					break;
+				  case '3'://编辑
+					$('#fileEdit'+fileid).click();
+					break;
+				  case '4'://删除
+					$('#fileDel'+fileid).click();
+					break;
+				  case '5'://移动
+					$('#fileMove'+fileid).click();
+					break;
+				  case '6'://分享
+					$('#fileShare'+fileid).click();
+					break;
+				  case '7'://取消分享
+					$('#fileShareno'+fileid).click();
+					break;
+				 case '8'://标星
+					$('#fileStar'+fileid).click();
+					break;
+				  case '9'://取消标星
+					$('#fileStarno'+fileid).click();
+					break;
+				  case '10'://还原
+					$('#fileBack'+fileid).click();
+					break;
+				  case '11'://清除
+					$('#fileClear'+fileid).click();
+					break;
+				  default:
+					return false;
+					break;
+				}				
+			}
+		});
 	});
 	
 	//搜索表单重置快捷操作
@@ -357,6 +535,16 @@ layui.define(function (exports) {
 				prev.click();
 			}, 10)
 		}
+	});
+	
+	//新建按钮快捷操作
+	$('body').on('click', '.tool-add', function () {
+		let href = $(this).data('href');
+		if (typeof(href) == "undefined" || href == '') {
+			return false;
+		}
+		tool.side(href);	
+		return false;
 	});
 	
 	$('body').on('click', '.tab-a', function () {
@@ -371,7 +559,6 @@ layui.define(function (exports) {
 		}
 		return false;
 	});
-	
 	$('body').on('click', '.side-a', function () {
 		let url = $(this).data('href');
 		if (url && url !== '') {

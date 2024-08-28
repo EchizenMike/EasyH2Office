@@ -15,13 +15,16 @@ if (empty(file_exists(__DIR__ . '/../vendor/autoload.php'))) {
 require __DIR__ . '/../vendor/autoload.php';
 
 // 定义当前版本号
-define('CMS_VERSION','4.99.20');
+define('CMS_VERSION','5.0.2');
 
 // 定义Layui版本号
-define('LAYUI_VERSION','2.9.13');
+define('LAYUI_VERSION','2.9.16');
 
 // 定义项目目录
 define('CMS_ROOT', __DIR__ . '/../');
+
+// 定义报错模版
+define('EEEOR_REPORTING',CMS_ROOT.'/public/tpl/error.html');
 
 // 执行HTTP应用并响应
 $http = (new App())->http;

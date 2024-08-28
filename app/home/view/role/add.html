@@ -1,9 +1,10 @@
 {extend name="../../base/view/common/base" /}
 {block name="style"}
 <style>
+.layui-form-checkbox[lay-skin=primary]{padding-left:20px;}
 .left-note{font-weight:800; vertical-align:top; padding-top:28px!important; text-align:center}
-.checkbox14 .layui-form-checkbox span{font-size:15px;font-weight:800;}
 .right-note .layui-checkbox-disabled span {color: #666666!important;}
+.note-0 {display: inline-block;vertical-align: middle;}
 </style>
 {/block}
 <!-- 主体 -->
@@ -46,37 +47,37 @@
 					{volist name="role_rule" id="vo"}
 					<tr>
 						<td class="left-note">
-						  <input type="checkbox" name="rule[]" value="{$vo.id}" title="{$vo.title}" class="aaa" {eq name="$vo.checked" value="true" }checked{/eq}>
+						  <input type="checkbox" name="rule[]" value="{$vo.id}" title="{$vo.title}" {eq name="$vo.checked" value="true" }checked{/eq}>
 						</td>
-						{notempty name="vo.children"}
+						{gt name="vo.len" value="0"}
 							<td class="right-note">
 								<div style="padding:0 0 0 10px;">
 								{volist name="vo.children" key="k" id="voo"}
-									<div class="checkbox15" style="padding:10px 0;">
-										<input type="checkbox" lay-filter="rule" name="rule[]" value="{$voo.id}" lay-skin="primary" title="{$voo.title}" {eq name="$voo.checked" value="true" }checked{/eq}>
+									<div class="note-{$voo.len}" style="padding:10px 0;">
+										<input type="checkbox" lay-filter="rule" data-pid="{$vo.id}" value="{$voo.id}" name="rule[]" lay-skin="primary" title="{$voo.title}" {eq name="$voo.checked" value="true" }checked{/eq}>
 									</div>
-									{notempty name="voo.children"}
-										<div style="padding:0 0 3px; {if condition='$k != count($vo.children)'}margin-bottom:3px; padding-bottom:16px; border-bottom:1px solid #eee;{/if}">
+									{gt name="voo.len" value="0"}
+										<div style="padding:0 0 3px 22px; {if condition='$k != count($vo.children)'}margin-bottom:3px; padding-bottom:16px; border-bottom:1px solid #eee;{/if}">
 										{volist name="voo.children" id="vooo"}
-											<div class="layui-input-inline" style="margin-right:10px;">
+											<div class="note-{$vooo.len}" style="margin-right:10px;">
 												<input type="checkbox" data-rule="{$voo.id}" name="rule[]" value="{$vooo.id}" lay-skin="primary" title="{$vooo.title}" {eq name="$vooo.checked" value="true" }checked{/eq}>
 											</div>
-											{notempty name="vooo.children"}
-												<div style="padding:0 0 3px; {if condition='$k != count($vo.children)'}margin-bottom:3px; padding-bottom:16px; border-bottom:1px solid #eee;{/if}">
+											{gt name="vooo.len" value="0"}
+												<div style="padding:6px 0 15px 22px; {if condition='$k != count($vo.children)'}margin-bottom:3px; padding-bottom:10px; margin-bottom:10px; border-bottom:1px solid #eee;{/if}">
 												{volist name="vooo.children" id="voooo"}
-													<div class="layui-input-inline" style="margin-right:10px;">
-														<input type="checkbox" data-rule="{$vooo.id}" name="rule[]" value="{$voooo.id}" lay-skin="primary" title="{$voooo.title}" {eq name="$voooo.checked" value="true" }checked{/eq}>
+													<div class="note-{$voooo.len}" style="margin-right:10px;">
+														<input type="checkbox" data-rule="{$voo.id}" name="rule[]" value="{$voooo.id}" lay-skin="primary" title="{$voooo.title}" {eq name="$voooo.checked" value="true" }checked{/eq}>
 													</div>
 												{/volist}
 												</div>
-											{/notempty}
+											{/gt}
 										{/volist}
 										</div>
-									{/notempty}
+									{/gt}
 								{/volist}
 								</div>
 							</td>
-						{/notempty}
+						{/gt}
 					</tr>
 					{/volist}
 				</table>
@@ -99,7 +100,7 @@
 			</td>
 		</tr>
 	</table>
-	<div class="pt-3">
+	<div class="pt-4">
 		<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform">立即提交</button>
 		<button type="reset" class="layui-btn layui-btn-primary">重置</button>
 	</div>
@@ -129,26 +130,14 @@
 			return false;
 		});
 		
-		
-		//监听多选框点击事件  通过 lay-filter="menu"来监听
-		form.on('checkbox(menu)', function (data) {
-		　　let val = data.value;
-			if(data.elem.checked){
-				//判断当前多选框是选中还是取消选中
-				$("input[data-menu='"+val+"']").prop("checked", true);//true:选中 false:不选中
-			}
-			else{
-				$("input[data-menu='"+val+"']").prop("checked", false);
-			}
-			form.render();//实时渲染选中和不选中的样式
-		});
-		
 		//监听多选框点击事件  通过 lay-filter="rule"来监听
 		form.on('checkbox(rule)', function (data) {
 		　　let val = data.value;
+			let pid =$(this).data('pid');
 			if(data.elem.checked){
 				//判断当前多选框是选中还是取消选中
 				$("input[data-rule='"+val+"']").prop("checked", true);//true:选中 false:不选中
+				$("input[value='"+pid+"']").prop("checked", true);//true:选中 false:不选中
 			}
 			else{
 				$("input[data-rule='"+val+"']").prop("checked", false);

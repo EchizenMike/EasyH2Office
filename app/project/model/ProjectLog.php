@@ -1,9 +1,15 @@
 <?php
 /**
- * @copyright Copyright (c) 2022 勾股工作室
- * @license https://opensource.org/licenses/GPL-3.0
- * @link https://www.gougucms.com
- */
++-----------------------------------------------------------------------------------------------
+* GouGuOPEN [ 左手研发，右手开源，未来可期！]
++-----------------------------------------------------------------------------------------------
+* @Copyright (c) 2021~2024 http://www.gouguoa.com All rights reserved.
++-----------------------------------------------------------------------------------------------
+* @Licensed 勾股OA，开源且可免费使用，但并不是自由软件，未经授权许可不能去除勾股OA的相关版权信息
++-----------------------------------------------------------------------------------------------
+* @Author 勾股工作室 <hdm58@qq.com>
++-----------------------------------------------------------------------------------------------
+*/
 
 declare (strict_types = 1);
 namespace app\project\model;
@@ -24,7 +30,6 @@ class ProjectLog extends Model
                 'status' => array('icon' => 'icon-wodedianping', 'title' => '状态'),
                 'content' => array('icon' => 'icon-wodedianping', 'title' => '描述'),
                 'file' => array('icon' => 'icon-sucaiziyuan', 'title' => '文件'),
-				'file_ids' => array('icon' => 'icon-sucaiziyuan', 'title' => '文件'),
                 'contract_id' => array('icon' => 'icon-hetongguanli', 'title' => '合同'),
                 'customer_id' => array('icon' => 'icon-jiaoshiguanli', 'title' => '客户'),
                 'link' => array('icon' => 'icon-sucaiziyuan', 'title' => '链接'),
@@ -34,24 +39,22 @@ class ProjectLog extends Model
             ]],
         'task' => [
             'priority' => ['', '低', '中', '高', '紧急'],
-            'flow_status' => ['', '未开始', '进行中', '已完成', '已拒绝', '已关闭'],
+            'status' => ['', '未开始', '进行中', '已完成', '已拒绝', '已关闭'],
             'type' => ['', '需求', '设计', '研发', '缺陷'],
             'field_array' => [
                 'director_uid' => array('icon' => 'icon-xueshengzhuce', 'title' => '负责人'),
                 'assist_admin_ids' => array('icon' => 'icon-xueshengbaoming', 'title' => '协作人'),
                 'end_time' => array('icon' => 'icon-kaoshijihua', 'title' => '预计结束时间'),
                 'title' => array('icon' => 'icon-wodedianping', 'title' => '标题'),
-                'flow_status' => array('icon' => 'icon-wodedianping', 'title' => '任务状态'),
+                'status' => array('icon' => 'icon-wodedianping', 'title' => '任务状态'),
                 'plan_hours' => array('icon' => 'icon-wodedianping', 'title' => '工时'),
                 'priority' => array('icon' => 'icon-wodedianping', 'title' => '等级'),
-                'type' => array('icon' => 'icon-wodedianping', 'title' => '任务类型'),
+                'work_id' => array('icon' => 'icon-wodedianping', 'title' => '工作类型'),
                 'cate' => array('icon' => 'icon-wodedianping', 'title' => '任务类别'),
                 'done_ratio' => array('icon' => 'icon-wodedianping', 'title' => '完成进度'),
                 'project_id' => array('icon' => 'icon-wodedianping', 'title' => '关联项目'),
-                'before_task' => array('icon' => 'icon-wodedianping', 'title' => '前置任务'),
                 'content' => array('icon' => 'icon-wodedianping', 'title' => '描述'),
                 'file' => array('icon' => 'icon-sucaiziyuan', 'title' => '文件'),
-				'file_ids' => array('icon' => 'icon-sucaiziyuan', 'title' => '文件'),
                 'new' => array('icon' => 'icon-zidingyishezhi', 'title' => '任务'),
                 'delete' => array('icon' => 'icon-shanchu', 'title' => '任务'),
             ]],
@@ -60,7 +63,6 @@ class ProjectLog extends Model
                 'title' => array('icon' => 'icon-wodedianping', 'title' => '标题'),
                 'project_id' => array('icon' => 'icon-wodedianping', 'title' => '关联项目'),
                 'content' => array('icon' => 'icon-wodedianping', 'title' => '描述'),
-				'file_ids' => array('icon' => 'icon-sucaiziyuan', 'title' => '文件'),
                 'new' => array('icon' => 'icon-zidingyishezhi', 'title' => '任务'),
                 'delete' => array('icon' => 'icon-shanchu', 'title' => '任务'),
             ]]
@@ -104,11 +106,7 @@ class ProjectLog extends Model
                 $v['old_content'] = Db::name('Project')->where(['id' => $v['old_content']])->value('name');
                 $v['new_content'] = Db::name('Project')->where(['id' => $v['new_content']])->value('name');
             }
-			if ($v['field'] == 'before_task') {
-                $v['old_content'] = Db::name('ProjectTask')->where(['id' => $v['old_content']])->value('title');
-                $v['new_content'] = Db::name('ProjectTask')->where(['id' => $v['new_content']])->value('title');
-            }
-            if ($v['field'] == 'cate') {
+            if ($v['field'] == 'work_id') {
                 $v['old_content'] = Db::name('WorkCate')->where(['id' => $v['old_content']])->value('title');
                 $v['new_content'] = Db::name('WorkCate')->where(['id' => $v['new_content']])->value('title');
             }
@@ -200,7 +198,7 @@ class ProjectLog extends Model
                 $v['old_content'] = Db::name('Project')->where(['id' => $v['old_content']])->value('name');
                 $v['new_content'] = Db::name('Project')->where(['id' => $v['new_content']])->value('name');
             }
-            if ($v['field'] == 'cate') {
+            if ($v['field'] == 'work_id') {
                 $v['old_content'] = Db::name('WorkCate')->where(['id' => $v['old_content']])->value('title');
                 $v['new_content'] = Db::name('WorkCate')->where(['id' => $v['new_content']])->value('title');
             }

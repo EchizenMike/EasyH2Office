@@ -1,7 +1,7 @@
 {extend name="../../base/view/common/base" /}
 <!-- 主体 -->
 {block name="body"}
-<div class="p-3">
+<div class="p-page">
 	<div class="gg-form-bar border-t border-x" style="padding-bottom:12px;">
 		<button class="layui-btn layui-btn-sm add-menu">+ 添加部门</button>
 	</div>
@@ -31,16 +31,16 @@
 				callback: {}
 			}
 			,done:function(){
-					treeTable.expandAll('treeTable', true); // 关闭全部节点
+				treeTable.expandAll('treeTable', true); // 关闭全部节点
 			}
 			, cols: [[
-				 { field: 'id', width: 100, title: 'ID号', align: 'center' }
-				, { field: 'pid', title: '上级部门ID',width: 120, align: 'center'}
+				 { field: 'id', width: 80, title: 'ID号', align: 'center' }
+				, { field: 'pid', title: '上级部门ID',width: 90, align: 'center'}
 				, { field: 'title', title: '部门名称'}
-				, { field: 'sort', title: '排序',width: 80, align: 'center'}
-				, { field: 'leader', title: '部门负责人',width: 120, align: 'center'}
-				, { field: 'phone', title: '部门电话',width: 160,}
-				, { width:180, title: '操作', align: 'center', templet: function (d) {
+				, { field: 'sort', title: '排序',width: 60, align: 'center'}
+				, { field: 'leader', title: '部门负责人',width: 200}
+				, { field: 'phone', title: '部门电话',width: 136,}
+				, { width:168, title: '操作', align: 'center', templet: function (d) {
 						var html = '<span class="layui-btn-group"><button class="layui-btn layui-btn-xs" lay-event="add">添加下级部门</button><button class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit">编辑</button><button class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</button></span>';
 						return html;
 					}

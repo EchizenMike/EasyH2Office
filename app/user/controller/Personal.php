@@ -1,9 +1,15 @@
 <?php
 /**
- * @copyright Copyright (c) 2021 勾股工作室
- * @license https://opensource.org/licenses/GPL-3.0
- * @link https://www.gougucms.com
- */
++-----------------------------------------------------------------------------------------------
+* GouGuOPEN [ 左手研发，右手开源，未来可期！]
++-----------------------------------------------------------------------------------------------
+* @Copyright (c) 2021~2024 http://www.gouguoa.com All rights reserved.
++-----------------------------------------------------------------------------------------------
+* @Licensed 勾股OA，开源且可免费使用，但并不是自由软件，未经授权许可不能去除勾股OA的相关版权信息
++-----------------------------------------------------------------------------------------------
+* @Author 勾股工作室 <hdm58@qq.com>
++-----------------------------------------------------------------------------------------------
+*/
 
 declare (strict_types = 1);
 
@@ -30,16 +36,18 @@ class Personal extends BaseController
             $where[] = ['p.status','=', 1];
             $rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
             $list = DepartmentChange::where($where)
-                ->field('p.*,u.name as name,ad.name as admin,a.title as adepartment,b.title as bdepartment')
+                ->field('p.*,u.name as name,ad.name as admin')
                 ->alias('p')
                 ->join('admin u', 'p.uid = u.id', 'LEFT')
-                ->join('admin ad', 'p.admin_id = ad.id', 'LEFT')
-                ->join('department a', 'p.from_did = a.id', 'LEFT')
-                ->join('department b', 'p.to_did = b.id', 'LEFT')                
+                ->join('admin ad', 'p.admin_id = ad.id', 'LEFT')              
                 ->order('p.id desc')
-                ->paginate($rows, false, ['query' => $param])
+				->paginate(['list_rows'=> $rows])
                 ->each(function ($item, $key) {
                     $item->move_time = date('Y-m-d', $item->move_time);
+					$adepartment = Db::name('Department')->whereIn('id',$item->from_did)->column('title');
+					$item->adepartment = implode(',', $adepartment);
+					$bdepartment = Db::name('Department')->whereIn('id',$item->to_did)->column('title');
+					$item->bdepartment = implode(',', $bdepartment);
                 });
             return table_assign(0, '', $list);
         } else {
@@ -52,21 +60,24 @@ class Personal extends BaseController
     {
         $param = get_params();
         if (request()->isAjax()) {
-            $param['move_time'] = isset($param['move_time']) ? strtotime($param['move_time']) : 0;
             if ($param['id'] > 0) {
                 $param['update_time'] = time();
                 $res = Db::name('DepartmentChange')->strict(false)->field(true)->update($param);
                 add_log('edit', $param['id'], $param);
             } else {
-				$count = Db::name('Department')->where(['leader_id' => $param['uid']])->count();
-				if($count>0){
-					return to_assign(1,'请先撤销该员工的部门负责人头衔再调部门');
-				}
+				$param['move_time'] = isset($param['move_time']) ? strtotime($param['move_time']) : 0;
                 $param['create_time'] = time();
                 $param['admin_id'] = $this->uid;
                 $res = Db::name('DepartmentChange')->strict(false)->field(true)->insertGetId($param);
 				if ($res!==false) {
-					Db::name('Admin')->where('id', $param['uid'])->update(['did' => $param['to_did']]);
+					Db::name('DepartmentAdmin')->where('admin_id',$param['uid'])->whereNotIn('department_id', $param['to_did'])->delete();
+					$dids = explode(',',$param['to_did']);
+					foreach ($dids as $did) {
+						$has = Db::name('DepartmentAdmin')->where(['admin_id'=>$param['uid'],'department_id'=>$did])->find();
+						if (empty($has)) {
+							Db::name('DepartmentAdmin')->insert(['admin_id'=>$param['uid'],'department_id'=>$did,'create_time' => time()]);
+						}							
+					}
 				}
                 add_log('add', $res, $param);
             }
@@ -99,13 +110,12 @@ class Personal extends BaseController
             $where['p.status'] = array('eq', 1);
             $rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
             $list = PersonalQuit::where($where)
-                ->field('p.*,u.name as name,d.title as department,ps.title as position')
+                ->field('p.*,u.name as name,ps.title as position')
                 ->alias('p')
                 ->join('admin u', 'p.uid = u.id', 'LEFT')
-                ->join('department d', 'u.did = d.id', 'LEFT')
                 ->join('position ps', 'u.position_id = ps.id', 'LEFT')
                 ->order('p.id desc')
-                ->paginate($rows, false, ['query' => $param])
+                ->paginate(['list_rows'=> $rows])
                 ->each(function ($item, $key) {
                     $item->quit_time = date('Y-m-d', $item->quit_time);
 					$item->connect_time_str='-';
@@ -116,6 +126,10 @@ class Personal extends BaseController
                     $item->connect_name = Db::name('admin')->where(['id' => $item->connect_id])->value('name');
                     $this_uids_name = Db::name('admin')->where([['id','in', $item->connect_uids]])->column('name');
                     $item->connect_names = implode(',', $this_uids_name);
+					
+					$dids =  Db::name('DepartmentAdmin')->where('admin_id',$item->uid)->column('department_id');
+					$department = Db::name('Department')->whereIn('id',$dids)->column('title');
+					$item->department = implode(',', $department);
                 });
             return table_assign(0, '', $list);
         } else {
@@ -134,17 +148,13 @@ class Personal extends BaseController
                 $res = Db::name('PersonalQuit')->strict(false)->field(true)->update($param);
                 add_log('edit', $param['id'], $param);
             } else {
-				$count = Db::name('Department')->where(['leader_id' => $param['uid']])->count();
-				if($count>0){
-					return to_assign(1,'请先撤销该员工的部门负责人头衔再添加离职档案');
-				}
                 $param['create_time'] = time();
                 $param['admin_id'] = $this->uid;
                 $res = Db::name('PersonalQuit')->strict(false)->field(true)->insertGetId($param);
-				if ($res!==false) {
-					Db::name('Admin')->where('id', $param['uid'])->update(['status' => 2]);
-					add_log('add', $res, $param);
-				}
+                add_log('add', $res, $param);
+            }
+            if ($res!==false) {
+                Db::name('Admin')->where('id', $param['uid'])->update(['status' => 2]);
             }
             return to_assign();
         } else {
@@ -153,17 +163,20 @@ class Personal extends BaseController
             if ($id>0) {
                 $where['p.id'] = array('eq', $id);
                 $detail = Db::name('PersonalQuit')
-                    ->field('p.*,u.name as name,l.name as lead_admin_name,d.title as department')
+                    ->field('p.*,u.name as name,l.name as lead_admin_name')
                     ->alias('p')
                     ->join('admin u', 'p.uid = u.id', 'LEFT')
                     ->join('admin l', 'p.lead_admin_id = l.id', 'LEFT')
-                    ->join('department d', 'u.did = d.id', 'LEFT')
                     ->where($where)
                     ->find();
                 $this_uids_name = Db::name('Admin')->where([['id','in', $detail['connect_uids']]])->column('name');
                 $detail['connect_names'] = implode(',', $this_uids_name);
                 $detail['quit_time'] = date('Y-m-d', $detail['quit_time']);
 				$detail['connect_name'] = Db::name('admin')->where(['id' => $detail['connect_id']])->value('name');
+				
+				$dids =  Db::name('DepartmentAdmin')->where('admin_id',$detail['uid'])->column('department_id');
+				$department = Db::name('Department')->whereIn('id',$dids)->column('title');
+				$detail['department'] = implode(',', $department);
                 View::assign('detail', $detail);
             }
             View::assign('id', $id);

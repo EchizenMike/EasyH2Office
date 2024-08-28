@@ -1,9 +1,15 @@
 <?php
 /**
- * @copyright Copyright (c) 2021 勾股工作室
- * @license https://opensource.org/licenses/GPL-3.0
- * @link https://www.gougucms.com
- */
++-----------------------------------------------------------------------------------------------
+* GouGuOPEN [ 左手研发，右手开源，未来可期！]
++-----------------------------------------------------------------------------------------------
+* @Copyright (c) 2021~2024 http://www.gouguoa.com All rights reserved.
++-----------------------------------------------------------------------------------------------
+* @Licensed 勾股OA，开源且可免费使用，但并不是自由软件，未经授权许可不能去除勾股OA的相关版权信息
++-----------------------------------------------------------------------------------------------
+* @Author 勾股工作室 <hdm58@qq.com>
++-----------------------------------------------------------------------------------------------
+*/
 
 declare (strict_types = 1);
 
@@ -25,8 +31,8 @@ class Index extends BaseController
             //未读消息统计
             $msg_map[] = ['to_uid', '=', $admin_id];
             $msg_map[] = ['read_time', '=', 0];
-            $msg_map[] = ['status', '=', 1];
-            $msg_count = Db::name('Message')->where($msg_map)->count();
+            $msg_map[] = ['delete_time', '=', 0];
+            $msg_count = Db::name('Msg')->where($msg_map)->count();
             $statistics['msg_num'] = $msg_count;
             return to_assign(0, 'ok', $statistics);
         } else {
@@ -47,7 +53,7 @@ class Index extends BaseController
             }
             View::assign('menu', $list);
 			View::assign('admin',$admin);
-			View::assign('web',get_system_config('web'));			
+			View::assign('system',get_system_config('system'));			
             return View();
         }
     }
@@ -58,139 +64,173 @@ class Index extends BaseController
         if (file_exists(CMS_ROOT . 'app/install')) {
             $install = true;
         }
+		$uid = $this->uid;
+		$dids = get_leader_departments($uid);
         $total = [];
-        $adminCount = Db::name('Admin')->where('status', '1')->count();
-        $approveCount = Db::name('Approve')->count();
-        $noteCount = Db::name('Note')->where('status', '1')->count();
-        $expenseCount = Db::name('Expense')->where('delete_time', '0')->count();
-        $invoiceCount = Db::name('Invoice')->where('delete_time', '0')->count();
-        $total[] = array(
-            'name' => '员工',
-            'num' => $adminCount,
-        );
 		$total[] = array(
-            'name' => '公告',
-            'num' => $noteCount,
+            'name' => '企业公告',
+            'num' => Db::name('Note')->where('status', '1')->count()
         );
         $total[] = array(
-            'name' => '审批',
-            'num' => $approveCount,
+            'name' => '报销总数',
+            'num' => Db::name('Expense')->where('delete_time', '0')->count()
         );
         $total[] = array(
-            'name' => '报销',
-            'num' => $expenseCount,
-        );
-        $total[] = array(
-            'name' => '发票',
-            'num' => $invoiceCount,
+            'name' => '发票总数',
+            'num' => Db::name('Invoice')->where('delete_time', '0')->count()
         );
 		
-		$handle=[
-			'approve'=>Db::name('Approve')->where([['', 'exp', Db::raw("FIND_IN_SET('{$this->uid}',check_admin_ids)")]])->count(),
-			'expenses'=>Db::name('Expense')->where([['', 'exp', Db::raw("FIND_IN_SET('{$this->uid}',check_admin_ids)")],['delete_time', '=', 0]])->count(),
-			'invoice'=>Db::name('Invoice')->where([['', 'exp', Db::raw("FIND_IN_SET('{$this->uid}',check_admin_ids)")],['delete_time', '=', 0]])->count(),
-			'income'=>Db::name('Invoice')->where([['is_cash', '<', 2],['admin_id','=',$this->uid],['check_status', '=', 5],['delete_time', '=', 0]])->count(),
-			'contract'=>0,
-			'task'=>0
-		];
+		$whereHandle = [];
+		$whereHandle[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',check_uids)")];
+		$whereHandle[] = ['delete_time', '=', 0];
+		$handle=[];
 		
-        $module = Db::name('AdminModule')->column('name');
-        if (in_array('customer', $module)) {
-			
-			$whereCustomer = array();
-			$whereCustomerOr = array();
-			$uid = $this->uid;
-			$dids = get_department_role($uid);
-			
-			$whereCustomer[] = ['delete_time', '=', 0];
-			$whereCustomerOr[] =['belong_uid', '=', $uid];	
-			if(!empty($dids)){
-				$whereCustomerOr[] =['belong_did', 'in', $dids];
-			}			
-			$whereCustomerOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',share_ids)")];
-			
-            $customerCount = Db::name('Customer')->where($whereCustomer)
-			->where(function ($query) use($whereCustomerOr) {
-					$query->whereOr($whereCustomerOr);
+        $handle[] = array(
+            'name' => '待审公文',
+            'num' =>  Db::name('OfficialDocs')->where($whereHandle)->count(),
+            'id' => 163,
+            'url' => '/adm/official/datalist',
+        );
+        $handle[] = array(
+            'name' => '待审用章',
+            'num' => Db::name('Seal')->where($whereHandle)->count(),
+            'id' => 176,
+            'url' => '/adm/seal/datalist',
+        );
+        $handle[] = array(
+            'name' => '待审销售合同',
+            'num' => Db::name('Contract')->where($whereHandle)->count(),
+            'id' => 316,
+            'url' => '/contract/contract/datalist',
+        );
+		$handle[] = array(
+            'name' => '待审采购合同',
+            'num' => Db::name('Purchase')->where($whereHandle)->count(),
+            'id' => 320,
+            'url' => '/contract/purchase/datalist',
+        );
+		$handle[] = array(
+            'name' => '待审报销',
+            'num' => Db::name('Expense')->where($whereHandle)->count(),
+            'id' => 218,
+            'url' => '/finance/expense/datalist',
+        );
+		$handle[] = array(
+            'name' => '待审发票',
+            'num' => Db::name('Invoice')->where($whereHandle)->count(),
+            'id' => 222,
+            'url' => '/finance/invoice/datalist',
+        );
+		$handle[] = array(
+            'name' => '待审收票',
+            'num' => Db::name('ticket')->where($whereHandle)->count(),
+            'id' => 226,
+            'url' => '/finance/ticket/datalist',
+        );
+		$handle[] = array(
+            'name' => '待完成任务',
+            'num' => Db::name('ProjectTask')->where([['director_uid', '=', $uid],['status', '<', 3],['delete_time', '=', 0]])->count(),
+            'id' => 350,
+            'url' => '/finance/ticket/datalist',
+        );
+				
+		$whereCustomer = array();
+		$whereCustomerOr = array();
+		$whereCustomer[] = ['delete_time', '=', 0];
+		$whereCustomerOr[] =['belong_uid', '=', $uid];	
+		if(!empty($dids)){
+			$whereCustomerOr[] =['belong_did', 'in', $dids];
+		}			
+		$whereCustomerOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',share_ids)")];
+		
+		$customerCount = Db::name('Customer')->where($whereCustomer)
+		->where(function ($query) use($whereCustomerOr) {
+				$query->whereOr($whereCustomerOr);
+			})
+		->count();
+		$total[] = array(
+			'name' => '客户总数',
+			'num' => $customerCount,
+		);
+		
+		$whereContract = array();
+		$whereContractOr = array();		
+		$whereContract[] = ['delete_time', '=', 0];
+		$whereContractOr[] =['admin_id|prepared_uid|sign_uid|keeper_uid', '=', $uid];
+		$whereContractOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',share_ids)")];
+		$whereContractOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',check_uids)")];
+		$whereContractOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',check_history_uids)")];
+		if(!empty($dids)){
+			$whereContractOr[] =['did', 'in', $dids];
+		}
+		
+		$contractCount = Db::name('Contract')->where($whereContract)
+		->where(function ($query) use($whereContractOr) {
+				$query->whereOr($whereContractOr);
+			})
+		->count();
+		$total[] = array(
+			'name' => '销售合同',
+			'num' => $contractCount,
+		);
+		
+		$wherePurchase = array();
+		$wherePurchaseOr = array();
+		
+		$wherePurchase[] = ['delete_time', '=', 0];
+		$wherePurchaseOr[] =['admin_id|prepared_uid|sign_uid|keeper_uid', '=', $uid];
+		$wherePurchaseOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',share_ids)")];
+		$wherePurchaseOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',check_uids)")];
+		$wherePurchaseOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',check_history_uids)")];
+		if(!empty($dids)){
+			$wherePurchaseOr[] =['did', 'in', $dids];
+		}
+		
+		$purchaseCount = Db::name('Purchase')->where($wherePurchase)
+		->where(function ($query) use($wherePurchaseOr) {
+				$query->whereOr($wherePurchaseOr);
+			})
+		->count();
+		$total[] = array(
+			'name' => '采购合同',
+			'num' => $purchaseCount,
+		);
+		
+		$project_ids = Db::name('ProjectUser')->where(['uid' => $uid, 'delete_time' => 0])->column('project_id');
+		$whereProject = [];
+		$whereProject[] = ['delete_time', '=', 0];
+		$whereProject[] = ['id', 'in', $project_ids];			
+		$projectCount = Db::name('Project')->where($whereProject)->count();
+		
+		$whereOr = array();
+		$map1 = [];
+		$map2 = [];
+		$map3 = [];
+		$map4 = [];
+		$map1[] = ['admin_id', '=', $uid];
+		$map2[] = ['director_uid', '=', $uid];
+		$map3[] = ['', 'exp', Db::raw("FIND_IN_SET({$uid},assist_admin_ids)")];
+		$map4[] = ['project_id', 'in', $project_ids];
+		
+		$whereOr =[$map1,$map2,$map3,$map4];
+		$taskCount = Db::name('ProjectTask')
+			->where(function ($query) use ($whereOr) {
+				if (!empty($whereOr))
+					$query->whereOr($whereOr);
 				})
-			->count();
-            $total[] = array(
-                'name' => '客户',
-                'num' => $customerCount,
-            );
-        }
-        if (in_array('contract', $module)) {
-			$whereContract = array();
-			$whereContractOr = array();
-			$uid = $this->uid;
-			
-			$whereContract[] = ['delete_time', '=', 0];
-			$whereContractOr[] =['admin_id|prepared_uid|sign_uid|keeper_uid', '=', $uid];
-			$whereContractOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',share_ids)")];
-			$whereContractOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',check_admin_ids)")];
-			$whereContractOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',flow_admin_ids)")];
-			$dids = get_department_role($uid);
-			if(!empty($dids)){
-				$whereContractOr[] =['sign_did', 'in', $dids];
-			}
-			
-            $contractCount = Db::name('Contract')->where($whereContract)
-			->where(function ($query) use($whereContractOr) {
-					$query->whereOr($whereContractOr);
-				})
-			->count();
-            $total[] = array(
-                'name' => '合同',
-                'num' => $contractCount,
-            );
-			$handle['contract'] = Db::name('Contract')->where([['', 'exp', Db::raw("FIND_IN_SET('{$this->uid}',check_admin_ids)")],['delete_time', '=', 0]])->count();
-        }
-        if (in_array('project', $module)) {
-			
-			$project_ids = Db::name('ProjectUser')->where(['uid' => $this->uid, 'delete_time' => 0])->column('project_id');
-			$whereProject = [];
-			$whereProject[] = ['delete_time', '=', 0];
-			$whereProject[] = ['id', 'in', $project_ids];			
-            $projectCount = Db::name('Project')->where($whereProject)->count();
-			
-			$whereOr = array();
-			$map1 = [];
-			$map2 = [];
-			$map3 = [];
-			$map4 = [];
-			$uid = $this->uid;
-			$map1[] = ['admin_id', '=', $uid];
-            $map2[] = ['director_uid', '=', $uid];
-            $map3[] = ['', 'exp', Db::raw("FIND_IN_SET({$uid},assist_admin_ids)")];
-            $map4[] = ['project_id', 'in', $project_ids];
-			
-			$whereOr =[$map1,$map2,$map3,$map4];
-            $taskCount = Db::name('ProjectTask')
-				->where(function ($query) use ($whereOr) {
-					if (!empty($whereOr))
-						$query->whereOr($whereOr);
-					})
-				->where([['delete_time', '=', 0]])->count();
-			
-            $total[] = array(
-                'name' => '项目',
-                'num' => $projectCount,
-            );
-            $total[] = array(
-                'name' => '任务',
-                'num' => $taskCount,
-            );
-			$handle['task'] = Db::name('ProjectTask')->where([['director_uid', '=', $this->uid],['flow_status', '<', 3],['delete_time', '=', 0]])->count();
-        }
-        if (in_array('article', $module)) {
-            $articleCount = Db::name('Article')->where([['delete_time', '=', 0],['uid', '=', $this->uid]])->count();
-            $total[] = array(
-                'name' => '文章',
-                'num' => $articleCount,
-            );
-        }
+			->where([['delete_time', '=', 0]])->count();
 		
-		$adminGroup = Db::name('PositionGroup')->where(['pid' => $this->pid])->column('group_id');
+		$total[] = array(
+			'name' => '项目总数',
+			'num' => $projectCount,
+		);
+		$total[] = array(
+			'name' => '任务总数',
+			'num' => $taskCount,
+		);
+		
+		$position_id = Db::name('Admin')->where('id',$uid)->value('position_id');
+		$adminGroup = Db::name('PositionGroup')->where(['pid' => $position_id])->column('group_id');
 		$adminLayout = Db::name('AdminGroup')->where('id', 'in', $adminGroup)->column('layouts');
 		$adminLayouts = [];
 		foreach ($adminLayout as $k => $v) {
@@ -212,27 +252,55 @@ class Index extends BaseController
         return View();
     }
 	
+	//权限不足
+	public function role()
+    {
+		return View('../../base/view/common/roletemplate');
+	}
 	//通讯录
-	public function mail_list()
+	public function contacts_book()
     {
         if (request()->isAjax()) {
             $param = get_params();
             $where = array();
+            $whereOr = array();
             if (!empty($param['keywords'])) {
-                $where[] = ['id|username|name|nickname|mobile|desc', 'like', '%' . $param['keywords'] . '%'];
+                $where[] = ['a.id|a.username|a.name|a.nickname|a.mobile|a.desc', 'like', '%' . $param['keywords'] . '%'];
             }
-            $where[] = ['status', '=', 1];
             if (!empty($param['did'])) {
-                $department_array = get_department_son($param['did']);
-                $where[] = ['did', 'in', $department_array];
+				$admin_array = Db::name('DepartmentAdmin')->where('department_id',$param['did'])->column('admin_id');
+				$map1=[
+					['a.id','in',$admin_array],
+				];
+				$map2=[
+					['a.did', '=', $param['did']],
+				];
+				$whereOr =[$map1,$map2];
             }
-            $rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
-            $admin = \app\user\model\Admin::where($where)
-                ->order('id desc')
-                ->paginate($rows, false, ['query' => $param])
+            $where[] = ['a.status', '=', 1];
+            $where[] = ['a.id', '>', 1];
+			$admin = \app\user\model\Admin::alias('a')
+				->with('departments')
+				->field('a.*,p.title as position,d.title as department')
+				->join('Department d', 'd.id = a.did','left')
+				->join('Position p', 'p.id = a.position_id','left')
+				->where($where)
+				->where(function ($query) use($whereOr) {
+					if (!empty($whereOr)){
+						$query->whereOr($whereOr);
+					}
+				})
+				->paginate(intval($this->pageSize))
+				->order('a.id desc')
                 ->each(function ($item, $key) {
-                    $item->department = Db::name('Department')->where(['id' => $item->did])->value('title');
-                    $item->position = Db::name('Position')->where(['id' => $item->position_id])->value('title');
+					//遍历次要部门数据
+					$departments = $item->departments->toArray();
+					if(empty($departments)){
+						$item->departments = '-';
+					}
+					else{
+						$item->departments = split_array_field($departments,'title');
+					}
 					if($item->is_hide ==1){
 						$item->mobile = hidetel($item->mobile);
 						$item->email = hidetel($item->email);
@@ -264,14 +332,7 @@ class Index extends BaseController
     //修改密码
     public function edit_password()
     {
-		if (request()->isAjax()) {
-			
-			//下面部分代码可删除--------------
-			if($_SERVER['HTTP_HOST']=='oa.gougucms.com'){
-				return to_assign(1, 'Bad Man，为什么总想着改别人的密码？已记录IP，抓住你了！');
-			}
-			//上面部分代码可删除--------------
-			
+		if (request()->isAjax()) {			
 			$param = get_params();			
             try {
                 validate(AdminCheck::class)->scene('editPwd')->check($param);

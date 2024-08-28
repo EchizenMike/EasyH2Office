@@ -1,7 +1,7 @@
 {extend name="../../base/view/common/base" /}
 <!-- 主体 -->
 {block name="body"}
-<div class="p-3">
+<div class="p-page">
 	<div class="gg-form-bar border-t border-x" style="padding-bottom:12px;">
 		<button class="layui-btn layui-btn-sm add-menu">+ 添加菜单/节点</button>
 	</div>
@@ -9,11 +9,6 @@
 		<table class="layui-hide" id="treeTable" lay-filter="treeTable"></table>
 	</div>
 </div>
-<script type="text/html" id="toolbarDemo">
-  <div class="layui-btn-container">
-    <button class="layui-btn layui-btn-sm" lay-event="add">+ 添加权限组</button>
-  </div>
-</script>
 {/block}
 <!-- /主体 -->
 

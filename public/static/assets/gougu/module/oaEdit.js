@@ -1,211 +1,314 @@
-layui.define(['tool','employeepicker','tinymce','oaTool'], function (exports) {
-	let form = layui.form;
-	let table = layui.table;
-	let laydate = layui.laydate;
-	let dropdown = layui.dropdown;
-	let employeepicker = layui.employeepicker;
-	let oaTool = layui.oaTool;
-	let tinymce = layui.tinymce;
-	let obj = {
-		//文本
-		text: function (id, name, real_txt, editPost) {
-			let that = this;
+layui.define(['tool','oaPicker','tinymce'],function(exports){
+	let layer = layui.layer,tool=layui.tool,laydate = layui.laydate,dropdown = layui.dropdown,oaPicker = layui.oaPicker,tinymce = layui.tinymce;
+	const opts={
+		"box":'editBox',//编辑容器id
+		"id":0,//编辑容器id
+		"url": '',
+		"dropdown":{},
+		"callback":function(e){
+			layer.msg(e.msg);
+			if(e.code==0){
+				setTimeout(function(){
+					location.reload();
+				},1000)
+			}			
+		}
+	};
+	
+	const obj = {
+		//短文本
+		text: function (that) {
+			let me = this;
+			let field = that.data('field');
+			let text = that.data('text');
+			if (typeof(text) == "undefined") {
+				text = that.text();
+			}
 			layer.open({
 				type: 1,
 				title: '请输入内容',
-				area: ['500px', '158px'],
-				content: '<div style="padding:5px;"><input class="layui-input" id="goguEditInput" value="' + real_txt + '"/></div>',
+				area: ['360px', '158px'],
+				content: '<div style="padding:5px;"><input class="layui-input" id="oaEditText" value="' + text + '"/></div>',
 				btnAlign: 'c',
 				btn: ['提交保存'],
 				yes: function () {
-					let newval = $("#goguEditInput").val();
-					if (newval != '') {
-						editPost(id, name, newval, newval);
+					let val = $("#oaEditText").val();
+					if (val != '') {
+						let postData = {'id':me.sets.id,'scene':'oaedit'};
+						postData[field] = val;
+						tool.post(me.sets.url,postData,me.sets.callback);
 					} else {
 						layer.msg('请输入内容');
 					}
 				}
-			})
+			})			
 		},
-		//文本
-		textarea: function (id, name, real_txt, editPost) {
-			let that = this;
+		//长文本
+		textarea: function (that) {
+			let me = this;
+			let field = that.data('field');
+			let target = that.data('target');
+			let textarea='';
+			if (typeof(target) == "undefined") {
+				textarea = that.text();
+			}
+			else{
+				textarea = $('#'+target).text();
+			}
 			layer.open({
 				type: 1,
 				title: '请输入内容',
-				area: ['800px', '360px'],
-				content: '<div style="padding:5px;"><textarea class="layui-textarea" id="goguEditTextarea" style="width: 100%; height: 240px;">' + real_txt + '</textarea></div>',
+				area: ['600px', '320px'],
+				content: '<div style="padding:5px;"><textarea class="layui-textarea" id="oaEditTextarea" style="width: 100%; height: 200px;">' + textarea + '</textarea></div>',
 				btnAlign: 'c',
 				btn: ['提交保存'],
 				yes: function () {
-					let newval = $("#goguEditTextarea").val();
-					if (newval != '') {
-						editPost(id, name, newval, newval);
+					let val = $("#oaEditTextarea").val();
+					if (val != '') {
+						let postData = {'id':me.sets.id,'scene':'oaedit'};
+						postData[field] = val;
+						tool.post(me.sets.url,postData,me.sets.callback);
 					} else {
 						layer.msg('请输入内容');
 					}
 				}
-			})
+			})			
 		},
-		//员工单选
-		employee_one: function (id, name, show_txt, real_txt, editPost) {
-			let that = this;
-			employeepicker.init({
-				ids: real_txt.toString(),
-				names: show_txt,
-				type: 0,
-				callback: function (ids, names) {
-					editPost(id, name, names, ids);
-				}
-			});
-		},
-		//员工多选
-		employee_more: function (id, name, show_txt, real_txt, editPost) {
-			let that = this;
-			let ids = [];
-			let names = [];
-			if (real_txt != '') {
-				ids = real_txt.toString().split(',');
-				names = show_txt.split(',');
+		//数字
+		num: function (that) {
+			let me = this;
+			let field = that.data('field');
+			let text = that.data('text');
+			let min = that.data('min');
+			let max = that.data('max');
+			if (typeof(min) == "undefined") {
+				min = '';
 			}
-			employeepicker.init({
-				ids: ids,
-				names: names,
-				type: 1,
-				callback: function (ids, names) {
-					editPost(id, name, names.join(','), ids.join(','));
-				}
-			});
-		},
-		//项目
-		select_table: function (id, name, real_val, editPost) {
-			let callback = function(data){
-				editPost(id, name, data.title, data.id);
+			if (typeof(max) == "undefined") {
+				max = '';
 			}
-			oaTool.projectPicker(callback);
-		},
-		//任务
-		select_task: function (id, name, real_val, editPost) {
-			let callback = function(data){
-				console.log(data.id);
-				editPost(id, name, data.title, data.id);
-			}
-			oaTool.taskPicker(callback);
-		},
-		//表格单选
-		select_type: function (id, name, real_val, data, editPost) {
-			let that = this;
-			let i = data.length;
-			while (i--) {
-				if (data[i].id == real_val) {
-					data.splice(i, 1);
-				}
-			}
-			if (data.length == 0) {
-				layer.msg('无可选择的内容');
-				return false;
+			if (typeof(text) == "undefined") {
+				text = that.text();
 			}
 			layer.open({
-				title: '请选择',
 				type: 1,
-				area: ['500px', '360px'],
-				content: '<div style="padding:16px 16px 0"><div id="selectBox"></div></div>',
-				success: function () {
-					selectable = table.render({
-						elem: '#selectBox',
-						cols: [
-							[{
-								type: 'radio',
-								title: '选择',
-								width: 80
-							}, {
-								field: 'title',
-								title: '选项'
-							}]
-						],
-						data: data
-					});
-				},
-				btn: ['确定'],
+				title: '请输入数字',
+				area: ['200px', '158px'],
+				content: '<div style="padding:5px;"><input class="layui-input" oninput="this.value = this.value.replace(/[^0-9]/g,\'\')" id="oaEditNum" value="' + text + '"/></div>',
 				btnAlign: 'c',
+				btn: ['提交保存'],
 				yes: function () {
-					var checkStatus = table.checkStatus(selectable.config.id);
-					var data = checkStatus.data;
-					if (data.length > 0) {
-						editPost(id, name, data[0].title, data[0].id);
-					}
-					else {
-						layer.msg('请选择');
+					let val = $("#oaEditNum").val();
+					if (val != '') {
+						if(min !='' && val<min){
+							layer.msg('输入数字不能小于'+min);
+						}
+						if(max !='' && val>max){
+							layer.msg('输入数字不能大于'+max);
+						}
+						let postData = {'id':me.sets.id,'scene':'oaedit'};
+						postData[field] = val;
+						tool.post(me.sets.url,postData,me.sets.callback);
+					} else {
+						layer.msg('请输入内容');
 					}
 				}
-			})
+			})			
 		},
-		//下拉选择
-		dropdown: function (id, name, real_val, data, editPost, is_cancel) {
-			let that = this;
-			let i = data.length;
-			while (i--) {
-				if (data[i].id == real_val) {
-					data.splice(i, 1);
+		dropdown: function (that) {
+			let me = this;
+			let field = that.data('field');
+			let text = that.data('text');
+			let cancel = that.data('cancel');
+			let arrayidx = that.data('array');
+			if (typeof(text) == "undefined") {
+				text = that.text();
+			}
+			if (typeof(cancel) == "undefined") {
+				cancel = 0;
+			}
+			let data = me.sets.dropdown[arrayidx];
+			let len = data.length;
+			while (len--) {
+				if (data[len].id == text) {
+					data.splice(len, 1);
 				}
 			}
 			if (data.length == 0) {
 				layer.msg('无可关联的内容');
 				return false;
 			}
-			if (is_cancel) {
+			if (cancel==1) {
 				data.push({ id: 0, title: '<span style="color:#FF5722">取消关联</span>' });
 			}
 			dropdown.render({
-				elem: '#' + name + '_' + id
-				, show: true
-				, data: data
-				, click: function (data, othis) {
-					editPost(id, name, data.title, data.id);
+				elem: that,
+				show: true,
+				data: data,
+				click: function (data, othis) {
+					let postData = {'id':me.sets.id,'scene':'oaedit'};
+					postData[field] = data.id;
+					tool.post(me.sets.url,postData,me.sets.callback);
 				}
 			});
 		},
-		//日期
-		date: function (id, name, real_txt, editPost) {
-			let that = this;
-			laydate.render({
-				elem: '#' + name + '_' + id
-				, showBottom: false
-				, show: true //直接显示
-				, value: real_txt
-				, done: function (value, date) {
-					editPost(id, name, value, value);
+		oadate: function (that) {
+			let me = this;
+			let type = that.data('type');
+			let range = that.data('range');
+			let min = that.data('min');
+			let max = that.data('max');
+			if (typeof(type) == "undefined" || type === '') {
+				type = 'date';
+			}
+			if (typeof(range) == "undefined" || type === '') {
+				range = false;
+			}
+			if (typeof(min) == "undefined" || min === '') {
+				min = '1900-1-1';
+			}
+			if (typeof(max) == "undefined" || max === '') {
+				max = '2099-1-1';
+			}
+			let field = that.data('field');
+			let text = that.data('text');
+			if (typeof(text) == "undefined") {
+				text = that.text();
+			}
+			layui.laydate.render({ 
+				elem: that,
+				show: true,
+				type: type,
+				range: range,
+				min: min,
+				max: max,
+				fullPanel: true,
+				done: function (val, date) {
+					let postData = {'id':me.sets.id,'scene':'oaedit'};
+					postData[field] = val;
+					tool.post(me.sets.url,postData,me.sets.callback);
 				}
 			});
 		},
-		editor:function (id, name, real_txt, editPost){
-			let that = this,index = Date.now();;
+		adminpicker: function (that){
+			let me = this;
+			let field = that.data('field');
+			let ids = that.data('ids');
+			let names = that.data('names');
+			let type = that.data('type');
+			if (typeof(type) == "undefined") {
+				type = 1;
+			}
+			oaPicker.employeeInit({
+				ids:ids.toString(),
+				names:names.toString(),
+				type:type,
+				callback:function(seleted){
+					let select_id=[],select_name=[];
+					for(var a=0; a<seleted.length;a++){
+						select_id.push(seleted[a].id);
+						select_name.push(seleted[a].name);
+					}
+					let postData = {'id':me.sets.id,'scene':'oaedit'};
+					postData[field] = select_id.join(',');
+					tool.post(me.sets.url,postData,me.sets.callback);
+				}
+			});
+		},
+		picker:function(that){
+			let me = this;
+			let field = that.data('field');
+			let types = that.data('picker');
+			let type = that.data('type');
+			if (typeof(type) == "undefined") {
+				type = 1;
+			}
+			let map = {};
+			let callback = function(data){
+				let ids = [],titles=[];
+                for ( var i = 0; i <data.length; i++){
+                    ids.push(data[i].id);
+                    titles.push(data[i].title);
+                }
+                let postData = {'id':me.sets.id,'scene':'oaedit'};
+				postData[field] = ids.join(',');
+				tool.post(me.sets.url,postData,me.sets.callback);
+            }
+            oaPicker.picker(types,type,callback,map);
+		},
+		editor:function(that){
+			let me = this,index = Date.now();
+			let field = that.data('field');
+			let target = that.data('target');
+			let content='';
+			if (typeof(target) == "undefined") {
+				content = that.html();
+			}
+			else{
+				content = $('#'+target).html();
+			}
 			layer.open({
 				type: 1,
 				title: '请输入内容',
 				zIndex:20,
 				area: ['900px', '600px'],
-				content: '<div style="padding:5px;"><textarea class="layui-textarea" id="goguEditTextarea'+index+'" style="width: 100%;">' + real_txt + '</textarea></div>',
+				content: '<div style="padding:5px;"><textarea class="layui-textarea" id="oaEditEditor'+index+'" style="width: 100%;">' + content + '</textarea></div>',
 				btnAlign: 'c',
 				btn: ['提交保存'],
 				success:function(){					
 					var edit = tinymce.render({
-						selector: "#goguEditTextarea"+index,
+						selector: "#oaEditEditor"+index,
 						images_upload_url: '/api/index/upload/sourse/tinymce',//图片上传接口
 						height: 480
 					});
 				},
 				yes: function () {
-					let newval = tinyMCE.editors['goguEditTextarea'+index].getContent();
-					if (newval != '') {
-						editPost(id, name, newval, newval);
+					let val = tinyMCE.editors['oaEditEditor'+index].getContent();
+					if (val != '') {
+						let postData = {'id':me.sets.id,'scene':'oaedit'};
+						postData[field] = val;
+						tool.post(me.sets.url,postData,me.sets.callback);
 					} else {
 						layer.msg('请输入内容');
 					}
 				}
 			})
-
+		},
+		init: function (options) {
+			this.sets = $.extend({}, opts, options);
+			let me = this;
+			let editBox = $('#'+me.sets.box);
+			editBox.on('click','.click-edit',function(){
+				let that = $(this);
+				let types = that.data('types');
+				switch (types) {
+					case "num":
+						me.num(that);
+						break;
+					case "oadate":
+						me.oadate(that);
+						break;
+					case "textarea":
+						me.textarea(that);
+						break;
+					case "dropdown":
+						me.dropdown(that);
+						break;
+					case "adminpicker":
+						me.adminpicker(that);
+						break;
+					case "picker":
+						me.picker(that);
+						break;
+					case "editor":
+						me.editor(that);
+						break;
+					default:
+						me.text(that);
+				}
+			})
 		}
-	};
+	}
+	//输出接口
 	exports('oaEdit', obj);
-});  
+});   

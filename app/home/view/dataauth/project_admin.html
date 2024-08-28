@@ -1,8 +1,8 @@
 {extend name="../../base/view/common/base" /}
 <!-- 主体 -->
 {block name="body"}
-<form class="layui-form p-4">
-	<h3 class="pb-3">权限配置</h3>
+<form class="layui-form p-page">
+	<h3 class="pb-3">模块配置及数据权限配置</h3>
 	<table class="layui-table layui-table-form">
 		<tr>
 			<td colspan="4" class="red" style="line-height:1.8">
@@ -20,21 +20,16 @@
 			<td>{$detail.name}</td>
 		</tr>
 		<tr>
-			<td class="layui-td-gray-2">默认阶段配置<font>*</font>
+			<td class="layui-td-gray-3">项目管理员</td>
+			<td>
+				<input type="text" name="conf_1_str" value="{$detail.conf_1_str|default=''}" readonly placeholder="请选择权限人员" autocomplete="off" class="layui-input picker-admin" data-type="2">
+				<input type="hidden" name="conf_1" value="{$detail.conf_1}">
 			</td>
-			<td colspan="3">
-				<input type="text" name="conf_1" value="{$detail.conf_1}" placeholder="请输入默认阶段，每个阶段以|分割" lay-verify="required" lay-reqText="请输入默认阶段" autocomplete="off" class="layui-input">
-			</td>
-		</tr>
-		<tr>
-			<td class="layui-td-gray-2">项目管理员</td>
-			<td colspan="3">
-				<input type="text" id="unames" name="unames" value="{$detail.unames}" readonly placeholder="请选择权限人员" autocomplete="off" class="layui-input picker-more">
-				<input type="hidden" id="uids" name="uids" value="{$detail.uids}">
-			</td>
+			<td class="layui-td-gray">权限标识</td>
+			<td style="width:100px;">conf_1</td>
 		</tr>
 	</table>
-	<div class="pt-3">
+	<div class="pt-4">
 		<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform">立即提交</button>
 		<button type="reset" class="layui-btn layui-btn-primary">重置</button>
 	</div>
@@ -45,7 +40,7 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
-	const moduleInit = ['tool','employeepicker'];
+	const moduleInit = ['tool','oaPicker'];
 	function gouguInit() {
 		var form = layui.form, tool = layui.tool;		
 		//监听提交

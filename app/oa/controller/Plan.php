@@ -1,9 +1,15 @@
 <?php
 /**
- * @copyright Copyright (c) 2021 勾股工作室
- * @license https://opensource.org/licenses/GPL-3.0
- * @link https://www.gougucms.com
- */
++-----------------------------------------------------------------------------------------------
+* GouGuOPEN [ 左手研发，右手开源，未来可期！]
++-----------------------------------------------------------------------------------------------
+* @Copyright (c) 2021~2024 http://www.gouguoa.com All rights reserved.
++-----------------------------------------------------------------------------------------------
+* @Licensed 勾股OA，开源且可免费使用，但并不是自由软件，未经授权许可不能去除勾股OA的相关版权信息
++-----------------------------------------------------------------------------------------------
+* @Author 勾股工作室 <hdm58@qq.com>
++-----------------------------------------------------------------------------------------------
+*/
 
 declare (strict_types = 1);
 
@@ -17,13 +23,13 @@ use think\facade\View;
 
 class Plan extends BaseController
 {
-    function index() {
+    function datalist() {
         if (request()->isAjax()) {
             $param = get_params();			
 			//按时间检索
 			if (!empty($param['diff_time'])) {
 				$diff_time =explode('~', $param['diff_time']);
-                $where[] = ['a.start_time', 'between', [strtotime(urldecode($diff_time[0])),strtotime(urldecode($diff_time[1]))]];
+                $where[] = ['a.start_time', 'between', [strtotime(urldecode($diff_time[0])),strtotime(urldecode($diff_time[1].' 23:59:59'))]];
             }
 			
             if (!empty($param['keywords'])) {
@@ -34,6 +40,9 @@ class Plan extends BaseController
             } else {
                 $where[] = ['a.admin_id', '=', $this->uid];
             }
+			if (!empty($param['type'])) {
+                $where[] = ['a.type', '=', $param['type']];
+            }
             $where[] = ['a.delete_time', '=', 0];
             $rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
             $plan = PlanList::where($where)
@@ -41,15 +50,15 @@ class Plan extends BaseController
                 ->alias('a')
                 ->join('admin u', 'u.id = a.admin_id', 'LEFT')
                 ->order('a.id desc')
-                ->paginate($rows, false)
+                ->paginate(['list_rows'=> $rows])
                 ->each(function ($item, $key) {
                     $item->remind_time = empty($item->remind_time) ? '-' : date('Y-m-d H:i', $item->remind_time);
                     $item->start_time = empty($item->start_time) ? '' : date('Y-m-d H:i', $item->start_time);
                     $item->end_time = empty($item->end_time) ? '': date('Y-m-d H:i', $item->end_time);
-                    //$item->end_time = empty($item->end_time) ? '' : date('H:i', $item->end_time);
                 });
             return table_assign(0, '', $plan);
         } else {
+			View::assign('is_leader', isLeader($this->uid));
             return view();
         }
     }
@@ -116,6 +125,7 @@ class Plan extends BaseController
             }
             return json($output_arrays);
         } else {
+			View::assign('is_leader', isLeader($this->uid));
             return view();
         }
     }
@@ -183,7 +193,7 @@ class Plan extends BaseController
     }
 
     //删除工作记录
-    public function delete()
+    public function del()
     {
         $id = get_params("id");
         $data['id'] = $id;
@@ -198,7 +208,6 @@ class Plan extends BaseController
 
     public function detail($id)
     {
-        $id = get_params('id');
         $schedule = Db::name('Plan')->where(['id' => $id])->find();
         if (!empty($schedule)) {
             $schedule['remind_time'] = $schedule['remind_time'] == 0?'-':date('Y-m-d H:i', $schedule['remind_time']);
@@ -211,23 +220,17 @@ class Plan extends BaseController
             $schedule['create_time'] = date('Y-m-d H:i:s', $schedule['create_time']);
             $schedule['user'] = Db::name('Admin')->where(['id' => $schedule['admin_id']])->value('name');
         }
+        return $schedule;
+    }
+
+    //读取日程弹层详情
+    public function view($id)
+    {
+        $schedule = $this->detail($id);
         if (request()->isAjax()) {
             return to_assign(0, "", $schedule);
         } else {
             return $schedule;
-        }
-    }
-
-    //读取日程弹层详情
-    public function view()
-    {
-        $id = get_params('id');
-        $schedule = $this->detail($id);
-        if ($schedule) {
-            View::assign('schedule', $schedule);
-            return view();
-        } else {
-            echo '该日程安排不存在';
         }
     }
 

@@ -1,38 +1,113 @@
 <?php
 /**
- * @copyright Copyright (c) 2022 勾股工作室
- * @license https://opensource.org/licenses/GPL-3.0
- * @link https://www.gougucms.com
- */
++-----------------------------------------------------------------------------------------------
+* GouGuOPEN [ 左手研发，右手开源，未来可期！]
++-----------------------------------------------------------------------------------------------
+* @Copyright (c) 2021~2024 http://www.gouguoa.com All rights reserved.
++-----------------------------------------------------------------------------------------------
+* @Licensed 勾股OA，开源且可免费使用，但并不是自由软件，未经授权许可不能去除勾股OA的相关版权信息
++-----------------------------------------------------------------------------------------------
+* @Author 勾股工作室 <hdm58@qq.com>
++-----------------------------------------------------------------------------------------------
+*/
 declare (strict_types = 1);
 namespace app\project\controller;
 
 use app\api\BaseController;
-use app\oa\model\Schedule as ScheduleList;
-use app\project\model\Project as ProjectList;
-use app\project\model\ProjectTask as TaskList;
+use app\project\model\Project as ProjectModel;
 use app\project\model\ProjectLog;
 use app\project\model\ProjectComment;
+use app\project\model\ProjectTask;
+use app\oa\model\Schedule;
 use think\facade\Db;
 use think\facade\View;
 
 class Api extends BaseController
 {
+	/**
+     * 构造函数
+     */
+	protected $model;
+    public function __construct()
+    {
+		parent::__construct(); // 调用父类构造函数
+        $this->model = new ProjectModel();
+    }
+    //获取项目列表
+    public function get_project()
+    {
+		$param = get_params();
+		$auth = isAuth($this->uid,'project_admin','conf_1');
+		$where = array();
+		$where[] = ['delete_time', '=', 0];		
+		if($auth == 0){
+			$project_ids = Db::name('ProjectUser')->where(['uid' => $this->uid, 'delete_time' => 0])->column('project_id');
+			$where[] = ['id', 'in', $project_ids];
+		}
+		if (!empty($param['keywords'])) {
+			$where[] = ['name|content', 'like', '%' . $param['keywords'] . '%'];
+		}
+		$list = $this->model->datalist($where, $param);
+		return table_assign(0, '', $list);
+    }
+	
+    //获取任务列表
+    public function get_task()
+    {
+		$param = get_params();
+		$uid = $this->uid;
+		$where = [];
+		$whereOr = [];
+		$where[] = ['delete_time', '=', 0];
+        if (!empty($param['status'])) {
+            $where[] = ['status', '=', $param['status']];
+        }
+        if (!empty($param['priority'])) {
+            $where[] = ['priority', '=', $param['priority']];
+        }
+        if (!empty($param['work_id'])) {
+            $where[] = ['work_id', '=', $param['work_id']];
+        }
+        if (!empty($param['director_uid'])) {
+            $where[] = ['director_uid', 'in', $param['director_uid']];
+        }
+        if (!empty($param['keywords'])) {
+            $where[] = ['title|content', 'like', '%' . $param['keywords'] . '%'];
+        }
+		if(!empty($param['project_id'])){
+			$where[] = ['project_id', '=', $param['project_id']];			
+		}
+		else{
+			$auth = isAuth($uid,'project_admin','conf_1');
+			if($auth == 0){
+				$whereOr[] = ['admin_id', '=', $uid];
+				$whereOr[] = ['director_uid', '=', $uid];
+				$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',assist_admin_ids)")];
+			}
+		}
+		
+		$rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
+		$order = empty($param['order']) ? 'status asc,id desc' : $param['order'];
+		$model = new ProjectTask();
+        $list = $model->datalist($param,$where,$whereOr);
+        return table_assign(0, '', $list);
+    }
+	
 	//获取项目概况数据
 	public function get_chart_data()
     {
         $param = get_params();
-        $tasks = Db::name('ProjectTask')->field('id,plan_hours,end_time,flow_status,over_time')->order('end_time asc')->where([['project_id', '=', $param['project_id']], ['delete_time', '=', 0]])->select()->toArray();
+        $tasks = Db::name('ProjectTask')->field('id,plan_hours,end_time,status,over_time')->order('end_time asc')->where([['project_id', '=', $param['project_id']], ['delete_time', '=', 0]])->select()->toArray();
 
         $task_count = count($tasks);
-        $task_count_ok = Db::name('ProjectTask')->where([['project_id', '=', $param['project_id']], ['delete_time', '=', 0],['flow_status', '>', 2]])->count();
+        $task_count_ok = Db::name('ProjectTask')->where([['project_id', '=', $param['project_id']], ['delete_time', '=', 0],['status', '>', 2]])->count();
         $task_delay = 0;
         if ($task_count > 0) {
             foreach ($tasks as $k => $v) {
-                if (($v['flow_status'] < 3) && ($v['end_time'] < time() - 86400)) {
+                if (($v['status'] < 3) && ($v['end_time'] < time() - 86400)) {
                     $task_delay++;
                 }
-                if (($v['flow_status'] == 3) && ($v['end_time'] < $v['over_time'] - 86400)) {
+                if (($v['status'] == 3) && ($v['end_time'] < $v['over_time'] - 86400)) {
                     $task_delay++;
                 }
             }
@@ -66,7 +141,7 @@ class Api extends BaseController
         $res['date_tasks_ok'] = $date_tasks_ok;
         $res['date_schedules'] = $date_schedules;
         to_assign(0, '', $res);
-    }
+    }	
 
     //添加附件
     public function add_file()
@@ -87,7 +162,7 @@ class Api extends BaseController
                 'create_time' => time(),
             );
             Db::name('ProjectLog')->strict(false)->field(true)->insert($log_data);
-            return to_assign(0, '', $fid);
+            return to_assign(0, '上传成功', $fid);
         }
     }
     
@@ -106,79 +181,6 @@ class Api extends BaseController
                     $detail['module'] . '_id' => $detail['topic_id'],
                     'admin_id' => $this->uid,
                     'new_content' => $file_name,
-                    'create_time' => time(),
-                );
-                Db::name('ProjectLog')->strict(false)->field(true)->insert($log_data);
-                return to_assign(0, "删除成功");
-            } else {
-                return to_assign(0, "删除失败");
-            }
-        } else {
-            return to_assign(1, "错误的请求");
-        }
-    }	
-	
-	    //链接添加修改
-    public function add_link()
-    {
-        $param = get_params();
-        $validate = \think\facade\Validate::rule([
-            'url' => 'url',
-        ]);
-        if (!$validate->check($param)) {
-            return to_assign(1, $validate->getError());
-        }
-        if (!empty($param['id']) && $param['id'] > 0) {
-            $param['update_time'] = time();
-            $res = Db::name('ProjectLink')->where('id', $param['id'])->strict(false)->field(true)->update($param);
-            if ($res) {
-                $log_data = array(
-                    'module' => $param['module'],
-                    'field' => 'link',
-                    'action' => 'edit',
-                    $param['module'] . '_id' => $param['topic_id'],
-                    'admin_id' => $this->uid,
-                    'old_content' => $param['url'],
-                    'new_content' => $param['desc'],
-                    'create_time' => time(),
-                );
-                Db::name('ProjectLog')->strict(false)->field(true)->insert($log_data);
-                return to_assign(0, '编辑成功');
-            }
-        } else {
-            $param['create_time'] = time();
-            $param['admin_id'] = $this->uid;
-            $lid = Db::name('ProjectLink')->strict(false)->field(true)->insertGetId($param);
-            if ($lid) {
-                $log_data = array(
-                    'module' => $param['module'],
-                    'field' => 'link',
-                    'action' => 'add',
-                    $param['module'] . '_id' => $param['topic_id'],
-                    'admin_id' => $this->uid,
-                    'new_content' => $param['desc'],
-                    'create_time' => time(),
-                );
-                Db::name('ProjectLog')->strict(false)->field(true)->insert($log_data);
-                return to_assign(0, '添加成功', $lid);
-            }
-        }
-    }
-
-    //删除
-    public function delete_link()
-    {
-        if (request()->isDelete()) {
-            $id = get_params("id");
-            $detail = Db::name('ProjectLink')->where('id', $id)->find();
-            if (Db::name('ProjectLink')->where('id', $id)->update(['delete_time' => time()]) !== false) {
-                $log_data = array(
-                    'module' => $detail['module'],
-                    'field' => 'link',
-                    'action' => 'delete',
-                    $detail['module'] . '_id' => $detail['topic_id'],
-                    'admin_id' => $this->uid,
-                    'new_content' => $detail['desc'],
                     'create_time' => time(),
                 );
                 Db::name('ProjectLog')->strict(false)->field(true)->insert($log_data);
@@ -208,7 +210,7 @@ class Api extends BaseController
 		}
 		$where[] = ['a.delete_time', '=', 0];
 		$rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
-		$list = ScheduleList::where($where)
+		$list = Schedule::where($where)
 			->field('a.*,u.name,d.title as department,t.title as task,p.name as project,w.title as work_cate')
 			->alias('a')
 			->join('Admin u', 'a.admin_id = u.id', 'LEFT')
@@ -217,7 +219,7 @@ class Api extends BaseController
 			->join('WorkCate w', 'w.id = t.cate', 'LEFT')
 			->join('Project p', 't.project_id = p.id', 'LEFT')
 			->order('a.end_time desc')
-			->paginate($rows, false, ['query' => $param])
+			->paginate(['list_rows'=> $rows])
 			->each(function ($item, $key) {
 				$item->start_time_a = empty($item->start_time) ? '' : date('Y-m-d', $item->start_time);
 				$item->start_time_b = empty($item->start_time) ? '' : date('H:i', $item->start_time);
@@ -234,7 +236,7 @@ class Api extends BaseController
     public function schedule_detail($id)
     {
         $id = get_params('id');
-        $schedule = ScheduleList::where(['id' => $id])->find();
+        $schedule = Schedule::where(['id' => $id])->find();
         if (!empty($schedule)) {
             $schedule['start_time_1'] = date('H:i', $schedule['start_time']);
             $schedule['end_time_1'] = date('H:i', $schedule['end_time']);
@@ -332,7 +334,7 @@ class Api extends BaseController
 				})
 				->where($task_map)->count();
 				//已完成任务
-				$task_map[] = ['flow_status', '>', 2]; //已完成
+				$task_map[] = ['status', '>', 2]; //已完成
 				$v['tasks_finish'] = Db::name('ProjectTask')->where(function ($query) use ($task_map1, $task_map2, $task_map3) {
 					$query->where($task_map1)->whereor($task_map2)->whereor($task_map3);
 				})
@@ -503,6 +505,23 @@ class Api extends BaseController
 		}
     }
 	
+	//设为已读评论内容
+    public function read_comment()
+    {
+		if (request()->isPost()) {
+			$id = get_params("id");
+			$res = Db::name('CommentRead')->strict(false)->field(true)->insertGetId(['comment_id'=>$id,'admin_id'=>$this->uid,'create_time'=>time()]);
+			if ($res!==false) {
+				add_log('view', $id,[],'评论');
+				return to_assign(0, "操作成功");
+			} else {
+				return to_assign(1, "操作失败");
+			}
+		}else{
+			return to_assign(1, "错误的请求");
+		}
+    }
+	
 	//删除评论内容
     public function delete_comment()
     {
@@ -518,182 +537,33 @@ class Api extends BaseController
 		}else{
 			return to_assign(1, "错误的请求");
 		}
-    }
+    }	
 	
-    //获取项目列表
-    public function get_project()
+    //删除已有的项目步骤
+    public function step_del()
     {
-		$param = get_params();
-		$project_ids = Db::name('ProjectUser')->where(['uid' => $this->uid, 'delete_time' => 0])->column('project_id');
-		$rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
-		
-		$auth = isAuth($this->uid,'project_admin');
-		$where = [];
-		$where[] = ['delete_time', '=', 0];
-		if(isset($param['keywords'])){
-			$where[] = ['name', 'like', '%'.$param['keywords'].'%'];
-		}		
-		if($auth == 0){
-			$where[] = ['id', 'in', $project_ids];
-		}	
-		$list = ProjectList::field('id,name as title')
-			->where($where)
-			->order('id desc')
-			->paginate($rows, false, ['query' => $param]);
-		return table_assign(0, '', $list);
-    }
-	
-    //获取任务列表
-    public function get_task(){
-	    $param = get_params();
-        $param['uid'] = $this->uid;
-        $list = (new TaskList())->list($param);
-        return table_assign(0, '', $list);
-	}
-
-    //获取树形任务列表
-    public function get_project_task(){
-	    $param = get_params();
-		$list = Db::name('ProjectTask')->withoutField('content,md_content')->where(['project_id'=>$param['project_id'],'delete_time'=>0])->order('id desc')->select()->toArray();
-		foreach ($list as $key => &$vo) {
-				$vo['director_name'] = '-';
-				if ($vo['director_uid'] > 0) {
-					$vo['director_name'] = Db::name('Admin')->where(['id' => $vo['director_uid']])->value('name');
-				}
-                $assist_admin_names = Db::name('Admin')->where([['id', 'in', $vo['assist_admin_ids']]])->column('name');
-                if (empty($assist_admin_names)) {
-                    $vo['assist_admin_names'] = '-';
-                } else {
-                    $vo['assist_admin_names'] = implode(',', $assist_admin_names);
-                }
-                $vo['cate_name'] = Db::name('WorkCate')->where(['id' => $vo['cate']])->value('title');
-				$vo['after_num'] = Db::name('ProjectTask')->where(['before_task'=>$vo['id'],'delete_time' => 0])->count();
-				if($vo['after_num']==1){
-					$vo['after_id'] = Db::name('ProjectTask')->where(['before_task'=>$vo['id'],'delete_time' => 0])->value('id');
-				}
-				$vo['delay'] = 0;
-				if ($vo['end_time'] > 0) {
-					$vo['end_time'] = date('Y-m-d', $vo['end_time']);
-					if ($vo['over_time'] > 0 && $vo['flow_status'] < 4) {
-						$vo['delay'] = countDays($vo['end_time'], date('Y-m-d', $vo['over_time']));
-					}
-					if ($vo['over_time'] == 0 && $vo['flow_status'] < 4) {
-						$vo['delay'] = countDays($vo['end_time']);
-					}
-				}
-				else{
-					$vo['end_time'] = '-';
-				}
-                $vo['priority_name'] = TaskList::$Priority[(int) $vo['priority']];
-                $vo['flow_name'] = TaskList::$FlowStatus[(int) $vo['flow_status']];
-                $vo['type_name'] = TaskList::$Type[(int) $vo['type']];
-		}
-        $res['total'] = count($list);
-        $res['data'] = table_tree_list(0, $list);
-        return table_assign(0, '', $res);
-	}
-	
-	//子任务新增
-    public function task_add_son()
-    {
-		$param = get_params();
-		$parent_task_array = admin_parent_task($param['id']);
-		if (in_array($param['pid'], $parent_task_array)) {
-			return to_assign(1, '子任务不能是该任务的父级以上的任务');
-		}
-		$after_task_array = admin_after_task_son($param['id']);
-		if (in_array($param['pid'], $after_task_array)) {
-			return to_assign(1, '子任务不能是该任务本身或其前置任务');
-		}
-		$res = Db::name('ProjectTask')->where(['id'=>$param['id']])->update(['pid'=>$param['pid']]);
-		if ($res) {
-			return to_assign(0, "操作成功");
-		} else {
-			return to_assign(1, "操作失败");
-		}
-	}
-	
-	//子任务删除
-    public function task_del_son()
-    {
-		$param = get_params();
-		$res = Db::name('ProjectTask')->where(['id'=>$param['id']])->update(['pid'=>0]);
-		if ($res) {
-			return to_assign(0, "操作成功");
-		} else {
-			return to_assign(1, "操作失败");
-		}
-	}
-	//编辑阶段
-    public function reset_check()
-    {
-        $param = get_params();
-        $id = isset($param['id']) ? $param['id'] : 0;
-		$detail = (new ProjectList())->detail($id);
-		if (request()->isPost()) {
-			if ($this->uid == $detail['admin_id'] || $this->uid == $detail['director_uid']) {
-				$flowNameData = isset($param['flowName']) ? $param['flowName'] : '';
-				$flowUidsData = isset($param['chargeIds']) ? $param['chargeIds'] : '';
-				$flowIdsData = isset($param['membeIds']) ? $param['membeIds'] : '';
-				$flowDateData = isset($param['cycleDate']) ? $param['cycleDate'] : '';
-				$step_idData = isset($param['step_id']) ? $param['step_id'] : 0;
-				$flow = [];
-				$time_1 = $detail['start_time'];
-				$time_2 = $detail['end_time'];
-				foreach ($flowNameData as $key => $value) {
-					if (!$value) {
-						continue;
-					}				
-					$flowDate = explode('到',$flowDateData[$key]);
-					$start_time = strtotime(urldecode(trim($flowDate[0])));
-					$end_time = strtotime(urldecode(trim($flowDate[1])));
-					if($start_time<$time_1){
-						if($key == 0){
-							return to_assign(1, '第'.($key+1).'阶段的开始时间不能小于计划开始时间');
-						}
-						else{
-							return to_assign(1, '第'.($key+1).'阶段的开始时间不能小于第'.($key).'阶段的结束时间');
-						}
-						break;
-					}
-					if($end_time>$time_2){
-						return to_assign(1, '第'.($key+1).'阶段的结束时间不能大于计划结束时间');
-						break;
-					}
-					else{
-						$time_1 = $end_time;
-					}
-					$item = [];
-					$item['action_id'] = $id;
-					$item['flow_name'] = $value;
-					$item['type'] = 2;
-					$item['flow_uid'] = $flowUidsData[$key];
-					$item['flow_ids'] = $flowIdsData[$key];
-					$item['sort'] = $key;
-					$item['start_time'] = $start_time;
-					$item['end_time'] = $end_time;
-					$item['id'] = $step_idData[$key];
-					$item['create_time'] = time();
-					$flow[]=$item;	
-				}
-				//原来的阶段步骤
-				foreach ($flow as $key => $value) {
-					if($value['id'] == 0){
-						Db::name('Step')->strict(false)->field(true)->insert($value);
-					}
-					else{
-						$value['update_time'] = time();
-						Db::name('Step')->strict(false)->field(true)->update($value);
-					}
-				}
-				$res = Db::name('Project')->where('id', $id)->strict(false)->field(true)->update(['status'=>2,'update_time'=>time()]);
-				add_log('reset', $param['id'], $param,'项目阶段');
-				return to_assign();
-			} else {
-				return to_assign(1, '只有创建人或者负责人才有权限编辑');
+        if (request()->isDelete()) {
+            $id = get_params("id");
+            $step = Db::name('ProjectStep')->where('id', $id)->find();
+			if($step['is_current'] == 1){
+				return to_assign(1, "项目当前所在步骤不能删除");
 			}
-		}
-	}
+			$project = Db::name('Project')->where('id', $step['project_id'])->find();
+			$auth = isAuth($this->uid,'project_admin','conf_1');
+			if($project['admin_id'] == $this->uid || $project['director_uid'] == $this->uid || $auth==1){
+				if (Db::name('ProjectStep')->where('id', $id)->update(['delete_time'=>time()]) !== false) {
+					return to_assign(0, "删除成功");
+				} else {
+					return to_assign(0, "删除失败");
+				}
+			}
+			else{
+				return to_assign(1, "只有项目管理员、项目创建人、项目负责人才有权限删除");
+			}
+        } else {
+            return to_assign(1, "错误的请求");
+        }
+    }
 	
 	//审核
     public function step_check()
@@ -701,74 +571,61 @@ class Api extends BaseController
         $param = get_params();
 		$detail = Db::name('Project')->where(['id' => $param['id']])->find();
 		//当前审核节点详情
-		$step = Db::name('Step')->where(['action_id'=>$detail['id'],'type'=>2,'sort'=>$detail['step_sort'],'delete_time'=>0])->find();
-		if ($this->uid != $step['flow_uid']){		
+		$step = Db::name('ProjectStep')->where(['project_id'=>$detail['id'],'is_current' => 1,'delete_time'=>0])->find();
+		if ($this->uid != $step['director_uid']){		
 			return to_assign(1,'您没权限操作');
 		}
 		//审核通过
 		if($param['check'] == 1){
-			$next_step = Db::name('Step')->where(['action_id'=>$detail['id'],'type'=>2,'sort'=>($detail['step_sort']+1),'delete_time'=>0])->find();
-			if($next_step){
-				$param['step_sort'] = $next_step['sort'];
+			$next_step = Db::name('ProjectStep')->where([['project_id','=',$detail['id']],['sort','>',$step['sort']],['delete_time','=',0]])->order('sort', 'asc')->find();
+			if(!empty($next_step)){
+				Db::name('ProjectStep')->where('id', $step['id'])->strict(false)->field(true)->update(['is_current'=>0]);
+				Db::name('ProjectStep')->where('id', $next_step['id'])->strict(false)->field(true)->update(['is_current'=>1]);
 				$param['status'] = 2;
 			}
 			else{
 				//不存在下一步审核，审核结束
 				$param['status'] = 3;
-				$param['step_sort'] = $detail['step_sort']+1;
+				Db::name('ProjectStep')->where('id', $step['id'])->strict(false)->field(true)->update(['is_current'=>0]);
 			}		
 			//审核通过数据操作
-			$res = Db::name('Project')->strict(false)->field('step_sort,status')->update($param);
-			if($res!==false){
+			Db::name('Project')->strict(false)->field('status')->update($param);
+			$checkData=array(
+				'project_id' => $detail['id'],
+				'step_id' => $step['id'],
+				'check_uid' => $this->uid,
+				'check_time' => time(),
+				'status' => $param['check'],
+				'create_time' => time()
+			);
+			Db::name('ProjectStepRecord')->strict(false)->field(true)->insertGetId($checkData);
+			add_log('check', $param['id'], $param,'项目阶段');
+			return to_assign();
+		}
+		//回退审核
+		else if($param['check'] == 2){
+			//获取上一步的审核信息
+			$prev_step = Db::name('ProjectStep')->where([['project_id','=',$detail['id']],['sort','<',$step['sort']],['delete_time','=',0]])->order('sort', 'desc')->find();
+			if(!empty($prev_step)){
+				//存在上一步审核
+				Db::name('ProjectStep')->where('id', $step['id'])->strict(false)->field(true)->update(['is_current'=>0]);
+				Db::name('ProjectStep')->where('id', $prev_step['id'])->strict(false)->field(true)->update(['is_current'=>1]);
 				$checkData=array(
 					'action_id' => $detail['id'],
 					'step_id' => $step['id'],
 					'check_uid' => $this->uid,
-					'type' => 2,
 					'check_time' => time(),
 					'status' => $param['check'],
+					'content' => $param['content'],
 					'create_time' => time()
-				);
-				$aid = Db::name('StepRecord')->strict(false)->field(true)->insertGetId($checkData);
-				add_log('check', $param['id'], $param,'项目阶段');
+				);	
+				Db::name('ProjectStepRecord')->strict(false)->field(true)->insertGetId($checkData);
+				add_log('refue', $param['id'], $param,'项目阶段');
 				return to_assign();
 			}
 			else{
-				return to_assign(1,'操作失败');
+				return to_assign(1,'已经是第一个阶段了');
 			}
-		}
-		//拒绝审核
-		else if($param['check'] == 2){
-			//获取上一步的审核信息
-			$prev_step = Db::name('Step')->where(['action_id'=>$detail['id'],'type'=>2,'sort'=>($detail['step_sort']-1),'delete_time'=>0])->find();
-			if($prev_step){
-				//存在上一步审核
-				$param['step_sort'] = $prev_step['sort'];
-			}
-			else{
-				//不存在上一步审核，审核初始化步骤
-				$param['step_sort'] = 0;				
-				$param['status'] = 1;
-			}
-		}
-		$res = Db::name('Project')->strict(false)->field('step_sort,status')->update($param);
-		if($res!==false){
-			$checkData=array(
-				'action_id' => $detail['id'],
-				'step_id' => $step['id'],
-				'check_uid' => $this->uid,
-				'type' => 2,
-				'check_time' => time(),
-				'status' => $param['check'],
-				'content' => $param['content'],
-				'create_time' => time()
-			);	
-			$aid = Db::name('StepRecord')->strict(false)->field(true)->insertGetId($checkData);
-			add_log('refue', $param['id'], $param,'项目阶段');
-			return to_assign();
-		}
-		else{
-			return to_assign(1,'操作失败');
 		}				
     }
 }

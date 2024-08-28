@@ -1,9 +1,15 @@
 <?php
 /**
- * @copyright Copyright (c) 2022 勾股工作室
- * @license https://opensource.org/licenses/GPL-3.0
- * @link https://www.gougucms.com
- */
++-----------------------------------------------------------------------------------------------
+* GouGuOPEN [ 左手研发，右手开源，未来可期！]
++-----------------------------------------------------------------------------------------------
+* @Copyright (c) 2021~2024 http://www.gouguoa.com All rights reserved.
++-----------------------------------------------------------------------------------------------
+* @Licensed 勾股OA，开源且可免费使用，但并不是自由软件，未经授权许可不能去除勾股OA的相关版权信息
++-----------------------------------------------------------------------------------------------
+* @Author 勾股工作室 <hdm58@qq.com>
++-----------------------------------------------------------------------------------------------
+*/
 
 declare (strict_types = 1);
 namespace app\customer\model;
@@ -14,8 +20,6 @@ use think\Model;
 class CustomerLog extends Model
 {
     public static $Sourse = [
-		'status' => ['未设置', '新进客户', '跟进客户', '正式客户', '流失客户','已成交客户'],
-		'intent_status' => ['未设置', '意向不明', '意向模糊', '意向一般', '意向强烈','已成交'],
 		'type' => ['其他','电话','微信','QQ','上门'],
 		'stage' => ['未设置','立项评估','初期沟通','需求分析','方案制定','商务谈判','合同签订','失单'],
 		'action' => [			
@@ -35,13 +39,12 @@ class CustomerLog extends Model
 			'source_id' => '客户来源',
 			'grade_id' => '客户等级',
 			'industry_id' => '所属行业',
-			'services_id' => '客户意向',
 			'provinceid' => '省份',
 			'cityid' => '城市',
 			'distid'=> '区县',
 			'address' => '联系地址',
-			'status' => '状态',
-			'intent_status' => '意向状态',
+			'customer_status' => '客户状态',
+			'intent_status' => '客户意向',
 			'belong_uid' => '所属人',
 			'belong_did' => '所属部门',
 			'share_ids' => '共享人员',
@@ -176,6 +179,10 @@ class CustomerLog extends Model
 			if ($v['field'] == 'services_id') {
                 $v['old_content'] = Db::name('Services')->where(['id' => $v['old_content']])->value('title');
                 $v['new_content'] = Db::name('Services')->where(['id' => $v['new_content']])->value('title');
+            }
+			if ($v['field'] == 'customer_status' || $v['field'] == 'intent_status') {
+                $v['old_content'] = Db::name('BasicCustomer')->where(['id' => $v['old_content']])->value('title');
+                $v['new_content'] = Db::name('BasicCustomer')->where(['id' => $v['new_content']])->value('title');
             }
 			if ($v['field'] == 'is_default') {
                 $v['old_content'] = $v['old_content'] == 1?'第一联系人':'普通联系人';

@@ -33,24 +33,10 @@
 	<div class="text-detial-content">
 	{$detail.content|raw}
 	</div>
-	{notempty name="$detail.file_ids"}
-	<h3 class="py-3">相关附件</h3>
-	<div class="layui-row" id="fileBox">
-		{volist name="$detail.fileArray" id="vo"}
-		<div class="layui-col-md4" id="uploadImg{$vo.id}">{:file_card($vo,'view')}</div>
-		{/volist}
-	</div>
-	{/notempty}
 </div>
 {/block}
 <!-- 脚本 -->
 {block name="script"}
 <script src="{__GOUGU__}/third_party/prism/prism.js"></script>
-<script>
-const moduleInit = ['tool','oaTool'];
-function gouguInit() {
-
-}
-</script>
 {/block}
 <!-- /脚本 -->

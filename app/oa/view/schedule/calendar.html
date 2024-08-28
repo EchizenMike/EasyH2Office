@@ -2,44 +2,24 @@
 {block name="style"}
 <link rel="stylesheet" href="{__GOUGU__}/third_party/fullcalendar/main.min.css"/>
 <style>
-.main-body{background-color:#fff;}
-#calendar {width: 100%;margin: 0 auto;
+#calendar {width: 100%;margin: 0 auto; background-color:#fff;
 -moz-user-select: none; /*火狐*/
 -webkit-user-select: none; /*webkit浏览器*/
--ms-user-select: none; /*IE10*/
--khtml-user-select: none; /*早期浏览器*/
-user-select: none;}
-.fc .fc-toolbar.fc-header-toolbar{margin-bottom:0;border:1px solid #ddd; border-bottom:none;padding:15px 12px;background-color:#fafafa;}
+}
+.fc .fc-toolbar.fc-header-toolbar{margin-bottom:0;border:1px solid #eeeeee; border-bottom:none;padding:15px 12px;}
 .fc-col-header{background-color:#fafafa;}
-.fc .fc-button-primary {
-    color: #fff;
-    background-color: #1E9FFF;
-    border-color: #1E9FFF;
-}
-.fc .fc-button-primary:not(:disabled).fc-button-active, .fc .fc-button-primary:not(:disabled):active {
-    color: #fff;
-    background-color: #FBBC05;
-    border-color: #FBBC05;
-}
-.fc .fc-button-primary:focus, .fc .fc-button-primary:not(:disabled).fc-button-active:focus, .fc .fc-button-primary:not(:disabled):active:focus {
-	box-shadow: 0 0 0 0;
-}
+.fc .fc-button-primary {color: #fff; background-color: #1E9FFF; border-color: #1E9FFF;}
+.fc .fc-button-primary:not(:disabled).fc-button-active, .fc .fc-button-primary:not(:disabled):active { color: #fff; background-color: #FBBC05; border-color: #FBBC05;}
+.fc .fc-button-primary:focus, .fc .fc-button-primary:not(:disabled).fc-button-active:focus, .fc .fc-button-primary:not(:disabled):active:focus {box-shadow: 0 0 0 0;}
 .fc .fc-button-primary:hover{color:#fff; background-color:#52B5FF; border-color:#52B5FF;}
 .fc-daygrid-event-harness{cursor:pointer;}
 .fc .fc-daygrid-week-number{font-size:12px;}
+.fc-daygrid-block-event .fc-event-time{font-weight:800}
+.fc-h-event .fc-event-main{color:#111111}
+.fc-theme-standard .fc-scrollgrid,.fc-theme-standard td, .fc-theme-standard th{border-color:#eee;}
 /*今天背景色和字体颜色 */
-.fc .fc-daygrid-day.fc-day-today .fc-event-title,.fc .fc-daygrid-day.fc-day-today .fc-event-time,.fc .fc-daygrid-day.fc-day-today .fc-daygrid-day-number{
-	font-weight:800;
-	color:#FF5722;
-}
-/*星期六,星期天背景色和字体颜色
-.fc-day-sat,.fc-day-sun{
-    background-color: #fafafa;
-}
-*/
-.fc-h-event .fc-event-main{color:#333}
-
-.calendar-select{width:100px; height:38px; position:absolute; top:27px; right:255px; z-index:100;}
+.fc .fc-daygrid-day.fc-day-today .fc-event-title,.fc .fc-daygrid-day.fc-day-today .fc-event-time,.fc .fc-daygrid-day.fc-day-today .fc-daygrid-day-number{font-weight:800;color:#FF5722;}
+.calendar-select{width:100px; height:40px; position:absolute; top:31px; right:262px; z-index:100;}
 .calendar-select .layui-input{height: 36px; line-height: 1.2;}
 .layui-tags-span {padding: 3px 6px;font-size: 12px; background-color:#fff; border-radius: 3px; margin:2px 0; margin-right: 5px; border: 1px solid #e6e6e6; display: inline-block;}
 .layui-layer-content .layui-table-view .layui-table td,.layui-layer-content .layui-table-view .layui-table th{padding:1px 0;}
@@ -49,14 +29,17 @@ user-select: none;}
 <!-- 主体 -->
 {block name="body"}
 <script src="{__GOUGU__}/third_party/fullcalendar/main.min.js"></script>
-<div class="p-3">
+<div class="p-page">
 	<div id="calendar"></div>
+	{gt name="is_leader" value="0"}
 	<div class="calendar-select">
-		<div class="layui-input-inline" style="width: 90px;"><input type="text" placeholder="请选择员工" class="layui-input" data-event="select" autocomplete="off"/></div>		
+		<div class="layui-input-inline"><input type="text" placeholder="选择下属员工" class="layui-input" data-event="select" autocomplete="off"/></div>		
 	</div>
+	{/gt}
 </div>
 <!-- /主体 -->
 {/block}
+{block name="copyright"}{/block}
 <!-- 脚本 -->
 {block name="script"}
 <script type="text/javascript">
@@ -67,26 +50,29 @@ user-select: none;}
 		}
 		return num;
 	}
-	const moduleInit = ['tool','employeepicker','oaSchedule'];
+	const moduleInit = ['tool','oaPicker','oaSchedule'];
 	function gouguInit() {
-		var form = layui.form,tool=layui.tool, employeepicker = layui.employeepicker,laydate = layui.laydate,work = layui.oaSchedule;
-		
-		// 选择员工
+		var form = layui.form,tool=layui.tool, oaPicker = layui.oaPicker,laydate = layui.laydate,work = layui.oaSchedule;
+		// 选择下属员工
 		$('body').on('click','[data-event="select"]',function(){
 			var that = $(this);
-			var names = that.val(), ids = $('[name="uid"]').val();
-			employeepicker.init({
-				ids: ids,
-				names: names,
-				type: 0,
-				department_url: '/api/index/get_department_tree',
-				employee_url: '/api/index/get_employee',
-				callback: function (ids, names, dids, departments) {
-					uid = ids;
-					that.val(names);
-					calendar.refetchEvents({
-						url: '/oa/schedule/index?uid='+uid
-					});
+			oaPicker.employeeInit({
+				title:"选择下属",
+				department_url: "/api/index/get_department_tree_sub",
+				employee_url: "/api/index/get_employee_sub",
+				ids: '',
+				names: '',
+				type: 1,
+				callback:function(data){
+					//这里是选择后的回调方法，可以根据具体需求自定义写哦
+					let select_id=[],select_name=[];
+					for(var a=0; a<data.length;a++){
+						select_id.push(data[a].id);
+						select_name.push(data[a].name);
+					}
+					that.val(select_name.join(','));
+					uid = select_id.join(','); 
+					calendar.refetchEvents();
 				}
 			})
 		});
@@ -97,7 +83,7 @@ user-select: none;}
 				return false;
 			}
 			$.ajax({
-				url: "/oa/schedule/detail",
+				url: "/oa/schedule/view",
 				type:'post',
 				data:{id:id},
 				success:function(res){					
@@ -140,9 +126,7 @@ user-select: none;}
 					text: '清空员工', click: function () {
 						uid = 0;
 						$('[data-event="select"]').val('');
-						calendar.refetchEvents({
-							url: '/oa/schedule/index?uid='+uid
-						});
+						calendar.refetchEvents();
 					}
 				}
             },

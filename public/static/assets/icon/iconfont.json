@@ -6,6 +6,20 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "12752070",
+      "name": "回收站",
+      "font_class": "shanchu",
+      "unicode": "e615",
+      "unicode_decimal": 58901
+    },
+    {
+      "icon_id": "11372666",
+      "name": "分享",
+      "font_class": "fenxiang",
+      "unicode": "e8b0",
+      "unicode_decimal": 59568
+    },
+    {
       "icon_id": "24056343",
       "name": "更多",
       "font_class": "gengduo1",
@@ -28,8 +42,8 @@
     },
     {
       "icon_id": "12557244",
-      "name": "考试模式",
-      "font_class": "kaoshimoshi-",
+      "name": "工作中",
+      "font_class": "working",
       "unicode": "e639",
       "unicode_decimal": 58937
     },
@@ -71,20 +85,20 @@
     {
       "icon_id": "11349237",
       "name": "QQ",
-      "font_class": "QQ",
+      "font_class": "qq",
       "unicode": "e651",
       "unicode_decimal": 58961
     },
     {
       "icon_id": "26672775",
-      "name": "名称=锁定, 线面=off",
+      "name": "锁定",
       "font_class": "suozhu",
       "unicode": "e65f",
       "unicode_decimal": 58975
     },
     {
       "icon_id": "26672776",
-      "name": "名称=开锁, 线面=off",
+      "name": "解锁",
       "font_class": "jiesuo",
       "unicode": "e660",
       "unicode_decimal": 58976
@@ -105,17 +119,10 @@
     },
     {
       "icon_id": "7007278",
-      "name": "插入链接-22",
-      "font_class": "charulianjie-",
+      "name": "链接",
+      "font_class": "lianjie",
       "unicode": "e67b",
       "unicode_decimal": 59003
-    },
-    {
-      "icon_id": "18336452",
-      "name": "删除",
-      "font_class": "shanchu",
-      "unicode": "e607",
-      "unicode_decimal": 58887
     },
     {
       "icon_id": "9922129",

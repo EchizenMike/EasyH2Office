@@ -82,6 +82,10 @@
 				return;
 			}
 			if (obj.event === 'del') {
+				if(obj.data.id == 1){
+					layer.msg('系统配置不支持删除');
+					return false;
+				}
 				layer.confirm('确定要删除吗?', {
 					icon: 3,
 					title: '提示'

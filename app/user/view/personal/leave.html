@@ -1,14 +1,14 @@
 {extend name="../../base/view/common/base" /}
 <!-- 主体 -->
 {block name="body"}
-<div class="p-3">
+<div class="p-page">
 	<form class="layui-form gg-form-bar border-t border-x">
 		<div class="layui-input-inline">
 			<input type="text" name="keywords" placeholder="关键字" class="layui-input" autocomplete="off"/>
 		</div>
 		<div class="layui-input-inline" style="width:150px;">
-			<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform"><i class="layui-icon layui-icon-search mr-1"></i>搜索</button>
-			<button type="reset" class="layui-btn layui-btn-reset" lay-filter="reset">清空</button>
+			<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="table-search"><i class="layui-icon layui-icon-search mr-1"></i>搜索</button>
+			<button type="reset" class="layui-btn layui-btn-reset" lay-filter="table-reset">清空</button>
 		</div>
 	</form>
 	<table class="layui-hide" id="test" lay-filter="test"></table>
@@ -25,9 +25,9 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
-	const moduleInit = ['tool'];
+	const moduleInit = ['tool','tablePlus'];
 	function gouguInit() {
-		var table = layui.table, tool = layui.tool ,form = layui.form;
+		var table = layui.tablePlus, tool = layui.tool ,form = layui.form;
 		layui.pageTable = table.render({
 			elem: '#test'
 			, toolbar: '#toolbarDemo'
@@ -86,7 +86,7 @@
 					let callback = function (e) {
 						layer.msg(e.msg);
 						if (e.code == 0) {
-							obj.del();
+							layui.pageTable.reload();
 						}
 					}
 					tool.delete("/user/personal/leave_check", { id: data.id }, callback);
@@ -98,7 +98,7 @@
 					let callback = function (e) {
 						layer.msg(e.msg);
 						if (e.code == 0) {
-							obj.del();
+							layui.pageTable.reload();
 						}
 					}
 					tool.delete("/user/personal/leave_delete", { id: data.id }, callback);
@@ -119,12 +119,7 @@
 
 		//监听搜索提交
 		form.on('submit(webform)', function(data){
-			if(data.field.keywords) {
-				layui.pageTable.reload({where:{keywords:data.field.keywords},page:{curr:1}});			  
-			}
-			else{
-				location.reload();
-			}
+			layui.pageTable.reload({where:data.field,page:{curr:1}});			  
 			return false;
 		});
 	}

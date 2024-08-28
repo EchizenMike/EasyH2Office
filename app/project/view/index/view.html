@@ -1,8 +1,6 @@
 {extend name="../../base/view/common/base" /}
 {block name="style"}
 <style>
-.hover-view i,.hover-edit i{margin-left:4px; font-weight:800; cursor:pointer; opacity:0}
-.hover-edit.hover-on i{opacity:1}
 .layui-tab-title .layui-this{background-color:#fff;}
 .layui-tab-card,.layui-card{box-shadow:0 0 0 0 rgb(0 0 0 / 10%); border-radius:0;}
 .layui-card-tips {color: #969696;}
@@ -31,6 +29,13 @@
 .comment-meta span{font-size:12px;}
 
 .check-items{overflow-x: auto; padding: 2px 0;}
+
+.check-item strong{margin-right:3px; font-size:20px;}
+.check-item strong.blue,.check-item strong.green{display:none;}
+.check-item.blue strong.black,.check-item.green strong.black{display:none;}
+.check-item.blue strong.blue{display:block;}
+.check-item.green strong.green{display:block;}
+
 .flow-flex-row {box-direction: row;
 	box-orient: horizontal;
     -webkit-box-orient: horizontal;
@@ -56,38 +61,17 @@
 .layui-icon[data-on]{color:#4285f4;}
 .check-item-status{color:#969696; font-size:12px; margin-left:3px;}
 .check-item:last-child .layui-icon-right{display:none;}
-
-tr[data-level="1"] td{
-  background-color: #f9f9f9;
-}
-tr[data-level="2"] td{
-  background-color: #fbfbfb;
-}
-tr[data-level="2"] td{
-  background-color: #fdfdfd;
-}
 </style>
 {/block}
 <!-- 主体 -->
 {block name="body"}
-	<div class="p-3">
-		<h2 class="pb-3 hover-edit">
-			<span class="font20" id="name_{$detail.id}" data-val="">{$detail.name}</span>
-			<i class="iconfont icon-wodedianping" title="编辑" data-id="{$detail.id}" data-name="name"></i>
-		</h2>
-		<div>
-			<span class="layui-badge layui-bg-gray">#P{$detail.id}</span>
-			<span class="mx-2">{$detail.admin_name}</span>
-			<span class="gray">创建于{$detail.times}<span id="editTips">{gt name="$detail.update_time"
-					value="0"}，最近更新于 {:time_trans($detail.update_time)}{/gt}</span></span>
-			{eq name="$detail.admin_id" value="$login_admin.id"}
-			<span class="layui-btn layui-btn-xs layui-btn-danger ml-4" id="delProject"><i
-					class="layui-icon">&#xe640;</i>删除</span>
-			{/eq}
-		</div>
+	<h2 class="p-3"><span class="font20">{$detail.name}</span></h2>
+	<div class="px-3">
+		<span class="layui-badge layui-bg-gray">#T{$detail.id}</span>
+		<span class="mx-2">{$detail.admin_name}</span>
+		<span class="gray">创建于{$detail.create_time}<span>{gt name="$detail.update_time" value="0"}，最近更新于 {$detail.update_time}{/gt}</span></span>
 	</div>
-
-	<div class="layui-tab layui-tab-card" style="margin:0;" lay-filter="project" id="projectTab">
+	<div class="layui-tab layui-tab-card" lay-filter="project" id="projectTab">
 		<ul class="layui-tab-title">
 			<li class="layui-this" data-load="true">项目概览</li>
 			<li data-load="">项目任务</li>
@@ -127,25 +111,14 @@ tr[data-level="2"] td{
 			</div>
 		</div>
 	</div>
-</div>
 {/block}
 <!-- /主体 -->
-
 <!-- 脚本 -->
 {block name="script"}
 <script src="{__GOUGU__}/third_party/echart/echarts.min.js"></script>
 <script>
-	var project_id = '{$detail.id}';
-	var project_start_time = '{$detail.start_time| date="Y-m-d"}';
-	const opsData = {
-		status: [
-			{ 'id': 1, 'title': '未开始' },
-			{ 'id': 2, 'title': '进行中' },
-			{ 'id': 3, 'title': '已完成' },
-			{ 'id': 4, 'title': '已关闭' }
-		]
-	}
-
+	const project_id = '{$detail.id}';
+	const project_start_time = "{$detail.start_time|date='Y-m-d'}";
 	var chartProgress = document.getElementById('progress');
 	var progressChart = echarts.init(chartProgress);
 	var optionA;
@@ -521,10 +494,12 @@ tr[data-level="2"] td{
 		}
 		return count;
 	}
-
-	const moduleInit = ['tool','oaEdit','oaSchedule','oaComment','oaTool'];
 	
+	//
+	const moduleInit = ['tool','oaPicker','uploadPlus','tablePlus','oaComment'];
+
 	function gouguInit() {
+		var tool = layui.tool;
 		var element = layui.element;
 		overview();		
 		element.on('tab(project)', function(data){
@@ -548,7 +523,7 @@ tr[data-level="2"] td{
 				project_comment();	
 			}
 		});
-	}	
+	}
 </script>
 {/block}
 <!-- /脚本 -->
