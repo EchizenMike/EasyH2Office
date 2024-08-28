@@ -202,7 +202,7 @@ INSERT INTO `oa_admin_rule` VALUES (6, 0, '', '财务管理', '财务管理', 'f
 INSERT INTO `oa_admin_rule` VALUES (7, 0, '', '客户管理', '客户管理', 'customer', 'icon-kehuguanli', 1, 7, 1, 0, 0);
 INSERT INTO `oa_admin_rule` VALUES (8, 0, '', '合同管理', '合同管理', 'contract', 'icon-hetongyidong', 1, 8, 1, 0, 0);
 INSERT INTO `oa_admin_rule` VALUES (9, 0, '', '项目管理', '项目管理', 'project', 'icon-xiangmuguanli', 1, 9, 1, 0, 0);
-INSERT INTO `oa_admin_rule` VALUES (10, 0, '', '知识网盘', '知识网盘', 'article', 'icon-tikuguanli', 1, 10, 1, 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (10, 0, '', '知识网盘', '知识网盘', 'disk', 'icon-tikuguanli', 1, 10, 1, 0, 0);
 
 INSERT INTO `oa_admin_rule` VALUES (11, 1, 'home/conf/index', '系统配置', '系统配置', 'home', '', 1, 1, 1, 0, 0);
 INSERT INTO `oa_admin_rule` VALUES (12, 11, 'home/conf/add', '新建/编辑', '配置项', 'home', '', 2, 1, 1, 0, 0);
