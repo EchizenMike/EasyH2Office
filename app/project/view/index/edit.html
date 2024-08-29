@@ -29,7 +29,7 @@
 		<tr>
 			<td class="layui-td-gray">关联合同</td>
 			<td colspan="3">
-				<input type="text" class="layui-input picker-oa" data-types="contract" name="contract_name" placeholder="请选择需要关联的合同" readonly value="{$detail.contract_name}">		
+				<input type="text" class="layui-input picker-oa" data-types="contract" name="contract_name" placeholder="请选择需要关联的合同" readonly value="{$detail.contract_name|default=''}">		
 				<input type="hidden" class="layui-input" name="contract_id" value="{$detail.contract_id}">
 			</td>
 		</tr>

@@ -130,8 +130,8 @@ class Index extends BaseController
 		$handle[] = array(
             'name' => '待完成任务',
             'num' => Db::name('ProjectTask')->where([['director_uid', '=', $uid],['status', '<', 3],['delete_time', '=', 0]])->count(),
-            'id' => 350,
-            'url' => '/finance/ticket/datalist',
+            'id' => 345,
+            'url' => '/project/task/datalist',
         );
 				
 		$whereCustomer = array();

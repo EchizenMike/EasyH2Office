@@ -197,7 +197,7 @@
 		
 		table.on('toolbar(table_work)',function (obj) {
 			if (obj.event === 'add') {
-				work.add({'task_id':task_id,'problems_id':0,'demand_id':0});
+				work.add(detail_id,{'id':0});
 			}
 		});	 
 		table.on('tool(table_work)',function (obj) {
