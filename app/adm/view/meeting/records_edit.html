@@ -21,12 +21,12 @@
 		<tr>
 			<td class="layui-td-gray">会 议 室<font>*</font></td>
 			<td colspan="3">
-				<input type="text" name="room_name" value="{$detail.room}" autocomplete="off" readonly placeholder="请选择" class="layui-input picker-oa" data-types="room">
+				<input type="text" name="room_name" value="{$detail.room}" autocomplete="off" readonly placeholder="请选择" lay-verify="required" readonly lay-reqText="请选择会议室" class="layui-input picker-oa" data-types="room">
 				<input type="hidden" name="room_id" value="{$detail.room_id}">
 			</td>
 			<td class="layui-td-gray">主办部门<font>*</font></td>
 			<td>
-				<input type="text" name="did_name" value="{$detail.did_name}" autocomplete="off" readonly placeholder="请选择" class="layui-input picker-oa" data-types="department">
+				<input type="text" name="did_name" value="{$detail.did_name|default=''}" autocomplete="off" readonly placeholder="请选择"  lay-verify="required" readonly lay-reqText="请选择主办部门" class="layui-input picker-oa" data-types="department">
 				<input type="hidden" name="did" value="{$detail.did}">
 			</td>
 		</tr>
