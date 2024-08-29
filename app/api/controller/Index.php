@@ -22,7 +22,7 @@ class Index extends BaseController
 	//上传文件
 	public function upload()
 	{
-		if (request()->isAjax()) {
+		if (request()->isPost()) {
 			$param = get_params();
 			$sourse = 'file';
 			if(isset($param['sourse'])){
@@ -129,7 +129,7 @@ class Index extends BaseController
 			 }
 		}
 		else{
-			return to_assign(1, '非法请求', $res);
+			return to_assign(1, '非法请求');
 		} 
 	}
 	
