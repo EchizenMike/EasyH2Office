@@ -16,12 +16,19 @@ declare (strict_types = 1);
 namespace app\adm\controller;
 
 use app\base\BaseController;
+use app\adm\model\MeetingRecords as MeetingRecordsModel;
 use think\exception\ValidateException;
 use think\facade\Db;
 use think\facade\View;
 
 class Meeting extends BaseController
 {	
+	protected $model;
+    public function __construct()
+    {
+		parent::__construct(); // 调用父类构造函数
+        $this->model = new MeetingRecordsModel();
+    }
 	//会议室
     public function room()
     {
@@ -108,29 +115,21 @@ class Meeting extends BaseController
     {
         if (request()->isAjax()) {
             $param = get_params();
-            $where = array();
+			$where=[];
+			$whereOr = [];
+			$uid = $this->uid;
             if (!empty($param['keywords'])) {
-                $where[] = ['a.title', 'like', '%' . $param['keywords'] . '%'];
+                $where[] = ['title', 'like', '%' . $param['keywords'] . '%'];
             }
 			if (!empty($param['anchor_id'])) {
-                $where[] = ['a.anchor_id', '=', $param['anchor_id']];
+                $where[] = ['anchor_id', '=', $param['anchor_id']];
             }
 			if (!empty($param['diff_time'])) {
 				$diff_time =explode('~', $param['diff_time']);
-                $where[] = ['a.meeting_date', 'between', [strtotime(urldecode($diff_time[0])),strtotime(urldecode($diff_time[1]))]];
+                $where[] = ['meeting_date', 'between', [strtotime(urldecode($diff_time[0])),strtotime(urldecode($diff_time[1].' 23:59:59'))]];
             }
-            $where[] = ['a.delete_time', '=', 0];
-            $rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
-            $list = Db::name('MeetingRecords')->where($where)
-                ->field('a.*,an.name as anchor')
-                ->alias('a')
-                ->join('Admin an', 'a.anchor_id = an.id', 'LEFT')
-                ->order('a.meeting_date desc')
-                ->paginate(['list_rows'=> $rows])
-                ->each(function ($item, $key) {
-                    $item['meeting_date'] = empty($item['meeting_date']) ? '-' : date('Y-m-d', $item['meeting_date']);
-					return $item;
-                });
+            $where[] = ['delete_time', '=', 0];
+			$list = $this->model->datalist($param,$where,$whereOr);
             return table_assign(0, '', $list);
         } else {
             return view();
@@ -144,37 +143,15 @@ class Meeting extends BaseController
         if (request()->isAjax()) {
             $param['meeting_date'] = isset($param['meeting_date']) ? strtotime(urldecode($param['meeting_date'])) : 0;
             if (!empty($param['id']) && $param['id'] > 0) {
-                $param['update_time'] = time();
-                $res = Db::name('MeetingRecords')->where('id', $param['id'])->strict(false)->field(true)->update($param);
-                if ($res) {
-                    add_log('edit', $param['id'], $param);
-                }
-                return to_assign();
+               $this->model->edit($param);
             } else {
                 $param['admin_id'] = $this->uid;
-                $param['create_time'] = time();
-                $sid = Db::name('MeetingRecords')->strict(false)->field(true)->insertGetId($param);
-                if ($sid) {
-                    add_log('add', $sid, $param);
-                }
-
-                return to_assign();
+                $this->model->add($param);
             }
         } else {
             $id = isset($param['id']) ? $param['id'] : 0;
             if ($id > 0) {
-                $detail = Db::name('MeetingRecords')->where(['id' => $id])->find();
-				$detail['recorder_name'] = Db::name('Admin')->where(['id' => $detail['recorder_id']])->value('name');
-				$detail['anchor_name'] = Db::name('Admin')->where(['id' => $detail['anchor_id']])->value('name');
-				$detail['room'] = Db::name('MeetingRoom')->where(['id' => $detail['room_id']])->value('title');
-				$detail['did_name'] = Db::name('Department')->where(['id' => $detail['did']])->value('title');
-				$join_names = Db::name('Admin')->where([['id','in',$detail['join_uids']]])->column('name');
-				$detail['join_names'] =implode(',' ,$join_names);
-				$sign_names = Db::name('Admin')->where([['id','in',$detail['sign_uids']]])->column('name');
-				$detail['sign_names'] =implode(',' ,$sign_names);
-				$share_names = Db::name('Admin')->where([['id','in',$detail['share_uids']]])->column('name');
-				$detail['share_names'] =implode(',' ,$share_names);
-                View::assign('detail', $detail);
+                View::assign('detail', $this->model->getById($id));
 				return view('records_edit');
             }
             return view();
@@ -182,21 +159,9 @@ class Meeting extends BaseController
     }
 
     //查看会议纪要
-    public function records_view()
+    public function records_view($id)
     {
-        $id = empty(get_params('id')) ? 0 : get_params('id');
-		 $detail = Db::name('MeetingRecords')->where(['id' => $id])->find();
-		$detail['recorder_name'] = Db::name('Admin')->where(['id' => $detail['recorder_id']])->value('name');
-		$detail['anchor_name'] = Db::name('Admin')->where(['id' => $detail['anchor_id']])->value('name');
-		$detail['room'] = Db::name('MeetingRoom')->where(['id' => $detail['room_id']])->value('title');
-		$detail['did_name'] = Db::name('Department')->where(['id' => $detail['did']])->value('title');
-		$join_names = Db::name('Admin')->where([['id','in',$detail['join_uids']]])->column('name');
-		$detail['join_names'] =implode(',' ,$join_names);
-		$sign_names = Db::name('Admin')->where([['id','in',$detail['sign_uids']]])->column('name');
-		$detail['sign_names'] =implode(',' ,$sign_names);
-		$share_names = Db::name('Admin')->where([['id','in',$detail['share_uids']]])->column('name');
-		$detail['share_names'] =implode(',' ,$share_names);
-		View::assign('detail', $detail);
+		View::assign('detail', $this->model->getById($id));
         return view();
     }
 
@@ -205,14 +170,7 @@ class Meeting extends BaseController
     {
 		if (request()->isDelete()) {
 			$id = get_params("id");
-			$data['delete_time'] = time();
-			$data['id'] = $id;
-			if (Db::name('MeetingRecords')->update($data) !== false) {
-				add_log('delete', $id);
-				return to_assign(0, "删除成功");
-			} else {
-				return to_assign(1, "删除失败");
-			}
+			$this->model->delById($id);
 		} else {
             return to_assign(1, "错误的请求");
         }
