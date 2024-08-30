@@ -46,7 +46,7 @@ class Api extends BaseController
 			}
 		}
 		$rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
-        $list = Db::name('Customer')->field('id,name,address')->order('id asc')->where($where)->paginate(['list_rows'=> $rows])->each(function($item, $key){
+        $list = Db::name('Customer')->field('id,name,address,tax_num,tax_bank,tax_banksn,tax_mobile,tax_address')->order('id asc')->where($where)->paginate(['list_rows'=> $rows])->each(function($item, $key){
 			$contact = Db::name('CustomerContact')->where(['cid'=>$item['id'],'is_default'=>1])->find();
 			if(!empty($contact)){
 				$item['contact_name'] = $contact['name'];

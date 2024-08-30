@@ -120,19 +120,25 @@
 		});
 		
 		$('.customer-picker').on('click',function(){
-			let that = $(this),ids = [],titles=[];
+			let that = $(this),ids = [],titles=[],tax_num=[],tax_bank=[],tax_banksn=[],tax_mobile=[],tax_address=[];
 			let callback = function(data){
 				for ( var i = 0; i <data.length; i++){
 					ids.push(data[i].id);
-					titles.push(data[i].title);
+					titles.push(data[i].name);
+					tax_num.push(data[i].tax_num);
+					tax_bank.push(data[i].tax_bank);
+					tax_banksn.push(data[i].tax_banksn);
+					tax_mobile.push(data[i].tax_mobile);
+					tax_address.push(data[i].tax_address);
 				}
-				that.val(titles.join(','));
-				that.next().val(ids.join(','));
+				//that.val(titles.join(','));
+				//that.next().val(ids.join(','));
+				$('[name="invoice_title"]').val(titles.join(','));
 				$('[name="invoice_tax"]').val(tax_num.join(','));
-				$('[name="invoice_bank"]').val(bank.join(','));
-				$('[name="invoice_account"]').val(bank_sn.join(','));
-				$('[name="invoice_phone"]').val(cperson_mobile.join(','));
-				$('[name="invoice_address"]').val(cperson_address.join(','));
+				$('[name="invoice_bank"]').val(tax_bank.join(','));
+				$('[name="invoice_account"]').val(tax_banksn.join(','));
+				$('[name="invoice_phone"]').val(tax_mobile.join(','));
+				$('[name="invoice_address"]').val(tax_address.join(','));
 			}
 			oaPicker.picker('customer',1,callback,{});
 		});
