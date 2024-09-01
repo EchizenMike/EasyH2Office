@@ -61,10 +61,16 @@ class Area extends BaseController
         } else {
             if ($id > 0) {
                 $detail = Db::name('Area')->where('id', $id)->find();
+                $detail['pname'] = Db::name('Area')->where('id', $detail['pid'])->value('name');
                 View::assign('detail', $detail);
             }
+			$pname='';
+			if($pid>0){
+				$pname = Db::name('Area')->where('id', $pid)->value('name');
+			}
             View::assign('id', $id);
             View::assign('pid', $pid);
+            View::assign('pname', $pname);
             return view();
         }
     }

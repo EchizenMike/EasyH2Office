@@ -7,21 +7,11 @@
 	<table class="layui-table layui-table-form">
 		<tr>
 			<td class="layui-td-gray-2">父级省市区<font>*</font></td>
-			<td>
-				<select name="pid" lay-verify="required" lay-filter="pid" lay-reqText="请选择省市区">
-					<option value="0" title="0">作为顶级省市区</option>
-					{volist name=":set_recursion(admin_rule())" id="v"}
-					<option value="{$v.id}" title="{$v.level|default='1'}" {eq name="pid" value="$v.id" }selected="" {/eq}>{$v.title} ({$v.level|default='1'}级)</option>
-					{/volist}
-				</select>
-			</td>
+			<td>{$pname|default='顶级城市'}</td>
 			<td class="layui-td-gray-2">省市区名称<font>*</font></td>
 			<td><input type="text" name="name" lay-verify="required" autocomplete="off" placeholder="请输入省市区名称" lay-reqText="请输入省市区名称" class="layui-input"></td>
-			<td class="layui-td-gray-2">省市区简称<font>*</font>
-			</td>
-			<td>
-				<input type="text" name="shortname" lay-verify="required" placeholder="请输入省市区简称" lay-reqText="请输入省市区简称" autocomplete="off" class="layui-input">
-			</td>
+			<td class="layui-td-gray-2">省市区简称<font>*</font></td>
+			<td><input type="text" name="shortname" lay-verify="required" placeholder="请输入省市区简称" lay-reqText="请输入省市区简称" autocomplete="off" class="layui-input"></td>
 		</tr>
 		<tr>
 			<td class="layui-td-gray">经度<font>*</font></td>
@@ -39,23 +29,12 @@
 	{else/}
 	<table class="layui-table layui-table-form">
 		<tr>
-			<td class="layui-td-gray-2">父级菜单/节点<font>*</font>
-			</td>
-			<td>
-				<select name="pid" lay-verify="required"  lay-filter="pid" lay-reqText="请选择父级菜单/节点">
-					<option value="0" title="0">作为顶级节点</option>
-					{volist name=":set_recursion(admin_rule())" id="v"}
-					<option value="{$v.id}" title="{$v.level|default='1'}" {eq name="$detail.pid" value="$v.id" }selected="" {/eq}>{$v.title}  ({$v.level|default='1'}级)</option>
-					{/volist}
-				</select>
-			</td>
+			<td class="layui-td-gray-2">父级菜单/节点<font>*</font></td>
+			<td>{$detail.pname|default='顶级城市'}</td>
 			<td class="layui-td-gray-2">省市区名称<font>*</font></td>
 			<td><input type="text" name="name" value="{$detail.name}" lay-verify="required" autocomplete="off" placeholder="请输入省市区名称" lay-reqText="请输入省市区名称" class="layui-input"></td>
-			<td class="layui-td-gray-2">省市区简称<font>*</font>
-			</td>
-			<td>
-				<input type="text" name="shortname" value="{$detail.shortname}" lay-verify="required" placeholder="请输入省市区简称" lay-reqText="请输入省市区简称" autocomplete="off" class="layui-input">
-			</td>
+			<td class="layui-td-gray-2">省市区简称<font>*</font></td>
+			<td><input type="text" name="shortname" value="{$detail.shortname}" lay-verify="required" placeholder="请输入省市区简称" lay-reqText="请输入省市区简称" autocomplete="off" class="layui-input"></td>
 		</tr>
 		<tr>
 			<td class="layui-td-gray">经度<font>*</font></td>

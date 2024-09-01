@@ -53,7 +53,8 @@ class Index extends BaseController
             }
             View::assign('menu', $list);
 			View::assign('admin',$admin);
-			View::assign('system',get_system_config('system'));			
+			View::assign('system',get_system_config('system'));
+			View::assign('web',get_system_config('web'));				
             return View();
         }
     }

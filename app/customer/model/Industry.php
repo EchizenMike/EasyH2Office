@@ -75,35 +75,5 @@ class Industry extends Model
         $info = self::find($id);
 		return $info;
     }
-
-    /**
-    * 删除信息
-    * @param $id
-    * @param $type
-    * @return array
-    */
-    public function delById($id,$type=0)
-    {
-		if($type==0){
-			//逻辑删除
-			try {
-				$param['delete_time'] = time();
-				self::where('id', $id)->update(['delete_time'=>time()]);
-				add_log('delete', $id);
-			} catch(\Exception $e) {
-				return to_assign(1, '操作失败，原因：'.$e->getMessage());
-			}
-		}
-		else{
-			//物理删除
-			try {
-				self::destroy($id);
-				add_log('delete', $id);
-			} catch(\Exception $e) {
-				return to_assign(1, '操作失败，原因：'.$e->getMessage());
-			}
-		}
-		return to_assign();
-    }
 }
 
