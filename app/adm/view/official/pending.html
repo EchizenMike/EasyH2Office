@@ -28,10 +28,11 @@
 		layui.pageTable = table.render({
 			elem: "#table_official"
 			,toolbar: false
-			,url: "/adm/official/datalist"
+			,url: "/adm/official/pending"
 			,page: true
 			,limit: 20
 			,cellMinWidth: 60
+			,height: 'full-112'
 			,cols: [[
 				{field:'id',width:80, title: 'ID号', align:'center'}
 				,{field:'title',title: '公文主题',minWidth:240}
@@ -42,47 +43,18 @@
 				,{field:'draft_time',title: '拟稿日期',width:100, align:'center'}
 				,{field:'draft_dname',title: '拟稿部门',width:100, align:'center'}
 				,{field:'create_time', title: '创建时间',width:150,align:'center'}
-				,{width:120,fixed:'right',title: '操作', align:'center',templet: function(d){
-					var html='';
+				,{width:80,fixed:'right',title: '操作', align:'center',templet: function(d){
 					var btn1='<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="view">详细</a>';
-					var btn2='<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>';
-					var btn3='<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>';
-					html = '<div class="layui-btn-group">'+btn1+btn2+btn3+'</div>';
-					return html;
+					return btn1;
 				}}
 			]]
 		});
-		
-		//表头工具栏事件
-		table.on('toolbar(table_official)', function(obj){
-			if (obj.event === 'add') {
-				tool.side("/adm/official/add");
-				return;
-			}
-		});	
 			
 		table.on('tool(table_official)',function (obj) {
 			var checkStatus = table.checkStatus(obj.config.id); //获取选中行状态
 			var data = obj.data;
 			if (obj.event === 'view') {
 				tool.side("/adm/official/view?id="+data.id);
-				return;
-			}
-			if (obj.event === 'edit') {
-				tool.side("/adm/official/add?id="+data.id);
-				return;
-			}
-			if (obj.event === 'del') {
-				layer.confirm('确定要删除该内容吗?', { icon: 3, title: '提示' }, function (index) {
-					let callback = function (e) {
-						layer.msg(e.msg);
-						if (e.code == 0) {
-							obj.del();
-						}
-					}
-					tool.delete("/adm/official/del", { id: data.id }, callback);
-					layer.close(index);
-				});
 				return;
 			}
 		});

@@ -99,6 +99,7 @@ class Purchase extends BaseController
         else{
 			View::assign('is_leader', isLeader($this->uid));
 			View::assign('is_auth', isAuth($this->uid,'contract_admin','conf_1'));
+			View::assign('delay_num', valueAuth('contract_admin','conf_10'));
             return view();
         }
     }
@@ -131,6 +132,7 @@ class Purchase extends BaseController
             return table_assign(0, '', $list);
         }
         else{
+			View::assign('delay_num', valueAuth('contract_admin','conf_10'));
             return view();
         }
     }

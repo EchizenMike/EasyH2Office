@@ -25,8 +25,12 @@
 			<td>{$detail.copy_names|default='-'}</td>
 		</tr>
 		<tr>
-			<td class="layui-td-gray-2">其他可查阅人</td>
-			<td>{$detail.share_names|default='-'}</td>
+			<td class="layui-td-gray-2">共享可查阅人</td>
+			<td>{$detail.share_names|default='-'}
+				{eq name="$auth_office" value="1"}
+				<span id="shares" data-ids="{$detail.share_uids}" data-names="{$detail.share_names}" class="layui-btn layui-btn-xs layui-btn-normal ml-1">更改</span>
+				{/eq}
+			</td>
 			<td class="layui-td-gray">密级程度</td>
 			<td>
 				{eq name="$detail.secrets" value="1"}公开{/eq}
@@ -40,12 +44,12 @@
 				{eq name="$detail.urgency" value="3"}加急{/eq}
 			</td>
 		</tr>
-		{notempty name="$detail.fileArray"}
+		{notempty name="$detail.file_ids"}
 		<tr>
 			<td class="layui-td-gray-2">相关附件</td>
 			<td colspan="5" style="line-height:inherit">
 				<div class="layui-row" id="uploadBox">
-					{volist name="$detail.fileArray" id="vo"}
+					{volist name="$detail.file_array" id="vo"}
 					<div class="layui-col-md4" id="fileItem{$vo.id}">{:file_card($vo,'view')}</div>
 					{/volist}
 				</div>
@@ -66,11 +70,39 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
-	const moduleInit = ['tool','oaCheck'];
+	var detail_id = {$detail.id};
+	const moduleInit = ['tool','oaCheck','oaPicker'];
 	function gouguInit() {
-		var form = layui.form,tool=layui.tool,oaCheck=layui.oaCheck;	
+		var form = layui.form,tool=layui.tool,oaCheck=layui.oaCheck,oaPicker=layui.oaPicker;	
 		oaCheck.init({
-			check_table:'official_docs'
+			check_table:'official_docs',
+			check_copy:0
+		});
+		
+		let eventCallback = function (e) {
+			layer.msg(e.msg);
+			parent.layui.pageTable.reload();
+			setTimeout(function(){
+				location.reload();
+			},1200)					
+		}
+		//选择共享成员弹窗	
+		$('body').on('click','#shares',function () {
+			let that = $(this);
+			let ids=$(this).data('ids')+'',names = $(this).data('names')+'';
+			oaPicker.employeeInit({
+				ids:ids,
+				names:names,
+				type:2,//1是单选，2是多选
+				callback:function(data){
+					let select_id=[],select_name=[];
+					for(var a=0; a<data.length;a++){
+						select_id.push(data[a].id);
+						select_name.push(data[a].name);
+					}
+					tool.post("/adm/official/add", {'id':detail_id,'share_uids':select_id.join(','),'scene':'change'}, eventCallback);
+				}
+			});
 		});
 	}
 </script>

@@ -145,7 +145,7 @@ class Work extends BaseController
 							'to_uids'=>$param['to_uids'],//接收人
 							'template_id'=>'work',//消息模板标识
 							'content'=>[ //消息内容
-								'create_time'=>date('Y-m-d H:i:s'),
+								'send_time'=>date('Y-m-d H:i:s'),
 								'action_id'=>$id
 							]
 						];

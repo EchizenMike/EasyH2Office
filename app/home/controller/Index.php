@@ -68,17 +68,39 @@ class Index extends BaseController
 		$uid = $this->uid;
 		$dids = get_leader_departments($uid);
         $total = [];
-		$total[] = array(
-            'name' => '企业公告',
-            'num' => Db::name('Note')->where('status', '1')->count()
-        );
+		
+		$whereFinance= array();
+		$whereFinanceOr = array();
+		$whereFinance[] = ['delete_time', '=', 0];
+		$whereFinance[] = ['check_status', '=', 2];
+		$whereFinancerOr[] =['admin_id', '=', $uid];	
+		if(!empty($dids)){
+			$whereFinancerOr[] =['did', 'in', $dids];
+		}	
+		
         $total[] = array(
             'name' => '报销总数',
-            'num' => Db::name('Expense')->where('delete_time', '0')->count()
+            'num' => Db::name('Expense')->where($whereFinance)
+				->where(function ($query) use($whereFinancerOr) {
+						$query->whereOr($whereFinancerOr);
+					})
+				->count()
         );
         $total[] = array(
-            'name' => '发票总数',
-            'num' => Db::name('Invoice')->where('delete_time', '0')->count()
+            'name' => '开票总数',
+            'num' => Db::name('Invoice')->where($whereFinance)
+				->where(function ($query) use($whereFinancerOr) {
+						$query->whereOr($whereFinancerOr);
+					})
+				->count()
+        );
+        $total[] = array(
+            'name' => '收票总数',
+            'num' => Db::name('Ticket')->where($whereFinance)
+				->where(function ($query) use($whereFinancerOr) {
+						$query->whereOr($whereFinancerOr);
+					})
+				->count()
         );
 		
 		$whereHandle = [];
@@ -175,21 +197,9 @@ class Index extends BaseController
 			'num' => $contractCount,
 		);
 		
-		$wherePurchase = array();
-		$wherePurchaseOr = array();
-		
-		$wherePurchase[] = ['delete_time', '=', 0];
-		$wherePurchaseOr[] =['admin_id|prepared_uid|sign_uid|keeper_uid', '=', $uid];
-		$wherePurchaseOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',share_ids)")];
-		$wherePurchaseOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',check_uids)")];
-		$wherePurchaseOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',check_history_uids)")];
-		if(!empty($dids)){
-			$wherePurchaseOr[] =['did', 'in', $dids];
-		}
-		
-		$purchaseCount = Db::name('Purchase')->where($wherePurchase)
-		->where(function ($query) use($wherePurchaseOr) {
-				$query->whereOr($wherePurchaseOr);
+		$purchaseCount = Db::name('Purchase')->where($whereContract)
+		->where(function ($query) use($whereContractOr) {
+				$query->whereOr($whereContractOr);
 			})
 		->count();
 		$total[] = array(
@@ -230,6 +240,64 @@ class Index extends BaseController
 			'num' => $taskCount,
 		);
 		
+		$todue=[];
+		$delay_day = valueAuth('contract_admin','conf_10');
+		if(empty($delay_day)){
+			$delay_day = 30;
+		}
+		$delay_time = time()+$delay_day*60*60*24;
+		$mapContract = array();
+		$mapContractOr = array();		
+		$mapContract[] = ['delete_time', '=', 0];
+		$mapContract[] = ['check_status', '=', 2];
+		$mapContract[] = ['end_time','<',$delay_time];
+		$mapContractOr[] =['admin_id|prepared_uid|sign_uid|keeper_uid', '=', $uid];
+		$mapContractOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',share_ids)")];
+		if(!empty($dids)){
+			$mapContractOr[] =['did', 'in', $dids];
+		}
+		
+        $todue[] = array(
+            'name' => '快到期的销售合同',
+            'num' =>  Db::name('Contract')->where($mapContract)
+						->where(function ($query) use($mapContractOr) {
+							$query->whereOr($mapContractOr);
+						})->count(),
+            'id' => 316,
+            'url' => '/contract/contract/datalist',
+        );
+        $todue[] = array(
+            'name' => '快到期的采购合同',
+            'num' =>  Db::name('Purchase')->where($mapContract)
+						->where(function ($query) use($mapContractOr) {
+							$query->whereOr($mapContractOr);
+						})->count(),
+            'id' => 320,
+            'url' => '/contract/purchase/datalist',
+        );
+		$delay_day_b = valueAuth('project_admin','conf_10');
+		if(empty($delay_day_b)){
+			$delay_day_b = 3;
+		}
+		$delay_day_b_time = time()+$delay_day_b*60*60*24;
+		$todue[] = array(
+            'name' => '快到期的项目',
+            'num' =>  Db::name('Project')->where($whereProject)->where([['status','<',3],['end_time','<',$delay_day_b_time]])->count(),
+            'id' => 340,
+            'url' => '/project/index/datalist',
+        );
+        $todue[] = array(
+            'name' => '快到期的任务',
+            'num' =>  Db::name('ProjectTask')
+			->where(function ($query) use ($whereOr) {
+				if (!empty($whereOr))
+					$query->whereOr($whereOr);
+				})
+			->where([['delete_time', '=', 0],['status','<',3],['end_time','<',$delay_day_b_time]])->count(),
+            'id' => 345,
+            'url' => '/project/task/datalist',
+        );
+		
 		$position_id = Db::name('Admin')->where('id',$uid)->value('position_id');
 		$adminGroup = Db::name('PositionGroup')->where(['pid' => $position_id])->column('group_id');
 		$adminLayout = Db::name('AdminGroup')->where('id', 'in', $adminGroup)->column('layouts');
@@ -248,6 +316,7 @@ class Index extends BaseController
 		View::assign('layout_selected',$layout_selected);
         View::assign('total', $total);
         View::assign('handle', $handle);
+        View::assign('todue', $todue);
         View::assign('install', $install);
         View::assign('TP_VERSION', \think\facade\App::version());
         return View();

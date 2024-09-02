@@ -34,6 +34,7 @@ class Project extends Model
 				$item->admin_name = Db::name('Admin')->where(['id' => $item->admin_id])->value('name');
 				$item->status_name = status_name($item->status);
 				$item->range_time = date('Y-m-d',$item->start_time). ' 至 ' .date('Y-m-d',$item->end_time);
+				$item->delay = count_days(date("Y-m-d"),date('Y-m-d', $item->end_time));
 				$task_map = [];
                 $task_map[] = ['project_id', '=', $item->id];
                 $task_map[] = ['delete_time', '=', 0];

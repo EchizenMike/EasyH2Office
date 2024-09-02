@@ -58,7 +58,7 @@ class Trace extends BaseController
 					$where[] = ['admin_id','=',$uid];
 				}
 			}
-            $list = $this->model->datalist($where, $param);
+            $list = $this->model->datalist($param,$where);
             return table_assign(0, '', $list);
         }
         else{

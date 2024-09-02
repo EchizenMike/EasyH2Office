@@ -42,14 +42,53 @@ class Official extends BaseController
 		$param = get_params();
         if (request()->isAjax()) {
 			$where=[];
+			$whereOr = [];
+			$map1 = [];
+			$map2 = [];
+			$map3 = [];
+			$map4 = [];
+			$uid = $this->uid;
+			$tab = isset($param['tab']) ? $param['tab'] : 0;
+			
+			//条件1
+			$map1[] = ['admin_id','=',$uid];
+
+			//条件2
+			$map2[] = ['check_status','=',2];
+			$map2[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',send_uids)")];
+				
+			//条件3	
+			$map3[] = ['check_status','=',2];
+			$map3[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',copy_uids)")];
+			
+			//条件4
+			$map4[] = ['check_status','=',2];
+			$map4[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',share_uids)")];
+			
+			
 			$where[]=['delete_time','=',0];
-			if (!empty($param['tab'])) {
-                //$where[] = [];
-            }
             if (!empty($param['keywords'])) {
                 $where[] = ['id|title', 'like', '%' . $param['keywords'] . '%'];
             }
-            $list = $this->model->datalist($where, $param);
+			if($tab == 0){
+				$whereOr = [$map1,$map2];
+			}
+			if($tab == 1){
+				$where[] = ['admin_id','=',$uid];
+			}
+			if($tab == 2){
+				$where[] = ['check_status','=',2];
+				$where[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',send_uids)")];
+			}
+			if($tab == 3){
+				$where[] = ['check_status','=',2];
+				$where[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',copy_uids)")];
+			}
+			if($tab == 4){
+				$where[] = ['check_status','=',2];
+				$where[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',share_uids)")];
+			}
+            $list = $this->model->datalist($param,$where,$whereOr);
             return table_assign(0, '', $list);
         }
         else{
@@ -102,6 +141,7 @@ class Official extends BaseController
 				$detail['file_array'] = $file_array;
 			}
 			View::assign('detail', $detail);
+			View::assign('auth_office', isAuth($this->uid,'office_admin','conf_1'));
 			return view();
 		}
 		else{
@@ -126,18 +166,14 @@ class Official extends BaseController
     {
         if (request()->isAjax()) {
 			$param = get_params();
-			$where = [];
+			$uid = $this->uid;
+			$where=[];
 			if (!empty($param['keywords'])) {
-                $where[] = ['c.title', 'like', '%' . $param['keywords'] . '%'];
+                $where[] = ['title', 'like', '%' . $param['keywords'] . '%'];
             }
-			if (!empty($param['diff_time'])) {
-				$diff_time =explode('~', $param['diff_time']);
-                $where[] = ['cr.repair_time', 'between', [strtotime(urldecode($diff_time[0])),strtotime(urldecode($diff_time[1]))]];
-            }
-			$where[] = ['cr.types','=',1];
-			$where[] = ['cr.delete_time','=',0];
-            $model = new Car();
-			$list = $this->model->repairlist($where, $param);
+			$where[] = ['check_status', '=', 1];
+			$where[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',check_uids)")];
+			$list = $this->model->datalist($param,$where);
             return table_assign(0, '', $list);
         } else {
             return view();
@@ -149,19 +185,13 @@ class Official extends BaseController
     {
         if (request()->isAjax()) {
 			$param = get_params();
-			$where = [];
+			$uid = $this->uid;
+			$where=[];
 			if (!empty($param['keywords'])) {
-                $where[] = ['cf.title|c.title', 'like', '%' . $param['keywords'] . '%'];
+                $where[] = ['title', 'like', '%' . $param['keywords'] . '%'];
             }
-			if (!empty($param['diff_time'])) {
-				$diff_time =explode('~', $param['diff_time']);
-                $where[] = ['cf.fee_time', 'between', [strtotime(urldecode($diff_time[0])),strtotime(urldecode($diff_time[1]))]];
-            }
-			if (!empty($param['types'])) {
-                $where[] = ['cf.types','=',$param['types']];
-            }
-			$where[] = ['cf.delete_time','=',0];
-			$list = $this->model->feelist($where, $param);
+			$where[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',check_history_uids)")];
+			$list = $this->model->datalist($param,$where);
             return table_assign(0, '', $list);
         } else {
             return view();

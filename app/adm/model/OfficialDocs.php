@@ -25,12 +25,17 @@ class OfficialDocs extends Model
     * @param $where
     * @param $param
     */
-    public function datalist($where, $param)
+    public function datalist($param=[],$where=[],$whereOr=[])
     {
 		$rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
 		$order = empty($param['order']) ? 'id desc' : $param['order'];
         try {
             $list = self::where($where)
+			->where(function ($query) use($whereOr) {
+				if (!empty($whereOr)){
+					$query->whereOr($whereOr);
+				}
+			})
 			->order($order)
 			->paginate(['list_rows'=> $rows])
 			->each(function ($item, $key){

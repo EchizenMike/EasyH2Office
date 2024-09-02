@@ -59,6 +59,7 @@ class ProjectTask extends Model
 					}
 				}
 				else{
+					$item['delay'] = 9999;
 					$item['end_time'] = '-';
 				}
 				$item['priority_name'] = priority_name($item['priority']);

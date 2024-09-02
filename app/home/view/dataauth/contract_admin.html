@@ -82,6 +82,12 @@
 			<td class="layui-td-gray">权限标识</td>
 			<td style="width:100px;">conf_7</td>
 		</tr>
+		<tr>			
+			<td class="layui-td-gray-2">合同到期前N天提醒</td>
+			<td><input type="text" name="conf_10" value="{$detail.conf_10|default='30'}" lay-verify="required|number" lay-reqText="请输入合同到期前N天提醒" class="layui-input"></td>
+			<td class="layui-td-gray">权限标识</td>
+			<td style="width:100px;">conf_10</td>
+		</tr>
 	</table>
 	<div class="pt-4">
 		<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform">立即提交</button>

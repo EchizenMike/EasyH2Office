@@ -10,6 +10,7 @@
 				<li>我发的公文</li>
 				<li>我收到的公文</li>
 				<li>抄送给我的公文</li>
+				<li>共享查阅的公文</li>
 			</ul>
 		</div>
 	</div>
@@ -76,6 +77,7 @@
 			,page: true
 			,limit: 20
 			,cellMinWidth: 60
+			,height: 'full-152'
 			,cols: [[
 				{field:'id',width:80, title: 'ID号', align:'center'}
 				,{field:'check_status',title: '审核状态',width:110, align:'center',templet: function(d){
@@ -95,7 +97,12 @@
 					var btn1='<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="view">详细</a>';
 					var btn2='<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>';
 					var btn3='<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>';
-					html = '<div class="layui-btn-group">'+btn1+btn2+btn3+'</div>';
+					if((d.check_status==0 || d.check_status==4)&& d.admin_id == login_admin){
+						html = '<div class="layui-btn-group">'+btn1+btn2+btn3+'</div>';
+					}
+					else{
+						html = '<div class="layui-btn-group">'+btn1+'</div>';
+					}
 					return html;
 				}}
 			]]

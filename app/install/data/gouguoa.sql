@@ -722,8 +722,8 @@ CREATE TABLE `oa_data_auth`  (
 INSERT INTO `oa_data_auth` VALUES (1, '日常办公', 'office_admin', '日常办公相关数据权限配置。', 'office', '', '', '3', '', '', '', '', '', '', '', '', 1656143065, 1724830718);
 INSERT INTO `oa_data_auth` VALUES (2, '财务模块', 'finance_admin', '财务到账相关数据权限配置。', 'finance', '', '', '', '', '', '', '', '', '', '', '', 1656143065, 0);
 INSERT INTO `oa_data_auth` VALUES (3, '客户模块', 'customer_admin', '客户模块相关数据权限配置。', 'customer', '', '', '10', '100', '', '', '', '', '', '', '', 1656143065, 1724830738);
-INSERT INTO `oa_data_auth` VALUES (4, '合同模块', 'contract_admin', '合同模块相关数据权限配置。', 'contract', '', '', '1', '1', '1', '1', '1', '1', '', '', '', 1656143065, 1724830772);
-INSERT INTO `oa_data_auth` VALUES (5, '项目模块', 'project_admin', '项目模块相关数据权限配置。', 'project', '', '', '', '', '', '', '', '', '', '', '', 1656143065, 0);
+INSERT INTO `oa_data_auth` VALUES (4, '合同模块', 'contract_admin', '合同模块相关数据权限配置。', 'contract', '', '', '1', '1', '1', '1', '1', '1', '', '', '30', 1656143065, 1724830772);
+INSERT INTO `oa_data_auth` VALUES (5, '项目模块', 'project_admin', '项目模块相关数据权限配置。', 'project', '', '', '', '', '', '', '', '', '', '', '3', 1656143065, 0);
 
 -- ----------------------------
 -- Table structure for oa_config
@@ -978,9 +978,9 @@ INSERT INTO `oa_template` VALUES (13, '加班申请被拒绝', 'overtimes_no', 1
 INSERT INTO `oa_template` VALUES (14, '用章申请待审批', 'seal_apply', 1, NULL, '{from_user}提交了一个『用章申请』，请及时审批', '<a class=\"side-a\" data-href=\"/adm/seal/view/id/{action_id}\">去审批</a>', '您有一个新的『用章申请』需要处理。', '', '', NULL, '', '', NULL, '', '', NULL, 1, 1, 1724136081, 0, 0);
 INSERT INTO `oa_template` VALUES (15, '用章申请通过', 'seal_ok', 1, NULL, '您提交的『用章申请』已被审批通过', '<a class=\"side-a\" data-href=\"/adm/seal/view/id/{action_id}\">查看详情</a>', '您在{create_time}提交的『用章申请』已于{date}被审批通过。', '', '', NULL, '', '', NULL, '', '', NULL, 1, 1, 1724136128, 0, 0);
 INSERT INTO `oa_template` VALUES (16, '用章申请被拒绝', 'seal_no', 1, NULL, '您提交的『用章申请』已被驳回拒绝', '<a class=\"side-a\" data-href=\"/adm/seal/view/id/{action_id}\">查看详情</a>', '您在{create_time}提交的『用章申请』已于{date}被驳回拒绝。', '', '', NULL, '', '', NULL, '', '', NULL, 1, 1, 1724136158, 0, 0);
-INSERT INTO `oa_template` VALUES (17, '公文申请待审批', 'official_apply', 1, NULL, '{from_user}提交了一个『公文申请』，请及时审批', '<a class=\"side-a\" data-href=\"/adm/seal/view/id/{action_id}\">去审批</a>', '您有一个新的『公文申请』需要处理。', '', '', NULL, '', '', NULL, '', '', NULL, 1, 1, 1724136211, 0, 0);
-INSERT INTO `oa_template` VALUES (18, '公文申请通过', 'official_ok', 1, NULL, '您提交的『公文申请』已被审批通过', '<a class=\"side-a\" data-href=\"/adm/seal/view/id/{action_id}\">查看详情</a>', '您在{create_time}提交的『公文申请』已于{date}被审批通过。', '', '', NULL, '', '', NULL, '', '', NULL, 1, 1, 1724136250, 0, 0);
-INSERT INTO `oa_template` VALUES (19, '公文申请被拒绝', 'official_no', 1, NULL, '您提交的『公文申请』已被驳回拒绝', '<a class=\"side-a\" data-href=\"/adm/seal/view/id/{action_id}\">查看详情</a>', '您在{create_time}提交的『公文申请』已于{date}被驳回拒绝。', '', '', NULL, '', '', NULL, '', '', NULL, 1, 1, 1724136290, 0, 0);
+INSERT INTO `oa_template` VALUES (17, '公文申请待审批', 'official_apply', 1, NULL, '{from_user}提交了一个『公文申请』，请及时审批', '<a class=\"side-a\" data-href=\"/adm/official/view/id/{action_id}\">去审批</a>', '您有一个新的『公文申请』需要处理。', '', '', NULL, '', '', NULL, '', '', NULL, 1, 1, 1724136211, 0, 0);
+INSERT INTO `oa_template` VALUES (18, '公文申请通过', 'official_ok', 1, NULL, '您提交的『公文申请』已被审批通过', '<a class=\"side-a\" data-href=\"/adm/official/view/id/{action_id}\">查看详情</a>', '您在{create_time}提交的『公文申请』已于{date}被审批通过。', '', '', NULL, '', '', NULL, '', '', NULL, 1, 1, 1724136250, 0, 0);
+INSERT INTO `oa_template` VALUES (19, '公文申请被拒绝', 'official_no', 1, NULL, '您提交的『公文申请』已被驳回拒绝', '<a class=\"side-a\" data-href=\"/adm/official/view/id/{action_id}\">查看详情</a>', '您在{create_time}提交的『公文申请』已于{date}被驳回拒绝。', '', '', NULL, '', '', NULL, '', '', NULL, 1, 1, 1724136290, 0, 0);
 INSERT INTO `oa_template` VALUES (20, '报销申请待审批', 'expense_apply', 1, NULL, '{from_user}提交了一个『报销申请』，请及时审批', '<a class=\"side-a\" data-href=\"/finance/expense/view/id/{action_id}\">去审批</a>', '您有一个新的『报销申请』需要处理。', '', '', NULL, '', '', NULL, '', '', NULL, 1, 1, 1724136340, 0, 0);
 INSERT INTO `oa_template` VALUES (21, '报销申请通过', 'expense_ok', 1, NULL, '您提交的『报销申请』已被审批通过', '<a class=\"side-a\" data-href=\"/finance/expense/view/id/{action_id}\">查看详情</a>', '您在{create_time}提交的『报销申请』已于{date}被审批通过。', '', '', NULL, '', '', NULL, '', '', NULL, 1, 1, 1724136382, 0, 0);
 INSERT INTO `oa_template` VALUES (22, '报销申请被拒绝', 'expense_no', 1, NULL, '您提交的『报销申请』已被驳回拒绝', '<a class=\"side-a\" data-href=\"/finance/expense/view/id/{action_id}\">查看详情</a>', '您在{create_time}提交的『报销申请』已于{date}被驳回拒绝。', '', '', NULL, '', '', NULL, '', '', NULL, 1, 1, 1724136419, 0, 0);
