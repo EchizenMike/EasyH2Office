@@ -39,7 +39,7 @@
 	<div class="px-3 py-1 border-b">
 		<div class="flow-flexbox check-items flow-flex-row">
 			{volist name="$detail.step_array" id="vo"}
-			<div class='flow-flexbox flow-flex-row check-item {eq name="$vo.is_current" value="1"} blue{/eq} {lt name="$vo.sort" value="$step.sort"} green{/lt}'>
+			<div class='flow-flexbox flow-flex-row check-item {eq name="$vo.is_current" value="1"} blue{/eq} {notempty name="$step"}{lt name="$vo.sort" value="$step.sort"} green{/lt}{else/} green{/notempty}'>
 				<strong class="iconfont icon-kaoshimoshi- blue"></strong>
 				<strong class="iconfont icon-kaoheguanli green"></strong>
 				<strong class="iconfont icon-genjinjilu black"></strong>
@@ -50,7 +50,7 @@
 			{/volist}
 		</div>
 	</div>
-	{notempty name="$step" id="vo"}
+	{notempty name="$step"}
 	<div class="p-3 border-b">
 		<div>
 			<span class="gray">当前阶段：</span>{$step.title}
