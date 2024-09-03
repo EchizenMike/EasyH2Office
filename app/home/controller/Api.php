@@ -25,7 +25,7 @@ class api extends BaseController
             ->field('a.id,a.title,a.create_time,c.title as cate_title')
             ->alias('a')
             ->join('note_cate c', 'a.cate_id = c.id')
-            ->where(['a.status' => 1])
+            ->where(['a.status' => 1,'a.delete_time' => 0])
             ->order('a.end_time desc,a.sort desc,a.create_time desc')
             ->limit(8)
             ->select()->toArray();
