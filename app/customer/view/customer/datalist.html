@@ -223,15 +223,15 @@
 				tool.side("/customer/customer/add?id="+data.id);
 				return;
 			}
-			if (obj.event === 'del') {
-				layer.confirm('确定要删除该客户吗?', { icon: 3, title: '提示' }, function (index) {
+			if (obj.event === 'remove') {
+				layer.confirm('确定把该客户移入公海吗?', { icon: 3, title: '提示' }, function (index) {
 					let callback = function (e) {
 						layer.msg(e.msg);
 						if (e.code == 0) {
 							obj.del();
 						}
 					}
-					tool.delete("/customer/customer/del", { id: data.id }, callback);
+					tool.delete("/customer/index/to_sea", { id: data.id }, callback);
 					layer.close(index);
 				});
 				return;
