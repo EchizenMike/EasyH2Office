@@ -128,6 +128,19 @@ class Api extends BaseController
 		return to_assign(0, '', $flows);
 	} 
 
+	//修改公章状态
+    public function set_seal_status($id,$status)
+    {
+		$res = Db::name('Seal')->where(['id'=>$id])->update(['status'=>$status]);
+		if($res!==false){
+			return to_assign();
+		}
+		else{
+			return to_assign(1, '操作失败');
+		}
+	} 
+
+	//测试demo
 	public function work_flow()
     {
 		return view('/flow/work_flow');

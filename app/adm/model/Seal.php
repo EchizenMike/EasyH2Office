@@ -96,6 +96,17 @@ class Seal extends Model
 			$info['start_time'] = '';
 			$info['end_time'] = '';	
 		}
+		$status_str = '未使用';
+		if($info['status'] == 1){
+			$status_str = '已使用';
+			if($info['is_borrow']==1){
+				$status_str = '已外借';
+			}
+		}
+		if($info['status'] == 2){
+			$status_str = '已归还';
+		}
+		$info['status_str'] = $status_str;
 		return $info;
     }
 

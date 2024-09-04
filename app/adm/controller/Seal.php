@@ -123,7 +123,7 @@ class Seal extends BaseController
 					View::assign('detail', $detail);
 					return view('edit');
 				}
-				return view(EEEOR_REPORTING,['code'=>403,'warning'=>'审核中的内容不支持编辑']);
+				return view(EEEOR_REPORTING,['code'=>403,'warning'=>'当前状态不支持编辑']);
 			}
 			return view();
 		}

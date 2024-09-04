@@ -66,7 +66,7 @@
 					if(d.status == 2){
 						status_str = '已归还';
 					}
-					return html = '<span class="check-status-color-'+d.status+'">『'+status_str+'』</span>';;
+					return html = '<span class="check-status-color-'+d.status+'">『'+status_str+'』</span>';
 				}}
 				,{field:'title',title: '用章申请主题',minWidth:240}
 				,{field:'seal_cate',title: '用章类型',width:100, align:'center'}
@@ -85,9 +85,30 @@
 				,{width:168,fixed:'right',title: '操作', align:'center',templet: function(d){
 					var html='';
 					var btn1='<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="view">详细</a>';
-					var btn2='<a class="layui-btn layui-btn-xs" lay-event="edit">出借登记</a>';
-					var btn3='<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">归还登记</a>';
-					html = '<div class="layui-btn-group">'+btn1+btn2+btn3+'</div>';
+					var btn2='<a class="layui-btn layui-btn-xs" lay-event="use">使用登记</a>';
+					var btn3='<a class="layui-btn layui-btn-xs" lay-event="use">出借登记</a>';
+					var btn4='<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="back">归还登记</a>';
+					
+					if(d.status == 0){
+						if(d.is_borrow==1){
+							html = '<div class="layui-btn-group">'+btn1+btn3+'</div>';
+						}
+						else{
+							html = '<div class="layui-btn-group">'+btn1+btn2+'</div>';
+						}
+					}
+					
+					if(d.status == 1){
+						if(d.is_borrow==1){
+							html = '<div class="layui-btn-group">'+btn1+btn4+'</div>';
+						}
+						else{
+							html = '<div class="layui-btn-group">'+btn1+'</div>';
+						}
+					}
+					if(d.status == 2){
+							html = '<div class="layui-btn-group">'+btn1+'</div>';
+					}					
 					return html;
 				}}
 			]]
@@ -100,8 +121,30 @@
 				tool.side("/adm/seal/view?id="+data.id);
 				return;
 			}
-			if (obj.event === 'edit') {
-				tool.side("/adm/seal/add?id="+data.id);
+			if (obj.event === 'use') {
+				layer.confirm('确定要修改用章状态吗?', {icon: 3, title:'提示'}, function(index){
+					let callback = function (e) {
+						layer.msg(e.msg);
+						if (e.code == 0) {
+							layui.pageTable.reload();
+						}
+					}
+					tool.post("/adm/api/set_seal_status", { id: obj.data.id,status: 1 }, callback);
+					layer.close(index);	
+				});
+				return;
+			}
+			if (obj.event === 'back') {
+				layer.confirm('确定要修改用章状态吗?', {icon: 3, title:'提示'}, function(index){
+					let callback = function (e) {
+						layer.msg(e.msg);
+						if (e.code == 0) {
+							layui.pageTable.reload();
+						}
+					}
+					tool.post("/adm/api/set_seal_status", { id: obj.data.id,status: 2 }, callback);
+					layer.close(index);	
+				});
 				return;
 			}
 		});

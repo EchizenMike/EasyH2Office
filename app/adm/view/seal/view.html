@@ -33,6 +33,12 @@
 			<td class="layui-td-gray" style="vertical-align:top;">盖章内容</td>
 			<td colspan="5">{$detail.content}</td>
 		</tr>
+		{eq name="detail.check_status" value="2"}
+		<tr>
+			<td class="layui-td-gray">用章状态</td>
+			<td colspan="5"><span class="check-status-color-{$detail.status}">『{$detail.status_str}』</span></td>
+		</tr>
+		{/eq}		
 		{notempty name="$detail.file_array"}
 		<tr>
 			<td class="layui-td-gray-2">
