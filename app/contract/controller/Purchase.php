@@ -50,7 +50,7 @@ class Purchase extends BaseController
 			$where[]=['stop_time','=',0];
 			$where[]=['void_time','=',0];
             if (!empty($param['keywords'])) {
-                $where[] = ['id|title|code', 'like', '%' . $param['keywords'] . '%'];
+                $where[] = ['id|name|code', 'like', '%' . $param['keywords'] . '%'];
             }
 			if (!empty($param['types'])) {
                 $where[] = ['types', '=',$param['types']];
@@ -112,7 +112,7 @@ class Purchase extends BaseController
 			$where[]=['delete_time','=',0];
 			$where[]=['archive_time','>',0];
             if (!empty($param['keywords'])) {
-                $where[] = ['id|title|code', 'like', '%' . $param['keywords'] . '%'];
+                $where[] = ['id|name|code', 'like', '%' . $param['keywords'] . '%'];
             }
 			if (!empty($param['types'])) {
                 $where[] = ['types', '=',$param['types']];
@@ -145,7 +145,7 @@ class Purchase extends BaseController
 			$where[]=['delete_time','=',0];
 			$where[]=['stop_time','>',0];
             if (!empty($param['keywords'])) {
-                $where[] = ['id|title|code', 'like', '%' . $param['keywords'] . '%'];
+                $where[] = ['id|name|code', 'like', '%' . $param['keywords'] . '%'];
             }
 			if (!empty($param['types'])) {
                 $where[] = ['types', '=',$param['types']];
@@ -177,7 +177,7 @@ class Purchase extends BaseController
 			$where[]=['delete_time','=',0];
 			$where[]=['void_time','>',0];
             if (!empty($param['keywords'])) {
-                $where[] = ['id|title|code', 'like', '%' . $param['keywords'] . '%'];
+                $where[] = ['id|name|code', 'like', '%' . $param['keywords'] . '%'];
             }
 			if (!empty($param['types'])) {
                 $where[] = ['types', '=',$param['types']];
