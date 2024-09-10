@@ -80,7 +80,7 @@
 	function gouguInit() {
 		var form = layui.form,tool=layui.tool,uploadPlus= layui.uploadPlus,formSelects= layui.formSelects,oaCheck=layui.oaCheck;	
 		oaCheck.init({
-			check_table:'seal',
+			check_name:'seal',
 			check_btn:0
 		});	
 		//选择用印部门
@@ -111,7 +111,7 @@
 							tool.sideClose(1000);				
 						}
 					}
-					data.field.check_table = 'seal';
+					data.field.check_name = 'seal';
 					data.field.action_id = e.data.return_id;
 					oaCheck.submit(data.field,checkCallback);
 				}

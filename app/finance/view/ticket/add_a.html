@@ -2,41 +2,26 @@
 <!-- 主体 -->
 {block name="body"}
 <form class="layui-form p-page">
-	<h3 class="pb-3">新增收票信息</h3>
+	<h3 class="pb-3">新增无发票付款申请</h3>
 	<table class="layui-table layui-table-form">
 		<tr>
-			<td class="layui-td-gray">发票金额<font>*</font></td>
-			<td><input type="text" class="layui-input" name="amount" lay-verify="required|number" placeholder="请输入发票金额" lay-reqText="请输入发票金额" value=""></td>
-			<td class="layui-td-gray">发票号码<font>*</font></td>
-			<td><input type="text" class="layui-input" name="code" lay-verify="required" placeholder="请输入发票号码" lay-reqText="请输入发票号码" value=""></td>
-		</tr>
-		<tr>
-			<td class="layui-td-gray">发票类型<font>*</font></td>
+			<td class="layui-td-gray-3">预付款金额(元)<font>*</font></td>
+			<td><input type="text" class="layui-input" name="amount" lay-verify="required|number" placeholder="请输入预付款金额" lay-reqText="请输入预付款金额" value=""></td>
+			<td class="layui-td-gray">付款方<font>*</font></td>
 			<td>
-			<select name="invoice_type" lay-verify="required" lay-reqText="请选择发票类型">
-				<option value="">请选择发票类型</option>
-				<option value="1">增值税专用发票</option>
-				<option value="2">普通发票</option>
-				<option value="3">专业发票</option>
-			  </select>
-			</td>
-			<td class="layui-td-gray">发票日期<font>*</font></td>
-			<td><input type="text" class="layui-input tool-time" name="open_time" lay-verify="required" readonly placeholder="请选择" lay-reqText="请完善发票日期" value=""></td>
-		</tr>
-		<tr>
-			<td class="layui-td-gray">发票抬头<font>*</font></td>
-			<td>
-				<select name="invoice_subject" lay-verify="required" lay-reqText="请选择发票抬头">
-					<option value="">请选择发票抬头</option>
+				<select name="invoice_subject" lay-verify="required" lay-reqText="请选择付款方">
+					<option value="">请选择付款方</option>
 					{volist name=":get_base_data('enterprise')" id="vo"}
 					<option value="{$vo.id}">{$vo.title}</option>
 					{/volist}
 				</select>
 			</td>
-			<td class="layui-td-gray-3">开票主体(供应商)<font>*</font></td>
-			<td>
-				<input type="text" name="supplier_name" class="layui-input picker-oa" data-types="supplier" value="" placeholder="请选择" readonly lay-verify="required" lay-reqText="开票主体(供应商)">
-				<input type="hidden" name="supplier_id" value=0>
+		</tr>
+		<tr>
+			<td class="layui-td-gray-3">收款方(供应商)<font>*</font></td>
+			<td colspan="3">
+				<input type="text" name="supplier_name" class="layui-input picker-oa" data-types="supplier" value="" placeholder="请选择" readonly lay-verify="required" lay-reqText="请完善收款方(供应商)">
+				<input type="hidden" name="supplier_id" value="0">
 			</td>
 		</tr>
 		<tr>
@@ -91,7 +76,7 @@
 		
 		//审批相关
 		oaCheck.init({
-			check_name:'ticket',
+			check_name:'ticketa',
 			check_btn:0
 		});
 		
@@ -106,12 +91,12 @@
 							tool.sideClose(1000);				
 						}
 					}
-					data.field.check_name = 'ticket';
+					data.field.check_name = 'ticketa';
 					data.field.action_id = e.data.return_id;
 					oaCheck.submit(data.field,checkCallback);
 				}
 			}
-			tool.post("/finance/ticket/add", data.field, callback);
+			tool.post("/finance/ticket/add_a", data.field, callback);
 			return false;
 		});
 	}

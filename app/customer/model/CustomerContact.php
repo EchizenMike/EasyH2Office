@@ -78,6 +78,15 @@ class CustomerContact extends Model
     public function getById($id)
     {
         $info = self::find($id);
+		if(!empty($info['family'])){
+			$info['family'] = unserialize($info['family']);
+		}
+		if(!empty($info['birthday'])){
+			$info['birthday'] = date('Y-m-d',$info['birthday']);
+		}
+		else{
+			$info['birthday'] = '';
+		}
 		$info['customer'] = Db::name('Customer')->where(['id' => $info['cid']])->value('name');
 		return $info;
     }
@@ -90,6 +99,10 @@ class CustomerContact extends Model
     */
     public function delById($id,$type=0)
     {
+		$detail=self::find($id);
+		if($detail['is_default'] == 1){
+			return to_assign(1, '首要联系人，不能删除');
+		}
 		if($type==0){
 			//逻辑删除
 			try {

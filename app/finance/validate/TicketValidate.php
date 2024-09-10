@@ -18,22 +18,19 @@ use think\facade\Db;
 class TicketValidate extends Validate
 {
     protected $rule = [
-        'amount'           => 'require|float',
-        'invoice_type'     => 'require',
+        'amount'           => 'require',
         'invoice_subject'  => 'require',
         'id'               => 'require'
     ];
 
     protected $message = [
         'amount.require'          => '发票金额不能为空',
-        'amount.number'           => '发票金额只能为数字',
         'id.require'              => '缺少更新条件',
-        'invoice_type.require'    => '请选择发票类型',
         'invoice_subject.require' => '请选择发票主体',
     ];
 
     protected $scene = [
-        'add'       => ['amount','invoice_type','invoice_subject'],
-        'edit'      => ['id', 'amount','invoice_type','invoice_subject']
+        'add'       => ['amount','invoice_subject'],
+        'edit'      => ['id', 'amount','invoice_subject']
     ];
 }

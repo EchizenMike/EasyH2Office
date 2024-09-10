@@ -5,7 +5,7 @@ layui.define(['tool','oaPicker'], function (exports) {
 	const opts={
 		"checkBox":"checkBox",//审核容器id
 		"check_copy": 1,//是否需要操送人
-		"check_table": "",//审核的数据表，不需要加表前缀
+		"check_name": "",//审核类型标识
 		"check_btn":1,//是否显示提交审核按钮
 		"check_back":0,//是否支持反确认审核操作
 		"checking_btn":''//待审核状态下添加的按钮
@@ -344,7 +344,7 @@ layui.define(['tool','oaPicker'], function (exports) {
 			$.ajax({
 				url: "/api/check/get_flow_nodes",
 				type:'get',
-				data:{check_table:me.sets.check_table,action_id:action_id,flow_id:check_flow_id},
+				data:{check_name:me.sets.check_name,action_id:action_id,flow_id:check_flow_id},
 				success: function (e) {
 					if (e.code == 0) {
 						if(check_status==0){
@@ -447,7 +447,7 @@ layui.define(['tool','oaPicker'], function (exports) {
 			//提交审批
 			form.on('submit(checkform)', function(data){
 				data.field.action_id = action_id;
-				data.field.check_table = me.sets.check_table;
+				data.field.check_name = me.sets.check_name;
 				let callback = function (e) {
 					layer.msg(e.msg);
 					if (e.code == 0) {
@@ -492,7 +492,7 @@ layui.define(['tool','oaPicker'], function (exports) {
 							type:'post',
 							data:{
 								action_id:action_id,
-								check_table:me.sets.check_table,
+								check_name:me.sets.check_name,
 								check_flow_id:check_flow_id,
 								check_node:check_node,
 								check_uids:check_uids,
@@ -524,7 +524,7 @@ layui.define(['tool','oaPicker'], function (exports) {
 							type:'post',
 							data:{
 								action_id:action_id,
-								check_table:me.sets.check_table,
+								check_name:me.sets.check_name,
 								check_flow_id:check_flow_id,
 								check:check_status,
 								content:value
@@ -554,7 +554,7 @@ layui.define(['tool','oaPicker'], function (exports) {
 							type:'post',
 							data:{
 								action_id:action_id,
-								check_table:me.sets.check_table,
+								check_name:me.sets.check_name,
 								check_flow_id:check_flow_id,
 								check:check_status,
 								content:value

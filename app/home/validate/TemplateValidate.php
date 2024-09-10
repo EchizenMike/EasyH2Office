@@ -33,14 +33,15 @@ class TemplateValidate extends Validate
 	
     protected $rule = [
 		'title' => 'require|checkOne',
-		'name' => 'require|checkOneName',
+		'name' => 'require|alphaDash|checkOneName',
 		'id' => 'require',
 	];
 
     protected $message = [
 		'title.require' => '名称不能为空',
 		'title.checkOne' => '同样的名称已经存在',
-		'title.checkOne' => '同样的标识已经存在',
+		'name.checkOne' => '同样的标识已经存在',
+		'name.alphaDash' => '标识只能是小写字母',
 		'id.require' => '缺少更新条件',
 	];
 	

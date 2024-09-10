@@ -29,9 +29,7 @@ layui.define(['tool'], function (exports) {
 		'template':{
 			title:'选择消息模板',
 			url:'/api/index/get_template',
-			area: ['400px', '524px'],
-			searchbar:'',
-			page:false,
+			area: ['600px', '568px'],
 			cols:[{field:'id',width:90,title:'序号',align:'center'},{field:'title',title:'消息模板名称'}]
 		},
 		'workcate':{

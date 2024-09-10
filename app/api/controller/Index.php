@@ -495,8 +495,14 @@ class Index extends BaseController
 	//获取消息模板
     public function get_template()
     {
-        $template = Db::name('Template')->field('id,title')->where([['status', '=', 1]])->select();
-        return to_assign(0, '', $template);
+		$param = get_params();
+		if (!empty($param['keywords'])) {
+			$where[] = ['title', 'like', '%' . $param['keywords'] . '%'];
+		}
+		$where[] = ['status', '=', 1];
+		$rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];		
+        $list = Db::name('Template')->field('id,title')->where($where)->paginate(['list_rows'=> $rows]);;
+		return table_assign(0, '', $list);
     }
 	
 	//读取报销类型

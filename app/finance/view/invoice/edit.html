@@ -121,7 +121,7 @@
 		
 		//审批相关
 		oaCheck.init({
-			check_table:'invoice',
+			check_name:'invoice',
 			check_btn:0
 		});
 		
@@ -159,7 +159,7 @@
 							tool.sideClose(1000);				
 						}
 					}
-					data.field.check_table = 'invoice';
+					data.field.check_name = 'invoice';
 					data.field.action_id = e.data.return_id;
 					oaCheck.submit(data.field,checkCallback);
 				}

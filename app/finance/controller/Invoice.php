@@ -46,6 +46,7 @@ class Invoice extends BaseController
             $where = array();
             $whereOr = array();
 			$where[]=['delete_time','=',0];
+			$where[]=['invoice_type','>',0];
 			if($tab == 0){
 				//全部
 				$whereOr[] = ['admin_id', '=', $this->uid];
@@ -186,6 +187,7 @@ class Invoice extends BaseController
 			$where = [];
 			$where[]=['delete_time','=',0];
 			$where[]=['check_status','=',2];
+			$where[]=['invoice_type','>',0];
 			if(isAuthInvoice($this->uid)==0){
 				$where[] = ['admin_id', '=', $this->uid];
 			}
@@ -214,6 +216,115 @@ class Invoice extends BaseController
 			
 			View::assign('authInvoice', isAuthInvoice($this->uid));
             return view();
+        }
+    }
+	
+	
+   /**
+    * 无发票回款列表
+    */
+    public function datalist_a()
+    {
+		$param = get_params();
+        if (request()->isAjax()) {
+			$uid=$this->uid;
+            $where = array();
+            $whereOr = array();
+			$where[]=['delete_time','=',0];
+			$where[]=['invoice_type','=',0];
+			
+			$whereOr[] = ['admin_id', '=', $this->uid];
+			$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',check_uids)")];
+			$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',check_history_uids)")];
+			$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',check_copy_uids)")];
+			
+			//按时间检索
+			if (!empty($param['diff_time'])) {
+				$diff_time =explode('~', $param['diff_time']);
+				$where[] = ['enter_time', 'between', [strtotime(urldecode($diff_time[0])),strtotime(urldecode($diff_time[1].' 23:59:59'))]];
+			}
+            if (isset($param['enter_status']) && $param['enter_status'] != "") {
+                $where[] = ['enter_status', '=', $param['enter_status']];
+            }
+			if (isset($param['check_status']) && $param['check_status'] != "") {
+                $where[] = ['check_status', '=', $param['check_status']];
+            }
+            $list = $this->model->datalist($param,$where,$whereOr);
+            return table_assign(0, '', $list);
+        }
+        else{
+			View::assign('auth', isAuthIncome($this->uid));
+            return view();
+        }
+    }
+	
+    /**
+    * 无发票添加/编辑
+    */
+    public function add_a()
+    {
+		$param = get_params();	
+        if (request()->isAjax()) {
+			$param['admin_id'] = $this->uid;
+			$param['did'] = $this->did;
+            if (!empty($param['id']) && $param['id'] > 0) {
+                try {
+                    validate(InvoiceValidate::class)->scene('edit')->check($param);
+                } catch (ValidateException $e) {
+                    // 验证失败 输出错误信息
+                    return to_assign(1, $e->getError());
+                }
+				$this->model->edit($param);
+            } else {
+                try {
+                    validate(InvoiceValidate::class)->scene('add')->check($param);
+                } catch (ValidateException $e) {
+                    // 验证失败 输出错误信息
+                    return to_assign(1, $e->getError());
+                }
+                $this->model->add($param);
+            }	 
+        }else{
+			$id = isset($param['id']) ? $param['id'] : 0;
+			if ($id>0) {
+				$detail = $this->model->getById($id);
+				View::assign('detail', $detail);
+				return view('edit_a');
+			}
+			return view();
+		}
+    }
+	
+    /**
+    * 无发票查看
+    */
+    public function view_a($id)
+    {
+		$detail = $this->model->getById($id);
+		if (!empty($detail)) {
+			$detail['subject'] = Db::name('Enterprise')->where(['id' =>$detail['invoice_subject']])->value('title');
+			$other_file_array = Db::name('File')->where('id','in',$detail['other_file_ids'])->select();
+			$detail['other_file_array'] = $other_file_array;
+			if($detail['open_status']>0){
+				$detail['open_admin_name'] = Db::name('Admin')->where('id','=',$detail['open_admin_id'])->value('name');
+			}
+			View::assign('detail', $detail);
+			return view();
+		}
+		else{
+			return view(EEEOR_REPORTING,['code'=>404,'warning'=>'找不到页面']);
+		}
+    }
+	
+   /**
+    * 删除
+    */
+    public function del_a($id)
+    {
+		if (request()->isDelete()) {
+			$this->model->delById($id);
+		} else {
+            return to_assign(1, "错误的请求");
         }
     }
 

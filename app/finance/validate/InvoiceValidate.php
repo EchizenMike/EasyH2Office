@@ -33,7 +33,7 @@ class InvoiceValidate extends Validate
     ];
 
     protected $scene = [
-        'add'       => ['amount','invoice_type','invoice_subject'],
-        'edit'      => ['id', 'amount','invoice_type','invoice_subject']
+        'add'       => ['amount','invoice_subject'],
+        'edit'      => ['id', 'amount','invoice_subject']
     ];
 }

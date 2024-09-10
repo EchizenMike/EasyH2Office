@@ -44,6 +44,7 @@ class Payment extends BaseController
             $where[] = ['delete_time', '=', 0];
             $where[] = ['check_status', '=', 2];
             $where[] = ['open_status', '=', 1];
+			$where[] = ['invoice_type','>',0];
 			//按时间检索
 			if (!empty($param['diff_time'])) {
 				$diff_time =explode('~', $param['diff_time']);
@@ -186,6 +187,9 @@ class Payment extends BaseController
             View::assign('uid', $this->uid);
             View::assign('id', $id);
             View::assign('detail', $detail);
+			if($detail['invoice_type'] == 0){
+				return view('add_a');
+			}
             return view();
         }
     }
@@ -216,6 +220,9 @@ class Payment extends BaseController
 		}
         View::assign('uid', $this->uid);
         View::assign('detail', $detail);
+		if($detail['invoice_type'] == 0){
+			return view('view_a');
+		}
         return view();
     }
 

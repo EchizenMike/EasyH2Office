@@ -111,7 +111,7 @@ class Index extends BaseController
         $handle[] = array(
             'name' => '待审公文',
             'num' =>  Db::name('OfficialDocs')->where($whereHandle)->count(),
-            'id' => 163,
+            'id' => 169,
             'url' => '/adm/official/datalist',
         );
         $handle[] = array(
@@ -123,13 +123,13 @@ class Index extends BaseController
         $handle[] = array(
             'name' => '待审销售合同',
             'num' => Db::name('Contract')->where($whereHandle)->count(),
-            'id' => 316,
+            'id' => 319,
             'url' => '/contract/contract/datalist',
         );
 		$handle[] = array(
             'name' => '待审采购合同',
             'num' => Db::name('Purchase')->where($whereHandle)->count(),
-            'id' => 320,
+            'id' => 323,
             'url' => '/contract/purchase/datalist',
         );
 		$handle[] = array(
@@ -140,20 +140,20 @@ class Index extends BaseController
         );
 		$handle[] = array(
             'name' => '待审发票',
-            'num' => Db::name('Invoice')->where($whereHandle)->count(),
+            'num' => Db::name('Invoice')->where($whereHandle)->where([['invoice_type','>',0]])->count(),
             'id' => 222,
             'url' => '/finance/invoice/datalist',
         );
 		$handle[] = array(
             'name' => '待审收票',
-            'num' => Db::name('ticket')->where($whereHandle)->count(),
+            'num' => Db::name('ticket')->where($whereHandle)->where([['invoice_type','>',0]])->count(),
             'id' => 226,
             'url' => '/finance/ticket/datalist',
         );
 		$handle[] = array(
             'name' => '待完成任务',
             'num' => Db::name('ProjectTask')->where([['director_uid', '=', $uid],['status', '<', 3],['delete_time', '=', 0]])->count(),
-            'id' => 345,
+            'id' => 348,
             'url' => '/project/task/datalist',
         );
 				
@@ -263,7 +263,7 @@ class Index extends BaseController
 						->where(function ($query) use($mapContractOr) {
 							$query->whereOr($mapContractOr);
 						})->count(),
-            'id' => 316,
+            'id' => 319,
             'url' => '/contract/contract/datalist',
         );
         $todue[] = array(
@@ -272,7 +272,7 @@ class Index extends BaseController
 						->where(function ($query) use($mapContractOr) {
 							$query->whereOr($mapContractOr);
 						})->count(),
-            'id' => 320,
+            'id' => 323,
             'url' => '/contract/purchase/datalist',
         );
 		$delay_day_b = valueAuth('project_admin','conf_10');
@@ -283,7 +283,7 @@ class Index extends BaseController
 		$todue[] = array(
             'name' => '快到期的项目',
             'num' =>  Db::name('Project')->where($whereProject)->where([['status','<',3],['end_time','<',$delay_day_b_time]])->count(),
-            'id' => 340,
+            'id' => 343,
             'url' => '/project/index/datalist',
         );
         $todue[] = array(
@@ -294,7 +294,7 @@ class Index extends BaseController
 					$query->whereOr($whereOr);
 				})
 			->where([['delete_time', '=', 0],['status','<',3],['end_time','<',$delay_day_b_time]])->count(),
-            'id' => 345,
+            'id' => 348,
             'url' => '/project/task/datalist',
         );
 		

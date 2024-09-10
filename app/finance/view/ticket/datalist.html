@@ -115,7 +115,7 @@
 							return html;
 						}
 					},{
-						field:'check_status',title: '审批状态',width:100, align:'center',templet: function(d){
+						field:'check_status',title: '审批状态',width:110, align:'center',templet: function(d){
 							var html = '<span class="check-status-color-'+d.check_status+'">『'+d.check_status_str+'』</span>';
 							return html;
 						}
@@ -168,7 +168,7 @@
 							var btn2='<span class="layui-btn layui-btn-xs" lay-event="edit">编辑</span>';
 							var btn3='<span class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</span>';
 							html+=btn1;
-							if(d.check_status==0 && d.admin_id==login_admin){
+							if((d.check_status==0 ||d.check_status==4) && d.admin_id==login_admin){
 								html+=btn2+btn3;
 							}
 							html+='</div>';

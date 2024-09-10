@@ -81,7 +81,7 @@ const moduleInit = ['tool','uploadPlus','oaCheck'];
 	function gouguInit() {
 		var form = layui.form,tool=layui.tool,uploadPlus=layui.uploadPlus,laydate = layui.laydate,oaCheck=layui.oaCheck;
 		oaCheck.init({
-			check_table:'overtimes',
+			check_name:'overtimes',
 			check_btn:0
 		});	
 		var fileUp = new uploadPlus();
@@ -101,7 +101,7 @@ const moduleInit = ['tool','uploadPlus','oaCheck'];
 							tool.sideClose(1000);				
 						}
 					}
-					data.field.check_table = 'overtimes';
+					data.field.check_name = 'overtimes';
 					data.field.action_id = e.data.return_id;
 					oaCheck.submit(data.field,checkCallback);
 				}

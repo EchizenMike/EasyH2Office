@@ -50,6 +50,104 @@ class Approve extends BaseController
 		View::assign('module', $module);
 		return view();
 	}
+	
+	public function get_list($where,$param)
+    {
+			$tables = Db::name('FlowCate')->field('name,check_table')->where('status',1)->select()->toArray();
+			$prefix = get_config('database.connections.mysql.prefix');
+			$sqlParts = [];
+			$sqlCounts = [];
+			$fortable =[];
+			foreach ($tables as $table) {
+				$dbname = $table['check_table'];
+				if(in_array($dbname,$fortable)){
+					continue;
+				}
+				$check_name = $table['name'];
+				$tableName = $prefix.$dbname;
+				$sqlPart = "SELECT id,admin_id,did,create_time,check_status,check_flow_id,check_step_sort,check_uids,check_last_uid,check_history_uids,check_copy_uids,check_time,'{$dbname}' as table_name,'{$check_name}' as check_name,'{$check_name}' as invoice_type,'{$check_name}' as types FROM {$tableName} WHERE {$where}";
+				if($dbname=='invoice' || $dbname=='ticket'){
+					$sqlPart = "SELECT id,admin_id,did,create_time,check_status,check_flow_id,check_step_sort,check_uids,check_last_uid,check_history_uids,check_copy_uids,check_time,'{$dbname}' as table_name,'{$check_name}' as check_name,invoice_type,'{$check_name}' as types FROM {$tableName} WHERE {$where}";
+				}
+				if($dbname=='approve'){
+					$sqlPart = "SELECT id,admin_id,did,create_time,check_status,check_flow_id,check_step_sort,check_uids,check_last_uid,check_history_uids,check_copy_uids,check_time,'{$dbname}' as table_name,'{$check_name}' as check_name,'{$check_name}' as invoice_type,types FROM {$tableName} WHERE {$where}";
+				}
+				$sqlCount = "SELECT COUNT(*) AS count FROM {$tableName} WHERE {$where}";
+				// 查询数据库中是否存在该数据表
+				$is_table = Db::query("SHOW TABLES LIKE '{$tableName}'");
+				// 判断查询结果
+				if (!empty($is_table)) {
+					$sqlParts[] = $sqlPart;
+					$sqlCounts[] = $sqlCount;
+					$fortable[] = $table['check_table'];
+				}
+			}
+
+			// 使用implode将各个部分用UNION ALL连接起来
+			$unionSql = implode(" UNION ALL ", $sqlParts);
+			
+			$totalCount = 0;
+			foreach ($sqlCounts as $sql) {
+				$count = Db::query($sql)[0]['count']; // 假设每个查询都返回了一个包含'count'键的数组
+				$totalCount += $count;
+			}
+			// 添加排序和分页逻辑
+			// 假设每页显示10条记录，当前页码为$page（需要预先定义或获取）
+			$pageSize = $param['limit'];
+			$page = 1; // 示例页码
+			$offset = ($page - 1) * $pageSize;
+
+			// 注意：不同的数据库分页语法可能有所不同，这里以MySQL为例
+			$finalSql = $unionSql . " ORDER BY create_time DESC LIMIT {$offset}, {$pageSize}";
+
+			// 执行查询
+			$result = Db::query($finalSql);
+			// 处理结果
+			foreach ($result as &$row) {
+				// 处理每一行数据
+				$row['create_time'] = date('Y-m-d H:i:s',$row['create_time']);
+				$row['admin_name'] = Db::name('Admin')->where('id',$row['admin_id'])->value('name');
+				$row['department'] = Db::name('Department')->where('id',$row['did'])->value('title');
+				$row['check_status_str'] = check_status_name($row['check_status']);
+				if($row['check_status']==1 && !empty($row['check_uids'])){
+					$check_users = Db::name('Admin')->where('id','in',$row['check_uids'])->column('name');
+					$row['check_users'] = implode(',',$check_users);
+				}
+				else{
+					$row['check_users']='-';
+				}
+				if(!empty($row['check_copy_uids'])){
+					$check_copy_users = Db::name('Admin')->where('id','in',$row['check_copy_uids'])->column('name');
+					$row['check_copy_users'] = implode(',',$check_copy_users);
+				}
+				else{
+					$row['check_copy_users']='-';
+				}
+				
+				$check_name=$row['check_name'];
+				if($row['table_name'] == 'invoice' || $row['table_name']=='ticket'){
+					if($row['invoice_type']==0){
+						$check_name=$row['table_name'].'a';
+					}
+					else{
+						$check_name=$row['table_name'];
+					}
+				}
+				if($row['table_name'] == 'approve'){
+					$check_name='approve_'.$row['types'];
+				}
+				$flow_cate = Db::name('FlowCate')->where('name',$check_name)->find();
+				$row['types_name'] = $flow_cate['title'];
+				$row['view_url'] = $flow_cate['view_url'];
+			}
+			$list=array(
+				'data'=>$result,
+				'total'=>$totalCount
+			);
+			return $list;
+	}
+	
+	
 	//我申请的
     public function mylist()
     {
@@ -72,75 +170,7 @@ class Approve extends BaseController
 			//$where.= " AND FIND_IN_SET('{$uid}',check_copy_uids)";
 			//关联审核人
 			//$where.= " AND (FIND_IN_SET('{$uid}',check_uids) or FIND_IN_SET('{$uid}',check_history_uids))";			
-			$tables = Db::name('FlowCate')->field('title,check_table')->where('status',1)->select()->toArray();
-			$prefix = get_config('database.connections.mysql.prefix');
-			$sqlParts = [];
-			$sqlCounts = [];
-
-			foreach ($tables as $table) {
-				$name = $table['title'];
-				$dbname = $table['check_table'];
-				$tableName = $prefix.$dbname;
-				//$whereCondition = $table['where'];
-				// 假设每个表都有相同的列结构，这里只是简单示例
-				$sqlPart = "SELECT id,admin_id,did,create_time,check_status,check_flow_id,check_step_sort,check_uids,check_last_uid,check_history_uids,check_copy_uids,check_time,'{$dbname}' as table_name ,'{$name}' as types_name FROM {$tableName} WHERE {$where}";
-				
-				$sqlCount = "SELECT COUNT(*) AS count FROM {$tableName} WHERE {$where}";
-				// 查询数据库中是否存在该数据表
-				$is_table = Db::query("SHOW TABLES LIKE '{$tableName}'");
-				// 判断查询结果
-				if (!empty($is_table)) {
-					$sqlParts[] = $sqlPart;
-					$sqlCounts[] = $sqlCount;
-				}
-			}
-
-			// 使用implode将各个部分用UNION ALL连接起来
-			$unionSql = implode(" UNION ALL ", $sqlParts);
-			
-			$totalCount = 0;
-			foreach ($sqlCounts as $sql) {
-				$count = Db::query($sql)[0]['count']; // 假设每个查询都返回了一个包含'count'键的数组
-				$totalCount += $count;
-			}
-			// 添加排序和分页逻辑
-			// 假设每页显示10条记录，当前页码为$page（需要预先定义或获取）
-			$pageSize = $param['limit'];
-			$page = 1; // 示例页码
-			$offset = ($page - 1) * $pageSize;
-
-			// 注意：不同的数据库分页语法可能有所不同，这里以MySQL为例
-			$finalSql = $unionSql . " ORDER BY create_time DESC LIMIT {$offset}, {$pageSize}";
-
-			// 执行查询
-			$result = Db::query($finalSql);
-			// 处理结果
-			foreach ($result as &$row) {
-				// 处理每一行数据
-				$row['create_time'] = date('Y-m-d H:i:s',$row['create_time']);
-				$row['admin_name'] = Db::name('Admin')->where('id',$row['admin_id'])->value('name');
-				$row['department'] = Db::name('Department')->where('id',$row['did'])->value('title');
-				$row['check_status_str'] = check_status_name($row['check_status']);
-				if($row['check_status']==1 && !empty($row['check_uids'])){
-					$check_users = Db::name('Admin')->where('id','in',$row['check_uids'])->column('name');
-					$row['check_users'] = implode(',',$check_users);
-				}
-				else{
-					$row['check_users']='-';
-				}
-				if(!empty($row['check_copy_uids'])){
-					$check_copy_users = Db::name('Admin')->where('id','in',$row['check_copy_uids'])->column('name');
-					$row['check_copy_users'] = implode(',',$check_copy_users);
-				}
-				else{
-					$row['check_copy_users']='-';
-				}
-				$row['view_url'] = Db::name('FlowCate')->where('check_table',$row['table_name'])->value('view_url');
-			}
-			$list=array(
-				'data'=>$result,
-				'total'=>$totalCount
-			);
+			$list = $this->get_list($where,$param);
             return table_assign(0, '', $list);
         } else {
             return view();
@@ -163,75 +193,7 @@ class Approve extends BaseController
 			if($status == 2){
 				$where.= " AND FIND_IN_SET('{$uid}',check_history_uids)";	
 			}		
-			$tables = Db::name('FlowCate')->field('title,check_table')->where('status',1)->select()->toArray();
-			$prefix = get_config('database.connections.mysql.prefix');
-			$sqlParts = [];
-			$sqlCounts = [];
-
-			foreach ($tables as $table) {
-				$name = $table['title'];
-				$dbname = $table['check_table'];
-				$tableName = $prefix.$dbname;
-				//$whereCondition = $table['where'];
-				// 假设每个表都有相同的列结构，这里只是简单示例
-				$sqlPart = "SELECT id,admin_id,did,create_time,check_status,check_flow_id,check_step_sort,check_uids,check_last_uid,check_history_uids,check_copy_uids,check_time,'{$dbname}' as table_name ,'{$name}' as types_name FROM {$tableName} WHERE {$where}";
-				
-				$sqlCount = "SELECT COUNT(*) AS count FROM {$tableName} WHERE {$where}";
-				// 查询数据库中是否存在该数据表
-				$is_table = Db::query("SHOW TABLES LIKE '{$tableName}'");
-				// 判断查询结果
-				if (!empty($is_table)) {
-					$sqlParts[] = $sqlPart;
-					$sqlCounts[] = $sqlCount;
-				}
-			}
-
-			// 使用implode将各个部分用UNION ALL连接起来
-			$unionSql = implode(" UNION ALL ", $sqlParts);
-			
-			$totalCount = 0;
-			foreach ($sqlCounts as $sql) {
-				$count = Db::query($sql)[0]['count']; // 假设每个查询都返回了一个包含'count'键的数组
-				$totalCount += $count;
-			}
-			// 添加排序和分页逻辑
-			// 假设每页显示10条记录，当前页码为$page（需要预先定义或获取）
-			$pageSize = $param['limit'];
-			$page = 1; // 示例页码
-			$offset = ($page - 1) * $pageSize;
-
-			// 注意：不同的数据库分页语法可能有所不同，这里以MySQL为例
-			$finalSql = $unionSql . " ORDER BY create_time DESC LIMIT {$offset}, {$pageSize}";
-
-			// 执行查询
-			$result = Db::query($finalSql);
-			// 处理结果
-			foreach ($result as &$row) {
-				// 处理每一行数据
-				$row['create_time'] = date('Y-m-d H:i:s',$row['create_time']);
-				$row['admin_name'] = Db::name('Admin')->where('id',$row['admin_id'])->value('name');
-				$row['department'] = Db::name('Department')->where('id',$row['did'])->value('title');
-				$row['check_status_str'] = check_status_name($row['check_status']);
-				if($row['check_status']==1 && !empty($row['check_uids'])){
-					$check_users = Db::name('Admin')->where('id','in',$row['check_uids'])->column('name');
-					$row['check_users'] = implode(',',$check_users);
-				}
-				else{
-					$row['check_users']='-';
-				}
-				if(!empty($row['check_copy_uids'])){
-					$check_copy_users = Db::name('Admin')->where('id','in',$row['check_copy_uids'])->column('name');
-					$row['check_copy_users'] = implode(',',$check_copy_users);
-				}
-				else{
-					$row['check_copy_users']='-';
-				}
-				$row['view_url'] = Db::name('FlowCate')->where('check_table',$row['table_name'])->value('view_url');
-			}
-			$list=array(
-				'data'=>$result,
-				'total'=>$totalCount
-			);
+			$list = $this->get_list($where,$param);
             return table_assign(0, '', $list);
         } else {
             return view();
@@ -256,75 +218,7 @@ class Approve extends BaseController
 			}
 			//关联抄送人
 			$where.= " AND FIND_IN_SET('{$uid}', check_copy_uids) > 0";
-			$tables = Db::name('FlowCate')->field('title,check_table')->where('status',1)->select()->toArray();
-			$prefix = get_config('database.connections.mysql.prefix');
-			$sqlParts = [];
-			$sqlCounts = [];
-
-			foreach ($tables as $table) {
-				$name = $table['title'];
-				$dbname = $table['check_table'];
-				$tableName = $prefix.$dbname;
-				//$whereCondition = $table['where'];
-				// 假设每个表都有相同的列结构，这里只是简单示例
-				$sqlPart = "SELECT id,admin_id,did,create_time,check_status,check_flow_id,check_step_sort,check_uids,check_last_uid,check_history_uids,check_copy_uids,check_time,'{$dbname}' as table_name ,'{$name}' as types_name FROM {$tableName} WHERE {$where}";
-				
-				$sqlCount = "SELECT COUNT(*) AS count FROM {$tableName} WHERE {$where}";
-				// 查询数据库中是否存在该数据表
-				$is_table = Db::query("SHOW TABLES LIKE '{$tableName}'");
-				// 判断查询结果
-				if (!empty($is_table)) {
-					$sqlParts[] = $sqlPart;
-					$sqlCounts[] = $sqlCount;
-				}
-			}
-
-			// 使用implode将各个部分用UNION ALL连接起来
-			$unionSql = implode(" UNION ALL ", $sqlParts);
-			
-			$totalCount = 0;
-			foreach ($sqlCounts as $sql) {
-				$count = Db::query($sql)[0]['count']; // 假设每个查询都返回了一个包含'count'键的数组
-				$totalCount += $count;
-			}
-			// 添加排序和分页逻辑
-			// 假设每页显示10条记录，当前页码为$page（需要预先定义或获取）
-			$pageSize = $param['limit'];
-			$page = 1; // 示例页码
-			$offset = ($page - 1) * $pageSize;
-
-			// 注意：不同的数据库分页语法可能有所不同，这里以MySQL为例
-			$finalSql = $unionSql . " ORDER BY create_time DESC LIMIT {$offset}, {$pageSize}";
-
-			// 执行查询
-			$result = Db::query($finalSql);
-			// 处理结果
-			foreach ($result as &$row) {
-				// 处理每一行数据
-				$row['create_time'] = date('Y-m-d H:i:s',$row['create_time']);
-				$row['admin_name'] = Db::name('Admin')->where('id',$row['admin_id'])->value('name');
-				$row['department'] = Db::name('Department')->where('id',$row['did'])->value('title');
-				$row['check_status_str'] = check_status_name($row['check_status']);
-				if($row['check_status']==1 && !empty($row['check_uids'])){
-					$check_users = Db::name('Admin')->where('id','in',$row['check_uids'])->column('name');
-					$row['check_users'] = implode(',',$check_users);
-				}
-				else{
-					$row['check_users']='-';
-				}
-				if(!empty($row['check_copy_uids'])){
-					$check_copy_users = Db::name('Admin')->where('id','in',$row['check_copy_uids'])->column('name');
-					$row['check_copy_users'] = implode(',',$check_copy_users);
-				}
-				else{
-					$row['check_copy_users']='-';
-				}
-				$row['view_url'] = Db::name('FlowCate')->where('check_table',$row['table_name'])->value('view_url');
-			}
-			$list=array(
-				'data'=>$result,
-				'total'=>$totalCount
-			);
+			$list = $this->get_list($where,$param);
             return table_assign(0, '', $list);
         } else {
             return view();
@@ -355,73 +249,7 @@ class Approve extends BaseController
 			if(!empty($param['uid'])){
 				$where.= ' AND admin_id = '.$param['uid'];
 			}
-			$tables = Db::name('FlowCate')->field('title,check_table')->where('status',1)->select()->toArray();
-			$prefix = get_config('database.connections.mysql.prefix');
-			$sqlParts = [];
-			$sqlCounts = [];
-
-			foreach ($tables as $table) {
-				$name = $table['title'];
-				$dbname = $table['check_table'];
-				$tableName = $prefix.$dbname;
-				$sqlPart = "SELECT id,admin_id,did,create_time,check_status,check_flow_id,check_step_sort,check_uids,check_last_uid,check_history_uids,check_copy_uids,check_time,'{$dbname}' as table_name ,'{$name}' as types_name FROM {$tableName} WHERE {$where}";
-				
-				$sqlCount = "SELECT COUNT(*) AS count FROM {$tableName} WHERE {$where}";
-				// 查询数据库中是否存在该数据表
-				$is_table = Db::query("SHOW TABLES LIKE '{$tableName}'");
-				// 判断查询结果
-				if (!empty($is_table)) {
-					$sqlParts[] = $sqlPart;
-					$sqlCounts[] = $sqlCount;
-				}
-			}
-
-			// 使用implode将各个部分用UNION ALL连接起来
-			$unionSql = implode(" UNION ALL ", $sqlParts);
-			
-			$totalCount = 0;
-			foreach ($sqlCounts as $sql) {
-				$count = Db::query($sql)[0]['count']; // 假设每个查询都返回了一个包含'count'键的数组
-				$totalCount += $count;
-			}
-			// 添加排序和分页逻辑
-			// 假设每页显示10条记录，当前页码为$page（需要预先定义或获取）
-			$pageSize = $param['limit'];
-			$page = 1; // 示例页码
-			$offset = ($page - 1) * $pageSize;
-
-			// 注意：不同的数据库分页语法可能有所不同，这里以MySQL为例
-			$finalSql = $unionSql . " ORDER BY create_time DESC LIMIT {$offset}, {$pageSize}";
-
-			// 执行查询
-			$result = Db::query($finalSql);
-			// 处理结果
-			foreach ($result as &$row) {
-				// 处理每一行数据
-				$row['create_time'] = date('Y-m-d H:i:s',$row['create_time']);
-				$row['admin_name'] = Db::name('Admin')->where('id',$row['admin_id'])->value('name');
-				$row['department'] = Db::name('Department')->where('id',$row['did'])->value('title');
-				$row['check_status_str'] = check_status_name($row['check_status']);
-				if($row['check_status']==1 && !empty($row['check_uids'])){
-					$check_users = Db::name('Admin')->where('id','in',$row['check_uids'])->column('name');
-					$row['check_users'] = implode(',',$check_users);
-				}
-				else{
-					$row['check_users']='-';
-				}
-				if(!empty($row['check_copy_uids'])){
-					$check_copy_users = Db::name('Admin')->where('id','in',$row['check_copy_uids'])->column('name');
-					$row['check_copy_users'] = implode(',',$check_copy_users);
-				}
-				else{
-					$row['check_copy_users']='-';
-				}
-				$row['view_url'] = Db::name('FlowCate')->where('check_table',$row['table_name'])->value('view_url');
-			}
-			$list=array(
-				'data'=>$result,
-				'total'=>$totalCount
-			);
+			$list = $this->get_list($where,$param);
             return table_assign(0, '', $list);
         } else {
 			if($auth_approve==0){

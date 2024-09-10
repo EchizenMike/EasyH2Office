@@ -39,21 +39,23 @@ function contact(){
 			}}
 			,{field:'mobile',width:100,title: '手机号码', align:'center'}
 			,{field:'email',title: '电子邮箱'}
-			,{field:'qq',width:100,title: 'QQ号码', align:'center'}
 			,{field:'wechat',width:100,title: '微信号码', align:'center'}
+			,{field:'qq',width:100,title: 'QQ号码', align:'center'}
 			,{field:'position',width:120,title: '担任职位', align:'center'}
-			,{field:'department',width:120,title: '部门', align:'center'}
-			,{fixed:'right',width:190,title: '操作', align:'center',templet: function(d){
-				var html = '<div class="layui-btn-group">';
-				var btn='<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>';
-				var btn1='<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="set">设为首要联系人</a>';
-				var btn2='<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>';
+			,{field:'is_default',width:90,title: '首要联系人', align:'center',templet: function(d){
 				if(d.is_default==1){
-					return '<span class="red" style="margin-right:10px;">首要联系人</span>'+btn;
+					return '<span class="green layui-icon layui-icon-success"></span>';
 				}
 				else{
-					return html+btn+btn1+btn2+'</div>';
+					return '<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="set" title="设为首要联系人">设置</a>';
 				}				
+			}}
+			,{fixed:'right',width:120,title: '操作', align:'center',templet: function(d){
+				var html = '<div class="layui-btn-group">';
+				var btn='<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>';
+				var btn1='<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="view">查看</a>';
+				var btn2='<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>';
+				return html+btn+btn1+btn2+'</div>';			
 			}}
 		]]
 	});
@@ -65,8 +67,10 @@ function contact(){
 		var data = obj.data; //获得当前行数据
 		var layEvent = obj.event;		 
 		if(layEvent === 'edit'){ //编辑
-			let url = '/customer/contact/add/id/'+data.id;
-			tool.side(url);
+			tool.side('/customer/contact/add/id/'+data.id);
+		}
+		if(layEvent === 'view'){ //编辑
+			tool.side('/customer/contact/view/id/'+data.id);
 		}
 		if(layEvent === 'set'){ //查看
 			layer.confirm('确定要设置该联系人为首要联系人吗?', {icon: 3, title:'提示'}, function(index){

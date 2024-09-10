@@ -101,7 +101,7 @@
 		var attachment = new uploadPlus();
 		//审批相关
 		oaCheck.init({
-			check_table:'expense',
+			check_name:'expense',
 			check_btn:0
 		});
 		//添加报销信息表格
@@ -169,7 +169,7 @@
 									tool.sideClose(1000);				
 								}
 							}
-							data.field.check_table = 'expense';
+							data.field.check_name = 'expense';
 							data.field.action_id = e.data.return_id;
 							oaCheck.submit(data.field,checkCallback);
 						}

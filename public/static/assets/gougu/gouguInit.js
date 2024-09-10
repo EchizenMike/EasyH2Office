@@ -19,7 +19,7 @@ if (moduleInit.length > 0) {
 }
 layui.config({
 	base: rootPath + "module/",
-	version: "2.9.15"
+	version: "2.9.16"
 }).extend(module).use(moduleInit, function () {
 	if (typeof gouguInit === 'function') {
 		gouguInit();

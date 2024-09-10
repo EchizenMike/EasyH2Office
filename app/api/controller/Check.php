@@ -20,9 +20,9 @@ use think\facade\Db;
 class Check extends BaseController
 {	
 	//获取审核流程
-    public function get_flows($check_table='')
+    public function get_flows($check_name='')
     {
-		$cate_id = Db::name('FlowCate')->where(['name' => $check_table,'status'=>1])->value('id');
+		$cate_id = Db::name('FlowCate')->where(['name' => $check_name,'status'=>1])->value('id');
         $flow = Db::name('Flow')->where(['cate_id' => $cate_id,'status'=>1,'delete_time'=>0])->select()->toArray();
         return to_assign(0, '', $flow);
     }
@@ -66,16 +66,18 @@ class Check extends BaseController
     public function submit_check()
     {
 		$param = get_params();
-		$check_table = $param['check_table'];
+		$flow_cate = Db::name('FlowCate')->where(['name' => $param['check_name']])->find();
 		$flow_list = Db::name('Flow')->where('id',$param['flow_id'])->value('flow_list');
 		$flow = unserialize($flow_list);
+		$subject = $flow_cate['title'];
+		$check_table = $flow_cate['check_table'];
 		//var_dump($flow);exit;
 		//删除原来的审核流程和审核记录
 		Db::name('FlowStep')->where(['action_id'=>$param['action_id'],'flow_id'=>$param['flow_id'],'delete_time'=>0])->update(['delete_time'=>time()]);
-		Db::name('FlowRecord')->where(['action_id'=>$param['action_id'],'check_table'=>$param['check_table'],'delete_time'=>0])->update(['delete_time'=>time()]);		
+		Db::name('FlowRecord')->where(['action_id'=>$param['action_id'],'check_table'=>$check_table,'delete_time'=>0])->update(['delete_time'=>time()]);		
 		$recordData=array(
 			'action_id' => $param['action_id'],
-			'check_table' => $param['check_table'],
+			'check_table' => $check_table,
 			'step_id' => 0,
 			'check_uid' => $this->uid,
 			'flow_id' => $param['flow_id'],
@@ -144,7 +146,6 @@ class Check extends BaseController
 					'check_copy_uids'=>isset($param['check_copy_uids'])?$param['check_copy_uids']:''
 				]);
 				//发送消息通知
-				$flow_cate = Db::name('FlowCate')->where(['check_table' => $check_table])->find();
 				if($flow_cate['template_apply']>0){
 					$msg=[
 						'from_uid'=>$this->uid,//发送人
@@ -153,7 +154,7 @@ class Check extends BaseController
 						'content'=>[ //消息内容
 							'create_time'=>date('Y-m-d H:i:s'),
 							'action_id'=>$param['action_id'],
-							'title' => '一个审批'
+							'title' => $subject
 						]
 					];
 					send_message($msg);
@@ -185,7 +186,6 @@ class Check extends BaseController
 					  'check_copy_uids'=>isset($param['check_copy_uids'])?$param['check_copy_uids']:''
 				]);
 				//发送消息通知
-				$flow_cate = Db::name('FlowCate')->where(['check_table' => $check_table])->find();
 				if($flow_cate['template_apply']>0){
 					$msg=[
 						'from_uid'=>$this->uid,//发送人
@@ -194,7 +194,7 @@ class Check extends BaseController
 						'content'=>[ //消息内容
 							'create_time'=>date('Y-m-d H:i:s'),
 							'action_id'=>$param['action_id'],
-							'title' => '一个审批'
+							'title' => $subject
 						]
 					];
 					send_message($msg);
@@ -208,13 +208,14 @@ class Check extends BaseController
 	}
 	
 	//获取审核流程节点
-    public function get_flow_nodes($check_table='',$action_id=0,$flow_id=0)
+    public function get_flow_nodes($check_name='',$action_id=0,$flow_id=0)
     {		
+		$flow_cate = Db::name('FlowCate')->where(['name' => $check_name])->find();
 		if($action_id==0){
-			$cate_id = Db::name('FlowCate')->where(['check_table' => $check_table,'status'=>1])->value('id');
-			$flow = Db::name('Flow')->where(['cate_id' => $cate_id,'status'=>1,'delete_time'=>0])->select()->toArray();
+			$flow = Db::name('Flow')->where(['cate_id' => $flow_cate['id'],'status'=>1,'delete_time'=>0])->select()->toArray();
 			return to_assign(0, '', $flow);
 		}
+		$check_table = $flow_cate['check_table'];
 		$detail = Db::name($check_table)->where('id',$action_id)->field('id,admin_id,check_status,check_flow_id,check_step_sort,check_uids,check_copy_uids')->find();
 		//创建人
 		$is_creater=0;
@@ -253,8 +254,7 @@ class Check extends BaseController
 		}
 		$detail['check_record'] = $check_record;
 		if($detail['check_status']==0 || $detail['check_status']==4){
-			$cate_id = Db::name('FlowCate')->where(['check_table' => $check_table,'status'=>1])->value('id');
-			$flow = Db::name('Flow')->where(['cate_id' => $cate_id,'status'=>1,'delete_time'=>0])->select()->toArray();
+			$flow = Db::name('Flow')->where(['cate_id' => $flow_cate['id'],'status'=>1,'delete_time'=>0])->select()->toArray();
 			$detail['flow'] = $flow;
 		}
 		else{				
@@ -316,10 +316,10 @@ class Check extends BaseController
     public function flow_check()
     {
         $param = get_params();
+		$flow_cate = Db::name('FlowCate')->where(['name' => $param['check_name']])->find();
+		$subject = $flow_cate['title'];
 		$action_id = $param['action_id'];
-		$check_table = $param['check_table'];
-		$detail = [];
-		$subject = '一个审批';
+		$check_table = $flow_cate['check_table'];
 		//审核内容详情
 		$detail = Db::name($check_table)->where(['id' => $action_id])->find();
 		if (empty($detail)){		
@@ -420,7 +420,6 @@ class Check extends BaseController
 				$aid = Db::name('FlowRecord')->strict(false)->field(true)->insertGetId($checkData);
 				add_log('check', $action_id, $param,$subject);
 				//发送消息通知
-				$flow_cate = Db::name('FlowCate')->where(['check_table' => $check_table])->find();
 				if($param['check_status'] == 1){
 					if($flow_cate['template_apply']>0){
 						$msg=[
@@ -505,7 +504,6 @@ class Check extends BaseController
 				$aid = Db::name('FlowRecord')->strict(false)->field(true)->insertGetId($checkData);
 				add_log('refue', $action_id, $param,$subject);
 				//发送消息通知
-				$flow_cate = Db::name('FlowCate')->where(['check_table' => $check_table])->find();
 				if($flow_cate['template_no']>0){
 					$msg=[
 						'from_uid'=>$this->uid,//发送人

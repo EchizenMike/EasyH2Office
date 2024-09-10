@@ -85,7 +85,26 @@ class Contact extends BaseController
     public function add()
     {
 		$param = get_params();	
-        if (request()->isAjax()) {		
+        if (request()->isAjax()) {
+			if (isset($param['birthday'])) {
+                $param['birthday'] = strtotime($param['birthday']);
+            }
+			$family_name_data = isset($param['family_name']) ? $param['family_name'] : '';
+			$family_relations_data = isset($param['family_relations']) ? $param['family_relations'] : '';
+			$family_remarks_data = isset($param['family_remarks']) ? $param['family_remarks'] : '';			
+			if(!empty($family_name_data)){
+				foreach ($family_name_data as $key => $value) {
+					if (!$value) {
+						continue;
+					}
+					$data = [];
+					$data['family_name'] = $family_name_data[$key];
+					$data['family_relations'] = $family_relations_data[$key];
+					$data['family_remarks'] = $family_remarks_data[$key];
+					$family[]=$data;
+				}
+			}
+			$param['family'] = serialize($family);		
             if (!empty($param['id']) && $param['id'] > 0) {
                 try {
                     validate(ContactValidate::class)->scene('edit')->check($param);
@@ -101,6 +120,7 @@ class Contact extends BaseController
                     // 验证失败 输出错误信息
                     return to_assign(1, $e->getError());
                 }
+				$param['admin_id'] = $this->uid;
                 $this->model->add($param);
             }	 
         }else{
