@@ -240,33 +240,11 @@ class Task extends BaseController
 				}
 			}
             $where[] = ['a.delete_time', '=', 0];
-            $rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
-            $schedule = Schedule::where($where)
-                ->field('a.*,u.name,w.title as work_cate')
-				->alias('a')
-				->join('Admin u', 'a.admin_id = u.id', 'LEFT')
-				->join('WorkCate w', 'w.id = a.cid', 'LEFT')
-				->order('a.end_time desc')
-                ->paginate(['list_rows'=> $rows])
-                ->each(function ($item, $key) {
-					$item->labor_type_string = '案头工作';
-					if($item->labor_type == 2){
-						$item->labor_type_string = '外勤工作';
-					}
-					if($item->tid > 0){
-						$task = Db::name('ProjectTask')->where(['id' => $item->tid])->find();
-						$item->task = $task['title'];
-						$item->project = Db::name('Project')->where(['id' => $task['project_id']])->value('name');
-					}
-					$item->start_time_a = empty($item->start_time) ? '' : date('Y-m-d', $item->start_time);
-					$item->start_time_b = empty($item->start_time) ? '' : date('H:i', $item->start_time);
-					$item->end_time_a = empty($item->end_time) ? '' : date('Y-m-d', $item->end_time);
-					$item->end_time_b = empty($item->end_time) ? '' : date('H:i', $item->end_time);
-                    $item->start_time = empty($item->start_time) ? '' : date('Y-m-d H:i', $item->start_time);
-                    //$item->end_time = empty($item->end_time) ? '': date('Y-m-d H:i', $item->end_time);
-                    $item->end_time = empty($item->end_time) ? '' : date('H:i', $item->end_time);
-                });
-            return table_assign(0, '', $schedule);
+			
+			
+			$model = new Schedule();
+			$list = $model->datalist($param,$where);
+            return table_assign(0, '', $list);
         } else {
             return view();
         }

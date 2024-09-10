@@ -38,7 +38,7 @@
 	<script>
 	const moduleInit = ['tool','tablePlus','oaPicker','oaSchedule'];
 	function gouguInit() {
-		var form = layui.form,table = layui.tablePlus,tool=layui.tool, work = layui.oaSchedule;	  
+		var form = layui.form,table = layui.tablePlus,tool=layui.tool, work = layui.oaSchedule,laydate = layui.laydate;	  
 		layui.scheduleTable = table.render({
 			elem: '#test'
 			,toolbar: '#toolbarDemo'
@@ -191,11 +191,7 @@
 			else if(obj.event === 'view'){
 				work.view(obj.data);				
 			}
-		});
-		  
-		$('body').on('click','.addLoan',function(){
-			work.add(0,{'id':0});	
-		});	  
+		}); 
 	}
 		
 	</script>
