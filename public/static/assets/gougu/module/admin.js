@@ -223,7 +223,7 @@ layui.define([], function (exports) {
 		delCookie: function (name) {
 			this.setCookie(name, "", -1);
 		},
-		officeView:function (id,mode,href=''){
+		officeView:function (id,mode){
 			layer.open({
 				type: 2,
 				title: 'OFFICE文件查看（当前使用的是微软官方的OFFICE接口，服务器需要连接外网才能查看）',
@@ -237,7 +237,7 @@ layui.define([], function (exports) {
 				anim: 2,
 				scrollbar:false,
 				//content: '/api/office/view?id='+id+'&mode='+mode,
-				content: '//view.officeapps.live.com/op/view.aspx?src='+href,
+				content: '/api/office/officeapps?id='+id+'&mode='+mode,
 				cancel: function(index, layero, that){
 					//layer.msg('文件在后台保存中，请稍再查看或下载...', {time: 3*1000});
 				}

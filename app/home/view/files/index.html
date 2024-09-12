@@ -126,7 +126,7 @@
 				</div>
 			</div>
 		</div>
-        </div>
+    </div>
 </div>
 <script type="text/html" id="toolbarDemo">
 <h3 class="h3-title" style="height:28px;">审批列表</h3>
@@ -367,7 +367,7 @@
 									type = 1;
 									ext="image";
 								}
-								if (item[a].fileext == 'pdf') {
+								if (item[a].fileext == 'pdf'||item[a].fileext == 'txt') {
 									type = 1;
 									ext="pdf";
 								}
@@ -382,7 +382,7 @@
 								
 								ctrl = '<span class="layui-btn layui-btn-xs layui-btn-normal file-ctrl" data-ctrl="edit" data-id="'+item[a].id+'" data-fileid="'+item[a].id+'" data-href="'+item[a].filepath+'" data-filename="'+item[a].name+'" data-ext="'+ext+'" data-type="'+type+'">操作</span>';
 								
-								li+='<li data-id="'+item[a].id+'" data-title="'+item[a].name+'" data-ext="'+item[a].fileext+'"><img src="'+path+'" alt="'+item[a].name+'" style="object-fit: contain;" class="file-item file-'+ext+'"><p title="'+item[a].name+'">'+item[a].name+'</p><div class="layui-btn-ctrl">'+ctrl+'<span class="name-edit green" style="display:none;" data-id="'+item[a].id+'" data-fileid="'+item[a].id+'" id="fileEdit'+item[a].id+'" title="重命名"></span><span class="file-delete red" style="display:none;" data-id="'+item[a].id+'" data-fileid="'+item[a].id+'" id="fileDel'+item[a].id+'" title="删除"></span></div><div class="file-check">✔</div></li>';
+								li+='<li data-id="'+item[a].id+'" data-title="'+item[a].name+'" data-ext="'+item[a].fileext+'"><img src="'+path+'" alt="'+item[a].name+'" style="object-fit: contain;" class="file-items file-'+ext+'"><p title="'+item[a].name+'">'+item[a].name+'</p><div class="layui-btn-ctrl">'+ctrl+'<span class="name-edit green" style="display:none;" data-id="'+item[a].id+'" data-fileid="'+item[a].id+'" id="fileEdit'+item[a].id+'" title="重命名"></span><span class="file-delete red" style="display:none;" data-id="'+item[a].id+'" data-fileid="'+item[a].id+'" id="fileDel'+item[a].id+'" title="删除"></span></div><div class="file-check">✔</div></li>';
 							}
 							$('#filesBox').html(li);
 							$('#laypage').show();
@@ -434,6 +434,12 @@
 					}
 				}
 			})
+		})
+		
+		//查看文件
+		$('#filesBox').on('click','.file-image',function(){
+			let href = $(this).attr('src');
+			tool.photoView(href);
 		})
 		
 		//监听搜索提交

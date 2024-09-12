@@ -436,13 +436,14 @@ layui.define(function (exports) {
 	}
 	
 	$('body').on('click','.file-ctrl',function () {
-		let that = this;
+		let that = $(this);
 		let ctrl = $(this).data('ctrl');
 		let fileid = $(this).data('fileid');
 		let filename = $(this).data('filename');
 		let type = $(this).data('type');
 		let ext = $(this).data('ext');
 		let href = $(this).data('href');
+		let actionid=0;
 		let file_menu = ctrlBtn([0]);
 		//type:0下载+重命名+删除，1下载+查看+重命名+删除，2下载+查看+编辑+重命名+删除
 		if(ctrl=='edit'){
@@ -463,9 +464,11 @@ layui.define(function (exports) {
 		}
 		if(ctrl=='disk'){
 			if(type!=''){
+				actionid = $(this).data('actionid');
 				file_menu = ctrlBtn((type+'').split(","));
 			}
 		}
+		console.log(actionid);
 		dropdown.render({
 			elem: that,
 			className:'file-menu',
@@ -492,7 +495,12 @@ layui.define(function (exports) {
 						tool.audioView(href);
 					}
 					if(ext=='office'){
-						tool.officeView(fileid,'view');
+						if(ctrl=='disk'){
+							tool.officeView(actionid,'view');
+						}
+						else{
+							tool.officeView(fileid,'view');
+						}
 					}
 					if(ext=='article'){
 						tool.articleView(fileid);
@@ -500,7 +508,12 @@ layui.define(function (exports) {
 					break;
 				  case '2':
 					if(ext=='office'){
-						tool.officeView(fileid,'edit');
+						if(ctrl=='disk'){
+							tool.officeView(actionid,'view');
+						}
+						else{
+							tool.officeView(fileid,'view');
+						}
 					}
 					if(ext=='article'){
 						tool.articleEdit(fileid);
