@@ -2,6 +2,21 @@ layui.define(function (exports) {
 	let MOD_NAME = 'tool',dropdown=layui.dropdown;
 	let tool = {
 		loading: false,
+		expressClose:function(index){return '<div class="express-close" data-index="'+index+'" title="关闭">\
+			<div class="express-container">\
+				<div class="express-bar">\
+					<svg viewBox="0 0 202.9 45.5" >\
+					  <clipPath id="menu" clipPathUnits="objectBoundingBox" transform="scale(0.0049285362247413 0.021978021978022)">\
+						<path  d="M6.7,45.5c5.7,0.1,14.1-0.4,23.3-4c5.7-2.3,9.9-5,18.1-10.5c10.7-7.1,11.8-9.2,20.6-14.3c5-2.9,9.2-5.2,15.2-7c7.1-2.1,13.3-2.3,17.6-2.1c4.2-0.2,10.5,0.1,17.6,2.1c6.1,1.8,10.2,4.1,15.2,7c8.8,5,9.9,7.1,20.6,14.3c8.3,5.5,12.4,8.2,18.1,10.5c9.2,3.6,17.6,4.2,23.3,4H6.7z"/>\
+					  </clipPath>\
+					</svg>\
+				</div>\
+				<div class="express-btn">\
+					<svg class="express-icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M463.787 512l-253.44-253.44a34.133 34.133 0 0 1 48.213-48.213L512 463.787l253.44-253.44a34.133 34.133 0 1 1 48.213 48.213L560.213 512l253.44 253.44a34.133 34.133 0 1 1-48.213 48.213L512 560.213l-253.44 253.44a34.133 34.133 0 0 1-48.213-48.213z" fill="#ffffff"></path></svg>\
+				</div>\
+			</div>\
+		</div>'
+		},
 		side: function (url, width) {
 			let that = this;
 			if (that.loading == true) {
@@ -9,15 +24,16 @@ layui.define(function (exports) {
 			}
 			that.loading = true;
 			sideWidth = '80%';
-			if(window.innerWidth>1400 && window.innerWidth<=1600){
-				sideWidth = '85%';
+			if(window.innerWidth>1366 && window.innerWidth<=1600){
+				sideWidth = '86%';
 			}
 			if(window.innerWidth>1000 && window.innerWidth<=1440){
-				sideWidth = '92%';
+				sideWidth = '93%';
 			}
 			if(window.innerWidth<=1000){
-				sideWidth = '93.8%';
+				sideWidth = '95%';
 			}
+			$(parent.$('.express-close')).addClass('parent-colse');
 			layer.open({
 				type: 2,
 				title: false,
@@ -29,16 +45,14 @@ layui.define(function (exports) {
 				skin:'layui-layer-gougu-admin',
 				end: function(){
 					$('body').removeClass('right-open');
-					$(parent.$('.express-close')).show();
+					$(parent.$('.express-close')).removeClass('parent-colse');
 					if (layui.pageTable && layui.pageTable.resize) {
 						layui.pageTable.resize();
 					}
 				},
 				success: function (obj, index) {
-					let btn = '<div data-index="'+index+'" class="express-close" title="关闭">关闭</div>';
-					obj.append(btn);
 					$('body').addClass('right-open');
-					$(parent.$('.express-close')).hide();
+					obj.append(that.expressClose(index));
 					that.loading = false;
 					obj.on('click','.express-close', function () {					
 						layer.close(index);
@@ -99,7 +113,8 @@ layui.define(function (exports) {
 						layer.msg(res.msg);
 						return false;
 					}
-					let express = '<section id="expressLayer" class="express-box" style="width:' + sideWidth + '"><article id="articleLayer">' + res + '</article><div id="expressClose" class="express-close" title="关闭">关闭</div></section><div id="expressMask" class="express-mask"></div>';
+					let index = timestamp = new Date().getTime();
+					let express = '<section id="expressLayer" class="express-box" style="width:' + sideWidth + '"><article id="articleLayer">' + res + '</article>'+that.expressClose(index)+'</section><div id="expressMask" class="express-mask"></div>';
 
 					$('body').append(express).addClass('right-open');
 					$('#expressMask').fadeIn(200);

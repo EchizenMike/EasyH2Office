@@ -143,11 +143,15 @@ layui.define(['tool','oaPicker'], function (exports) {
 				usersInput='<div class="layui-input-wrap" style="margin-bottom:5px;"><div class="layui-input-prefix"><i class="layui-icon layui-icon-at"></i></div><input type="text" placeholder="要提醒的员工" value="'+to_uname+'" readonly class="layui-input picker-admin" data-type="2" /><input type="hidden" id="to_uids" value="'+to_uid+'" /></div>';
 				height='320px';
 			}
+			$(parent.$('.express-close')).addClass('parent-colse');
 			layer.open({
 				type: 1,
 				title: '请输入评论内容',
 				area: ['600px', height],
 				content: '<div style="padding:5px;">'+usersInput+'<textarea class="layui-textarea" id="editTextarea" style="width: 100%; height: 160px;">'+txt+'</textarea></div>',
+				end: function(){
+					$(parent.$('.express-close')).removeClass('parent-colse');
+				},
 				btnAlign: 'c',
 				btn: ['提交保存'],
 				yes: function () {

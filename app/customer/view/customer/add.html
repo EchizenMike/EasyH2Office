@@ -130,6 +130,10 @@
 		});	
 		//监听提交
 		form.on('submit(webform)', function (data) {
+			if(!data.field.c_sex){
+				layer.msg('请完善首要联系人性别');
+				return false;
+			}
 			let callback = function (e) {
 				layer.msg(e.msg);
 				if (e.code == 0) {

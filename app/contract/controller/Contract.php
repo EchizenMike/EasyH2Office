@@ -220,63 +220,65 @@ class Contract extends BaseController
 					return to_assign(1, "结束时间需要大于开始时间");
 				}
             }
-			$param['content'] = serialize([]);
-			if($param['types']==2 && ($param['scene'] == 'add' || $param['scene'] == 'edit')){			
-				$product_title_data = isset($param['product_title']) ? $param['product_title'] : '';
-				$product_id_data = isset($param['product_id']) ? $param['product_id'] : 0;
-				$product_unit_data = isset($param['product_unit']) ? $param['product_unit'] : '';
-				$product_specs_data = isset($param['product_specs']) ? $param['product_specs'] : '';
-				$product_price_data = isset($param['product_price']) ? $param['product_price'] : '0.00';
-				$product_num_data = isset($param['product_num']) ? $param['product_num'] : 1;
-				$product_subtotal_data = isset($param['product_subtotal']) ? $param['product_subtotal'] : '0.00';
-				$product_remark_data = isset($param['product_remark']) ? $param['product_remark'] : '';				
-				$product = [];
-				if(!empty($product_title_data)){
-					foreach ($product_title_data as $key => $value) {
-						if (!$value) {
-							continue;
+			if($param['scene'] == 'add' || $param['scene'] == 'edit'){
+				$param['content'] = serialize([]);
+				if($param['types']==2){			
+					$product_title_data = isset($param['product_title']) ? $param['product_title'] : '';
+					$product_id_data = isset($param['product_id']) ? $param['product_id'] : 0;
+					$product_unit_data = isset($param['product_unit']) ? $param['product_unit'] : '';
+					$product_specs_data = isset($param['product_specs']) ? $param['product_specs'] : '';
+					$product_price_data = isset($param['product_price']) ? $param['product_price'] : '0.00';
+					$product_num_data = isset($param['product_num']) ? $param['product_num'] : 1;
+					$product_subtotal_data = isset($param['product_subtotal']) ? $param['product_subtotal'] : '0.00';
+					$product_remark_data = isset($param['product_remark']) ? $param['product_remark'] : '';				
+					$product = [];
+					if(!empty($product_title_data)){
+						foreach ($product_title_data as $key => $value) {
+							if (!$value) {
+								continue;
+							}
+							$data = [];
+							$data['product_title'] = $product_title_data[$key];
+							$data['product_id'] = $product_id_data[$key];
+							$data['product_unit'] = $product_unit_data[$key];
+							$data['product_specs'] = $product_specs_data[$key];
+							$data['product_price'] = $product_price_data[$key];
+							$data['product_num'] = $product_num_data[$key];
+							$data['product_subtotal'] = $product_subtotal_data[$key];
+							$data['product_remark'] = $product_remark_data[$key];
+							$product[]=$data;
 						}
-						$data = [];
-						$data['product_title'] = $product_title_data[$key];
-						$data['product_id'] = $product_id_data[$key];
-						$data['product_unit'] = $product_unit_data[$key];
-						$data['product_specs'] = $product_specs_data[$key];
-						$data['product_price'] = $product_price_data[$key];
-						$data['product_num'] = $product_num_data[$key];
-						$data['product_subtotal'] = $product_subtotal_data[$key];
-						$data['product_remark'] = $product_remark_data[$key];
-						$product[]=$data;
 					}
-				}
-				$param['content'] = serialize($product);
-			}	
-			if($param['types']==3 && ($param['scene'] == 'add' || $param['scene'] == 'edit')){			
-				$service_title_data = isset($param['service_title']) ? $param['service_title'] : '';
-				$service_id_data = isset($param['service_id']) ? $param['service_id'] : 0;
-				$service_date_data = isset($param['service_date']) ? $param['service_date'] : '';
-				$service_price_data = isset($param['service_price']) ? $param['service_price'] : '0.00';
-				$service_num_data = isset($param['service_num']) ? $param['service_num'] : 1;
-				$service_subtotal_data = isset($param['service_subtotal']) ? $param['service_subtotal'] : '0.00';
-				$service_remark_data = isset($param['service_remark']) ? $param['service_remark'] : '';				
-				$service = [];
-				if(!empty($service_title_data)){
-					foreach ($service_title_data as $key => $value) {
-						if (!$value) {
-							continue;
+					$param['content'] = serialize($product);
+				}	
+				if($param['types']==3){			
+					$service_title_data = isset($param['service_title']) ? $param['service_title'] : '';
+					$service_id_data = isset($param['service_id']) ? $param['service_id'] : 0;
+					$service_date_data = isset($param['service_date']) ? $param['service_date'] : '';
+					$service_price_data = isset($param['service_price']) ? $param['service_price'] : '0.00';
+					$service_num_data = isset($param['service_num']) ? $param['service_num'] : 1;
+					$service_subtotal_data = isset($param['service_subtotal']) ? $param['service_subtotal'] : '0.00';
+					$service_remark_data = isset($param['service_remark']) ? $param['service_remark'] : '';				
+					$service = [];
+					if(!empty($service_title_data)){
+						foreach ($service_title_data as $key => $value) {
+							if (!$value) {
+								continue;
+							}
+							$data = [];
+							$data['service_title'] = $service_title_data[$key];
+							$data['service_id'] = $service_id_data[$key];
+							$data['service_date'] = $service_date_data[$key];
+							$data['service_price'] = $service_price_data[$key];
+							$data['service_num'] = $service_num_data[$key];
+							$data['service_subtotal'] = $service_subtotal_data[$key];
+							$data['service_remark'] = $service_remark_data[$key];
+							$service[]=$data;
 						}
-						$data = [];
-						$data['service_title'] = $service_title_data[$key];
-						$data['service_id'] = $service_id_data[$key];
-						$data['service_date'] = $service_date_data[$key];
-						$data['service_price'] = $service_price_data[$key];
-						$data['service_num'] = $service_num_data[$key];
-						$data['service_subtotal'] = $service_subtotal_data[$key];
-						$data['service_remark'] = $service_remark_data[$key];
-						$service[]=$data;
 					}
+					$param['content'] = serialize($service);
 				}
-				$param['content'] = serialize($service);
-			}	
+			}				
 			
             if (!empty($param['id']) && $param['id'] > 0) {
                 try {

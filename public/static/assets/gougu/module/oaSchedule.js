@@ -82,11 +82,15 @@ layui.define(['tool'], function (exports) {
 							</table>
 							${project}
 						</div>`;
+			$(parent.$('.express-close')).addClass('parent-colse');			
 			layer.open({
 				type: 1,
 				title: '工作记录详情',
 				area: ['720px', '420px'],
 				content: content,
+				end: function(){
+					$(parent.$('.express-close')).removeClass('parent-colse');
+				},
 				success: function () {
 
 				},
@@ -164,12 +168,16 @@ layui.define(['tool'], function (exports) {
 									</td>
 								</tr>
 							</table>
-						</form>`;					
+						</form>`;
+					$(parent.$('.express-close')).addClass('parent-colse');		
 					layer.open({
 						type: 1,
 						title: title,
 						area: ['720px', '420px'],
 						content: content,
+						end: function(){
+							$(parent.$('.express-close')).removeClass('parent-colse');
+						},
 						success: function () {
 							if (detail['id'] == 0) {
 								//日期时间范围

@@ -5,7 +5,7 @@
 .layui-tab-card,.layui-card{box-shadow:0 0 0 0 rgb(0 0 0 / 10%); border-radius:0;}
 .layui-card-tips {color: #969696;}
 .layui-card-value {padding: 4px 0 16px;font-size: 18px;color: #1E9FFF;}
-
+.layui-tab-title .layui-this:after{z-index:1}
 .log-timeline{ position: relative; min-height:600px; padding-left: 48px; background-color:#fff;}
 .log-timeline:after {content: ""; position: absolute; top: 0; left: 24px; width: 1px; height: 100%; background: #e3e9ed;}
 .log-timeline dl{padding-bottom: 8px; position: relative;}
@@ -65,14 +65,15 @@
 {/block}
 <!-- 主体 -->
 {block name="body"}
-	<h2 class="p-3"><span class="font20">{$detail.name}</span></h2>
-	<div class="px-3">
+<div class="p-page">
+	<h2 class="pb-3"><span class="font20">{$detail.name}</span></h2>
+	<div>
 		<span class="layui-badge layui-bg-gray">#T{$detail.id}</span>
 		<span class="mx-2">{$detail.admin_name}</span>
 		<span class="gray">创建于{$detail.create_time}<span>{gt name="$detail.update_time" value="0"}，最近更新于 {$detail.update_time}{/gt}</span></span>
 	</div>
-	<div class="layui-tab layui-tab-card" lay-filter="project" id="projectTab">
-		<ul class="layui-tab-title">
+	<div class="body-table layui-tab layui-tab-brief" lay-filter="project" id="projectTab">
+		<ul class="layui-tab-title border-t border-x bg-white" style="border-bottom:0;">
 			<li class="layui-this" data-load="true">项目概览</li>
 			<li data-load="">项目任务</li>
 			<li data-load="">工作记录</li>
@@ -111,6 +112,7 @@
 			</div>
 		</div>
 	</div>
+</div>
 {/block}
 <!-- /主体 -->
 <!-- 脚本 -->

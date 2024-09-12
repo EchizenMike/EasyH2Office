@@ -24,11 +24,15 @@ layui.define(['tool','oaPicker','tinymce'],function(exports){
 			if (typeof(text) == "undefined") {
 				text = that.text();
 			}
+			$(parent.$('.express-close')).addClass('parent-colse');
 			layer.open({
 				type: 1,
 				title: '请输入内容',
 				area: ['360px', '158px'],
 				content: '<div style="padding:5px;"><input class="layui-input" id="oaEditText" value="' + text + '"/></div>',
+				end: function(){
+					$(parent.$('.express-close')).removeClass('parent-colse');
+				},
 				btnAlign: 'c',
 				btn: ['提交保存'],
 				yes: function () {
@@ -55,12 +59,16 @@ layui.define(['tool','oaPicker','tinymce'],function(exports){
 			else{
 				textarea = $('#'+target).text();
 			}
+			$(parent.$('.express-close')).addClass('parent-colse');
 			layer.open({
 				type: 1,
 				title: '请输入内容',
 				area: ['600px', '320px'],
 				content: '<div style="padding:5px;"><textarea class="layui-textarea" id="oaEditTextarea" style="width: 100%; height: 200px;">' + textarea + '</textarea></div>',
 				btnAlign: 'c',
+				end: function(){
+					$(parent.$('.express-close')).removeClass('parent-colse');
+				},
 				btn: ['提交保存'],
 				yes: function () {
 					let val = $("#oaEditTextarea").val();
@@ -90,11 +98,15 @@ layui.define(['tool','oaPicker','tinymce'],function(exports){
 			if (typeof(text) == "undefined") {
 				text = that.text();
 			}
+			$(parent.$('.express-close')).addClass('parent-colse');
 			layer.open({
 				type: 1,
 				title: '请输入数字',
 				area: ['200px', '158px'],
 				content: '<div style="padding:5px;"><input class="layui-input" oninput="this.value = this.value.replace(/[^0-9]/g,\'\')" id="oaEditNum" value="' + text + '"/></div>',
+				end: function(){
+					$(parent.$('.express-close')).removeClass('parent-colse');
+				},
 				btnAlign: 'c',
 				btn: ['提交保存'],
 				yes: function () {
@@ -247,6 +259,7 @@ layui.define(['tool','oaPicker','tinymce'],function(exports){
 			else{
 				content = $('#'+target).html();
 			}
+			$(parent.$('.express-close')).addClass('parent-colse');
 			layer.open({
 				type: 1,
 				title: '请输入内容',
@@ -255,6 +268,9 @@ layui.define(['tool','oaPicker','tinymce'],function(exports){
 				content: '<div style="padding:5px;"><textarea class="layui-textarea" id="oaEditEditor'+index+'" style="width: 100%;">' + content + '</textarea></div>',
 				btnAlign: 'c',
 				btn: ['提交保存'],
+				end: function(){
+					$(parent.$('.express-close')).removeClass('parent-colse');
+				},
 				success:function(){					
 					var edit = tinymce.render({
 						selector: "#oaEditEditor"+index,

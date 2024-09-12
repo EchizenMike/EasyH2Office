@@ -167,12 +167,16 @@ layui.define(['tool'], function (exports) {
 					select_array.push({id:select_ids[m],name:select_names[m]});
 				}
 			}
+			$(parent.$('.express-close')).addClass('parent-colse');
 			layer.open({
 				type:1,
 				title:me.settings.title,
 				area:['800px','500px'],
 				resize:false,
 				content:me.employeeRender(),
+				end: function(){
+					$(parent.$('.express-close')).removeClass('parent-colse');
+				},
 				success:function(obj,idx){
 						var dataList=[],letterBar=$('#letterBar'),employee = $('#employee'),selectTags = $('#selectTags');
 						$.ajax({
@@ -339,12 +343,16 @@ layui.define(['tool'], function (exports) {
 			if(settings.add!=''){
 				btn = ['确定选择','清空已选','新增'];
 			}
+			$(parent.$('.express-close')).addClass('parent-colse');
 			layer.open({
 				title: settings.title,
 				area: settings.area,
 				type: 1,
 				skin: 'gougu-picker',
 				content: '<div class="picker-table" id="pickerBox'+pickerIndex+'">'+settings.searchbar+'<div id="pickerTable'+pickerIndex+'"></div></div>',
+				end: function(){
+					$(parent.$('.express-close')).removeClass('parent-colse');
+				},
 				success: function () {
 					let cols=JSON.parse(JSON.stringify(settings.cols));
 					if(settings.type==1){

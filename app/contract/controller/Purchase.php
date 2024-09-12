@@ -220,60 +220,62 @@ class Purchase extends BaseController
 					return to_assign(1, "结束时间需要大于开始时间");
 				}
             }
-			$param['content'] = serialize([]);
-			if($param['types']==2 && ($param['scene'] == 'add' || $param['scene'] == 'edit')){			
-				$purchased_title_data = isset($param['purchased_title']) ? $param['purchased_title'] : '';
-				$purchased_id_data = isset($param['purchased_id']) ? $param['purchased_id'] : 0;
-				$purchased_unit_data = isset($param['purchased_unit']) ? $param['purchased_unit'] : '';
-				$purchased_specs_data = isset($param['purchased_specs']) ? $param['purchased_specs'] : '';
-				$purchased_price_data = isset($param['purchased_price']) ? $param['purchased_price'] : '0.00';
-				$purchased_num_data = isset($param['purchased_num']) ? $param['purchased_num'] : 1;
-				$purchased_subtotal_data = isset($param['purchased_subtotal']) ? $param['purchased_subtotal'] : '0.00';
-				$purchased_remark_data = isset($param['purchased_remark']) ? $param['purchased_remark'] : '';				
-				$purchased = [];
-				if(!empty($purchased_title_data)){
-					foreach ($purchased_title_data as $key => $value) {
-						if (!$value) {
-							continue;
+			if($param['scene'] == 'add' || $param['scene'] == 'edit'){
+				$param['content'] = serialize([]);
+				if($param['types']==2){			
+					$purchased_title_data = isset($param['purchased_title']) ? $param['purchased_title'] : '';
+					$purchased_id_data = isset($param['purchased_id']) ? $param['purchased_id'] : 0;
+					$purchased_unit_data = isset($param['purchased_unit']) ? $param['purchased_unit'] : '';
+					$purchased_specs_data = isset($param['purchased_specs']) ? $param['purchased_specs'] : '';
+					$purchased_price_data = isset($param['purchased_price']) ? $param['purchased_price'] : '0.00';
+					$purchased_num_data = isset($param['purchased_num']) ? $param['purchased_num'] : 1;
+					$purchased_subtotal_data = isset($param['purchased_subtotal']) ? $param['purchased_subtotal'] : '0.00';
+					$purchased_remark_data = isset($param['purchased_remark']) ? $param['purchased_remark'] : '';				
+					$purchased = [];
+					if(!empty($purchased_title_data)){
+						foreach ($purchased_title_data as $key => $value) {
+							if (!$value) {
+								continue;
+							}
+							$data = [];
+							$data['purchased_title'] = $purchased_title_data[$key];
+							$data['purchased_id'] = $purchased_id_data[$key];
+							$data['purchased_unit'] = $purchased_unit_data[$key];
+							$data['purchased_specs'] = $purchased_specs_data[$key];
+							$data['purchased_price'] = $purchased_price_data[$key];
+							$data['purchased_num'] = $purchased_num_data[$key];
+							$data['purchased_subtotal'] = $purchased_subtotal_data[$key];
+							$data['purchased_remark'] = $purchased_remark_data[$key];
+							$purchased[]=$data;
 						}
-						$data = [];
-						$data['purchased_title'] = $purchased_title_data[$key];
-						$data['purchased_id'] = $purchased_id_data[$key];
-						$data['purchased_unit'] = $purchased_unit_data[$key];
-						$data['purchased_specs'] = $purchased_specs_data[$key];
-						$data['purchased_price'] = $purchased_price_data[$key];
-						$data['purchased_num'] = $purchased_num_data[$key];
-						$data['purchased_subtotal'] = $purchased_subtotal_data[$key];
-						$data['purchased_remark'] = $purchased_remark_data[$key];
-						$purchased[]=$data;
 					}
-				}
-				$param['content'] = serialize($purchased);
-			}	
-			if($param['types']==3 && ($param['scene'] == 'add' || $param['scene'] == 'edit')){			
-				$service_title_data = isset($param['service_title']) ? $param['service_title'] : '';
-				$service_date_data = isset($param['service_date']) ? $param['service_date'] : '';
-				$service_price_data = isset($param['service_price']) ? $param['service_price'] : '0.00';
-				$service_num_data = isset($param['service_num']) ? $param['service_num'] : 1;
-				$service_subtotal_data = isset($param['service_subtotal']) ? $param['service_subtotal'] : '0.00';
-				$service_remark_data = isset($param['service_remark']) ? $param['service_remark'] : '';				
-				$service = [];
-				if(!empty($service_title_data)){
-					foreach ($service_title_data as $key => $value) {
-						if (!$value) {
-							continue;
+					$param['content'] = serialize($purchased);
+				}	
+				if($param['types']==3){			
+					$service_title_data = isset($param['service_title']) ? $param['service_title'] : '';
+					$service_date_data = isset($param['service_date']) ? $param['service_date'] : '';
+					$service_price_data = isset($param['service_price']) ? $param['service_price'] : '0.00';
+					$service_num_data = isset($param['service_num']) ? $param['service_num'] : 1;
+					$service_subtotal_data = isset($param['service_subtotal']) ? $param['service_subtotal'] : '0.00';
+					$service_remark_data = isset($param['service_remark']) ? $param['service_remark'] : '';				
+					$service = [];
+					if(!empty($service_title_data)){
+						foreach ($service_title_data as $key => $value) {
+							if (!$value) {
+								continue;
+							}
+							$data = [];
+							$data['service_title'] = $service_title_data[$key];
+							$data['service_date'] = $service_date_data[$key];
+							$data['service_price'] = $service_price_data[$key];
+							$data['service_num'] = $service_num_data[$key];
+							$data['service_subtotal'] = $service_subtotal_data[$key];
+							$data['service_remark'] = $service_remark_data[$key];
+							$service[]=$data;
 						}
-						$data = [];
-						$data['service_title'] = $service_title_data[$key];
-						$data['service_date'] = $service_date_data[$key];
-						$data['service_price'] = $service_price_data[$key];
-						$data['service_num'] = $service_num_data[$key];
-						$data['service_subtotal'] = $service_subtotal_data[$key];
-						$data['service_remark'] = $service_remark_data[$key];
-						$service[]=$data;
 					}
+					$param['content'] = serialize($service);
 				}
-				$param['content'] = serialize($service);
 			}
             if (!empty($param['id']) && $param['id'] > 0) {
                 try {

@@ -1,7 +1,6 @@
 {extend name="../../base/view/common/base" /}
 {block name="style"}
 <style>
-html{background-color:#fff;}
 .log-timeline{ position: relative; padding-left: 48px; background-color:#fff;}
 .log-timeline:after {content: ""; position: absolute; top: 0; left: 24px; width: 1px; height: 100%; background: #e3e9ed;}
 .log-timeline dl{padding-bottom: 8px; position: relative;}
@@ -130,14 +129,14 @@ html{background-color:#fff;}
 	  </tr>	
 	  {/notempty}
 	</table>
-	<div class="layui-tab" lay-filter="customer" id="customerTab">
-		<ul class="layui-tab-title">
+	<div class="body-table layui-tab layui-tab-brief bg-white" lay-filter="customer" id="customerTab">
+		<ul class="layui-tab-title border">
 			<li class="layui-this" data-load="true">跟进记录</li>
 			<li>线索机会</li>
 			<li>联 系 人</li>
 			<li>操作记录</li>
 		</ul>
-		<div class="layui-tab-content">
+		<div class="layui-tab-content" style="padding:0;">
 			<div class="layui-tab-item layui-show">
 				{include file="/customer/view_trace" /}
 			</div>

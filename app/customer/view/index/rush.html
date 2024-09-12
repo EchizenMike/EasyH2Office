@@ -106,7 +106,7 @@
 							$('#count').html(++count);
 						}
 					}
-					tool.post("/customer/index/get", {id: data.id}, callback);
+					tool.post("/customer/index/to_get", {id: data.id}, callback);
 					layer.close(index);
 				});
 			}
