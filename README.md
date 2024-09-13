@@ -23,7 +23,7 @@
 
 ### ✳️ 演示地址
 
-勾股OA演示地址：[https://oa.gougucms.com](https://oa.gougucms.com)
+勾股OA演示地址：[https://www.gouguoa.com](https://www.gouguoa.com)
 
 沟通咨询请加微信号：hdm588
 
