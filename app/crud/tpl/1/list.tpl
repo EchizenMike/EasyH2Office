@@ -20,7 +20,7 @@
 		
 		layui.pageTable = treeTable.render({
 			elem: "#table_<model>"
-			,title: '<name>列表',
+			,title: '<name>列表'
 			,url: "/<module>/<controller>/datalist"
 			,tree: {
 				customName: {name:'title'},
