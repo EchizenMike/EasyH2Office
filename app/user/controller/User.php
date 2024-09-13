@@ -187,6 +187,7 @@ class User extends BaseController
             $position = Db::name('Position')->where('status', '>=', 0)->order('create_time asc')->select();
             if ($id > 0) {
                 $detail = get_admin($id);
+                $detail['pname'] =  Db::name('Admin')->where('id',$detail['pid'])->value('name');
 				$department_ids = Db::name('DepartmentAdmin')->where('admin_id',$param['id'])->column('department_id');
 				$detail['department_ids'] = implode(',',$department_ids);
                 View::assign('detail', $detail);
@@ -232,6 +233,7 @@ class User extends BaseController
 		$department_ids = Db::name('DepartmentAdmin')->where('admin_id',$id)->column('department_id');
 		$department_names = Db::name('Department')->whereIn('id',$department_ids)->column('title');
 		$detail['department_names'] = implode(',',$department_names);
+		$detail['pname'] =  Db::name('Admin')->where('id',$detail['pid'])->value('name');
         //查询所有菜单和权限节点
         $menu = Db::name('AdminRule')->where(['menu' => 1])->order('sort asc,id asc')->select()->toArray();
         $rule = Db::name('AdminRule')->order('sort asc,id asc')->select()->toArray();
