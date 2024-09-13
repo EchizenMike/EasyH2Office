@@ -321,7 +321,7 @@ layui.define(['tool'], function (exports) {
 		},
 		picker:function(types,type,callback,map){
 			let pickerIndex = new Date().getTime();
-			let pickerTable;
+			let pickerTable,options;
 			const opts={
 				"title":"选择",
 				"url": "",
@@ -336,7 +336,12 @@ layui.define(['tool'], function (exports) {
 				"add": "",//新增url
 				"callback": callback
 			};
-			let options = dataPicker[types];
+			if(Object.prototype.toString.call(types) === '[object Object]'){
+				options = types;
+			}
+			else{
+				let options = dataPicker[types];
+			}
 			let settings = $.extend({},opts,options);
 			//console.log(settings);
 			let btn = ['确定选择','清空已选'];

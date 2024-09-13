@@ -284,7 +284,7 @@ class Files extends BaseController
 			}
         } else {
             $detail = get_admin($id);
-			$detail['pname'] = Db::name('Admin')->where('id',$detail['id'])->value('name');
+			$detail['pname'] = Db::name('Admin')->where('id',$detail['pid'])->value('name');
 			$detail['position'] = Db::name('Position')->where('id',$detail['position_id'])->value('title');
 			$detail['department'] = Db::name('Department')->where('id',$detail['did'])->value('title');
 			$department_ids = Db::name('DepartmentAdmin')->where('admin_id',$id)->column('department_id');
@@ -336,7 +336,7 @@ class Files extends BaseController
 		$param = get_params();
 		$id = isset($param['id'])?$param['id']:0;
 		$detail = get_admin($id);
-		$detail['pname'] = Db::name('Admin')->where('id',$detail['id'])->value('name');
+		$detail['pname'] = Db::name('Admin')->where('id',$detail['pid'])->value('name');
 		$detail['position'] = Db::name('Position')->where('id',$detail['position_id'])->value('title');
 		$detail['department'] = Db::name('Department')->where('id',$detail['did'])->value('title');
 		$department_ids = Db::name('DepartmentAdmin')->where('admin_id',$id)->column('department_id');
