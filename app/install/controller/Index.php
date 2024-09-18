@@ -25,8 +25,10 @@ class Index
     {
         // 检测是否安装过
         if (is_installed()) {
-            echo '你已经安装过勾股OA系统！如需重新安装，请删除“config/install.lock”文件';
-            die();
+			if(Request()->action()!='step4'){
+				echo '你已经安装过勾股OA系统！如需重新安装，请删除“config/install.lock”文件';
+				die();
+			}
         }
     }
 
@@ -73,7 +75,13 @@ class Index
     public function step3()
     {
         return view();
-    }		
+    }
+
+    public function step4()
+    {
+		$domain = get_system_config('web','domain');
+        return view('', ['domain' => $domain]);
+    }	
 		
     public function install()
     {
@@ -220,7 +228,6 @@ return [
         if (false == file_put_contents(CMS_ROOT . "config/install.lock", '勾股OA安装鉴定文件，请勿删除！！！！！此次安装时间为：' . date('Y-m-d H:i:s', time()))) {
             return to_assign(1, '创建安装鉴定文件失败，请检查目录权限');
         }
-		$domain = get_system_config('web','domain');
-        return to_assign(0,'安装完成',$domain);
+        return to_assign(0,'安装完成');
     }
 }
