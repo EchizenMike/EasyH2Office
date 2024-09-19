@@ -340,7 +340,7 @@ layui.define(['tool'], function (exports) {
 				options = types;
 			}
 			else{
-				let options = dataPicker[types];
+				options = dataPicker[types];
 			}
 			let settings = $.extend({},opts,options);
 			//console.log(settings);
