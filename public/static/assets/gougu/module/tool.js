@@ -215,6 +215,28 @@ layui.define(function (exports) {
 				location.reload();
 			}
 		},
+		ask:function(tips,yes,cancel){
+			layer.confirm(tips, {
+				icon: 3,
+				title: '提示',
+				success:function(){
+					$(parent.$('.express-close')).addClass('parent-colse');
+				},
+				end:function(){
+					$(parent.$('.express-close')).removeClass('parent-colse');
+				}
+			}, function (index) {
+				if (yes && typeof yes === 'function') {
+					yes();
+				}
+				layer.close(index);
+			}, function (index) {
+				if (cancel && typeof cancel === 'function') {
+					cancel();
+				}
+				layer.close(index);
+			});
+		},
 		close: function (delay,table) {
 			//延迟关闭，一般是在编辑完页面数据后需要自动关闭页面用到
 			if(delay && delay>0){
