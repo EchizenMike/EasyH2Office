@@ -6,7 +6,7 @@
 	<table class="layui-table layui-table-form">
 		<tr>
 			<td class="layui-td-gray"><name>名称<font>*</font></td>
-			<td><input type="text" name="title" lay-verify="required" placeholder="请输入<name>名称" lay-reqText="请输入<name>名称" class="layui-input" value="{$detail.title|default=''}"></td>
+			<td><input type="text" name="title" placeholder="请输入<name>名称" lay-verify="required" lay-reqText="请输入<name>名称" class="layui-input" value="{$detail.title|default=''}"></td>
 			<td class="layui-td-gray">父级分类<font>*</font></td>
 			<td>
 				{empty name="$detail"}

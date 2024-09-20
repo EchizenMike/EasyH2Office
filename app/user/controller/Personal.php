@@ -65,19 +65,20 @@ class Personal extends BaseController
                 $res = Db::name('DepartmentChange')->strict(false)->field(true)->update($param);
                 add_log('edit', $param['id'], $param);
             } else {
+				$uid = $param['uid'];
+				$map = [];
+				$map[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',leader_ids)")];
+				$count = Db::name('Department')->where($map)->count();
+				if($count>0){
+					return to_assign(1,'请先撤销该员工的部门负责人头衔再调部门');
+				}
 				$param['move_time'] = isset($param['move_time']) ? strtotime($param['move_time']) : 0;
                 $param['create_time'] = time();
                 $param['admin_id'] = $this->uid;
                 $res = Db::name('DepartmentChange')->strict(false)->field(true)->insertGetId($param);
 				if ($res!==false) {
-					Db::name('DepartmentAdmin')->where('admin_id',$param['uid'])->whereNotIn('department_id', $param['to_did'])->delete();
-					$dids = explode(',',$param['to_did']);
-					foreach ($dids as $did) {
-						$has = Db::name('DepartmentAdmin')->where(['admin_id'=>$param['uid'],'department_id'=>$did])->find();
-						if (empty($has)) {
-							Db::name('DepartmentAdmin')->insert(['admin_id'=>$param['uid'],'department_id'=>$did,'create_time' => time()]);
-						}							
-					}
+					Db::name('Admin')->where('id', $param['uid'])->update(['did' => $param['to_did']]);
+					Db::name('DepartmentAdmin')->where(['admin_id'=>$param['uid'],'department_id'=>$param['to_did']])->delete();
 				}
                 add_log('add', $res, $param);
             }
