@@ -333,6 +333,7 @@ layui.define(['tool'], function (exports) {
 				"searchbar":'<form class="layui-form pb-2"><div class="layui-input-inline" style="width:420px; margin-right:5px;"><input type="text" name="keywords" placeholder="请输入关键字" class="layui-input" autocomplete="off" /></div><button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="picker">提交搜索</button><button type="reset" class="layui-btn layui-btn-reset" lay-filter="picker-reset">清空</button></form>',
 				"page":true,
 				"type":type,//1单选择,2多选
+				"btnno":true,
 				"add": "",//新增url
 				"callback": callback
 			};
@@ -344,7 +345,10 @@ layui.define(['tool'], function (exports) {
 			}
 			let settings = $.extend({},opts,options);
 			//console.log(settings);
-			let btn = ['确定选择','清空已选'];
+			let btn = ['确定选择'];
+			if(settings.btnno==true){
+				btn = ['确定选择','清空已选'];
+			}
 			if(settings.add!=''){
 				btn = ['确定选择','清空已选','新增'];
 			}

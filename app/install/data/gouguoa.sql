@@ -565,7 +565,7 @@ INSERT INTO `oa_admin_rule` VALUES (290, 289, 'contract/cate/datalist', '合同�
 INSERT INTO `oa_admin_rule` VALUES (291, 290, 'contract/cate/add', '新建/编辑', '合同分类', 'contract', '', 2, 1, 1, 0, 1656143065);
 INSERT INTO `oa_admin_rule` VALUES (292, 290, 'contract/cate/set', '设置', '合同分类', 'contract', '', 2, 1, 1, 1656143065, 0);
 
-INSERT INTO `oa_admin_rule` VALUES (293, 286, 'contract/productcate/datalist', '产品分类', '产品分类', 'contract', '', 1, 1, 1, 1656143065, 0);
+INSERT INTO `oa_admin_rule` VALUES (293, 289, 'contract/productcate/datalist', '产品分类', '产品分类', 'contract', '', 1, 1, 1, 1656143065, 0);
 INSERT INTO `oa_admin_rule` VALUES (294, 293, 'contract/productcate/add', '新建/编辑', '产品分类', 'contract', '', 2, 1, 1, 1656143065, 0);
 INSERT INTO `oa_admin_rule` VALUES (295, 293, 'contract/productcate/del', '删除', '产品分类', 'contract', '', 2, 1, 1, 1656143065, 0);
 
