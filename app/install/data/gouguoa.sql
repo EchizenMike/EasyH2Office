@@ -341,7 +341,7 @@ INSERT INTO `oa_admin_rule` VALUES (114, 2, '', '行政模块', '行政模块', 
 
 INSERT INTO `oa_admin_rule` VALUES (115, 114, 'adm/propertycate/datalist', '资产分类', '资产分类', 'adm', '', 1, 1, 1, 0, 0);
 INSERT INTO `oa_admin_rule` VALUES (116, 115, 'adm/propertycate/add', '新建/编辑', '资产分类', 'adm', '', 2, 1, 1, 0, 0);
-INSERT INTO `oa_admin_rule` VALUES (117, 115, 'adm/propertycate/delete', '删除', '资产分类', 'adm', '', 2, 1, 1, 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (117, 115, 'adm/propertycate/del', '删除', '资产分类', 'adm', '', 2, 1, 1, 0, 0);
 
 INSERT INTO `oa_admin_rule` VALUES (118, 114, 'adm/propertybrand/datalist', '资产品牌', '资产品牌', 'adm', '', 1, 1, 1, 0, 0);
 INSERT INTO `oa_admin_rule` VALUES (119, 118, 'adm/propertybrand/add', '新建/编辑', '资产品牌', 'adm', '', 2, 1, 1, 0, 0);

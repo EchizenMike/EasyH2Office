@@ -39,7 +39,7 @@ class Approve extends BaseController
 		foreach ($module as &$row) {
 			// 处理每一行数据
 			$row['list'] = Db::name('FlowCate')
-				->where([['module_id','=',$row['id']],['status','=',1]])
+				->where([['module_id','=',$row['id']],['status','=',1],['is_list','=',1]])
 				->where(function ($query) use($whereOr) {
 					if (!empty($whereOr)){
 						$query->whereOr($whereOr);
