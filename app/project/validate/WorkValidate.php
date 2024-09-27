@@ -21,7 +21,7 @@ class WorkValidate extends Validate
 	protected function checkOne($value,$rule,$data=[])
 	{
 		$id = isset($data['id'])?$data['id']:0;
-		$count = Db::name('WorkCate')->where([['title','=',$data['title']],['id','<>',$id],['delete_time','=',0]])->count();
+		$count = Db::name('WorkCate')->where([['title','=',$data['title']],['id','<>',$id]])->count();
 		return $count == 0 ? true : false;
 	}
 	
