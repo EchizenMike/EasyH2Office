@@ -37,6 +37,8 @@ class MeetingRecords extends Model
 				->each(function ($item, $key){					
 					$item['anchor'] = Db::name('Admin')->where(['id' => $item['anchor_id']])->value('name');
 					$item['meeting_date'] = empty($item['meeting_date']) ? '-' : date('Y-m-d', $item['meeting_date']);
+					$item['did_name'] = Db::name('Department')->where(['id' => $item['did']])->value('title');
+					$item['recorder_name'] = Db::name('Admin')->where(['id' => $item['recorder_id']])->value('name');
 				});
 			return $list;
         } catch(\Exception $e) {
