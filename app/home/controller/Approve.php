@@ -139,6 +139,7 @@ class Approve extends BaseController
 				$flow_cate = Db::name('FlowCate')->where('name',$check_name)->find();
 				$row['types_name'] = $flow_cate['title'];
 				$row['view_url'] = $flow_cate['view_url'];
+				$row['add_url'] = $flow_cate['add_url'];
 			}
 			$list=array(
 				'data'=>$result,

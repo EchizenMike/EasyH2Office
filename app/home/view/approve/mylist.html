@@ -51,9 +51,17 @@
 					,{field:'department',title: '所属部门',width:120,align:'center'}
 					,{field:'check_users',title: '当前审批人'}
 					,{field:'check_copy_users',title: '抄送人员',width:150}
-					,{width:60,title: '操作', align:'center',templet: function(d){
-						var btn='<a class="layui-btn layui-btn-xs side-a" data-href="'+d.view_url+'?id='+d.id+'">详情</a>';
-						return btn;
+					,{width:90,title: '操作', align:'center',templet: function(d){
+						var btn0='<a class="layui-btn layui-btn-xs layui-btn-normal side-a" data-href="'+d.view_url+'?id='+d.id+'">详情</a>';
+						var btn1='<a class="layui-btn layui-btn-xs side-a" data-href="'+d.add_url+'?id='+d.id+'">编辑</a>';
+						var html='';
+						if(d.check_status==0 ||d.check_status ==4){
+							html='<div class="layui-btn-group">'+btn0+btn1+'</div>';
+						}
+						else{
+							html=btn0;
+						}
+						return html;
 					}}
 				]]
 			});

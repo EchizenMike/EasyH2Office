@@ -8,25 +8,35 @@
 			<td class="layui-td-gray">开始时间<font>*</font></td>
 			<td>
 				<div class="layui-input-inline" style="width:120px; margin-right:16px;">
-					<input id="start_date" name="start_date" autocomplete="off" class="layui-input select-time" value="" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
+					<input id="start_date" name="start_date" autocomplete="off" class="layui-input select-time" value="{$detail.start_date|default=''}" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
 				</div>
 				<div class="layui-input-inline">
+					{empty name="$detail"}
 					<input type="radio" name="start_span" value="1" title="上午" checked lay-filter="start-span">
 					<input type="radio" name="start_span" value="2" title="下午" lay-filter="start-span">
+					{else/}
+					<input type="radio" name="start_span" value="1" title="上午" {eq name="$detail.start_span" value="1"} checked{/eq} lay-filter="start-span">
+					<input type="radio" name="start_span" value="2" title="下午" {eq name="$detail.start_span" value="2"} checked{/eq} lay-filter="start-span">
+					{/empty}
 				</div>
 			</td>
 			<td class="layui-td-gray">结束时间<font>*</font></td>
 			<td>
 				<div class="layui-input-inline" style="width:120px; margin-right:16px;">
-					<input id="end_date" name="end_date" autocomplete="off" class="layui-input select-time" value="" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
+					<input id="end_date" name="end_date" autocomplete="off" class="layui-input select-time" value="{$detail.end_date|default=''}" readonly lay-verify="required" placeholder="请选择时间" lay-reqText="请选择时间">
 				</div>
 				<div class="layui-input-inline">
+					{empty name="$detail"}
 					<input type="radio" name="end_span" value="1" title="上午" lay-filter="end-span">
 					<input type="radio" name="end_span" value="2" title="下午" checked lay-filter="end-span">
+					{else/}
+					<input type="radio" name="end_span" value="1" title="上午" {eq name="$detail.end_span" value="1"} checked{/eq} lay-filter="end-span">
+					<input type="radio" name="end_span" value="2" title="下午" {eq name="$detail.end_span" value="2"} checked{/eq} lay-filter="end-span">
+					{/empty}
 				</div>
 			</td>
 			<td class="layui-td-gray">出差天数</td>
-			<td id="days">共{$detail.days|default=0}天,{$detail.days|default=0}小时</td>
+			<td id="days">共{$detail.duration|default=0}天</td>
 		</tr>
 		<tr>
 			<td class="layui-td-gray">出差事由<font>*</font></td>
