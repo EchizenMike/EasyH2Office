@@ -56,7 +56,7 @@ function layoutFastentry(tool,work,table){
 				var checkStatus = table.checkStatus(tablereport.config.id);
 				var data = checkStatus.data;
 				if(data.length>0){
-					tool.side('/oa/work/add?type='+data[0].id);
+					tool.side('/oa/work/add?types='+data[0].id);
 					layer.close(idx);
 				}
 				else{
