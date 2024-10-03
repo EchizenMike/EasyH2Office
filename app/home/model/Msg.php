@@ -32,11 +32,13 @@ class Msg extends Model
 			->order($order)
 			->paginate(['list_rows'=> $rows])
 			->each(function ($item, $key){
+				$item->from_name = '系统';
+				$item->thumb = '/static/home/images/icon.png';
+				
 				if($item->from_uid>0){
-					$item->from_name = Db::name('Admin')->where('id',$item->from_uid)->value('name');
-				}
-				else{
-					$item->from_name = '系统';
+					$from_name = Db::name('Admin')->where('id',$item->from_uid)->find();
+					$item->from_name = $from_name['name'];
+					$item->thumb = $from_name['thumb'];
 				}
 				if(!empty($item->uids)){
 					$to_name = Db::name('Admin')->where(['id','in',$item->uids])->column('name');

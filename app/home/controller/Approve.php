@@ -92,9 +92,8 @@ class Approve extends BaseController
 				$totalCount += $count;
 			}
 			// 添加排序和分页逻辑
-			// 假设每页显示10条记录，当前页码为$page（需要预先定义或获取）
+			$page = isset($param['page']) ? $param['page'] : 1;
 			$pageSize = $param['limit'];
-			$page = 1; // 示例页码
 			$offset = ($page - 1) * $pageSize;
 
 			// 注意：不同的数据库分页语法可能有所不同，这里以MySQL为例

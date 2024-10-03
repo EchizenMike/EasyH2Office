@@ -2,10 +2,10 @@
 <!-- 主体 -->
 {block name="body"}
 <form class="layui-form p-page">
-	<h3 class="pb-1">添加用章申请</h3>
+	<h3 class="pb-1">添加用章审批</h3>
 	<table class="layui-table">
 		<tr>
-			<td class="layui-td-gray">申请主题</td>
+			<td class="layui-td-gray">审批主题</td>
 			<td colspan="3">{$detail.title}</td>
 			<td class="layui-td-gray">印章类型</td>
 			<td>{$detail.seal_cate}</td>
@@ -31,7 +31,7 @@
 		</tr>
 		<tr>
 			<td class="layui-td-gray" style="vertical-align:top;">盖章内容</td>
-			<td colspan="5">{$detail.content}</td>
+			<td colspan="5">{:nl2br($detail.content)}</td>
 		</tr>
 		{eq name="detail.check_status" value="2"}
 		<tr>
