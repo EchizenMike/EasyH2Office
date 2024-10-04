@@ -49,10 +49,10 @@ class Work extends Model
     {
 		$detail = self::find($id);
 		if($detail['types']>1){
-			$detail['range_date'] = date('Y-m-d',$detail['start_date']).'~'.date('Y-m-d',$detail['end_date']);
+			$detail['range_date'] = date('Y-m-d',$detail['start_date']).' ~ '.date('Y-m-d',$detail['end_date']);
 		}
 		else{
-			$detail['start_date'] = date('Y-m-d',$detail['start_date']);
+			$detail['range_date'] = date('Y-m-d',$detail['start_date']);
 		}
 		$to_unames = Db::name('Admin')->where('status', 1)->where('id', 'in', $detail['to_uids'])->column('name');
 		$detail['to_unames'] = implode(",", $to_unames);
