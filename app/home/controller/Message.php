@@ -446,7 +446,7 @@ class Message extends BaseController
 		if($detail['message_id']>0){
 			 View::assign('message', $this->model->detail($detail['message_id']));
 		}
-		$detail['from_uid'] = Db::name('Admin')->where('id', $detail['from_uid'])->value('name');
+		$detail['from_uname'] = Db::name('Admin')->where('id', $detail['from_uid'])->value('name');
         View::assign('detail', $detail);
         return view();
     }

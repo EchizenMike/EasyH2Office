@@ -72,24 +72,15 @@ class Plan extends BaseController
             if (!empty($param['uid'])) {
                 $uid = $param['uid'];
             }
-            $where1 = [];
-            $where2 = [];
-
-            $where1[] = ['delete_time', '=', 0];
-            $where1[] = ['admin_id', '=', $uid];
-            $where1[] = ['start_time', '>=', strtotime($param['start'])];
-
-            $where2[] = ['delete_time', '=', 0];
-            $where2[] = ['admin_id', '=', $uid];
-            $where2[] = ['end_time', '<=', strtotime($param['end'])];
+            $where = [];
+			
+			$where[] = ['start_time','<=',strtotime($param['end'])];
+            $where[] = ['end_time','>=',strtotime($param['start'])];
+            $where[] = ['delete_time', '=', 0];
+            $where[] = ['admin_id', '=', $uid];
 
             $schedule = Db::name('Plan')
-            ->where(function ($query) use ($where1) {
-                $query->where($where1);
-            })
-            ->whereOr(function ($query) use ($where2) {
-                $query->where($where2);
-            })
+            ->where($where)
             ->field('id,title,type,remind_type,start_time,end_time')
             ->select()->toArray();
             $events = [];
