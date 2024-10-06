@@ -56,7 +56,7 @@ class ProjectDocument extends Model
             }
             $detail['admin_name'] = Db::name('Admin')->where(['id' => $detail['admin_id']])->value('name');
             $detail['times'] = time_trans($detail['create_time']);
-            $detail['create_time'] = date('Y-m-d', $detail['create_time']);
+            $detail['create_time'] = date('Y-m-d H:i:s', $detail['create_time']);
         }
         return $detail;
     }

@@ -28,7 +28,7 @@
 <form class="layui-form p-4">
 	<h1>{$detail.title}</h1>
 	<div class="text-detial-ops">
-		<span>{$detail.admin_name}发表于：{$detail.create_time | date='Y-m-d H:i:s'}</span><span>关联项目：{$detail.project_name}</span>
+		<span>{$detail.admin_name}发表于：{$detail.create_time}</span><span>关联项目：{$detail.project_name}</span>
 	</div>
 	<div class="text-detial-content">
 	{$detail.content|raw}
