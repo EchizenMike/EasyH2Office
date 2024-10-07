@@ -611,7 +611,7 @@ class Api extends BaseController
 				Db::name('ProjectStep')->where('id', $step['id'])->strict(false)->field(true)->update(['is_current'=>0]);
 				Db::name('ProjectStep')->where('id', $prev_step['id'])->strict(false)->field(true)->update(['is_current'=>1]);
 				$checkData=array(
-					'action_id' => $detail['id'],
+					'project_id' => $detail['id'],
 					'step_id' => $step['id'],
 					'check_uid' => $this->uid,
 					'check_time' => time(),

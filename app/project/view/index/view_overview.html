@@ -40,7 +40,7 @@
 		<div class="flow-flexbox check-items flow-flex-row">
 			{volist name="$detail.step_array" id="vo"}
 			<div class='flow-flexbox flow-flex-row check-item {eq name="$vo.is_current" value="1"} blue{/eq} {notempty name="$step"}{lt name="$vo.sort" value="$step.sort"} green{/lt}{else/} green{/notempty}'>
-				<strong class="iconfont icon-kaoshimoshi- blue"></strong>
+				<strong class="iconfont icon-gongwenxinzeng blue"></strong>
 				<strong class="iconfont icon-kaoheguanli green"></strong>
 				<strong class="iconfont icon-genjinjilu black"></strong>
 				<div class="check-item-name">{$vo.title}</div>
@@ -82,12 +82,9 @@
 					<i class="layui-icon layui-timeline-axis">&#xe63f;</i>
 					{if ($vo.status == 1)}
 					<p style="padding-left:24px">{$vo.check_time_str}<span class="black mx-1">{$vo.check_name}</span><span class="mr-1 green">{$vo.status_str}</span>了『{$vo.title}』的工作。</p>
-					{elseif ($vo.status == 2) /}
-					<p style="padding-left:24px">{$vo.check_time_str}<span class="black mx-1">{$vo.check_name}</span>在{$vo.flow_name}执行了<span class="mx-1 red">{$vo.status_str}</span>操作。操作意见：<span class="red">{$vo.content}</span></p>
 					{else /}
-					<p style="padding-left:24px">{$vo.check_time_str}<span class="black mx-1">{$vo.check_name}</span><span class="mr-1 layui-color-{$vo.status}">{$vo.status_str}</span>了该阶段流程。操作意见：<span class="red">{$vo.content}</span></p>
-					{/if}
-					
+					<p style="padding-left:24px">{$vo.check_time_str}<span class="black mx-1">{$vo.check_name}</span>在了『{$vo.title}』执行了<span class="mx-1 red">{$vo.status_str}</span>操作。操作意见：<span class="red">{$vo.content}</span></p>
+					{/if}					
 				</li>
 			{/volist}
 			</ul>

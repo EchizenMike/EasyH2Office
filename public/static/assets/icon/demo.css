@@ -1,4 +1,20 @@
-body{font-family: helvetica neue,arial,hiragino sans gb,stheiti,wenquanyi micro hei,\5FAE\8F6F\96C5\9ED1,\5B8B\4F53,sans-serif;}
+/* Logo 字体 */
+@font-face {
+  font-family: "iconfont logo";
+  src: url('https://at.alicdn.com/t/font_985780_km7mi63cihi.eot?t=1545807318834');
+  src: url('https://at.alicdn.com/t/font_985780_km7mi63cihi.eot?t=1545807318834#iefix') format('embedded-opentype'),
+    url('https://at.alicdn.com/t/font_985780_km7mi63cihi.woff?t=1545807318834') format('woff'),
+    url('https://at.alicdn.com/t/font_985780_km7mi63cihi.ttf?t=1545807318834') format('truetype'),
+    url('https://at.alicdn.com/t/font_985780_km7mi63cihi.svg?t=1545807318834#iconfont') format('svg');
+}
+
+.logo {
+  font-family: "iconfont logo";
+  font-size: 160px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 
 /* tabs */
 .nav-tabs {
@@ -44,7 +60,7 @@ body{font-family: helvetica neue,arial,hiragino sans gb,stheiti,wenquanyi micro 
 
 /* 页面布局 */
 .main {
-  padding: 10px 100px;
+  padding: 30px 100px;
   width: 960px;
   margin: 0 auto;
 }
@@ -90,13 +106,6 @@ body{font-family: helvetica neue,arial,hiragino sans gb,stheiti,wenquanyi micro 
   text-align: center;
   list-style: none !important;
   cursor: default;
-  display: inline-block;
-      vertical-align: top;
-    font-size: 12px;
-    letter-spacing: normal;
-    word-spacing: normal;
-    line-height: inherit;
-	  cursor:pointer;
 }
 
 .icon_lists li .code-name {

@@ -79,6 +79,7 @@ class Index
 
     public function step4()
     {
+		\think\facade\Cache::clear();
 		$domain = get_system_config('web','domain');
         return view('', ['domain' => $domain]);
     }	
