@@ -45,6 +45,8 @@ class Task extends BaseController
 		$uid = $this->uid;
 		$auth = isAuth($uid,'project_admin','conf_1');
         if (request()->isAjax()) {
+			$tab = isset($param['tab']) ? $param['tab'] : 0;
+			$time = time();
 			$where = [];
 			$whereOr = [];
 			$where[] = ['delete_time', '=', 0];
@@ -72,6 +74,20 @@ class Task extends BaseController
 					$whereOr[] = ['director_uid', '=', $uid];
 					$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',assist_admin_ids)")];
 				}
+			}
+			if($tab==1){
+				//进行中
+				$where[] = ['status', '<', 3];
+			}
+			if($tab==2){
+				//即将逾期
+				$where[] = ['status', '<', 3];
+				$where[] = ['end_time','between',[$time-86400,$time]];
+			}
+			if($tab==3){
+				//已逾期
+				$where[] = ['status', '<', 3];
+				$where[] = ['end_time','<',$time-86400];
 			}			
 			$rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
 			$order = empty($param['order']) ? 'status asc,id desc' : $param['order'];
@@ -260,6 +276,12 @@ class Task extends BaseController
 			if (!empty($param['keywords'])) {
 				$where[] = ['content', 'like', '%' . trim($param['keywords']) . '%'];
 			}
+			if (!empty($param['module'])) {
+				$where[] = ['module', '=', $param['module']];
+			}
+			if (!empty($param['topic_id'])) {
+				$where['topic_id'] = $param['topic_id'];
+			}			
             $where[] = ['delete_time', '=', 0];
 			$model = new ProjectComment();
             $list = $model->datalist($param,$where);

@@ -40,7 +40,7 @@
 		<div class="flow-flexbox check-items flow-flex-row">
 			{volist name="$detail.step_array" id="vo"}
 			<div class='flow-flexbox flow-flex-row check-item {eq name="$vo.is_current" value="1"} blue{/eq} {notempty name="$step"}{lt name="$vo.sort" value="$step.sort"} green{/lt}{else/} green{/notempty}'>
-				<strong class="iconfont icon-gongwenxinzeng blue"></strong>
+				<strong class="iconfont icon-bianji blue"></strong>
 				<strong class="iconfont icon-kaoheguanli green"></strong>
 				<strong class="iconfont icon-genjinjilu black"></strong>
 				<div class="check-item-name">{$vo.title}</div>
