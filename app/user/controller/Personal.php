@@ -215,13 +215,12 @@ class Personal extends BaseController
 			//项目负责人
             Db::name('Project')->where([['director_uid','=',$uid],['status','<',3]])->update(['director_uid' => $connect_uid]);
 			//任务负责人
-            Db::name('ProjectTask')->where([['director_uid','=',$uid],['flow_status','<',3]])->update(['director_uid' => $connect_uid]);			
+            Db::name('ProjectTask')->where([['director_uid','=',$uid],['status','<',3]])->update(['director_uid' => $connect_uid]);			
 			//客户所属人
 			$did = Db::name('Admin')->where('id', $connect_uid)->value('did');
             Db::name('Customer')->where([['belong_uid','=',$uid]])->update(['belong_uid' => $connect_uid,'belong_did'=>$did]);
 			//合同
             Db::name('Contract')->where([['admin_id','=',$uid],['check_status','<',3]])->update(['admin_id' => $connect_uid]);
-			
             add_log('hand', $id);
             return to_assign(0, "交接成功");
         } else {

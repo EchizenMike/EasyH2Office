@@ -61,6 +61,7 @@ return [
 		'secure'     => '解除',
 		'recovery'   => '恢复',
 		'set'		 => '设置',
+		'hand'		 => '交接',
 		'apply'      => '申请',
 		'check'      => '审核通过',
 		'refue'      => '审核拒绝',
