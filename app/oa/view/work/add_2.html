@@ -72,7 +72,7 @@ const moduleInit = ['tool','oaPicker','uploadPlus'];
 				return false;
 			}
 			data.field.send=1;
-			layer.confirm('确定要保存后直接发送该工作汇报吗?', {icon: 3, title:'提示'}, function(index){
+			tool.ask('确定要保存后直接发送该工作汇报吗?', function(index){
 				$.ajax({
 					url: "/oa/work/add",
 					type:'post',
@@ -91,7 +91,7 @@ const moduleInit = ['tool','oaPicker','uploadPlus'];
 		
 		//监听保存
 		form.on('submit(webform1)', function(data){
-			layer.confirm('确定要仅保存该工作汇报吗?', {icon: 3, title:'提示'}, function(index){
+			tool.ask('确定要仅保存该工作汇报吗?', function(index){
 				$.ajax({
 					url: "/oa/work/add",
 					type:'post',
