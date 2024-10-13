@@ -45,6 +45,9 @@ class Position extends BaseController
         $param = get_params();
         if (request()->isAjax()) {
             if (!empty($param['id']) && $param['id'] > 0) {
+                if($param['id']==1){
+                    return to_assign(1, '超级管理员不能编辑');
+                }
                 try {
                     validate(PositionCheck::class)->scene('edit')->check($param);
                 } catch (ValidateException $e) {
