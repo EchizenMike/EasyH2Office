@@ -18,7 +18,7 @@ require __DIR__ . '/../vendor/autoload.php';
 define('CMS_VERSION','5.1.3');
 
 // 定义Layui版本号
-define('LAYUI_VERSION','2.9.17');
+define('LAYUI_VERSION','2.9.18');
 
 // 定义项目目录
 define('CMS_ROOT', __DIR__ . '/../');

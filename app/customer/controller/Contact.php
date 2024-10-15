@@ -89,6 +89,7 @@ class Contact extends BaseController
 			if (isset($param['birthday'])) {
                 $param['birthday'] = strtotime($param['birthday']);
             }
+			$family=[];
 			$family_name_data = isset($param['family_name']) ? $param['family_name'] : '';
 			$family_relations_data = isset($param['family_relations']) ? $param['family_relations'] : '';
 			$family_remarks_data = isset($param['family_remarks']) ? $param['family_remarks'] : '';			
