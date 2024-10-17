@@ -99,7 +99,7 @@ class Ticket extends Model
         $info = self::find($id);
 		$info['supplier_name'] = Db::name('Supplier')->where(['id' => $info['supplier_id']])->value('title');
 		if($info['purchase_id']>0){
-			$info['purchase_name'] = Db::name('Contract')->where('id',$info['purchase_id'])->value('name');
+			$info['purchase_name'] = Db::name('Purchase')->where('id',$info['purchase_id'])->value('name');
 		}
 		if($info['project_id']>0){
 			$info['project_name'] = Db::name('Project')->where('id',$info['project_id'])->value('name');
