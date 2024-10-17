@@ -2313,6 +2313,7 @@ CREATE TABLE `oa_customer_contact`  (
   `email` char(100) NOT NULL DEFAULT '' COMMENT '邮件地址',
   `nickname` varchar(50) NOT NULL DEFAULT '' COMMENT '称谓',
   `department` varchar(50) NOT NULL DEFAULT '' COMMENT '部门',
+  `position` varchar(50) NOT NULL DEFAULT '' COMMENT '职位',
   `birthday` bigint(11) NOT NULL DEFAULT 0 COMMENT '生日',
   `address` varchar(255) NOT NULL DEFAULT '' COMMENT '家庭住址',
   `family` mediumtext NULL COMMENT '家庭成员',
