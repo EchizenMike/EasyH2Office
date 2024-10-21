@@ -8,7 +8,7 @@
 		<tr>
 			<td class="layui-td-gray">员工姓名<font>*</font></td>
 			<td>
-				<input type="text" name="name" lay-verify="required" placeholder="请输入员工姓名" lay-reqText="请输入员工姓名" autocomplete="off" class="layui-input">
+				<input type="text" name="name" lay-verify="required" placeholder="请输入员工姓名" lay-reqText="请输入员工姓名" class="layui-input">
 			</td>
 			<td class="layui-td-gray">员工性别<font>*</font></td>
 			<td>
@@ -24,11 +24,11 @@
 		<tr>
 			<td class="layui-td-gray">手机号码<font>*</font></td>
 			<td>
-				<input type="text" name="mobile" lay-verify="required" placeholder="可使用手机号码登录" lay-reqText="请输入手机" autocomplete="off" class="layui-input">
+				<input type="text" name="mobile" lay-verify="required|phone" lay-reqText="请输入正确的手机号码" placeholder="可使用手机号码登录" class="layui-input">
 			</td>
 			<td class="layui-td-gray">电子邮箱<font>*</font></td>
 			<td>
-				<input type="text" name="email" lay-verify="required" placeholder="请输入电子邮箱" lay-reqText="请输入电子邮箱" autocomplete="off" class="layui-input">
+				<input type="text" name="email" lay-verify="required|email" lay-reqText="请输入正确的电子邮箱" placeholder="请输入电子邮箱" class="layui-input">
 			</td>
 			<td rowspan="3" class="layui-td-gray">头像<br /><span style="font-size: 12px;">(如若不上传<br />系统将自动生成)</span></td>
 			<td rowspan="3" valign="top" style="width: 120px;">
@@ -93,7 +93,7 @@
 		<tr>
 			<td class="layui-td-gray">员工姓名<font>*</font></td>
 			<td>
-				<input type="text" name="name" value="{$detail.name}" lay-verify="required" placeholder="请输入员工姓名" lay-reqText="请输入员工姓名" autocomplete="off" class="layui-input">
+				<input type="text" name="name" value="{$detail.name}" lay-verify="required" placeholder="请输入员工姓名" lay-reqText="请输入员工姓名" class="layui-input">
 			</td>
 			<td class="layui-td-gray">登录账号</td>
 			<td>
@@ -111,11 +111,11 @@
 		<tr>
 			<td class="layui-td-gray">手机号码<font>*</font></td>
 			<td>
-				<input type="text" name="mobile" value="{$detail.mobile}" lay-verify="required" placeholder="可使用手机号码登录" lay-reqText="请输入手机" autocomplete="off" class="layui-input">
+				<input type="text" name="mobile" value="{$detail.mobile}" lay-verify="required|phone" lay-reqText="请输入正确的手机号码" placeholder="可使用手机号码登录" class="layui-input">
 			</td>
 			<td class="layui-td-gray">电子邮箱<font>*</font></td>
 			<td>
-				<input type="text" name="email" value="{$detail.email}" lay-verify="required" placeholder="请输入电子邮箱" lay-reqText="请输入电子邮箱" autocomplete="off" class="layui-input">
+				<input type="text" name="email" value="{$detail.email}" lay-verify="required|email" lay-reqText="请输入正确的电子邮箱" placeholder="请输入电子邮箱" class="layui-input">
 			</td>
 			<td rowspan="4" class="layui-td-gray">头像<br /><span style="font-size: 12px;">(如若不上传<br />系统将自动生成)</span></td>
 			<td rowspan="4" valign="top" style="width: 160px;">
@@ -229,6 +229,10 @@
 		form.on('submit(webform)', function(data){
 			if(!data.field.sex){
 				layer.msg('请选择员工性别');
+				return false;
+			}
+			if(!data.field.type){
+				layer.msg('请选择员工类型');
 				return false;
 			}
 			let department_ids = data.field.department_ids.split(',');

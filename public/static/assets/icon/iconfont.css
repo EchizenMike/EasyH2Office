@@ -1,6 +1,6 @@
 @font-face {
   font-family: "iconfont"; /* Project id 4700657 */
-  src: url('iconfont.woff2?t=1728184950729') format('woff2');
+  src: url('iconfont.woff2?t=1729477454973') format('woff2');
 }
 
 .iconfont {
@@ -9,6 +9,10 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-addnew:before {
+  content: "\e615";
 }
 
 .icon-chengji:before {
@@ -921,10 +925,6 @@
 
 .icon-renjijiaohu:before {
   content: "\eb69";
-}
-
-.icon-shiyongwendang:before {
-  content: "\eb6a";
 }
 
 .icon-quanxianshenpi:before {

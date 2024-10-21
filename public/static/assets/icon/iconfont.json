@@ -6,6 +6,13 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "20733759",
+      "name": "新增",
+      "font_class": "addnew",
+      "unicode": "e615",
+      "unicode_decimal": 58901
+    },
+    {
       "icon_id": "8574211",
       "name": "成绩",
       "font_class": "chengji",
@@ -1600,13 +1607,6 @@
       "font_class": "renjijiaohu",
       "unicode": "eb69",
       "unicode_decimal": 60265
-    },
-    {
-      "icon_id": "3868276",
-      "name": "使用文档",
-      "font_class": "shiyongwendang",
-      "unicode": "eb6a",
-      "unicode_decimal": 60266
     },
     {
       "icon_id": "3868278",
