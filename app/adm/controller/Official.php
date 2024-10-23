@@ -70,6 +70,12 @@ class Official extends BaseController
             if (!empty($param['keywords'])) {
                 $where[] = ['id|title', 'like', '%' . $param['keywords'] . '%'];
             }
+			if (!empty($param['secrets'])) {
+                $where[] = ['secrets', '=', $param['secrets']];
+            }
+			if (!empty($param['urgency'])) {
+                $where[] = ['urgency', '=', $param['urgency']];
+            }
 			if($tab == 0){
 				$whereOr = [$map1,$map2];
 			}

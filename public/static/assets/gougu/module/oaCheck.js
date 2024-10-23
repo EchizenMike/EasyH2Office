@@ -486,7 +486,7 @@ layui.define(['tool','oaPicker'], function (exports) {
 					if(check_status==2){
 						confirmTips='确定拒绝该审批？';
 					}				
-					layer.confirm(confirmTips, function(index){
+					tool.ask(confirmTips, function(index){
 						$.ajax({
 							url: "/api/check/flow_check",
 							type:'post',
