@@ -31,6 +31,12 @@ class Files extends BaseController
             if (!empty($param['keywords'])) {
                 $where[] = ['a.id|a.username|a.name|a.nickname|a.mobile|a.desc', 'like', '%' . $param['keywords'] . '%'];
             }
+			if (isset($param['status']) && $param['status']!='') {
+                $where[] = ['a.status', '=', $param['status']];
+            }
+			else{
+				$where[] = ['a.status', '<', 2];
+			}
             if (!empty($param['political'])) {
                 $where[] = ['a.political', '=', $param['political']];
             }
