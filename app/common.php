@@ -502,6 +502,21 @@ function get_leader_departments($uid = 0)
 	}
 }
 
+//获取某员工所在部门的顶级部门（如果默认顶级部门当做是分公司的，即是获取某员工所属分公司）
+function get_department_top($did=0,$uid=0)
+{
+	if($uid>0){
+		$did = get_admin($uid)['did'];
+	}
+	$top_id = $did;
+	if($did>0){
+		$pid = Db::name('Department')->where('id',$did)->value('pid');
+		if($pid>0){
+			$top_id = get_department_top($pid,0);
+		}
+	}
+    return $top_id;
+}
 /***************************************************审批相关*****************************************************/
 
 //获取全部审批状态
@@ -627,6 +642,38 @@ function get_flow($uid,$flows)
         'check_user_ids' => $check_user_ids
     );
     return $res;
+}
+
+/**
+ * 获取审批记录数据
+ * @param  $uid 当前登录用户
+ * @param  $flows 当前步骤内容
+ * @return
+ */
+function get_check_record($check_table,$action_id)
+{
+	$check_record = Db::name('FlowRecord')
+					->field('f.*,a.name')
+					->alias('f')->join('Admin a', 'a.id = f.check_uid', 'left')
+					->where([['f.check_table','=',$check_table],['f.action_id','=',$action_id],['f.delete_time','=',0],['f.step_id','>',0]])
+					->select()->toArray();				
+	foreach ($check_record as $kk => &$vv) {		
+		$vv['check_time_str'] = date('Y-m-d H:i', $vv['check_time']);
+		$vv['status_str'] = '提交';
+		if($vv['check_status'] == 1){
+			$vv['status_str'] = '审核通过';
+		}
+		else if($vv['check_status'] == 2){
+			$vv['status_str'] = '审核拒绝';
+		}
+		if($vv['check_status'] == 3){
+			$vv['status_str'] = '撤销';
+		}
+		if($vv['check_status'] == 4){
+			$vv['status_str'] = '反确认';
+		}
+	}
+	return $check_record;
 }
 
 /***************************************************常规数据获取*****************************************************/
