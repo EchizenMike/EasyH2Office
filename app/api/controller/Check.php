@@ -212,7 +212,26 @@ class Check extends BaseController
     {		
 		$flow_cate = Db::name('FlowCate')->where(['name' => $check_name])->find();
 		if($action_id==0){
-			$flow = Db::name('Flow')->where(['cate_id' => $flow_cate['id'],'status'=>1,'delete_time'=>0])->select()->toArray();
+			$did = $this->did;
+			$map = [];
+			$map[] = ['cate_id','=',$flow_cate['id']];
+			$map[] = ['status','=',1];
+			$map[] = ['delete_time','=',0];		
+			$map1=[
+				['department_ids','=','']
+			];
+			$map2=[
+				['', 'exp', Db::raw("FIND_IN_SET('{$did}',department_ids)")]
+			];
+			$whereOr =[$map1,$map2];
+			$flow = Db::name('Flow')
+				->where($map)
+				->where(function ($query) use($whereOr) {
+					if (!empty($whereOr)){
+						$query->whereOr($whereOr);
+					}
+				})
+				->select()->toArray();
 			return to_assign(0, '', $flow);
 		}
 		$check_table = $flow_cate['check_table'];
