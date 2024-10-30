@@ -252,10 +252,14 @@ layui.define(['tool'],function(exports){
 		multiImage: function () {
 			let me = this;
 			let area =[[],['640px','360px'],['928px','610px']];
+			$(parent.$('.express-close')).addClass('parent-colse');
 			this.layerindex = layer.open({
 				'title':me.settings.title,
 				'area':area[me.settings.multi.type],
 				'content':me.multiRender(),
+				end: function(){
+					$(parent.$('.express-close')).removeClass('parent-colse');
+				},
 				'type':1,
 				'success':function(){
 					if(me.settings.multi.type==1){
@@ -490,6 +494,7 @@ layui.define(['tool'],function(exports){
 		//批量导入
 		excelImport:function(){
 			let me = this;
+			$(parent.$('.express-close')).addClass('parent-colse');
 			layer.open({
 				'title':me.settings.title,
 				'type':1,
@@ -517,6 +522,9 @@ layui.define(['tool'],function(exports){
 									</div>\
 								</div>\
 						</div>',
+				end: function(){
+					$(parent.$('.express-close')).removeClass('parent-colse');
+				},
 				success: function(layero, idx){
 					form.render();
 					let noteImport = $('#noteImport'+me.settings.index);

@@ -66,7 +66,16 @@
 <!-- 主体 -->
 {block name="body"}
 <div class="p-page">
-	<h2 class="pb-3"><span class="font20">{$detail.name}</span></h2>
+	<h2 class="pb-3">
+		<span class="font20">{$detail.name}</span> 
+		{gt name="$role" value="0"}
+			{eq name="$detail.status" value="4"}
+			<span class="layui-btn layui-btn-xs" data-event="open">开启</span>
+			{else/}
+			<span class="layui-btn layui-btn-danger layui-btn-xs" data-event="close">关闭</span>
+			{/eq}
+		{/gt}
+	</h2>
 	<div>
 		<span class="layui-badge layui-bg-gray">#T{$detail.id}</span>
 		<span class="mx-2">{$detail.admin_name}</span>
@@ -503,6 +512,36 @@
 	function gouguInit() {
 		var tool = layui.tool;
 		var element = layui.element;
+		
+		$('body').on('click','[data-event="close"]',function(){
+			tool.ask('确定要关闭该项目？',function(){
+				let callback = function (e) {
+					layer.msg(e.msg);
+					if(e.code==0){
+						parent.layui.pageTable.reload();
+						setTimeout(function(){
+							location.reload();
+						},2000)
+					}
+				}
+				tool.post("/project/api/close", { 'id': project_id}, callback);
+			})
+		})
+		$('body').on('click','[data-event="open"]',function(){
+			tool.ask('确定要开启该项目？',function(){
+				let callback = function (e) {
+					layer.msg(e.msg);
+					if(e.code==0){
+						parent.layui.pageTable.reload();
+						setTimeout(function(){
+							location.reload();
+						},2000)
+					}
+				}
+				tool.post("/project/api/open", { 'id': project_id}, callback);
+			})
+		})
+		
 		overview();		
 		element.on('tab(project)', function(data){
 			let index = data.index;

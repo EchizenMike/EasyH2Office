@@ -58,6 +58,7 @@ return [
 		'delete'     => '删除',
 		'send'       => '发送',
 		'disable'    => '禁用',
+		'close'      => '关闭',
 		'secure'     => '解除',
 		'recovery'   => '恢复',
 		'set'		 => '设置',

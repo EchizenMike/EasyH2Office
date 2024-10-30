@@ -86,8 +86,6 @@ class Api extends BaseController
 			}
 		}
 		
-		$rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
-		$order = empty($param['order']) ? 'status asc,id desc' : $param['order'];
 		$model = new ProjectTask();
         $list = $model->datalist($param,$where,$whereOr);
         return table_assign(0, '', $list);
@@ -539,7 +537,59 @@ class Api extends BaseController
 		}
     }	
 	
-    //删除已有的项目步骤
+    //关闭项目
+    public function close()
+    {
+        if (request()->isPost()) {
+            $id = get_params("id");
+            $project = Db::name('Project')->where('id', $id)->find();
+			if($project['status'] == 3){
+				return to_assign(1, "已完成的项目当不能关闭");
+			}
+			$auth = isAuth($this->uid,'project_admin','conf_1');
+			if($project['admin_id'] == $this->uid || $project['director_uid'] == $this->uid || $auth==1){
+				if (Db::name('Project')->where('id', $id)->update(['status'=>4]) !== false) {
+					add_log('close', $id, [],'项目');
+					return to_assign(0, "操作成功");
+				} else {
+					return to_assign(1, "操作失败");
+				}
+			}
+			else{
+				return to_assign(1, "只有项目管理员、项目创建人、项目负责人才有权限关闭");
+			}
+        } else {
+            return to_assign(1, "错误的请求");
+        }
+    }
+	
+	//关闭项目
+    public function open()
+    {
+        if (request()->isPost()) {
+            $id = get_params("id");
+            $project = Db::name('Project')->where('id', $id)->find();
+			if($project['status'] == 3){
+				return to_assign(1, "已完成的项目当不能开启");
+			}
+			$auth = isAuth($this->uid,'project_admin','conf_1');
+			if($project['admin_id'] == $this->uid || $project['director_uid'] == $this->uid || $auth==1){
+				if (Db::name('Project')->where('id', $id)->update(['status'=>2]) !== false) {
+					add_log('open', $id, [],'项目');
+					return to_assign(0, "操作成功");
+				} else {
+					return to_assign(1, "操作失败");
+				}
+			}
+			else{
+				return to_assign(1, "只有项目管理员、项目创建人、项目负责人才有权限开启");
+			}
+        } else {
+            return to_assign(1, "错误的请求");
+        }
+    }
+	
+	//删除已有的项目步骤
     public function step_del()
     {
         if (request()->isDelete()) {
@@ -554,7 +604,7 @@ class Api extends BaseController
 				if (Db::name('ProjectStep')->where('id', $id)->update(['delete_time'=>time()]) !== false) {
 					return to_assign(0, "删除成功");
 				} else {
-					return to_assign(0, "删除失败");
+					return to_assign(1, "删除失败");
 				}
 			}
 			else{
@@ -570,6 +620,9 @@ class Api extends BaseController
     {
         $param = get_params();
 		$detail = Db::name('Project')->where(['id' => $param['id']])->find();
+		if($detail['status'] > 2){
+			return to_assign(1, "不支持该操作：项目已完成或者已关闭");
+		}
 		//当前审核节点详情
 		$step = Db::name('ProjectStep')->where(['project_id'=>$detail['id'],'is_current' => 1,'delete_time'=>0])->find();
 		if ($this->uid != $step['director_uid']){		

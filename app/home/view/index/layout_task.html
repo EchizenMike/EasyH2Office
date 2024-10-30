@@ -13,7 +13,7 @@
 function layoutTask(table){
 	table.render({
 		elem: '#Task'
-		, url: "/project/api/get_task" //数据接口
+		, url: "/project/api/get_task?limit=10" //数据接口
 		, page: false //开启分页
 		, cols: [[ //表头
 			{field: 'id', title: '任务编号', width: 80, align: 'center', fixed: 'left', templet: function (d) {

@@ -13,7 +13,7 @@
 function layoutProject(table){
 	table.render({
 		elem: '#Project'
-		, url: "/project/api/get_project" //数据接口
+		, url: "/project/api/get_project?limit=10" //数据接口
 		, page: false //开启分页
 		, cols: [[ //表头
 			{field: 'id', title: '项目编号', align: 'center','width': 90, templet: function (d) {
