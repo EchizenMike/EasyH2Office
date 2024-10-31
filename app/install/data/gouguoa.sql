@@ -25,6 +25,7 @@ CREATE TABLE `oa_admin`  (
   `position_name` int(11) NOT NULL DEFAULT 0 COMMENT '职务',
   `position_rank` int(11) NOT NULL DEFAULT 0 COMMENT '职级',
   `type` int(1) NOT NULL DEFAULT 0 COMMENT '员工类型:0未设置,1正式,2试用,3实习',
+  `is_staff` int(1) NOT NULL DEFAULT 1 COMMENT '身份类型:1企业员工,2劳务派遣,3兼职员工',
   `job_number` varchar(255) NOT NULL DEFAULT '' COMMENT '工号',
   `birthday` int(11) NOT NULL DEFAULT 0 COMMENT '生日',
   `age` int(11) NOT NULL DEFAULT 0 COMMENT '年龄',
@@ -46,6 +47,7 @@ CREATE TABLE `oa_admin`  (
   `education` varchar(255) NOT NULL DEFAULT '' COMMENT '学位',
   `speciality` varchar(255) NOT NULL DEFAULT '' COMMENT '专业',
   `social_account` varchar(255) NOT NULL DEFAULT '' COMMENT '社保账号',
+  `social_account` varchar(255) NOT NULL DEFAULT '' COMMENT '社保账号',
   `provident_account` varchar(255) NOT NULL DEFAULT '' COMMENT '公积金账号',
   `bank_account` varchar(255) NOT NULL DEFAULT '' COMMENT '银行卡号',
   `bank_info` varchar(255) NOT NULL DEFAULT '' COMMENT '开户行',
@@ -59,6 +61,7 @@ CREATE TABLE `oa_admin`  (
   `login_num` int(11) NOT NULL DEFAULT 0 COMMENT '登录次数',
   `last_login_ip` varchar(64) NOT NULL DEFAULT '' COMMENT '最后登录IP',
   `is_lock` int(1) NOT NULL DEFAULT 0 COMMENT '是否锁屏:1是0否',
+  `auth_did` int(2) NOT NULL DEFAULT 0 COMMENT '数据权限:0仅自己关联的数据,1所属主部门的数据,2所属次部门的数据,3所属主次部门的数据,4所属主部门及其子部门数据,5所属次部门及其子部门数据,6所属主次部门及其子部门数据,7所属主部门所在顶级部门及其子部门数据,8所属次部门所在顶级部门及其子部门数据,9所属主次部门所在顶级部门及其子部门数据,10所有部门数据',
   `status` int(1) NOT NULL DEFAULT 1 COMMENT '状态：-1待入职,0禁止登录,1正常,2离职',  
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `id`(`id`) USING BTREE

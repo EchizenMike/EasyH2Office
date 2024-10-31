@@ -160,9 +160,9 @@ class Index
         $now_time = time();
 
         $create_admin_sql = "INSERT INTO " . $data['DB_PREFIX'] . "admin" .
-            "(username,salt,pwd,name,nickname,did,position_id,sex,mobile,email,type,thumb,entry_time,create_time,update_time)"
+            "(username,salt,pwd,name,nickname,did,position_id,sex,mobile,email,type,thumb,entry_time,create_time,update_time,auth_did)"
             . "VALUES "
-            . "('$username','$salt','$password','$name','$nickname',1,1,1,'13800138000','gouguoa@gougucms.com',1,'$thumb','$now_time','$now_time','$now_time')";
+            . "('$username','$salt','$password','$name','$nickname',1,1,1,'13800138000','gouguoa@gougucms.com',1,'$thumb','$now_time','$now_time','$now_time',10)";
         if (!$link->query($create_admin_sql)) {
             return to_assign(1, '创建管理员信息失败');
         }

@@ -36,14 +36,11 @@ class Api extends BaseController
 		}
 		$where[] = ['delete_time', '=', 0];
 		$where[] = ['check_status', '=', 2];
-		$auth = isAuth($uid,'contract_admin','conf_1');
-		if($auth==0){
-			$whereOr[] =['admin_id|prepared_uid|sign_uid|keeper_uid', '=', $uid];
-			$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',share_ids)")];
-			$dids = get_leader_departments($uid);
-			if(!empty($dids)){
-				$whereOr[] =['did', 'in', $dids];
-			}
+		$whereOr[] =['admin_id|prepared_uid|sign_uid|keeper_uid', '=', $uid];
+		$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',share_ids)")];
+		$dids = get_role_departments($uid);
+		if(!empty($dids)){
+			$whereOr[] =['did', 'in', $dids];
 		}
 		$model = new Contract();
         $list = $model->datalist($param,$where,$whereOr);
@@ -210,14 +207,11 @@ class Api extends BaseController
 		}
 		$where[] = ['delete_time', '=', 0];
 		$where[] = ['check_status', '=', 2];
-		$auth = isAuth($uid,'contract_admin','conf_1');
-		if($auth==0){
-			$whereOr[] =['admin_id|prepared_uid|sign_uid|keeper_uid', '=', $uid];
-			$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',share_ids)")];
-			$dids = get_leader_departments($uid);
-			if(!empty($dids)){
-				$whereOr[] =['did', 'in', $dids];
-			}
+		$whereOr[] =['admin_id|prepared_uid|sign_uid|keeper_uid', '=', $uid];
+		$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',share_ids)")];
+		$dids = get_role_departments($uid);
+		if(!empty($dids)){
+			$whereOr[] =['did', 'in', $dids];
 		}
 		$model = new Purchase();
         $list = $model->datalist($param,$where,$whereOr);

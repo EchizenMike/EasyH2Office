@@ -66,7 +66,7 @@ class Index extends BaseController
             $install = true;
         }
 		$uid = $this->uid;
-		$dids = get_leader_departments($uid);
+		$dids = get_role_departments($uid);
         $total = [];
 		
 		$whereFinance= array();

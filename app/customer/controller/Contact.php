@@ -47,29 +47,26 @@ class Contact extends BaseController
             if (!empty($param['keywords'])) {
                 $where[] = ['id|name|mobile|email', 'like', '%' . $param['keywords'] . '%'];
             }
-			$auth = isAuth($uid,'customer_admin','conf_1');
-			if($auth==0 || ($auth==1&&!empty($param['uid']))){
-				$map=[];
-				$mapOr=[];
-				$map[]=['delete_time','=',0];
-				$map[]=['discard_time','=',0];
-				if (!empty($param['uid'])) {
-					$map[] = ['belong_uid', '=',$param['uid']];
-				}
-				else{
-					$mapOr[] = ['belong_uid','=',$uid];
-					$mapOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',share_ids)")];
-					$mapOr[] = ['belong_did','in',get_leader_departments($uid)];
-				}
-				$cids = Db::name('Customer')
-					->where($map)
-					->where(function ($query) use($map) {
-						if (!empty($map)){
-							$query->whereOr($map);
-						}
-					})->column('id');
-				$where[] = ['cid', 'in',$cids];
+			$map=[];
+			$mapOr=[];
+			$map[]=['delete_time','=',0];
+			$map[]=['discard_time','=',0];
+			if (!empty($param['uid'])) {
+				$map[] = ['belong_uid', '=',$param['uid']];
 			}
+			else{
+				$mapOr[] = ['belong_uid','=',$uid];
+				$mapOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',share_ids)")];
+				$mapOr[] = ['belong_did','in',get_role_departments($uid)];
+			}
+			$cids = Db::name('Customer')
+				->where($map)
+				->where(function ($query) use($map) {
+					if (!empty($map)){
+						$query->whereOr($map);
+					}
+				})->column('id');
+			$where[] = ['cid', 'in',$cids];
             $list = $this->model->datalist($param,$where);
             return table_assign(0, '', $list);
         }

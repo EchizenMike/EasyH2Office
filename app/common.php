@@ -517,6 +517,132 @@ function get_department_top($did=0,$uid=0)
 	}
     return $top_id;
 }
+
+//获取某员工所能看的部门数据(dids)
+//传入某员工uid，输出部门数组，如:['1,2,3']。
+function get_role_departments($uid = 0)
+{
+	//超级管理员
+	if($uid==1){
+		$dids = Db::name('Department')->where('status',1)->column('id');
+		return $dids;
+	}
+	$auth_did = Db::name('Admin')->where('id',$uid)->value('auth_did');
+	//仅自己关联的数据
+	if($auth_did==0){
+		return [];
+	}
+	//所有部门数据
+	if($auth_did==10){
+		$dids = Db::name('Department')->where('status',1)->column('id');
+		return $dids;
+	}
+	//主部门did
+	$main_did = Db::name('Admin')->where('id',$uid)->value('did');
+	//次要部门did
+	$secondary_dids = Db::name('DepartmentAdmin')->where('admin_id',$uid)->column('department_id');
+	//全部可见部门
+	$all_dids = array_merge($secondary_dids,[$main_did]);
+	
+	//所属主部门的数据
+	if($auth_did==1){
+		return [$main_did];
+	}
+	
+	//所属次部门的数据
+	if($auth_did==2){
+		return $secondary_dids;
+	}
+	
+	//仅所属主次部门数据
+	if($auth_did==3){
+		return $all_dids;
+	}
+	
+	//所属主部门及其子部门数据
+	if($auth_did==4){
+		//获取子部门
+		$department = get_department();
+		$department_list = get_data_node($department, $main_did);
+		$department_array = array_column($department_list, 'id');
+		//包括自己部门在内
+		$department_array[] = $main_did;
+		return $department_array;
+	}
+	
+	//所属次部门及其子部门数据
+	if($auth_did==5){
+		//获取子部门
+		$department = get_department();
+		$list_array = [];
+		foreach ($secondary_dids as $key => $value) {
+			$department_list = get_data_node($department, $value);
+			$department_array = array_column($department_list, 'id');
+			//包括自己部门在内
+			$department_array[] = $value;
+			$list_array = array_merge($list_array,$department_array);
+		}
+		$department_array = array_unique($list_array);
+		return $department_array;
+	}
+	
+	//所属主次部门及其子部门数据
+	if($auth_did==6){
+		//获取子部门
+		$department = get_department();
+		$list_array = [];
+		foreach ($all_dids as $key => $value) {
+			$department_list = get_data_node($department, $value);
+			$department_array = array_column($department_list, 'id');
+			//包括自己部门在内
+			$department_array[] = $value;
+			$list_array = array_merge($list_array,$department_array);
+		}
+		$department_array = array_unique($list_array);
+		return $department_array;
+	}
+	
+	//所属主部门所在顶级部门及其子部门数据
+	if($auth_did==7){
+		//获取顶级部门
+		$top_did = get_department_top($main_did);
+		$list_array = get_department_son($top_did,1);
+		return $list_array;
+	}
+	
+	//所属次部门所在顶级部门及其子部门数据
+	if($auth_did==8){
+		//获取顶级部门
+		$top_dids =[];
+		foreach ($secondary_dids as $key => $value) {
+			array_push($top_dids, get_department_top($value));
+		}
+		
+		$list_array = [];
+		foreach ($top_dids as $key => $value) {
+			$list_array = array_merge($list_array,get_department_son($value,1));
+		}
+		$department_array = array_unique($list_array);
+		return $department_array;
+	}
+	
+	//所属主次部门所在顶级部门及其子部门数据
+	if($auth_did==9){
+		//获取顶级部门
+		$top_dids =[];
+		foreach ($all_dids as $key => $value) {
+			array_push($top_dids, get_department_top($value));
+		}
+		
+		$list_array = [];
+		foreach ($top_dids as $key => $value) {
+			$list_array = array_merge($list_array,get_department_son($value,1));
+		}
+		$department_array = array_unique($list_array);
+		return $department_array;
+	}
+}
+
 /***************************************************审批相关*****************************************************/
 
 //获取全部审批状态
@@ -646,8 +772,8 @@ function get_flow($uid,$flows)
 
 /**
  * 获取审批记录数据
- * @param  $uid 当前登录用户
- * @param  $flows 当前步骤内容
+ * @param  $check_table 关联内容表
+ * @param  $action_id 关联内容记录id
  * @return
  */
 function get_check_record($check_table,$action_id)
@@ -655,11 +781,11 @@ function get_check_record($check_table,$action_id)
 	$check_record = Db::name('FlowRecord')
 					->field('f.*,a.name')
 					->alias('f')->join('Admin a', 'a.id = f.check_uid', 'left')
-					->where([['f.check_table','=',$check_table],['f.action_id','=',$action_id],['f.delete_time','=',0],['f.step_id','>',0]])
+					->where([['f.check_table','=',$check_table],['f.action_id','=',$action_id],['f.delete_time','=',0]])
 					->select()->toArray();				
 	foreach ($check_record as $kk => &$vv) {		
 		$vv['check_time_str'] = date('Y-m-d H:i', $vv['check_time']);
-		$vv['status_str'] = '提交';
+		$vv['status_str'] = '提交申请';
 		if($vv['check_status'] == 1){
 			$vv['status_str'] = '审核通过';
 		}
@@ -667,7 +793,7 @@ function get_check_record($check_table,$action_id)
 			$vv['status_str'] = '审核拒绝';
 		}
 		if($vv['check_status'] == 3){
-			$vv['status_str'] = '撤销';
+			$vv['status_str'] = '撤销申请';
 		}
 		if($vv['check_status'] == 4){
 			$vv['status_str'] = '反确认';
@@ -945,7 +1071,7 @@ function file_card($file,$view=''){
 	}
 	$image=['jpg','jpeg','png','gif'];
 	$office=['doc','docx','xls','xlsx','ppt','pptx'];
-	$type_icon = 'icon-sucaiziyuan';
+	$type_icon = 'icon-xiangmuguanli';
 	$type = 0;//0下载+重命名+删除，1下载+查看+重命名+删除，2下载+查看+编辑+重命名+删除
 	$ext = 'zip';
 	$view_btn = '<a class="blue" href="'.$file['filepath'].'" download="'.$file['name'].'" target="_blank" title="下载"><i class="iconfont icon-xiazai"></i></a>';
@@ -961,7 +1087,7 @@ function file_card($file,$view=''){
 		$type = 1;
 	}
 	if(in_array($file['fileext'], $office)){
-		$type_icon = 'icon-lunwenshezhi';
+		$type_icon = 'icon-shenbao';
 		$ext = 'office';
 		$type = 2;
 	}	

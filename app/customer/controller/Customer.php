@@ -79,17 +79,11 @@ class Customer extends BaseController
 					$where[] = ['belong_uid', '=', $param['uid']];
 				}
 				else{
-					$auth = isAuth($uid,'customer_admin','conf_1');
-					if($auth==1){
-						$where[] = ['belong_uid','>',0];
-					}
-					else{
-						$whereOr[] = ['belong_uid','=',$uid];
-						$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',share_ids)")];
-						$dids = get_leader_departments($uid);
-						if(!empty($dids)){
-							$whereOr[] = ['belong_did','in',get_leader_departments($uid)];
-						}
+					$whereOr[] = ['belong_uid','=',$uid];
+					$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',share_ids)")];
+					$dids = get_role_departments($uid);
+					if(!empty($dids)){
+						$whereOr[] = ['belong_did','in',$dids];
 					}
 				}
 			}

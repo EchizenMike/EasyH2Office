@@ -238,7 +238,7 @@ class User extends BaseController
         $menu = Db::name('AdminRule')->where(['menu' => 1])->order('sort asc,id asc')->select()->toArray();
         $rule = Db::name('AdminRule')->order('sort asc,id asc')->select()->toArray();
 
-        //查询用户拥有的查单和节点
+        //查询用户拥有的菜单和节点
         $user_groups = Db::name('PositionGroup')
             ->alias('a')
             ->join("AdminGroup g", "a.group_id=g.id", 'LEFT')

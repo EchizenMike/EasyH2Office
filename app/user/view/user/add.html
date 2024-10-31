@@ -68,11 +68,11 @@
 			<td>
 				<input type="text" name="entry_time" readonly lay-verify="required" placeholder="请选择入职日期" lay-reqText="请选择入职日期" class="layui-input tool-time">
 			</td>
-			<td class="layui-td-gray">员工类型<font>*</font></td>
+			<td class="layui-td-gray">身份类型<font>*</font></td>
 			<td>
-				<input type="radio" name="type" value="3" title="实习">
-				<input type="radio" name="type" value="2" title="试用">
-				<input type="radio" name="type" value="1" title="正式">
+				<input type="radio" name="is_staff" value="1" title="企业员工">
+				<input type="radio" name="is_staff" value="2" title="劳动派遣">
+				<input type="radio" name="is_staff" value="3" title="兼职人员">
 			</td>
 			<td class="layui-td-gray-2">隐藏联系方式</td>
 			<td>
@@ -81,9 +81,27 @@
 			</td>
 		</tr>
 		<tr>
-			<td class="layui-td-gray">员工简介</td>
+			<td class="layui-td-gray">员工类型<font>*</font></td>
 			<td colspan="5">
-				<textarea name="desc" placeholder="请输入员工简介" class="layui-textarea"></textarea>
+				<input type="radio" name="type" value="1" title="正式">
+				<input type="radio" name="type" value="2" title="试用">
+				<input type="radio" name="type" value="3" title="实习">
+			</td>
+		</tr>
+		<tr>
+			<td class="layui-td-gray">数据权限<font>*</font></td>
+			<td colspan="5">
+				<input type="radio" name="auth_did" value="0" title="仅自己关联的数据" checked>
+				<input type="radio" name="auth_did" value="1" title="所属主部门的数据">				
+				<input type="radio" name="auth_did" value="2" title="所属次部门的数据">				
+				<input type="radio" name="auth_did" value="3" title="所属主次部门的数据">				
+				<input type="radio" name="auth_did" value="4" title="所属主部门及其子部门数据">				
+				<input type="radio" name="auth_did" value="5" title="所属次部门及其子部门数据">				
+				<input type="radio" name="auth_did" value="6" title="所属主次部门及其子部门数据">				
+				<input type="radio" name="auth_did" value="7" title="所属主部门所在顶级部门及其子部门数据">				
+				<input type="radio" name="auth_did" value="8" title="所属次部门所在顶级部门及其子部门数据">				
+				<input type="radio" name="auth_did" value="9" title="所属主次部门所在顶级部门及其子部门数据">				
+				<input type="radio" name="auth_did" value="10" title="所有部门数据">			
 			</td>
 		</tr>
 	</table>
@@ -164,20 +182,36 @@
 		<tr>
 			<td class="layui-td-gray">员工类型<font>*</font></td>
 			<td>
-				<input type="radio" name="type" value="3" title="实习" {eq name="$detail.type" value="3"}checked{/eq}>
-				<input type="radio" name="type" value="2" title="试用" {eq name="$detail.type" value="2"}checked{/eq}>
 				<input type="radio" name="type" value="1" title="正式" {eq name="$detail.type" value="1"}checked{/eq}>
+				<input type="radio" name="type" value="2" title="试用" {eq name="$detail.type" value="2"}checked{/eq}>
+				<input type="radio" name="type" value="3" title="实习" {eq name="$detail.type" value="3"}checked{/eq}>
+			</td>
+			<td class="layui-td-gray">身份类型<font>*</font></td>
+			<td>
+				<input type="radio" name="is_staff" value="1" title="企业员工" {eq name="$detail.is_staff" value="1"}checked{/eq}>
+				<input type="radio" name="is_staff" value="2" title="劳动派遣" {eq name="$detail.is_staff" value="2"}checked{/eq}>
+				<input type="radio" name="is_staff" value="3" title="兼职员工" {eq name="$detail.is_staff" value="3"}checked{/eq}>
 			</td>
 			<td class="layui-td-gray-3">隐藏联系方式</td>
-			<td colspan="3">
+			<td>
 				<input type="radio" name="is_hide" value="0" title="否" {eq name="$detail.is_hide" value="0"}checked{/eq}>
 				<input type="radio" name="is_hide" value="1" title="是" {eq name="$detail.is_hide" value="1"}checked{/eq}>
 			</td>
 		</tr>
 		<tr>
-			<td class="layui-td-gray">员工简介</td>
+			<td class="layui-td-gray">数据权限<font>*</font></td>
 			<td colspan="5">
-				<textarea name="desc" placeholder="请输入员工简介" class="layui-textarea">{$detail.desc|default=''}</textarea>
+				<input type="radio" name="auth_did" value="0" title="仅自己关联的数据" {eq name="$detail.auth_did" value="0"}checked{/eq}>
+				<input type="radio" name="auth_did" value="1" title="所属主部门的数据" {eq name="$detail.auth_did" value="1"}checked{/eq}>				
+				<input type="radio" name="auth_did" value="2" title="所属次部门的数据" {eq name="$detail.auth_did" value="2"}checked{/eq}>				
+				<input type="radio" name="auth_did" value="3" title="所属主次部门的数据" {eq name="$detail.auth_did" value="3"}checked{/eq}>				
+				<input type="radio" name="auth_did" value="4" title="所属主部门及其子部门数据" {eq name="$detail.auth_did" value="4"}checked{/eq}>				
+				<input type="radio" name="auth_did" value="5" title="所属次部门及其子部门数据" {eq name="$detail.auth_did" value="5"}checked{/eq}>				
+				<input type="radio" name="auth_did" value="6" title="所属主次部门及其子部门数据" {eq name="$detail.auth_did" value="6"}checked{/eq}>				
+				<input type="radio" name="auth_did" value="7" title="所属主部门所在顶级部门及其子部门数据" {eq name="$detail.auth_did" value="7"}checked{/eq}>				
+				<input type="radio" name="auth_did" value="8" title="所属次部门所在顶级部门及其子部门数据" {eq name="$detail.auth_did" value="8"}checked{/eq}>				
+				<input type="radio" name="auth_did" value="9" title="所属主次部门所在顶级部门及其子部门数据" {eq name="$detail.auth_did" value="9"}checked{/eq}>					
+				<input type="radio" name="auth_did" value="10" title="所有部门数据" {eq name="$detail.auth_did" value="10"}checked{/eq}>				
 			</td>
 		</tr>
 	</table>
@@ -233,6 +267,10 @@
 			}
 			if(!data.field.type){
 				layer.msg('请选择员工类型');
+				return false;
+			}
+			if(!data.field.is_staff){
+				layer.msg('请选择员工身份');
 				return false;
 			}
 			let department_ids = data.field.department_ids.split(',');

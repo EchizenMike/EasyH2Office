@@ -74,16 +74,13 @@ class Contract extends BaseController
 					$where[] = ['sign_uid', '=', $param['uid']];
 				}
 				else{
-					$auth = isAuth($uid,'contract_admin','conf_1');
-					if($auth==0){
-						$whereOr[] =['admin_id|prepared_uid|sign_uid|keeper_uid', '=', $uid];
-						$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',share_ids)")];
-						$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',check_uids)")];
-						$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',check_history_uids)")];
-						$dids = get_leader_departments($uid);
-						if(!empty($dids)){
-							$whereOr[] =['did', 'in', $dids];
-						}
+					$whereOr[] =['admin_id|prepared_uid|sign_uid|keeper_uid', '=', $uid];
+					$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',share_ids)")];
+					$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',check_uids)")];
+					$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',check_history_uids)")];
+					$dids = get_role_departments($uid);
+					if(!empty($dids)){
+						$whereOr[] =['did', 'in', $dids];
 					}
 				}
 			}

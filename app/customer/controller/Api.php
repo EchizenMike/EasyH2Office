@@ -33,17 +33,11 @@ class Api extends BaseController
 		}
 		$where[] = ['delete_time', '=', 0];
 		$uid = $this->uid;
-		$auth = isAuth($uid,'customer_admin','conf_1');
-		if($auth==1){
-			$where[] = ['belong_uid','>',0];
-		}
-		else{
-			$whereOr[] = ['belong_uid','=',$uid];
-			$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',share_ids)")];
-			$dids = get_leader_departments($uid);
-			if(!empty($dids)){
-				$whereOr[] = ['belong_did','in',get_leader_departments($uid)];
-			}
+		$whereOr[] = ['belong_uid','=',$uid];
+		$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',share_ids)")];
+		$dids = get_role_departments($uid);
+		if(!empty($dids)){
+			$whereOr[] = ['belong_did','in',$dids];
 		}
 		$rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
         $list = Db::name('Customer')->field('id,name,address,tax_num,tax_bank,tax_banksn,tax_mobile,tax_address')->order('id asc')->where($where)->paginate(['list_rows'=> $rows])->each(function($item, $key){

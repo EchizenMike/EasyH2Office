@@ -87,8 +87,8 @@
 			<!-- 分组 -->
 			<div class="group">
 				<ul id="group" class="groups">					
-					<li data-id="" class="active"><i class="iconfont icon-sucaiziyuan"></i><span>全部</span></li>
-					<li data-id="0"><i class="iconfont icon-sucaiziyuan"></i><span>未分组</span></li>					
+					<li data-id="" class="active"><i class="iconfont icon-xiangmuguanli"></i><span>全部</span></li>
+					<li data-id="0"><i class="iconfont icon-xiangmuguanli"></i><span>未分组</span></li>					
 				</ul>
 				<div class="footer">
 					<span class="layui-btn layui-btn-primary layui-btn-sm add-new">添加分组</span>
@@ -275,7 +275,7 @@
 						var group=res.data,item='';
 						if(group.length>0){
 							for(var a=0;a<group.length;a++){
-								item+='<li data-id="'+group[a].id+'" data-title="'+group[a].title+'"><i class="iconfont icon-sucaiziyuan"></i><span>'+group[a].title+'</span><i class="layui-icon layui-icon-more-vertical dropdown-on"></i></li>';
+								item+='<li data-id="'+group[a].id+'" data-title="'+group[a].title+'"><i class="iconfont icon-xiangmuguanli"></i><span>'+group[a].title+'</span><i class="layui-icon layui-icon-more-vertical dropdown-on"></i></li>';
 							}
 							$('#group').append(item);
 							fileGroup = fileGroup.concat(group);
