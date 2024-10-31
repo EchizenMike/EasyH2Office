@@ -6,3 +6,9 @@ ADD COLUMN `is_staff` int(1) NOT NULL DEFAULT 1 COMMENT '身份类型:1企业员
 
 ALTER TABLE `oa_admin` 
 ADD COLUMN `medical_account` varchar(255) NOT NULL DEFAULT '' COMMENT '医保账号' AFTER `social_account`;
+
+ALTER TABLE `oa_labor_contract` 
+ADD COLUMN `file_ids` varchar(500) NOT NULL DEFAULT '' COMMENT '附件' AFTER `status`;
+
+ALTER TABLE `oa_customer_contact`
+ADD COLUMN `position` varchar(50) NOT NULL DEFAULT '' COMMENT '职位' AFTER `department`;

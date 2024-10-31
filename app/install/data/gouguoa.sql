@@ -115,6 +115,7 @@ CREATE TABLE `oa_labor_contract`  (
   `trial_salary` decimal(15, 2) NOT NULL DEFAULT 0.00 COMMENT '试用工资',
   `worker_salary` decimal(15, 2) NOT NULL DEFAULT 0.00 COMMENT '转正工资',
   `status` int(1) NOT NULL DEFAULT 1 COMMENT '合同状态:1正常,2已到期,3已解除',
+  `file_ids` varchar(500) NOT NULL DEFAULT '' COMMENT '附件',
   `remark` mediumtext  NULL COMMENT '备注说明',
   `admin_id` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建人ID',
   `create_time` bigint(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '添加时间',

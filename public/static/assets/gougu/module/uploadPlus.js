@@ -185,7 +185,7 @@ layui.define(['tool'],function(exports){
 								idsArray = idsStr.split(",");
 							}
 							idsArray.push(res.data.id);
-							let filesize = renderSize(res.data.filesize),type=0,type_icon = 'icon-sucaiziyuan',ext = 'zip';
+							let filesize = renderSize(res.data.filesize),type=0,type_icon = 'icon-xiangmuguanli',ext = 'zip';
 							if(res.data.fileext == 'pdf'){
 								type=1;
 								type_icon = 'icon-kejian';								
@@ -198,7 +198,7 @@ layui.define(['tool'],function(exports){
 							}
 							if (office.indexOf(res.data.fileext) !== -1) {
 								type=2;
-								type_icon = 'icon-lunwenshezhi';
+								type_icon = 'icon-shenbao';
 								ext = 'office';
 							}
 							
