@@ -47,7 +47,7 @@ CREATE TABLE `oa_admin`  (
   `education` varchar(255) NOT NULL DEFAULT '' COMMENT '学位',
   `speciality` varchar(255) NOT NULL DEFAULT '' COMMENT '专业',
   `social_account` varchar(255) NOT NULL DEFAULT '' COMMENT '社保账号',
-  `social_account` varchar(255) NOT NULL DEFAULT '' COMMENT '社保账号',
+  `medical_account` varchar(255) NOT NULL DEFAULT '' COMMENT '医保账号',
   `provident_account` varchar(255) NOT NULL DEFAULT '' COMMENT '公积金账号',
   `bank_account` varchar(255) NOT NULL DEFAULT '' COMMENT '银行卡号',
   `bank_info` varchar(255) NOT NULL DEFAULT '' COMMENT '开户行',
