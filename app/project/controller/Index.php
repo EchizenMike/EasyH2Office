@@ -50,6 +50,9 @@ class Index extends BaseController
 			if (!empty($param['status'])) {
 				$where[] = ['status', '=', $param['status']];
 			}
+			if (!empty($param['cate_id'])) {
+                $where[] = ['cate_id', '=', $param['cate_id']];
+            }
 			if (!empty($param['keywords'])) {
 				$where[] = ['name|content', 'like', '%' . $param['keywords'] . '%'];
 			}			

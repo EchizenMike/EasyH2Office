@@ -13,6 +13,14 @@
 				<option value="4">已关闭</option>
 			</select>
 		</div>
+		<div class="layui-input-inline" style="width:136px;">
+            <select name="cate_id">
+                <option value="">项目类别</option>
+                {volist name = ":get_base_data('ProjectCate')" id="vo"}
+                <option value="{$vo.id}">{$vo.title}</option>
+                {/volist}
+            </select>
+        </div>
 		<div class="layui-input-inline" style="width:160px;">
 			<input type="text" name="director" placeholder="项目负责人，可多选" readonly class="layui-input picker-admin" data-type="2" autocomplete="off" />
 			<input name="director_uid" style="display: none;" value="" />
@@ -60,6 +68,7 @@
 					return html;
 					}
 				}
+				,{field:'cate',title: '项目类别',width:100,align:'center'}
 				,{field:'name',title: '项目名称',minWidth:240}
 				,{field:'director_name',title: '负责人',width:80,align:'center'}
 				,{ field:'range_time', title: '项目计划周期', align: 'center', width: 180}
