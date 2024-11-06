@@ -113,10 +113,7 @@ layui.define(['tool'],function(exports){
 					idsArray = idsStr.split(",");
 					idsArray.remove(file_id);
 				}
-				layer.confirm('确定删除该附件吗？', {
-					icon: 3,
-					title: '提示'
-				}, function(index) {
+				tool.ask('确定删除该附件吗？', function(index) {
 					if (typeof (attachment.ajaxDelete) === "function") {
 						if(attachment.type==1){
 							//单文件，单记录删除
@@ -129,7 +126,7 @@ layui.define(['tool'],function(exports){
 					else{
 						//虚拟删除
 						boxInput.val(idsArray.join(','));
-						$('#file_' + id).remove();
+						$('#uploadImg' + id).remove();
 					}
 					layer.close(index);
 				});
@@ -204,7 +201,7 @@ layui.define(['tool'],function(exports){
 							
 							let view_btn = '<span class="file-ctrl blue" data-ctrl="edit" data-type="'+type+'" data-fileid="'+res.data.id+'" data-ext="'+ext+'" data-filename="'+res.data.name+'" data-href="'+res.data.filepath+'" data-id="'+res.data.id+'" data-uid="'+res.data.uid+'" title="附件操作"><i class="iconfont icon-gengduo1"></i></span>';
 							
-							let temp = `<div class="layui-col-md${attachment.colmd}" id="file_${res.data.id}">
+							let temp = `<div class="layui-col-md${attachment.colmd}" id="uploadImg${res.data.id}">
 									<div class="file-card" id="fileItem${res.data.id}">
 										<i class="file-icon iconfont ${type_icon}"></i>
 										<div class="file-info">
