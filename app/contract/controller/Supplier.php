@@ -122,7 +122,7 @@ class Supplier extends BaseController
     }
 	
     //设置
-    public function check()
+    public function set()
     {
 		$param = get_params();
         $res = Db::name('Supplier')->strict(false)->field('id,status')->update($param);
