@@ -11,7 +11,7 @@
 			<td>
 				 <select name="cate_id" lay-verify="required" lay-reqText="请选择分类">
 					<option value="">请选择分类</option>
-					{volist name=":set_recursion(get_base_data('ProductCate'))" id="v"}
+					{volist name=":set_recursion(get_base_data('PurchasedCate'))" id="v"}
 					<option value="{$v.id}" {eq name="$v.id" value="$detail.cate_id"} selected{/eq}>{$v.title}</option>
 					{/volist}
 				 </select>
