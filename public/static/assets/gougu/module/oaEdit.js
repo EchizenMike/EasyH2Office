@@ -114,9 +114,11 @@ layui.define(['tool','oaPicker','tinymce'],function(exports){
 					if (val != '') {
 						if(min !='' && val<min){
 							layer.msg('输入数字不能小于'+min);
+							return false;
 						}
 						if(max !='' && val>max){
 							layer.msg('输入数字不能大于'+max);
+							return false;
 						}
 						let postData = {'id':me.sets.id,'scene':'oaedit'};
 						postData[field] = val;

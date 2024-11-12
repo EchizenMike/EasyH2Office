@@ -4,6 +4,58 @@
 mbui.define([], function (exports) {
 	"use strict";
 	var tool = {
+		ajax: function (options, callback) {
+			let format = 'json';
+			if (options.hasOwnProperty('data')) {
+				format = options.data.hasOwnProperty('format') ? options.data.format : 'json';
+			}
+			callback = callback || options.success;
+			callback && delete options.success;
+			let optsetting = { timeout: 10000 };
+			if (format == 'jsonp') {
+				optsetting = { timeout: 10000, dataType: 'jsonp', jsonp: 'callback' }
+			}
+			let opts = $.extend({}, optsetting, {
+				success: function (res) {
+					if (callback && typeof callback === 'function') {
+						callback(res);
+					}
+				}
+			}, options);
+			$.ajax(opts);
+		},
+		get: function (url, data, callback) {
+			this.ajax({ url: url, type: "GET", data: data }, callback);
+		},
+		post: function (url, data, callback) {
+			this.ajax({ url: url, type: "POST", data: data }, callback);
+		},
+		put: function (url, data, callback) {
+			this.ajax({ url: url, type: "PUT", data: data }, callback);
+		},
+		delete: function (url, data, callback) {
+			this.ajax({ url: url, type: "DELETE", data: data }, callback);
+		},
+		reload: function (delay) {
+			//延迟刷新，一般是在编辑完页面数据后需要自动关闭页面用到
+			if(delay && delay>0){
+				setTimeout(function () {
+					location.reload();
+				}, delay);
+			}else{
+				location.reload();
+			}
+		},
+		replace: function (url,delay) {
+			//延迟刷新，一般是在编辑完页面数据后需要自动关闭页面用到
+			if(delay && delay>0){
+				setTimeout(function () {
+					window.location.replace(url);
+				}, delay);
+			}else{
+				window.location.replace(url);
+			}
+		},
 		// 倒计时
 		countdown: function (options) {
 			var that = this;
@@ -109,7 +161,8 @@ mbui.define([], function (exports) {
 			var that = this;
 			var date = new Date(function () {
 				if (!time) return;
-				return isNaN(time) ? time : (typeof time === 'string' ? parseInt(time) : time)}() || new Date());
+				return isNaN(time) ? time : (typeof time === 'string' ? parseInt(time) : time)
+			}() || new Date());
 			if (!date.getDate()) return console.log('Invalid millisecond for "tool.toDateString(millisecond)"');
 			var years = date.getFullYear();
 			var month = date.getMonth();
@@ -798,6 +851,13 @@ mbui.define([], function (exports) {
 			return result;
 		}
 	};
+	$('body').on('click', '.link-a', function () {
+		let url = $(this).data('href');
+		if (url && url !== '') {
+			window.location.replace(url);
+		}
+		return false;
+	});
 	// 输出接口
 	exports('tool', tool);
 });
