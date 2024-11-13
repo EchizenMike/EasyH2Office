@@ -174,7 +174,8 @@ class Expense extends Model
 			->join('ExpenseCate c', 'a.cate_id = c.id','LEFT')
 			->where(['a.exid' => $info['id']])
 			->select();
-			
+		$file_array = Db::name('File')->where('id','in',$info['file_ids'])->select();
+		$info['file_array'] = $file_array;	
 		return $info;
     }
 
