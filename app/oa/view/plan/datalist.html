@@ -151,7 +151,7 @@
 							layui.pageTable.reload();
 						}
 					}
-					tool.delete("/oa/plan/delete", { id: obj.data.id }, callback);
+					tool.delete("/oa/plan/del", { id: obj.data.id }, callback);
 					layer.close(index);
 				});
 				return;				
