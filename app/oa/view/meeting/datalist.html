@@ -13,8 +13,8 @@
 			<input type="text" name="keywords" placeholder="会议主题" class="layui-input"/>
 		</div>	
 		<div class="layui-input-inline" style="width:150px;">
-			<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform"><i class="layui-icon layui-icon-search mr-1"></i>搜索</button>
-			<button type="reset" class="layui-btn layui-btn-reset" lay-filter="reset">清空</button>
+			<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="table-search"><i class="layui-icon layui-icon-search mr-1"></i>搜索</button>
+			<button type="reset" class="layui-btn layui-btn-reset" lay-filter="table-reset">清空</button>
 		</div>
 	</form> 
 	<table class="layui-hide" id="test" lay-filter="test"></table>
@@ -28,9 +28,9 @@
 <!-- 脚本 -->
 {block name="script"}
 <script>
-	const moduleInit = ['tool','oaPicker','laydatePlus'];
+	const moduleInit = ['tool','oaPicker','laydatePlus','tablePlus'];
 	function gouguInit() {
-		var table = layui.table, tool = layui.tool ,form = layui.form, laydatePlus = layui.laydatePlus;	
+		var table = layui.tablePlus, tool = layui.tool ,form = layui.form, laydatePlus = layui.laydatePlus;	
 		//日期范围
 		var diff_time = new laydatePlus({'target':'diff_time'});
 		

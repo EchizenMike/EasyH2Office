@@ -84,9 +84,8 @@
 			}
 			let callback = function (e) {
 				layer.msg(e.msg);
-				parent.layui.documentTable.reload();
 				if (e.code == 0) {
-					tool.sideClose(1000);
+					tool.sideClose(1000,'documentTable');
 				}
 			}
 			tool.post("/project/document/add", data.field, callback);
