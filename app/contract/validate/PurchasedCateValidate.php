@@ -18,7 +18,7 @@ use think\Validate;
 class PurchasedCateValidate extends Validate
 {
     protected $rule = [
-        'title' => 'require|unique:product_cate',
+        'title' => 'require|unique:purchased_cate',
         'id' => 'require',
     ];
 
