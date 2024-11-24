@@ -111,15 +111,15 @@ mbui.define(['layer'], function (exports) {
 				success: function(res) {
 					console.log('文件上传成功');
 					if(res.code==0){
-						fileValue();
 						console.log(that.config.ajaxUpload);
 						if(typeof(that.config.ajaxUpload) == "undefined" || that.config.ajaxUpload==null){
 							var listItem = that.config.template(res.data);
-							uploadBox.find('ul').append(listItem);						
+							uploadBox.find('ul').append(listItem);
 						}
 						else{
 							 that.config.ajaxUpload(res);
 						}
+						fileValue();
 					}
 				},
 				error: function(xhr, status, error) {

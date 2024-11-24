@@ -4,11 +4,11 @@ mbui.define([], function (exports) {
 				<button class="fixed-bar-btn"><span class="menutoggle"><span></span></span></button>\
 			</div>\
 			<div class="fixed-bar-item">\
-				<a href="/qiye/index/index">日常<br>办公</a>\
+				<a href="/qiye/index/index">工作台</a>\
+				<a href="/qiye/customer/index">客户<br>管理</a>\
+				<a href="/qiye/contract/index">合同<br>管理</a>\
 				<a href="/qiye/project/index">项目<br>管理</a>\
 				<a href="/qiye/msg/index">消息<br>通知</a>\
-				<a href="/qiye/approve/index">办公<br>审批</a>\
-				<a href="/qiye/approve/apply">审批<br>申请</a>\
 			</div>\
 		</div>');
 	$('.fixed-bar-btn').click(function () {

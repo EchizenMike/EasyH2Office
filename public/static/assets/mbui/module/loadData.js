@@ -1,4 +1,17 @@
-mbui.define([], function (exports) {
+mbui.define(['tool'], function (exports) {
+	let tool = mbui.tool;
+	//html转义，防止XSS
+	function escapeHtml(text) {
+	  var map = {
+		'&': '&amp;',
+		'<': '&lt;',
+		'>': '&gt;',
+		'"': '&quot;',
+		"'": '&#039;'
+	  };
+	  return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+	}
+	
 	var LoadData = function () {
 		this.config = {
 			elem: "#listBox",
@@ -52,6 +65,12 @@ mbui.define([], function (exports) {
 				if (res.count > 0) {
 					that.page++;
 					$.each(res.data, function (index, item) {
+						// 转义JSON对象中的字符串值,防止XSS
+						for (var key in item) {
+						  if (typeof item[key] === 'string') {
+							item[key] = escapeHtml(item[key]);
+						  }
+						}
 						// 创建列表项并添加到列表中
 						var listItem = that.config.template(item);
 						elem.find('.load-data-container').append(listItem);

@@ -1153,11 +1153,13 @@ $('body').on('click', '.picker-oa', function () {
 						])
 					},
 					onClear: function(index){
+						elem.val('');
+						elem.next().val('');
 						layPicker.remove(index);
 					},
 					onConfirm: function(index, val, result){ // 点击确认回调
 						if(result.length>0){
-							elem.val(result[0].title);
+							elem.val(result[0][field]);
 							elem.next().val(result[0].id);
 						}
 						layPicker.remove(index);
