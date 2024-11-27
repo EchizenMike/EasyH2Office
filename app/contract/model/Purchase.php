@@ -119,7 +119,7 @@ class Purchase extends Model
     public function getById($id)
     {
         $info = self::find($id);
-		$types_title=contract_types_name($info['types']);
+		$types_title=purchase_types_name($info['types']);
 		$info['types_name'] = $types_title['title'];
 		$info['sign_time'] = date('Y-m-d', $info['sign_time']);
 		$info['start_time'] = date('Y-m-d', $info['start_time']);

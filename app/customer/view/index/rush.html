@@ -3,7 +3,7 @@
 {block name="body"}
 <div class="p-page">
 	<div class="layui-row gg-form-bar border-x border-t">
-		<div class="layui-input-inline"><button class="layui-btn layui-btn-danger" lay-submit="" lay-filter="webform">去抢客</button></div>
+		<div class="layui-input-inline"><button class="layui-btn layui-btn-sm" lay-submit="" lay-filter="webform">换一批客户</button></div>
 		<div class="layui-input-inline red">每点击一次随机获取20个公海客户的信息，每天最多可抢<strong class="mx-1">{$max_num|default="0"}</strong>个客户，你今天已抢了<strong class="mx-1" id="count">{$count}</strong>个客户</div>
     </div>
 	<table class="layui-hide" id="test" lay-filter="test"></table>
@@ -82,8 +82,12 @@
 						width: 80,
 						align: 'center',
 						templet: function (d) {
-							var btn='<span class="layui-btn layui-btn-xs" lay-event="get">领取客户</span>';
-							return btn;
+							if(login_admin==1){
+								return '-';
+							}
+							else{
+								return '<span class="layui-btn layui-btn-xs" lay-event="get">领取客户</span>';
+							}
 						}						
 					}
 				]
