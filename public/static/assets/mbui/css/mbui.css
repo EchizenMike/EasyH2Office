@@ -1307,7 +1307,7 @@ a.mbui-list:active { background: #F5F5F5;}
 .mbui-comment-box .comment-avatar{width: 32px;}
 .mbui-comment-box .comment-image{width:32px; height:32px; border-radius:50%}
 
-.mbui-comment-box .comment-body{font-size:16px; margin-left:12px; line-height:1.5;}
+.mbui-comment-box .comment-body{font-size:16px; margin-left:12px; line-height:1.5; width:100%;}
 .mbui-comment-box .comment-meta span{margin-right:12px; font-size:12px; color:#999;}
 .mbui-comment-box .comment-content{padding:4px 0;}
 .mbui-comment-box .comment-actions a{color:#8c95a8; cursor:pointer; font-size:12px;}

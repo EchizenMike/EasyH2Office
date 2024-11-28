@@ -10,7 +10,7 @@ mbui.define(['tool','layer','userPicker','loadData'], function (exports) {
 			that.module=module;
 			that.topic_id=topic_id;
 			loadData({
-				url:'/project/api/comment',
+				url:'/api/comment/datalist',
 				elem:'#'+comment_box,
 				where: {tid: topic_id, m: module},
 				limit:100,
@@ -23,7 +23,7 @@ mbui.define(['tool','layer','userPicker','loadData'], function (exports) {
 							ops = `<span class="mbui-btn mbui-btn-primary mbui-btn-xs" data-event="edit" data-id="${data.id}">编辑</span><span class="mbui-btn mbui-btn-primary mbui-btn-xs" data-event="del" data-id="${data.id}">删除</span>`;
 						}
 						else{
-							ops = `<span class="mbui-btn mbui-btn-primary mbui-btn-xs" data-event="replay" data-id="${data.id}" data-uid="${data.admin_id}" data-unames="${data.admin_name}">回复</span>`;
+							ops = `<span class="mbui-btn mbui-btn-primary mbui-btn-xs" data-event="replay" data-id="${data.id}" data-uid="${data.admin_id}" data-unames="${data.name}">回复</span>`;
 						}
 						if(data.pid>0){
 							ptext=`<div style="padding-bottom:8px;"><fieldset><legend>回复『${data.padmin}』${data.ptimes}的评论</legend>${data.pcontent}</fieldset></div>`;
@@ -36,7 +36,7 @@ mbui.define(['tool','layer','userPicker','loadData'], function (exports) {
 								</div>
 								<div class="comment-body">
 									<div class="comment-meta">
-										<span class="comment-name">${data.admin_name}</span><span title="${data.create_time}">${data.times}${data.update_time_str}</span>
+										<span class="comment-name">${data.name}</span><span title="${data.create_time}">${data.create_times}${data.update_times}</span>
 									</div>
 									<div class="comment-content">${to_names} ${data.content}</div>
 									${ptext}
@@ -59,7 +59,7 @@ mbui.define(['tool','layer','userPicker','loadData'], function (exports) {
 				return false;
 			}
 			let postData = { module: module,topic_id: topic_id, content: content, to_uids: to_uids, pid: pid};
-			tool.post("/project/api/add_comment", postData, callback);
+			tool.post("/api/comment/add", postData, callback);
 		},
 		edit: function (id,content) {
 			let that = this;
@@ -72,7 +72,7 @@ mbui.define(['tool','layer','userPicker','loadData'], function (exports) {
 				return false;
 			}
 			let postData = {id: id, content: content};
-			tool.post("/project/api/add_comment", postData, callback);
+			tool.post("/api/comment/add", postData, callback);
 		},
 		del: function (id) {
 			let that = this;
@@ -83,7 +83,7 @@ mbui.define(['tool','layer','userPicker','loadData'], function (exports) {
 						that.load(that.comment_box,that.module,that.topic_id);
 					}
 				}
-				tool.delete("/project/api/delete_comment", { id: id }, callback);
+				tool.delete("/api/comment/del", { id: id }, callback);
 				layer.close(index);
 			});
 		},
