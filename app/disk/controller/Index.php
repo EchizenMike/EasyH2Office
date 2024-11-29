@@ -269,7 +269,7 @@ class Index extends BaseController
    /**
     * 删除
     */
-    public function del($ids)
+    public function del()
     {
 		$param = get_params();
         if (request()->isDelete()) {
@@ -495,7 +495,7 @@ class Index extends BaseController
 			foreach ($idArray as $key => $val) {
 				$list[] = [
 					'id' => $val,
-					'is_share' => 0,
+					'is_star' => 0,
 					'update_time' => time()
 				];
 			}
