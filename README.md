@@ -153,7 +153,7 @@ composer config -g repos.packagist composer https://mirrors.tencent.com/composer
 
 阿里云镜像：
 ```shell
-composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
+composer config -g repos.packagist composer https://mirrors.aliyun.com/composer/
 ```
 
 5.  访问 http://www.你的域名.com/install/index 前，请注意查看伪静态请配置是否设置了伪静态规则。
