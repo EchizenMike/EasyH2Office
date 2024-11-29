@@ -144,9 +144,17 @@ BOSS角色：suhaizhen     123456
 
 3.  如果提示当前权限不足，无法写入配置文件`config/database.php`，请检查`config`目录是否可写，还有可能是当前安装程序无法访问父目录，请检查PHP的`open_basedir`配置，还有可能是服务器Nginx、Apache的执行者无权限的问题。
 
-4.  如果`composer install`失败，请尝试在命令行进行切换配置到国内源，命令如下:
+4、如果`composer install`失败，可能是国际网络问题，请尝试在命令行进行切换配置到国内源镜像，命令如下：
 
-    composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
+腾讯云镜像：
+```shell
+composer config -g repos.packagist composer https://mirrors.tencent.com/composer/
+```
+
+阿里云镜像：
+```shell
+composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
+```
 
 5.  访问 http://www.你的域名.com/install/index 前，请注意查看伪静态请配置是否设置了伪静态规则。
 
