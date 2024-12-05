@@ -14,7 +14,12 @@ return [
     'default_app'      => 'home',
     // 默认时区
     'default_timezone' => 'Asia/Shanghai',
-
+	//授权域名
+	'auth_host'    => 'oa.a.gougucms.com',
+	//授权key
+	'auth_key'    => 'YcXACHWh0s',
+	//授权码
+	'auth_code'    => 'o8aH.naS.4g8o7uwgkuKclmGsO.5c6oWmiY5cIXjAMCFHoW5ha0lslmkoabii9lteNERxeXYrUDByeFhBeFE9PQ==',
     // 应用映射（自动多应用模式有效）
     'app_map'          => [],
     // 域名绑定（自动多应用模式有效）

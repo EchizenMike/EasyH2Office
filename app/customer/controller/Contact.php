@@ -51,19 +51,30 @@ class Contact extends BaseController
 			$mapOr=[];
 			$map[]=['delete_time','=',0];
 			$map[]=['discard_time','=',0];
-			if (!empty($param['uid'])) {
-				$map[] = ['belong_uid', '=',$param['uid']];
+			
+			$mapOr[] = ['belong_uid','=',$uid];
+			$mapOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',share_ids)")];
+			$dids_a = get_leader_departments($uid);
+			//是否是客户管理员
+			$auth = isAuth($uid,'customer_admin','conf_1');
+			if($auth == 1){
+				$dids_b = get_role_departments($uid);
+				$dids = array_merge($dids_a, $dids_b);
+				if(!empty($dids)){
+					$mapOr[] = ['belong_did','in',$dids];
+				}
 			}
 			else{
-				$mapOr[] = ['belong_uid','=',$uid];
-				$mapOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',share_ids)")];
-				$mapOr[] = ['belong_did','in',get_role_departments($uid)];
+				if(!empty($dids_a)){
+					$mapOr[] = ['belong_did','in',$dids_a];
+				}
 			}
+			
 			$cids = Db::name('Customer')
 				->where($map)
-				->where(function ($query) use($map) {
-					if (!empty($map)){
-						$query->whereOr($map);
+				->where(function ($query) use($mapOr) {
+					if (!empty($mapOr)){
+						$query->whereOr($mapOr);
 					}
 				})->column('id');
 			$where[] = ['cid', 'in',$cids];
@@ -71,7 +82,6 @@ class Contact extends BaseController
             return table_assign(0, '', $list);
         }
         else{
-			View::assign('is_leader', isLeader($this->uid));
             return view();
         }
     }
@@ -133,6 +143,10 @@ class Contact extends BaseController
 				View::assign('customer_name', Db::name('Customer')->where('id',$cid)->value('name'));
 			}
 			View::assign('customer_id', $cid);
+			View::assign('customer_id', $cid);
+			if(is_mobile()){
+				return view('qiye@/customer/contact_add');
+			}
 			return view();
 		}
     }
@@ -145,6 +159,9 @@ class Contact extends BaseController
 		$detail = $this->model->getById($id);
 		if (!empty($detail)) {
 			View::assign('detail', $detail);
+			if(is_mobile()){
+				return view('qiye@/customer/contact_view');
+			}
 			return view();
 		}
 		else{

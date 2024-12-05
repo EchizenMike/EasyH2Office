@@ -13,70 +13,70 @@
 			<ul class="layui-tab-title">
 				<li class="layui-this">全部客户</li>
 				<li>我的客户</li>
-				<li>共享客户</li>
 				{gt name="$is_leader" value="0"}
 				<li>下属客户</li>
 				{/gt}
+				<li>共享客户</li>
 			</ul>
 		</div>
 	</div>
 	<form class="layui-form gg-form-bar border-x tab-0" id="barsearchform" lay-filter="barsearchform">
-		{gt name="$is_leader" value="0"}
-		<div class="layui-input-inline user-name" style="width:100px;">
-			<input type="text" name="username" placeholder="选择下属员工" class="layui-input picker-sub" readonly />
-			<input type="text" name="uid" value="" style="display:none" />	
+		<div class="layui-input-inline" style="width:172px;">
+			<input type="text" class="layui-input" data-range="~" placeholder="最近跟进日期" readonly name="follow_time" id="follow_time">
 		</div>
-		{/gt}
-		<div class="layui-input-inline" style="width:122px;">
+		<div class="layui-input-inline" style="width:172px;">
+			<input type="text" class="layui-input" data-range="~" placeholder="下次跟进日期" readonly name="next_time" id="next_time">
+		</div>
+		<div class="layui-input-inline" style="width:100px;">
 			<select name="industry_id">
-				<option value="">选择所属行业</option>
+				<option value="">所属行业</option>
 				{volist name=":get_base_data('Industry')" id="v"}
 				<option value="{$v.id}">{$v.title}</option>
 				{/volist}
 			</select>
 		</div>
-		<div class="layui-input-inline" style="width:122px;">
+		<div class="layui-input-inline" style="width:100px;">
 			<select name="grade_id">
-				<option value="">选择客户等级</option>
-				{volist name=":customer_grade()" id="v"}
+				<option value="">客户等级</option>
+				{volist name=":get_base_data('customer_grade')" id="v"}
 				<option value="{$v.id}">{$v.title}</option>
 				{/volist}
 			</select>
 		</div>
-		<div class="layui-input-inline" style="width:122px;">
+		<div class="layui-input-inline" style="width:100px;">
 			<select name="source_id">
-				<option value="">选择渠道来源</option>
-				{volist name=":customer_source()" id="v"}
+				<option value="">渠道来源</option>
+				{volist name=":get_base_data('customer_source')" id="v"}
 				<option value="{$v.id}">{$v.title}</option>
 				{/volist}
 			</select>
 		</div>
-		<div class="layui-input-inline" style="width:122px;">
+		<div class="layui-input-inline" style="width:100px;">
 			<select name="customer_status">
-				<option value="">选择客户状态</option>
+				<option value="">客户状态</option>
 				{volist name=":get_base_type_data('basic_customer',1)" id="v"}
 				<option value="{$v.id}">{$v.title}</option>
 				{/volist}
 			</select>
 		</div>
-		<div class="layui-input-inline" style="width:122px;">
+		<div class="layui-input-inline" style="width:100px;">
 			<select name="intent_status">
-				<option value="">选择客户意向</option>
+				<option value="">客户意向</option>
 				{volist name=":get_base_type_data('basic_customer',2)" id="v"}
 				<option value="{$v.id}">{$v.title}</option>
 				{/volist}
 			</select>
 		</div>
-		<div class="layui-input-inline" style="width:175px;">
-			<input type="text" class="layui-input" data-range="~" placeholder="最近跟进日期" readonly name="follow_time" id="follow_time">
+		{gt name="$is_leader" value="0"}
+		<div class="layui-input-inline user-name" style="width:100px;">
+			<input type="text" name="username" placeholder="下属员工" class="layui-input picker-sub" readonly />
+			<input type="text" name="uid" value="" style="display:none" />	
 		</div>
-		<div class="layui-input-inline" style="width:175px;">
-			<input type="text" class="layui-input" data-range="~" placeholder="下次跟进日期" readonly name="next_time" id="next_time">
+		{/gt}
+		<div class="layui-input-inline" style="width:188px;">
+			<input type="text" name="keywords" placeholder="输入关键字,客户名称" class="layui-input" autocomplete="off" />
 		</div>
-		<div class="layui-input-inline" style="width:240px;">
-			<input type="text" name="keywords" placeholder="输入关键字" class="layui-input" autocomplete="off" />
-		</div>
-		<div class="layui-input-inline" style="width:150px">
+		<div class="layui-input-inline" style="width:148px">
 			<input type="hidden" name="tab" value="0" />
 			<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="table-search"><i class="layui-icon layui-icon-search mr-1"></i>搜索</button>
 			<button type="reset" class="layui-btn layui-btn-reset" lay-filter="table-reset">清空</button>
@@ -143,12 +143,12 @@
 						align: 'center',
 						width: 100
 					},{
-						field: 'contacter',
+						field: 'contact_name',
 						title: '联系人',
 						align: 'center',
 						width: 80
 					},{
-						field: 'mobile',
+						field: 'contact_mobile',
 						title: '手机号码',
 						align: 'center',
 						width: 100

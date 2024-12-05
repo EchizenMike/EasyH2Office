@@ -11,31 +11,31 @@
 {block name="body"}
 <div class="p-page">
 	<form class="layui-form gg-form-bar border-x border-t" id="barsearchform" lay-filter="barsearchform">
-		<div class="layui-input-inline" style="width:150px;">
+		<div class="layui-input-inline" style="width:120px;">
 			<select name="source_id">
-				<option value="">请选择渠道来源</option>
-				{volist name=":customer_source()" id="v"}
+				<option value="">渠道来源</option>
+				{volist name=":get_base_data('customer_source')" id="v"}
 				<option value="{$v.id}">{$v.title}</option>
 				{/volist}
 			</select>
 		</div>
-		<div class="layui-input-inline" style="width:122px;">
+		<div class="layui-input-inline" style="width:120px;">
 			<select name="industry_id">
-				<option value="">选择所属行业</option>
+				<option value="">所属行业</option>
 				{volist name=":get_base_data('Industry')" id="v"}
 				<option value="{$v.id}">{$v.title}</option>
 				{/volist}
 			</select>
 		</div>
-		<div class="layui-input-inline" style="width:122px;">
+		<div class="layui-input-inline" style="width:120px;">
 			<select name="grade_id">
-				<option value="">选择客户等级</option>
-				{volist name=":customer_grade()" id="v"}
+				<option value="">客户等级</option>
+				{volist name=":get_base_data('customer_grade')" id="v"}
 				<option value="{$v.id}">{$v.title}</option>
 				{/volist}
 			</select>
 		</div>
-		<div class="layui-input-inline" style="width:175px;">
+		<div class="layui-input-inline" style="width:172px;">
 			<input type="text" class="layui-input" data-range="~" placeholder="最近跟进日期" readonly name="follow_time" id="follow_time">
 		</div>
 		<div class="layui-input-inline" style="width:240px;">
@@ -85,17 +85,17 @@
 						minWidth:240,
 						templet: '<div><a data-href="/customer/customer/view/id/{{d.id}}.html" class="side-a">{{d.name}}</a></div>'
 					},{
-						field: 'contacter',
+						field: 'contact_name',
 						title: '联系人',
 						align: 'center',
 						width: 80
 					},{
-						field: 'mobile',
+						field: 'contact_mobile',
 						title: '手机号码',
 						align: 'center',
 						width: 100
 					},{
-						field: 'email',
+						field: 'contact_email',
 						title: '电子邮箱',
 						width: 200
 					},{

@@ -13,6 +13,7 @@
 namespace app\project\model;
 use think\model;
 use think\facade\Db;
+use app\api\model\EditLog;
 class Project extends Model
 {
     /**
@@ -20,17 +21,22 @@ class Project extends Model
     * @param $where
     * @param $param
     */
-    public function datalist($where, $param)
+    public function datalist($param=[],$where=[],$whereOr=[])
     {
 		$rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
 		$order = empty($param['order']) ? 'id desc' : $param['order'];
         try {
             $list = self::where($where)
+			 ->where(function ($query) use ($whereOr) {
+				if (!empty($whereOr))
+					$query->whereOr($whereOr);
+				})
 			->order($order)
 			->paginate(['list_rows'=> $rows])
 			->each(function ($item, $key){
 				$item['title'] = $item['name'];
 				$item->director_name = Db::name('Admin')->where(['id' => $item->director_uid])->value('name');
+				$item->department = Db::name('Department')->where(['id' => $item->did])->value('title');
 				$item->admin_name = Db::name('Admin')->where(['id' => $item->admin_id])->value('name');
 				$item->status_name = status_name($item->status);
 				$item->range_time = date('Y-m-d',$item->start_time). ' 至 ' .date('Y-m-d',$item->end_time);
@@ -123,6 +129,8 @@ class Project extends Model
 			}
 			Db::name('ProjectStep')->strict(false)->field(true)->insertAll($step);	
 			add_log('add', $insertId, $param);
+			$log=new EditLog();
+			$log->add('Project',$insertId);
 			// 提交事务
 			Db::commit();
         } catch(\Exception $e) {
@@ -143,6 +151,7 @@ class Project extends Model
 		Db::startTrans();
         try {
             $param['update_time'] = time();
+			$old = self::find($param['id']);
             self::where('id', $param['id'])->strict(false)->field(true)->update($param);
 			//项目阶段
 			foreach ($step as $key => $value) {
@@ -156,6 +165,8 @@ class Project extends Model
 				}
 			}			
 			add_log('edit', $param['id'], $param);
+			$log=new EditLog();
+			$log->edit('Project',$param['id'],$param,$old);
 			// 提交事务
 			Db::commit();
         } catch(\Exception $e) {
@@ -163,6 +174,21 @@ class Project extends Model
 			Db::rollback();
 			return to_assign(1, '操作失败，原因：'.$e->getMessage());
         }
+		return to_assign(0,'操作成功',['return_id'=>$param['id']]);
+    }
+	
+    public function apiedit($param)
+    {
+		try {
+            $param['update_time'] = time();
+			$old = self::find($param['id']);
+            self::where('id', $param['id'])->strict(false)->field(true)->update($param);		
+			add_log('edit', $param['id'], $param);
+			$log=new EditLog();
+			$log->edit('Project',$param['id'],$param,$old);
+		} catch(\Exception $e) {
+			return to_assign(1, '操作失败，原因：'.$e->getMessage());
+		}
 		return to_assign(0,'操作成功',['return_id'=>$param['id']]);
     }
 	
@@ -175,6 +201,7 @@ class Project extends Model
         $info = self::find($id);
 		$info['admin_name'] = Db::name('Admin')->where(['id' => $info['admin_id']])->value('name');
 		$info['director_name'] = Db::name('Admin')->where(['id' => $info['director_uid']])->value('name');
+		$info['department'] = Db::name('Department')->where(['id' => $info['did']])->value('title');
 		$info['contract_name'] = Db::name('Contract')->where(['id' => $info['contract_id']])->value('name');
 		//项目阶段			
 		$step_array = Db::name('ProjectStep')

@@ -74,13 +74,19 @@ class Contract extends BaseController
 					$where[] = ['sign_uid', '=', $param['uid']];
 				}
 				else{
-					$whereOr[] =['admin_id|prepared_uid|sign_uid|keeper_uid', '=', $uid];
-					$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',share_ids)")];
-					$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',check_uids)")];
-					$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',check_history_uids)")];
-					$dids = get_role_departments($uid);
-					if(!empty($dids)){
-						$whereOr[] =['did', 'in', $dids];
+					//是否是客户管理员
+					$auth = isAuth($uid,'customer_admin','conf_1');
+					if($auth == 0){
+						$whereOr[] =['admin_id|prepared_uid|sign_uid|keeper_uid', '=', $uid];
+						$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',share_ids)")];
+						$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',check_uids)")];
+						$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',check_history_uids)")];
+						$dids_a = get_leader_departments($uid);
+						$dids_b = get_role_departments($uid);
+						$dids = array_merge($dids_a, $dids_b);
+						if(!empty($dids)){
+							$whereOr[] = ['did','in',$dids];
+						}
 					}
 				}
 			}
@@ -105,7 +111,9 @@ class Contract extends BaseController
     {
 		$param = get_params();
         if (request()->isAjax()) {
-			$where=[];
+			$uid = $this->uid;
+            $where = [];
+            $whereOr = [];
 			$where[]=['delete_time','=',0];
 			$where[]=['archive_time','>',0];
             if (!empty($param['keywords'])) {
@@ -125,7 +133,27 @@ class Contract extends BaseController
 				$end_time =explode('~', $param['end_time']);
 				$where[] = ['end_time', 'between',[strtotime(urldecode($end_time[0])),strtotime(urldecode($end_time[1].' 23:59:59'))]];
             }
-            $list = $this->model->datalist($param,$where);
+			$whereOr[] =['admin_id|prepared_uid|sign_uid|keeper_uid', '=', $uid];
+			$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',share_ids)")];
+			$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',check_uids)")];
+			$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',check_history_uids)")];
+			
+			$dids_a = get_leader_departments($uid);
+			//是否是合同管理员
+			$auth = isAuth($uid,'contract_admin','conf_1');
+			if($auth == 1){
+				$dids_b = get_role_departments($uid);
+				$dids = array_merge($dids_a, $dids_b);
+				if(!empty($dids)){
+					$whereOr[] = ['did','in',$dids];
+				}
+			}
+			else{
+				if(!empty($dids_a)){
+					$whereOr[] = ['did','in',$dids_a];
+				}
+			}
+            $list = $this->model->datalist($param,$where,$whereOr);
             return table_assign(0, '', $list);
         }
         else{
@@ -138,7 +166,9 @@ class Contract extends BaseController
     {
 		$param = get_params();
         if (request()->isAjax()) {
-			$where=[];
+			$uid = $this->uid;
+            $where = [];
+            $whereOr = [];
 			$where[]=['delete_time','=',0];
 			$where[]=['stop_time','>',0];
             if (!empty($param['keywords'])) {
@@ -158,7 +188,27 @@ class Contract extends BaseController
 				$end_time =explode('~', $param['end_time']);
 				$where[] = ['end_time', 'between',[strtotime(urldecode($end_time[0])),strtotime(urldecode($end_time[1].' 23:59:59'))]];
             }
-            $list = $this->model->datalist($param,$where);
+            $whereOr[] =['admin_id|prepared_uid|sign_uid|keeper_uid', '=', $uid];
+			$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',share_ids)")];
+			$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',check_uids)")];
+			$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',check_history_uids)")];
+			
+			$dids_a = get_leader_departments($uid);
+			//是否是合同管理员
+			$auth = isAuth($uid,'contract_admin','conf_1');
+			if($auth == 1){
+				$dids_b = get_role_departments($uid);
+				$dids = array_merge($dids_a, $dids_b);
+				if(!empty($dids)){
+					$whereOr[] = ['did','in',$dids];
+				}
+			}
+			else{
+				if(!empty($dids_a)){
+					$whereOr[] = ['did','in',$dids_a];
+				}
+			}
+            $list = $this->model->datalist($param,$where,$whereOr);
             return table_assign(0, '', $list);
         }
         else{
@@ -170,7 +220,9 @@ class Contract extends BaseController
     {
 		$param = get_params();
         if (request()->isAjax()) {
-			$where=[];
+			$uid = $this->uid;
+            $where = [];
+            $whereOr = [];
 			$where[]=['delete_time','=',0];
 			$where[]=['void_time','>',0];
             if (!empty($param['keywords'])) {
@@ -190,7 +242,27 @@ class Contract extends BaseController
 				$end_time =explode('~', $param['end_time']);
 				$where[] = ['end_time', 'between',[strtotime(urldecode($end_time[0])),strtotime(urldecode($end_time[1].' 23:59:59'))]];
             }
-            $list = $this->model->datalist($param,$where);
+            $whereOr[] =['admin_id|prepared_uid|sign_uid|keeper_uid', '=', $uid];
+			$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',share_ids)")];
+			$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',check_uids)")];
+			$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',check_history_uids)")];
+			
+			$dids_a = get_leader_departments($uid);
+			//是否是合同管理员
+			$auth = isAuth($uid,'contract_admin','conf_1');
+			if($auth == 1){
+				$dids_b = get_role_departments($uid);
+				$dids = array_merge($dids_a, $dids_b);
+				if(!empty($dids)){
+					$whereOr[] = ['did','in',$dids];
+				}
+			}
+			else{
+				if(!empty($dids_a)){
+					$whereOr[] = ['did','in',$dids_a];
+				}
+			}
+            $list = $this->model->datalist($param,$where,$whereOr);
             return table_assign(0, '', $list);
         }
         else{
@@ -296,6 +368,9 @@ class Contract extends BaseController
                 $this->model->add($param);
             }	 
         }else{
+			if(is_mobile()){
+				return view('qiye@/index/405',['msg' => '由于合同太多字段，手机端不方便操作，请到PC端新增合同']);
+			}
 			$id = isset($param['id']) ? $param['id'] : 0;
 			$types = isset($param['types']) ? $param['types'] : 0;
 			$is_customer = Db::name('DataAuth')->where('name','contract_admin')->value('conf_3');
@@ -357,6 +432,9 @@ class Contract extends BaseController
 			$auth = isAuth($this->uid,'contract_admin','conf_1');
 			View::assign('detail', $detail);
 			View::assign('auth', $auth);
+			if(is_mobile()){
+				return view('qiye@/contract/contract_view');
+			}
 			return view();
 		}
 		else{

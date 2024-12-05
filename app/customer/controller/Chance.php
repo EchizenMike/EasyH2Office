@@ -52,15 +52,40 @@ class Chance extends BaseController
 			if (!empty($param['uid'])) {
                 $where[] = ['belong_uid','=',$param['uid']];
             }
-			else{
-				$auth = isAuth($uid,'customer_admin','conf_1');
-				if($auth==0){
-					$whereOr[] = ['admin_id','=',$uid];
-					$whereOr[] = ['belong_uid','=',$uid];
-					$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',assist_ids)")];
+			
+			$map=[];
+			$mapOr=[];
+			$map[]=['delete_time','=',0];
+			$map[]=['discard_time','=',0];
+			
+			$mapOr[] = ['belong_uid','=',$uid];
+			$mapOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',share_ids)")];
+			$dids_a = get_leader_departments($uid);
+			//是否是客户管理员
+			$auth = isAuth($uid,'customer_admin','conf_1');
+			if($auth == 1){
+				$dids_b = get_role_departments($uid);
+				$dids = array_merge($dids_a, $dids_b);
+				if(!empty($dids)){
+					$mapOr[] = ['belong_did','in',$dids];
 				}
 			}
-            $list = $this->model->datalist($param,$where,$whereOr);
+			else{
+				if(!empty($dids_a)){
+					$mapOr[] = ['belong_did','in',$dids_a];
+				}
+			}
+			
+			$cids = Db::name('Customer')
+				->where($map)
+				->where(function ($query) use($mapOr) {
+					if (!empty($mapOr)){
+						$query->whereOr($mapOr);
+					}
+				})->column('id');
+				
+			$where[] = ['cid', 'in',$cids];
+            $list = $this->model->datalist($param,$where);
             return table_assign(0, '', $list);
         }
         else{
@@ -101,6 +126,9 @@ class Chance extends BaseController
 			$customer_name = Db::name('Customer')->where('id',$customer_id)->value('name');
             View::assign('customer_id', $customer_id);
             View::assign('customer_name', $customer_name);
+			if(is_mobile()){
+				return view('qiye@/customer/chance_add');
+			}
 			return view();
 		}
     }
@@ -115,6 +143,9 @@ class Chance extends BaseController
 			$detail['contact'] = Db::name('CustomerContact')->where('id',$detail['contact_id'])->value('name');
 			$detail['stage_name'] =Db::name('BasicCustomer')->where('id',$detail['stage'])->value('title');
 			View::assign('detail', $detail);
+			if(is_mobile()){
+				return view('qiye@/customer/chance_view');
+			}
 			return view();
 		}
 		else{

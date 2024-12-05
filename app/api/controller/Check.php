@@ -146,18 +146,19 @@ class Check extends BaseController
 					'check_copy_uids'=>isset($param['check_copy_uids'])?$param['check_copy_uids']:''
 				]);
 				//发送消息通知
-				if($flow_cate['template_apply']>0){
+				if($flow_cate['template_id']>0){
 					$msg=[
 						'from_uid'=>$this->uid,//发送人
 						'to_uids'=>$step[0]['check_uids'],//接收人
-						'template_id'=>$flow_cate['template_apply'],//消息模板ID
+						'template_id'=>$flow_cate['template_id'],//消息模板ID
+						'template_field'=>'0',//消息模板字段
 						'content'=>[ //消息内容
 							'create_time'=>date('Y-m-d H:i:s'),
 							'action_id'=>$param['action_id'],
 							'title' => $subject
 						]
 					];
-					send_message($msg);
+					event('SendMessage',$msg);
 				}
 				return to_assign();
 			}
@@ -186,18 +187,19 @@ class Check extends BaseController
 					  'check_copy_uids'=>isset($param['check_copy_uids'])?$param['check_copy_uids']:''
 				]);
 				//发送消息通知
-				if($flow_cate['template_apply']>0){
+				if($flow_cate['template_id']>0){
 					$msg=[
 						'from_uid'=>$this->uid,//发送人
 						'to_uids'=>$param['check_uids'],//接收人
-						'template_id'=>$flow_cate['template_apply'],//消息模板ID
+						'template_id'=>$flow_cate['template_id'],//消息模板ID
+						'template_field'=>'0',//消息模板字段
 						'content'=>[ //消息内容
 							'create_time'=>date('Y-m-d H:i:s'),
 							'action_id'=>$param['action_id'],
 							'title' => $subject
 						]
 					];
-					send_message($msg);
+					event('SendMessage',$msg);
 				}
 				return to_assign();
 			}
@@ -440,33 +442,35 @@ class Check extends BaseController
 				add_log('check', $action_id, $param,$subject);
 				//发送消息通知
 				if($param['check_status'] == 1){
-					if($flow_cate['template_apply']>0){
+					if($flow_cate['template_id']>0){
 						$msg=[
 							'from_uid'=>$detail['admin_id'],//发送人
 							'to_uids'=>$param['check_uids'],//接收人
-							'template_id'=>$flow_cate['template_apply'],//消息模板ID
+							'template_id'=>$flow_cate['template_id'],//消息模板ID
+							'template_field'=>'0',//消息模板字段
 							'content'=>[ //消息内容
 								'create_time'=>date('Y-m-d H:i:s',$detail['create_time']),
 								'action_id'=>$action_id,
 								'title' => $subject
 							]
 						];
-						send_message($msg);
+						event('SendMessage',$msg);
 					}
 				}
 				if($param['check_status'] == 2){
-					if($flow_cate['template_ok']>0){
+					if($flow_cate['template_id']>0){
 						$msg=[
 							'from_uid'=>$this->uid,//发送人
 							'to_uids'=>$detail['admin_id'],//接收人
-							'template_id'=>$flow_cate['template_ok'],//消息模板ID
+							'template_id'=>$flow_cate['template_id'],//消息模板ID
+							'template_field'=>'1',//消息模板字段
 							'content'=>[ //消息内容
 								'create_time'=>date('Y-m-d H:i:s',$detail['create_time']),
 								'action_id'=>$action_id,
 								'title' => $subject
 							]
 						];
-						send_message($msg);
+						event('SendMessage',$msg);
 					}
 				}
 				return to_assign();
@@ -523,18 +527,19 @@ class Check extends BaseController
 				$aid = Db::name('FlowRecord')->strict(false)->field(true)->insertGetId($checkData);
 				add_log('refue', $action_id, $param,$subject);
 				//发送消息通知
-				if($flow_cate['template_no']>0){
+				if($flow_cate['template_id']>0){
 					$msg=[
 						'from_uid'=>$this->uid,//发送人
 						'to_uids'=>$detail['admin_id'],//接收人
-						'template_id'=>$flow_cate['template_no'],//消息模板ID
+						'template_id'=>$flow_cate['template_id'],//消息模板ID
+						'template_field'=>'2',//消息模板字段
 						'content'=>[ //消息内容
 							'create_time'=>date('Y-m-d H:i:s',$detail['create_time']),
 							'action_id'=>$detail['id'],
 							'title' => $subject
 						]
 					];
-					send_message($msg);
+					event('SendMessage',$msg);
 				}
 				return to_assign();
 			}

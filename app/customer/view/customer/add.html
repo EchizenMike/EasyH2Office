@@ -11,7 +11,7 @@
 			<td>
 				<select name="source_id" lay-verify="required" lay-reqText="请选择客户来源">
 				<option value="">请选择客户来源</option>
-				{volist name=":customer_source()" id="v"}
+				{volist name=":get_base_data('customer_source')" id="v"}
 				<option value="{$v.id}">{$v.title}</option>
 				{/volist}
 			  </select>
@@ -93,6 +93,7 @@
     </table>
 	<div class="pt-4">
 		<input type="hidden" name="id" value="{$detail.id|default=0}"/>
+		<input type="hidden" name="scene" value="add"/>
 		<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform">立即提交</button>
 		<button type="reset" class="layui-btn layui-btn-primary">重置</button>
 	</div>

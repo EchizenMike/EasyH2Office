@@ -13,6 +13,7 @@
 namespace app\customer\model;
 use think\model;
 use think\facade\Db;
+use app\api\model\EditLog;
 class Customer extends Model
 {
     /**
@@ -86,14 +87,14 @@ class Customer extends Model
 				}
 				$contact = Db::name('CustomerContact')->where(['is_default'=>1,'cid' => $item->id])->find();
 				if(!empty($contact)){
-					$item->contacter = $contact['name'];
-					$item->mobile = $contact['mobile'];
-					$item->email = $contact['email'];
+					$item->contact_name = $contact['name'];
+					$item->contact_mobile = $contact['mobile'];
+					$item->contact_email = $contact['email'];
 				}
 				else{
-					$item->contacter = '-';
-					$item->mobile = '-';
-					$item->email = '-';
+					$item->contact_name = '';
+					$item->contact_mobile = '';
+					$item->contact_email = '';
 				}
 			});
 			return $list;
@@ -113,7 +114,6 @@ class Customer extends Model
 			$param['create_time'] = time();
 			$param['update_time'] = time();
 			$insertId = self::strict(false)->field(true)->insertGetId($param);
-			add_log('add', $insertId, $param);
 			$contact = [
 				'name' => $param['c_name'],
 				'mobile' => $param['c_mobile'],
@@ -127,15 +127,9 @@ class Customer extends Model
 				'admin_id' => $param['admin_id']
 			];
 			Db::name('CustomerContact')->strict(false)->field(true)->insert($contact);
-			$log_data = array(
-				'field' => 'new',
-				'action' => 'add',
-				'type' => 0,
-				'customer_id' => $insertId,
-				'admin_id' => $param['admin_id'],
-				'create_time' => time(),
-			);
-			Db::name('CustomerLog')->strict(false)->field(true)->insert($log_data);
+			add_log('add', $insertId, $param);
+			$log=new EditLog();
+			$log->add('Customer',$insertId);
         } catch(\Exception $e) {
 			return to_assign(1, '操作失败，原因：'.$e->getMessage());
         }
@@ -150,10 +144,11 @@ class Customer extends Model
     {
         try {
             $param['update_time'] = time();
-			$customer = self::find($param['id']);
+			$old = self::find($param['id']);
             self::where('id', $param['id'])->strict(false)->field(true)->update($param);
 			add_log('edit', $param['id'], $param);
-			to_log($param['edit_id'],0,$param,$customer);
+			$log=new EditLog();
+			$log->edit('Customer',$param['id'],$param,$old);
         } catch(\Exception $e) {
 			return to_assign(1, '操作失败，原因：'.$e->getMessage());
         }

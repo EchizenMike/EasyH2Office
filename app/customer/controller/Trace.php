@@ -52,12 +52,38 @@ class Trace extends BaseController
 			if (!empty($param['uid'])) {
                 $where[] = ['admin_id','=',$param['uid']];
             }
-			else{
-				$auth = isAuth($uid,'customer_admin','conf_1');
-				if($auth==0){
-					$where[] = ['admin_id','=',$uid];
+			$map=[];
+			$mapOr=[];
+			$map[]=['delete_time','=',0];
+			$map[]=['discard_time','=',0];
+			
+			$mapOr[] = ['belong_uid','=',$uid];
+			$mapOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',share_ids)")];
+			$dids_a = get_leader_departments($uid);
+			//是否是客户管理员
+			$auth = isAuth($uid,'customer_admin','conf_1');
+			if($auth == 1){
+				$dids_b = get_role_departments($uid);
+				$dids = array_merge($dids_a, $dids_b);
+				if(!empty($dids)){
+					$mapOr[] = ['belong_did','in',$dids];
 				}
 			}
+			else{
+				if(!empty($dids_a)){
+					$mapOr[] = ['belong_did','in',$dids_a];
+				}
+			}
+			
+			$cids = Db::name('Customer')
+				->where($map)
+				->where(function ($query) use($mapOr) {
+					if (!empty($mapOr)){
+						$query->whereOr($mapOr);
+					}
+				})->column('id');
+				
+			$where[] = ['cid', 'in',$cids];
             $list = $this->model->datalist($param,$where);
             return table_assign(0, '', $list);
         }
@@ -98,6 +124,9 @@ class Trace extends BaseController
 			$customer_name = Db::name('Customer')->where('id',$customer_id)->value('name');
             View::assign('customer_id', $customer_id);
             View::assign('customer_name', $customer_name);
+			if(is_mobile()){
+				return view('qiye@/customer/trace_add');
+			}
             return view();
 		}
     }
@@ -119,6 +148,9 @@ class Trace extends BaseController
 				$detail['chance']='-';
 			}
 			View::assign('detail', $detail);
+			if(is_mobile()){
+				return view('qiye@/customer/trace_view');
+			}
 			return view();
 		}
 		else{

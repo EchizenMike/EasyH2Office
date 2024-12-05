@@ -37,11 +37,8 @@ class Schedule extends BaseController
         if (request()->isAjax()) {
             $param = get_params();
             $where = [];			
-			if (!empty($param['uid'])) {
-				$where[] = ['a.admin_id', '=', $param['uid']];
-			} else {
-				$where[] = ['a.admin_id', '=', $this->uid];
-			}
+            $whereOr = [];	
+			$uid= $this->uid;			
 			if (!empty($param['keywords'])) {
 				$where[] = ['a.title', 'like', '%' . trim($param['keywords']) . '%'];
 			}
@@ -57,7 +54,18 @@ class Schedule extends BaseController
 				$where[] = ['a.start_time', 'between', [strtotime(urldecode($diff_time[0])),strtotime(urldecode($diff_time[1].' 23:59:59'))]];
 			}
             $where[] = ['a.delete_time', '=', 0];
-            $list = $this->model->datalist($param,$where);
+			if (!empty($param['uid'])) {
+				$where[] = ['a.admin_id', '=', $param['uid']];
+			} else {
+				$whereOr[] = ['a.admin_id', '=', $uid];
+				$dids_a = get_leader_departments($uid);	
+				$dids_b = get_role_departments($uid);
+				$dids = array_merge($dids_a, $dids_b);
+				if(!empty($dids)){
+					$whereOr[] = ['a.did','in',$dids];
+				}
+			}
+            $list = $this->model->datalist($param,$where,$whereOr);
             return table_assign(0, '', $list);
         } else {
 			View::assign('is_leader', isLeader($this->uid));
@@ -141,6 +149,15 @@ class Schedule extends BaseController
         $param = get_params();
         $admin_id = $this->uid;
         if ($param['id'] == 0) {
+			if (isset($param['start_time'])) {
+                $param['start_time'] = strtotime($param['start_time']);
+            }
+			if (isset($param['end_time'])) {
+                $param['end_time'] = strtotime($param['end_time']);
+            }
+            if (isset($param['end_time_a'])) {
+                $param['end_time'] = strtotime($param['end_time_a'] . '' . $param['end_time_b']);
+            }
             if (isset($param['start_time_a'])) {
                 $param['start_time'] = strtotime($param['start_time_a'] . '' . $param['start_time_b']);
             }
@@ -152,6 +169,9 @@ class Schedule extends BaseController
 			}
             if ($param['end_time'] <= $param['start_time']) {
                 return to_assign(1, "结束时间需要大于开始时间");
+            }
+			if (date('d',$param['end_time']) != date('d',$param['start_time'])) {
+                return to_assign(1, "结束时间与开始时间必须是同一天");
             }
             $where1[] = ['delete_time', '=', 0];
             $where1[] = ['admin_id', '=', $admin_id];
@@ -242,7 +262,11 @@ class Schedule extends BaseController
         }
         if (request()->isAjax()) {
             return to_assign(0, "", $schedule);
-        } else {
+        } else {			
+			View::assign('detail',$schedule);
+			if(is_mobile()){
+				return view('qiye@/index/schedule_view');
+			}
             return $schedule;
         }
     }

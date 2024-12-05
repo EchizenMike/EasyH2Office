@@ -15,6 +15,7 @@ declare (strict_types = 1);
 namespace app\api\controller;
 
 use app\api\BaseController;
+use app\api\model\EditLog;
 use think\facade\Db;
 
 class Index extends BaseController
@@ -141,6 +142,29 @@ class Index extends BaseController
 			//判断是否是分块上传
 			if ($data['type'] === 'chunk') {
 				$file = request()->file('file');
+				
+				$rule = [
+					'image' => 'jpg,png,jpeg,gif',
+					'doc' => 'txt,doc,docx,ppt,pptx,xls,xlsx,pdf',
+					'file' => 'zip,gz,7z,rar,tar',
+					'video' => 'mpg,mp4,mpeg,avi,wmv,mov,flv,m4v',
+					'audio' => 'mp3,wav,wma,flac,midi',
+				];
+				$fileExt = $rule['image'] . ',' . $rule['doc'] . ',' . $rule['file'] . ',' . $rule['video'] . ',' . $rule['audio'];
+				//1M=1024*1024=1048576字节
+				$file_size = get_system_config('system','upload_max_filesize');
+				if(!isset($file_size)){
+					$file_size=50;
+				}
+				$fileSize = $file_size * 1024 * 1024;
+				$validate = \think\facade\Validate::rule([
+					'image' => 'require|fileSize:' . $fileSize . '|fileExt:' . $fileExt,
+				]);
+				$file_check['image'] = $file;
+				if (!$validate->check($file_check)) {
+					return to_assign(1, $validate->getError());
+				}
+				
 				//获取对应的上传配置
 				$fs = \think\facade\Filesystem::disk('public');
 				$ext = $file->extension();
@@ -274,6 +298,16 @@ class Index extends BaseController
 			return to_assign(1, "操作失败");
 		}
     }
+
+    //获取编辑记录
+    public function load_log()
+    {
+        $param = get_params();
+		$log = new EditLog();
+		$list = $log->datalist($param);
+        return to_assign(0, '', $list);
+    }
+
 
     //清空缓存
     public function cache_clear()

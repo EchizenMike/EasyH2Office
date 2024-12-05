@@ -66,6 +66,9 @@ class Leaves extends BaseController
 			}
 			if(!empty($param['end_date'])){
 				$param['end_date'] = strtotime($param['end_date']);
+				if($param['end_date']<$param['start_date']){
+					return to_assign(1, '结束时间不能小于开始时间');
+				}
 			}
             if (!empty($param['id']) && $param['id'] > 0) {
 				$this->model->edit($param);
@@ -80,6 +83,9 @@ class Leaves extends BaseController
 				$detail = $this->model->getById($id);
 				View::assign('detail', $detail);
 			}
+			if(is_mobile()){
+				return view('qiye@/approve/add_qingjia');
+			}
 			return view();
 		}
     }
@@ -91,7 +97,6 @@ class Leaves extends BaseController
     {
 		$detail = $this->model->getById($id);
 		if (!empty($detail)) {
-			$detail['types_name'] = leaves_types_name($detail['types']);
 			$detail['start_span_name'] = '上午';
 			$detail['end_span_name'] = '上午';
 			if($detail['start_span'] == 2){
@@ -100,7 +105,12 @@ class Leaves extends BaseController
 			if($detail['end_span'] == 2){
 				$detail['end_span_name'] = '下午';
 			}
+			$detail['types_name'] = leaves_types_name($detail['types']);
+			View::assign('create_user', get_admin($detail['admin_id']));
 			View::assign('detail', $detail);
+			if(is_mobile()){
+				return view('qiye@/approve/view_qingjia');
+			}
 			return view();
 		}
 		else{

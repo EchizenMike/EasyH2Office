@@ -17,6 +17,7 @@ namespace app\user\controller;
 
 use app\base\BaseController;
 use app\user\model\Admin as AdminList;
+use app\user\model\Department as DepartmentModel;
 use app\user\validate\AdminCheck;
 use avatars\MDAvatars;
 use Overtrue\Pinyin\Pinyin;
@@ -88,13 +89,18 @@ class User extends BaseController
     }
 
     //生成登录名
-    public function create_name($name,$id)
+    public function create_name($name,$id=0,$total=0,$old='')
     {
 		$count = Db::name('Admin')->where([['username','=',$name],['id','<>',$id]])->count();
-		if($count>0){
-			$name = $this->create_name($name.'1',$id);
+		if($total==0){
+			$old = $name;
 		}
-		return $name;       
+		$total++;
+		if($count>0){
+			$newname = $old.$total;
+			$name = $this->create_name($newname,$id,$total,$old);
+		}
+		return $name;
     }
 
     //添加
@@ -135,6 +141,11 @@ class User extends BaseController
                         $char = mb_substr($param['name'], 0, 1, 'utf-8');
                         Db::name('Admin')->where('id', $id)->update(['thumb' => $this->to_avatars($char)]);
                     }
+					$info = Db::name('Admin')->where('id', $id)->find();
+					$model = new DepartmentModel();
+					$auth_dids = $model->get_auth_departments($info);
+					$son_dids = $model->get_son_departments($info);
+					Db::name('Admin')->where('id',$id)->update(['auth_dids'=>$auth_dids,'son_dids'=>$son_dids]);
                     add_log('edit', $id, $param);
                     //清除菜单\权限缓存
                     clear_cache('adminMenu');
@@ -171,6 +182,11 @@ class User extends BaseController
                         $char = mb_substr($param['name'], 0, 1, 'utf-8');
                         Db::name('Admin')->where('id', $uid)->update(['thumb' => $this->to_avatars($char)]);
                     }
+					$info = Db::name('Admin')->where('id', $uid)->find();
+					$model = new DepartmentModel();
+					$auth_dids = $model->get_auth_departments($info);
+					$son_dids = $model->get_son_departments($info);
+					Db::name('Admin')->where('id',$uid)->update(['auth_dids'=>$auth_dids,'son_dids'=>$son_dids]);
                     add_log('add', $uid, $param);
                     // 提交事务
                     Db::commit();

@@ -53,6 +53,15 @@ class Ticket extends BaseController
 				$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',check_uids)")];
 				$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',check_history_uids)")];
 				$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',check_copy_uids)")];
+				$auth = isAuthInvoice($uid);
+				if($auth == 0){
+					$dids_a = get_leader_departments($uid);	
+					$dids_b = get_role_departments($uid);
+					$dids = array_merge($dids_a, $dids_b);
+					if(!empty($dids)){
+						$whereOr[] = ['did','in',$dids];
+					}
+				}
 			}
 			if($tab == 1){
 				//我创建的
@@ -128,6 +137,9 @@ class Ticket extends BaseController
 				View::assign('detail', $detail);
 				return view('edit');
 			}
+			if(is_mobile()){
+				return view('qiye@/finance/add_ticket');
+			}
 			return view();
 		}
     }
@@ -143,6 +155,10 @@ class Ticket extends BaseController
 			$other_file_array = Db::name('File')->where('id','in',$detail['other_file_ids'])->select();
 			$detail['other_file_array'] = $other_file_array;
 			View::assign('detail', $detail);
+			View::assign('create_user', get_admin($detail['admin_id']));
+			if(is_mobile()){
+				return view('qiye@/finance/view_ticket');
+			}
 			return view();
 		}
 		else{
@@ -165,6 +181,8 @@ class Ticket extends BaseController
 	//收票记录
     public function record()
     {
+		$uid = $this->uid;
+		$auth = isAuthInvoice($uid);
         if (request()->isAjax()) {
 			$param = get_params();
 			$tab = isset($param['tab']) ? $param['tab'] : 0;
@@ -172,11 +190,16 @@ class Ticket extends BaseController
 			$where[]=['delete_time','=',0];
 			$where[]=['check_status','=',2];
 			$where[]=['invoice_type','>',0];
-			if(isAuthInvoice($this->uid)==0){
-				$where[] = ['admin_id', '=', $this->uid];
+			if($auth == 0){
+				$dids_a = get_leader_departments($uid);	
+				$dids_b = get_role_departments($uid);
+				$dids = array_merge($dids_a, $dids_b);
+				if(!empty($dids)){
+					$whereOr[] = ['did','in',$dids];
+				}
 			}
 			if($tab == 0){
-				//已作废的
+				//正常的
 				$where[] = ['open_status', '<', 2];
 			}
 			if($tab == 1){
@@ -197,7 +220,7 @@ class Ticket extends BaseController
 			$totalRow['amount'] = sprintf("%.2f",$amount);
             return table_assign(0, '', $list);
         } else {
-			View::assign('authInvoice', isAuthInvoice($this->uid));
+			View::assign('authInvoice',$auth);
             return view();
         }
     }
@@ -274,6 +297,9 @@ class Ticket extends BaseController
 				View::assign('detail', $detail);
 				return view('edit_a');
 			}
+			if(is_mobile()){
+				return view('qiye@/finance/add_ticket_a');
+			}
 			return view();
 		}
     }
@@ -289,6 +315,10 @@ class Ticket extends BaseController
 			$other_file_array = Db::name('File')->where('id','in',$detail['other_file_ids'])->select();
 			$detail['other_file_array'] = $other_file_array;
 			View::assign('detail', $detail);
+			View::assign('create_user', get_admin($detail['admin_id']));
+			if(is_mobile()){
+				return view('qiye@/finance/view_ticket_a');
+			}
 			return view();
 		}
 		else{

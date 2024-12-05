@@ -27,7 +27,7 @@
 .layui-btn-reset:hover{color: #323232;}
 
 .layui-tab-brief>.layui-tab-title .layui-this{color:#1A75FF}
-.layui-tab-brief>.layui-tab-more li.layui-this:after, .layui-tab-brief>.layui-tab-title .layui-this:after{border-color:#1A75FF}
+.layui-tab-brief>.layui-tab-more li.layui-this:after, .layui-tab-brief>.layui-tab-title .layui-this:after{border-color:#1A75FF;z-index:1}
 .layui-form-radio{padding-right:4px;}
 .layui-form-radio>i{margin-right:4px;}
 .layui-form-label{padding:9px; color:#909399}
@@ -439,3 +439,25 @@ div.layui-table-main::-webkit-scrollbar-thumb:active{background-color:rgba(0,0,0
 .file-hasdelete .file-tool{display:none}
 .layui-dropdown.file-menu{min-width:64px;}
 .layui-menu{margin:0}
+/*编辑日志*/
+.log-timeline{position: relative; min-height:120px; padding-left: 48px; background-color:#fff;}
+.log-timeline:after {content: ""; position: absolute; top: 0; left: 24px; width: 1px; height: 100%; background: #e3e9ed;}
+.log-timeline dl{padding-bottom: 8px; position: relative;}
+.log-timeline dt{font-size: 16px; line-height: 2.4; color: #323232; font-weight:600}
+.log-timeline dd{font-size: 14px; line-height: 1.6; padding:5px 0}
+.log-timeline .date-second-point{width: 10px; height: 10px; display: block; border-radius: 50%; border: 3px solid #FBBC05; background: #fff; position: absolute; z-index: 99; left:-32px; top:9px}
+.log-timeline .log-thumb{width: 24px; height: 24px; border-radius: 50%; margin-right:4px;}
+.log-timeline .open-a{margin:0 4px;}
+.log-item i{font-weight:800; color:#323232}
+.log-content strong{margin:0 4px; color:#323232}
+.layui-timeline-item{color:#c9c9c9; padding-bottom:8px}
+.layui-timeline-item.delete_0{color:#646464;}
+/*评论*/
+.comment-input .comment-image{width:40px; height:40px; border-radius:50%}
+.comment-item .comment-avatar{width:50px; float:left}
+.comment-item .comment-image{width:36px; height:36px; border-radius:50%}
+.comment-item .comment-body{margin-left:50px;}
+.comment-item .comment-content blockquote{border-left:3px solid #f1f1f1; padding:4px 8px;}
+.comment-item .comment-actions a{color:#8c95a8; cursor:pointer; font-size:12px;}
+.comment-item .comment-actions a:hover{color:#3582fb;}
+.comment-meta span{font-size:12px;}

@@ -226,88 +226,45 @@ function table_assign($code = 0, $msg = '请求成功', $data = [],$totalRow = [
 }
 
 //写入操作日主
-function add_log($type, $param_id = '', $param = [] ,$subject='')
+function add_log($type, $param_id = 0, $param = [] ,$subject='')
 {
-	$title = '操作';
-	$session_admin = get_config('app.session_admin');
-	$uid = \think\facade\Session::get($session_admin);
-	$type_action = get_config('log.type_action');
-	if($type_action[$type]){
-		$title = $type_action[$type];
-	}
-	$data = [
-		'uid' => $uid,
-		'type' => $type,
-		'action' => $title,
-		'param_id' => $param_id,
-		'param' => json_encode($param),
-		'module' => strtolower(app('http')->getName()),
-		'controller' => strtolower(app('request')->controller()),
-		'function' => strtolower(app('request')->action()),
-		'ip' => app('request')->ip(),
-		'create_time' => time(),
-		'subject' => '系统'
-	];
-	if($subject!=''){
-		$data['subject'] =$subject;
-	}
-	else{
-		$rule = $data['module'] . '/' . $data['controller'] . '/' . $data['function'];
-		$rule_menu = Db::name('AdminRule')->where(array('src' => $rule))->find();
-		if($rule_menu){
-			$data['subject'] = $rule_menu['name'];
+	try {
+		// 可能会抛出异常的代码
+		$title = '操作';
+		$session_admin = get_config('app.session_admin');
+		$uid = \think\facade\Session::get($session_admin);
+		$type_action = get_config('log.type_action');
+		if($type_action[$type]){
+			$title = $type_action[$type];
 		}
+		$data = [
+			'uid' => $uid,
+			'type' => $type,
+			'action' => $title,
+			'param_id' => $param_id,
+			'param' => json_encode($param),
+			'module' => strtolower(app('http')->getName()),
+			'controller' => strtolower(app('request')->controller()),
+			'function' => strtolower(app('request')->action()),
+			'ip' => app('request')->ip(),
+			'create_time' => time(),
+			'subject' => 'OA系统'
+		];
+		if($subject!=''){
+			$data['subject'] =$subject;
+		}
+		else{
+			$rule = $data['module'] . '/' . $data['controller'] . '/' . $data['function'];
+			$rule_menu = Db::name('AdminRule')->where(array('src' => $rule))->find();
+			if($rule_menu){
+				$data['subject'] = $rule_menu['name'];
+			}
+		}
+		Db::name('AdminLog')->strict(false)->field(true)->insert($data);
+	} catch (\Exception $e) {
+	// 处理异常，记录日志或者其他逻辑
+	// 但不要抛出异常，以免中断主程序流程
 	}
-	Db::name('AdminLog')->strict(false)->field(true)->insert($data);
-}
-
-/**
- * 发送系统消息
- * @param  $user_id 接收人
- * @param  $template_id 消息模板
- * @param  $data 操作内容
- * @return
- */
-function send_message($msg=[])
-{
-	if(is_numeric($msg['template_id'])){
-		$template = Db::name('Template')->where('id',$msg['template_id'])->find();
-	}
-	else{
-		$template = Db::name('Template')->where('name',$msg['template_id'])->find();
-	}
-	if(empty($template)){
-		return true;
-	}
-    $title = $template['msg_title'];
-    $content = $template['msg_content'];
-	$data = $msg['content'];
-	$data['from_user'] = Db::name('Admin')->where('id',$msg['from_uid'])->value('name');
-	$data['date'] = date('Y-m-d');
-	foreach ($data as $key => $val) {
-		$title = str_replace('{' . $key . '}', $val, $title);
-		$content = str_replace('{' . $key . '}', $val, $content);
-	}
-    if (!is_array($msg['to_uids'])) {
-        $users = explode(",", strval($msg['to_uids']));
-    } else {
-        $users = $msg['to_uids'];
-    }
-    $users = array_unique(array_filter($users));
-	//组合要发的消息
-	$send_data = [];
-	foreach ($users as $key => $value) {
-		$send_data[] = array(
-			'to_uid' => $value,//接收人
-			'action_id' => $data['action_id'],
-			'title' => $title,
-			'content' => $content,
-			'template' => $template['id'],
-			'create_time' => time()
-		);
-	}
-	$res = Db::name('Msg')->strict(false)->field(true)->insertAll($send_data);
-    return $res;
 }
 
 //消息链接信息转换
@@ -315,8 +272,20 @@ function get_message_link($template_id,$action_id){
 	$content='';
 	$template = Db::name('Template')->where('id',$template_id)->find();
 	$link = $template['msg_link'];
-	$content = str_replace('{action_id}', $action_id, $link);
-	return $content;
+	if(!empty($link)){
+		$content = str_replace('{action_id}', $action_id, $link);
+	}
+	return '<a class="side-a" data-href="'.$content.'">查看详情</a>';
+}
+
+function get_message_mobile($template_id,$action_id){
+	$content='';
+	$template = Db::name('Template')->where('id',$template_id)->find();
+	$link = $template['msg_link'];
+	if(!empty($link)){
+		$content = str_replace('{action_id}', $action_id, $link);
+	}
+	return '<a class="side-a" href="'.$content.'">查看详情</a>';
 }
 
 /**
@@ -471,37 +440,6 @@ function get_department_leader($uid=0,$pid=0)
     return $leader_ids;
 }
 
-//获取某负责人所负责的部门的数据集(ids)
-//传入某员工uid，输出部门数组，如:['1,2,3'],逻辑：先判断传入的uid是否是负责人，如果是负责人再读取对应的部门数据。
-function get_leader_departments($uid = 0)
-{
-	if($uid==1){
-		$dids = Db::name('Department')->where('status',1)->column('id');
-		return $dids;
-	}
-	$map = [];
-	$map[] = ['status','=',1];
-	$map[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',leader_ids)")];
-	$dids = Db::name('Department')->where($map)->column('id');
-	//判断是否是部门负责人
-	if(empty($dids)){
-		return [];
-	}
-	else{
-		//获取子部门
-		$department = get_department();
-		$list_array = [];
-		foreach ($dids as $key => $value) {
-			$department_list = get_data_node($department, $value);
-			$department_array = array_column($department_list, 'id');
-			//包括自己部门在内
-			$department_array[] = $value;
-			$list_array = array_merge($list_array,$department_array);
-		}
-		return $list_array;
-	}
-}
-
 //获取某员工所在部门的顶级部门（如果默认顶级部门当做是分公司的，即是获取某员工所属分公司）
 function get_department_top($did=0,$uid=0)
 {
@@ -518,128 +456,28 @@ function get_department_top($did=0,$uid=0)
     return $top_id;
 }
 
-//获取某员工所能看的部门数据(dids)
-//传入某员工uid，输出部门数组，如:['1,2,3']。
-function get_role_departments($uid = 0)
+
+//获取某负责人所负责的部门的数据集(ids)
+function get_leader_departments($uid = 0)
 {
-	//超级管理员
-	if($uid==1){
-		$dids = Db::name('Department')->where('status',1)->column('id');
-		return $dids;
-	}
-	$auth_did = Db::name('Admin')->where('id',$uid)->value('auth_did');
-	//仅自己关联的数据
-	if($auth_did==0){
+	$dids = Db::name('Admin')->where('id',$uid)->value('son_dids');
+	if(empty($dids)){
 		return [];
 	}
-	//所有部门数据
-	if($auth_did==10){
-		$dids = Db::name('Department')->where('status',1)->column('id');
-		return $dids;
+	else{
+		return explode(',',$dids);
 	}
-	//主部门did
-	$main_did = Db::name('Admin')->where('id',$uid)->value('did');
-	//次要部门did
-	$secondary_dids = Db::name('DepartmentAdmin')->where('admin_id',$uid)->column('department_id');
-	//全部可见部门
-	$all_dids = array_merge($secondary_dids,[$main_did]);
-	
-	//所属主部门的数据
-	if($auth_did==1){
-		return [$main_did];
+}
+
+//获取某员工所能看的部门数据(dids)
+function get_role_departments($uid = 0)
+{
+	$dids = Db::name('Admin')->where('id',$uid)->value('auth_dids');
+	if(empty($dids)){
+		return [];
 	}
-	
-	//所属次部门的数据
-	if($auth_did==2){
-		return $secondary_dids;
-	}
-	
-	//仅所属主次部门数据
-	if($auth_did==3){
-		return $all_dids;
-	}
-	
-	//所属主部门及其子部门数据
-	if($auth_did==4){
-		//获取子部门
-		$department = get_department();
-		$department_list = get_data_node($department, $main_did);
-		$department_array = array_column($department_list, 'id');
-		//包括自己部门在内
-		$department_array[] = $main_did;
-		return $department_array;
-	}
-	
-	//所属次部门及其子部门数据
-	if($auth_did==5){
-		//获取子部门
-		$department = get_department();
-		$list_array = [];
-		foreach ($secondary_dids as $key => $value) {
-			$department_list = get_data_node($department, $value);
-			$department_array = array_column($department_list, 'id');
-			//包括自己部门在内
-			$department_array[] = $value;
-			$list_array = array_merge($list_array,$department_array);
-		}
-		$department_array = array_unique($list_array);
-		return $department_array;
-	}
-	
-	//所属主次部门及其子部门数据
-	if($auth_did==6){
-		//获取子部门
-		$department = get_department();
-		$list_array = [];
-		foreach ($all_dids as $key => $value) {
-			$department_list = get_data_node($department, $value);
-			$department_array = array_column($department_list, 'id');
-			//包括自己部门在内
-			$department_array[] = $value;
-			$list_array = array_merge($list_array,$department_array);
-		}
-		$department_array = array_unique($list_array);
-		return $department_array;
-	}
-	
-	//所属主部门所在顶级部门及其子部门数据
-	if($auth_did==7){
-		//获取顶级部门
-		$top_did = get_department_top($main_did);
-		$list_array = get_department_son($top_did,1);
-		return $list_array;
-	}
-	
-	//所属次部门所在顶级部门及其子部门数据
-	if($auth_did==8){
-		//获取顶级部门
-		$top_dids =[];
-		foreach ($secondary_dids as $key => $value) {
-			array_push($top_dids, get_department_top($value));
-		}
-		
-		$list_array = [];
-		foreach ($top_dids as $key => $value) {
-			$list_array = array_merge($list_array,get_department_son($value,1));
-		}
-		$department_array = array_unique($list_array);
-		return $department_array;
-	}
-	
-	//所属主次部门所在顶级部门及其子部门数据
-	if($auth_did==9){
-		//获取顶级部门
-		$top_dids =[];
-		foreach ($all_dids as $key => $value) {
-			array_push($top_dids, get_department_top($value));
-		}
-		
-		$list_array = [];
-		foreach ($top_dids as $key => $value) {
-			$list_array = array_merge($list_array,get_department_son($value,1));
-		}
-		$department_array = array_unique($list_array);
-		return $department_array;
+	else{
+		return explode(',',$dids);
 	}
 }
 
@@ -941,6 +779,9 @@ function hidetel($phone)
 function time_trans($time, $format = 'd')
 {
 	$now = time();
+	if (!is_numeric($time)) {
+		$time = strtotime($time);
+	}
 	$diff = $now - $time;
 	if ($diff < 60) {
 		return '1分钟前';
@@ -1008,13 +849,17 @@ function time_trans($time, $format = 'd')
  */
 function to_date($time = NULL, $format = 'Y-m-d H:i:s')
 {
-    $usec = $time = $time === null ? '' : $time;
-    if (strpos($time, '.')!==false) {
-        list($usec, $sec) = explode(".", $time);
-    } else {
-        $sec = 0;
-    }
-    return $time != '' ? str_replace('x', $sec, date($format, intval($usec))) : '';
+	if(empty($time)){
+		return '';
+	}
+	else{
+		if (is_numeric($time)) {
+		return date($format, intval($time));
+		}
+		else{
+			return $time;
+		}
+	}
 }
 
 /**
@@ -1111,6 +956,35 @@ function file_card($file,$view=''){
 		</div>
 		<div class="file-tool">'.$view_btn.'</div>
 	</div>';
+	return $item;
+}
+
+//格式化附件展示
+function file_item($file,$view=''){
+	$image=['jpg','jpeg','png','gif'];
+    $fileshow='<div class="mbui-file-icon"><i class="iconfont icon-weizhigeshi"></i></div>';
+	if($file['fileext'] == 'pdf'){
+
+	}
+	if(in_array($file['fileext'], $image)){
+		$fileshow='<div class="mbui-file-icon file-img"><img src="'.$file['filepath'].'" alt="'.$file['name'].'"></div>';
+	}
+	$file_del='';
+	if(empty($view)){
+		$file_del = '<div class="mbui-file-del"><i class="iconfont icon-cuowukongxin"></i></div>';
+	}
+	$filesize = to_size($file['filesize']);
+	$filedate = date('Y-m-d H:i',$file['create_time']);
+	$item = '<li data-id="'.$file['id'].'">
+							<div class="mbui-file-div">
+								'.$fileshow.'
+								<div class="mbui-file-info">
+									<div class="mbui-file-name line-limit-1">'.$file['name'].'</div>
+									<div class="mbui-file-size">'.$filesize.'，'.$filedate.'</div>
+								</div>
+								'.$file_del.'
+							</div>
+						</li>';
 	return $item;
 }
 
@@ -1644,6 +1518,31 @@ function is_mobile()
 }
 
 /**
+ * 判断是否是微信浏览器
+ *  @return bool
+ */
+function is_wechat(){
+	if ( strpos($_SERVER['HTTP_USER_AGENT'], 'MicroMessenger') !== false ) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+/**
+ * 判断是否是企业微信浏览器
+ *  @return bool
+ */
+function is_wxwork()
+{ 
+	if (strpos($_SERVER['HTTP_USER_AGENT'] , 'wxwork') !== false ) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+/**
  * 验证输入的邮件地址是否合法
  * @param $user_email 邮箱
  * @return bool
@@ -1713,4 +1612,56 @@ function get_os_name()
         $OS = 'Other';
     }
     return $OS;
+}
+
+/**
+ * curl 模拟GET请求
+ * @author lee
+ ***/
+function curl_get($url)
+{
+    //初始化
+    $ch = curl_init();
+    //设置抓取的url
+    curl_setopt($ch, CURLOPT_URL, $url);
+    //设置获取的信息以文件流的形式返回，而不是直接输出。
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE); // https请求 不验证证书
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE); // https请求 不验证hosts
+	curl_setopt($ch, CURLINFO_HEADER_OUT, TRUE);//添加这个获取请求头信息
+    //执行命令
+    $output = curl_exec($ch);
+	$meta = curl_getinfo($ch,CURLINFO_HEADER_OUT);
+	$accept = substr($meta,0,strpos($meta, 'Accept:'));
+	$host = substr($accept,strpos($accept, 'Host:')+5);
+    curl_close($ch); //释放curl句柄
+    return $output;
+}
+
+/**
+ * 模拟post进行url请求
+ * @param string $url
+ * @param string $param
+ */
+function curl_post($url = '', $post = array())
+{
+	//$post['host'] = $_SERVER['HTTP_HOST'];
+    $curl = curl_init(); // 启动一个CURL会话
+    curl_setopt($curl, CURLOPT_URL, $url); // 要访问的地址
+    curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0); // 对认证证书来源的检查
+    curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0); // 从证书中检查SSL加密算法是否存在
+    curl_setopt($curl, CURLOPT_USERAGENT, $_SERVER['HTTP_USER_AGENT']); // 模拟用户使用的浏览器
+    curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1); // 使用自动跳转
+    curl_setopt($curl, CURLOPT_AUTOREFERER, 1); // 自动设置Referer
+    curl_setopt($curl, CURLOPT_POST, 1); // 发送一个常规的Post请求
+    curl_setopt($curl, CURLOPT_POSTFIELDS, $post); // Post提交的数据包
+    curl_setopt($curl, CURLOPT_TIMEOUT, 30); // 设置超时限制防止死循环
+    curl_setopt($curl, CURLOPT_HEADER, 0); // 显示返回的Header区域内容
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1); // 获取的信息以文件流的形式返回
+    $res = curl_exec($curl); // 执行操作
+    if (curl_errno($curl)) {
+        echo 'Errno' . curl_error($curl);//捕抓异常
+    }
+    curl_close($curl); // 关闭CURL会话
+    return $res; // 返回数据，json格式
 }

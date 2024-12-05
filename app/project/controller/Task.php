@@ -17,8 +17,9 @@ namespace app\project\controller;
 
 use app\base\BaseController;
 use app\project\model\ProjectTask;
-use app\project\model\ProjectComment;
+use app\api\model\Comment;
 use app\oa\model\Schedule;
+use app\api\model\EditLog;
 use app\project\validate\TaskCheck;
 use think\exception\ValidateException;
 use think\facade\Db;
@@ -47,6 +48,8 @@ class Task extends BaseController
         if (request()->isAjax()) {
 			$tab = isset($param['tab']) ? $param['tab'] : 0;
 			$time = time();
+			$time = time();
+			$dalay_time = time()+7*86400;
 			$where = [];
 			$whereOr = [];
 			$where[] = ['delete_time', '=', 0];
@@ -59,20 +62,28 @@ class Task extends BaseController
 			if (!empty($param['work_id'])) {
 				$where[] = ['work_id', '=', $param['work_id']];
 			}
-			if (!empty($param['director_uid'])) {
-				$where[] = ['director_uid', 'in', $param['director_uid']];
-			}
 			if (!empty($param['keywords'])) {
 				$where[] = ['title|content', 'like', '%' . $param['keywords'] . '%'];
 			}
 			if(!empty($param['project_id'])){
 				$where[] = ['project_id', '=', $param['project_id']];			
 			}
+			if (!empty($param['director_uid'])) {
+				$where[] = ['director_uid', 'in', $param['director_uid']];
+			}
 			else{
 				if($auth == 0){
 					$whereOr[] = ['admin_id', '=', $uid];
-					$whereOr[] = ['director_uid', '=', $uid];
 					$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',assist_admin_ids)")];
+					$dids_a = get_leader_departments($uid);	
+					$dids_b = get_role_departments($uid);
+					$dids = array_merge($dids_a, $dids_b);
+					if(!empty($dids)){
+						$whereOr[] = ['did','in',$dids];
+					}
+					if (empty($param['director_uid'])) {
+						$whereOr[] = ['director_uid', '=', $uid];
+					}
 				}
 			}
 			if($tab==1){
@@ -82,12 +93,12 @@ class Task extends BaseController
 			if($tab==2){
 				//即将逾期
 				$where[] = ['status', '<', 3];
-				$where[] = ['end_time','between',[$time-86400,$time]];
+				$where[] = ['end_time','between',[$time,$dalay_time]];
 			}
 			if($tab==3){
 				//已逾期
 				$where[] = ['status', '<', 3];
-				$where[] = ['end_time','<',$time-86400];
+				$where[] = ['end_time','<',$time];
 			}			
 			$rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
 			$order = empty($param['order']) ? 'status asc,id desc' : $param['order'];
@@ -115,7 +126,7 @@ class Task extends BaseController
                 }
             }
             if (!empty($param['id']) && $param['id'] > 0) {
-                $task = $this->model->detail($param['id']);
+                $old = $this->model->detail($param['id']);
                 try {
                     validate(TaskCheck::class)->scene('edit')->check($param);
                 } catch (ValidateException $e) {
@@ -126,7 +137,8 @@ class Task extends BaseController
                 $res = ProjectTask::where('id', $param['id'])->strict(false)->field(true)->update($param);
                 if ($res) {
                     add_log('edit', $param['id'], $param);
-					add_project_log($this->uid,'task',$param, $task);
+					$log=new EditLog();
+					$log->edit('Task',$param['id'],$param,$old);
                 }
                 return to_assign();
             } else {
@@ -138,22 +150,13 @@ class Task extends BaseController
                 }
                 $param['create_time'] = time();
                 $param['admin_id'] = $this->uid;
-                $sid = ProjectTask::strict(false)->field(true)->insertGetId($param);
-                if ($sid) {
-                    add_log('add', $sid, $param);
-                    $log_data = array(
-                        'module' => 'task',
-                        'task_id' => $sid,
-                        'new_content' => $param['title'],
-                        'field' => 'new',
-                        'action' => 'add',
-                        'admin_id' => $this->uid,
-                        'create_time' => time(),
-                    );
-                    Db::name('ProjectLog')->strict(false)->field(true)->insert($log_data);
+                $insertId = ProjectTask::strict(false)->field(true)->insertGetId($param);
+                if ($insertId) {
+                    add_log('add', $insertId, $param);
+					$log=new EditLog();
+					$log->add('Task',$insertId);
 					//发消息
-                    //$users = $param['director_uid'];
-                    //send_message($users, 21, ['title' => $param['title'],'from_uid' => $this->uid, 'create_time'=>date('Y-m-d H:i:s',time()), 'action_id' => $sid]);
+					//event('SendMessage',$msg);
                 }
                 return to_assign();
             }
@@ -192,6 +195,9 @@ class Task extends BaseController
 			View::assign('file_array', $file_array);
 			View::assign('role_edit', $role_edit);
 			View::assign('id', $id);
+			if(is_mobile()){
+				return view('qiye@/project/task_view');
+			}
 			return view();
 		}
 		else{
@@ -210,17 +216,6 @@ class Task extends BaseController
                 return to_assign(1, "你不是该任务的创建人，无权限删除");
             }
             if (Db::name('ProjectTask')->where('id', $id)->update(['delete_time' => time()]) !== false) {
-                $log_data = array(
-                    'module' => 'task',
-                    'field' => 'delete',
-                    'action' => 'delete',
-                    'task_id' => $detail['id'],
-                    'admin_id' => $this->uid,
-                    'old_content' => '',
-                    'new_content' => $detail['title'],
-                    'create_time' => time(),
-                );
-                Db::name('ProjectLog')->strict(false)->field(true)->insert($log_data);
                 return to_assign(0, "删除成功");
             } else {
                 return to_assign(0, "删除失败");
@@ -233,33 +228,44 @@ class Task extends BaseController
 	public function hour() {
         if (request()->isAjax()) {
             $param = get_params();
+			$uid = $this->uid;
+			$auth = isAuth($uid,'project_admin','conf_1');
             //按时间检索
             $start_time = isset($param['start_time']) ? strtotime($param['start_time']) : 0;
             $end_time = isset($param['end_time']) ? strtotime($param['end_time']) : 0;
             $tid = isset($param['tid']) ? $param['tid'] : 0;
             $where = [];
+            $whereOr = [];
 			if ($tid>0) {
                 $task_ids = Db::name('ProjectTask')->where(['delete_time' => 0, 'project_id' => $param['tid']])->column('id');
 				$where[] = ['a.tid', 'in', $task_ids];
             }
 			else{
-				if (!empty($param['uid'])) {
-					$where[] = ['a.admin_id', '=', $param['uid']];
-				} else {
-					$where[] = ['a.admin_id', '=', $this->uid];
-				}
+				$where[] = ['a.tid', '>', 0];
 				if (!empty($param['keywords'])) {
 					$where[] = ['a.title', 'like', '%' . trim($param['keywords']) . '%'];
 				}
 				if ($start_time > 0 && $end_time > 0) {
 					$where[] = ['a.start_time', 'between', [$start_time, $end_time]];
 				}
+				if($auth == 0){
+					if (!empty($param['uid'])) {
+						$where[] = ['a.admin_id', '=', $param['uid']];
+					} else {
+						$whereOr[] = ['a.admin_id', '=', $uid];
+						$dids_a = get_leader_departments($uid);	
+						$dids_b = get_role_departments($uid);
+						$dids = array_merge($dids_a, $dids_b);
+						if(!empty($dids)){
+							$whereOr[] = ['a.did','in',$dids];
+						}
+					}
+				}
 			}
             $where[] = ['a.delete_time', '=', 0];
 			
-			
 			$model = new Schedule();
-			$list = $model->datalist($param,$where);
+			$list = $model->datalist($param,$where,$whereOr);
             return table_assign(0, '', $list);
         } else {
             return view();
@@ -283,7 +289,7 @@ class Task extends BaseController
 				$where['topic_id'] = $param['topic_id'];
 			}			
             $where[] = ['delete_time', '=', 0];
-			$model = new ProjectComment();
+			$model = new Comment();
             $list = $model->datalist($param,$where);
             return table_assign(0, '', $list);
         } else {

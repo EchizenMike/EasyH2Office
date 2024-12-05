@@ -2,6 +2,39 @@
 <!-- 主体 -->
 {block name="body"}
 <div class="layui-form p-page">
+	{eq name="$detail.invoice_type" value="0"}
+	<h3 class="pb-3">无发票付款详情</h3>
+	<table class="layui-table layui-table-form">
+		<tr>
+			<td class="layui-td-gray-2">预付款金额(元)</td>
+			<td class="blue">{$detail.amount}</td>
+			<td class="layui-td-gray">付款方</td>
+			<td>{$detail.subject}</td>
+		</tr>
+		<tr>
+			<td class="layui-td-gray-3">收款方(供应商)</td>
+			<td colspan="3">{$detail.supplier_name}</td>
+		</tr>
+		{notempty name="$detail.remark"}
+		<tr>
+			<td class="layui-td-gray">备注信息</td>
+			<td colspan="3">{$detail.remark}</td>
+		</tr>
+		{/notempty}
+		{notempty name="$detail.file_ids"}
+		<tr>
+			<td class="layui-td-gray">关联附件</td>
+			<td colspan="3" style="line-height:inherit">
+				<div class="layui-row">
+					{volist name="$detail.file_array" id="vo"}
+					<div class="layui-col-md4" id="uploadImg{$vo.id}">{:file_card($vo,'view')}</div>
+					{/volist}
+				</div>
+			</td>
+		</tr>
+		{/notempty}
+	</table>
+	{else/}
 	<h3 class="pb-3">发票信息</h3>
 	<table class="layui-table layui-table-form">
 		<tr>
@@ -57,6 +90,7 @@
 		</tr>
 		{/notempty}
 	</table>
+	{/eq}
 	
 	<h3 class="py-3">付款信息</h3>
 	<form class="layui-form">

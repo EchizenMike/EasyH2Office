@@ -79,23 +79,35 @@ class Customer extends BaseController
 					$where[] = ['belong_uid', '=', $param['uid']];
 				}
 				else{
-					$whereOr[] = ['belong_uid','=',$uid];
-					$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',share_ids)")];
-					$dids = get_role_departments($uid);
-					if(!empty($dids)){
-						$whereOr[] = ['belong_did','in',$dids];
+					//是否是客户管理员
+					$auth = isAuth($uid,'customer_admin','conf_1');
+					if($auth == 0){
+						$whereOr[] = ['belong_uid','=',$uid];
+						$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',share_ids)")];
+						$dids_a = get_leader_departments($uid);
+						$dids_b = get_role_departments($uid);
+						$dids = array_merge($dids_a, $dids_b);
+						if(!empty($dids)){
+							$whereOr[] = ['belong_did','in',$dids];
+						}
 					}
 				}
 			}
+			//我的客户
 			if($tab == 1){
 				$where[] = ['belong_uid','=',$uid];
 			}
+			//下属客户
 			if($tab == 2){
-				$where[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',share_ids)")];
-			}
-			if($tab == 3){
 				$where[] = ['belong_uid','<>',$uid];
-				$where[] = ['belong_did','in',get_leader_departments($uid)];
+				$dids_a = get_leader_departments($uid);
+				if(!empty($dids_a)){
+					$where[] = ['belong_did','in',$dids_a];
+				}				
+			}
+			//分享客户
+			if($tab == 3){
+				$where[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',share_ids)")];
 			}
             $list = $this->model->datalist($param,$where,$whereOr);
             return table_assign(0, '', $list);
@@ -112,23 +124,17 @@ class Customer extends BaseController
     public function add()
     {
 		$param = get_params();	
-        if (request()->isAjax()) {		
+        if (request()->isAjax()) {	
+			try {
+				validate(CustomerValidate::class)->scene($param['scene'])->check($param);
+			} catch (ValidateException $e) {
+				// 验证失败 输出错误信息
+				return to_assign(1, $e->getError());
+			}		
             if (!empty($param['id']) && $param['id'] > 0) {
-                try {
-                    validate(CustomerValidate::class)->scene('edit')->check($param);
-                } catch (ValidateException $e) {
-                    // 验证失败 输出错误信息
-                    return to_assign(1, $e->getError());
-                }
 				$param['edit_id'] = $this->uid;
 				$this->model->edit($param);
             } else {
-                try {
-                    validate(CustomerValidate::class)->scene('add')->check($param);
-                } catch (ValidateException $e) {
-                    // 验证失败 输出错误信息
-                    return to_assign(1, $e->getError());
-                }
 				$param['admin_id'] = $this->uid;
                 $this->model->add($param);
             }	 
@@ -182,10 +188,15 @@ class Customer extends BaseController
 			->select()->toArray();
 		$detail['file_array'] = $file_array;
 		
-		//最近跟进记录
-		$trace_array = Db::name('CustomerTrace')->where(array('cid' => $id, 'delete_time' => 0))->order('follow_time desc')->find();
-		$detail['trace_array'] = $trace_array;
+		$role=0;
+		if($detail['belong_uid'] == $this->uid && $detail['is_lock'] == 0){
+			$role=1;
+		}
 		View::assign('detail', $detail);
+		View::assign('role', $role);
+		if(is_mobile()){
+			return view('qiye@/customer/view');
+		}
 		return view();
     }
 	

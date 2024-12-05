@@ -63,7 +63,7 @@ class Rule extends BaseController
                 }
                 $param['create_time'] = time();
                 $rid = Db::name('AdminRule')->strict(false)->field(true)->insertGetId($param);
-                //自动为系统所有者管理组分配新增的节点
+                //自动为系统超级管理员角色组分配新增的节点
                 $group = Db::name('AdminGroup')->find(1);
                 if (!empty($group)) {
                     $newGroup['id'] = 1;

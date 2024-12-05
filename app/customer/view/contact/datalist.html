@@ -4,14 +4,8 @@
 
 <div class="p-page">
 	<form class="layui-form gg-form-bar border-t border-x" lay-filter="barsearchform">
-		{gt name="$is_leader" value="0"}
-		<div class="layui-input-inline user-name" style="width:100px;">
-			<input type="text" name="username" placeholder="选择下属员工" class="layui-input picker-sub" readonly />
-			<input type="text" name="uid" value="" style="display:none" />	
-		</div>
-		{/gt}
 		<div class="layui-input-inline" style="width:300px">
-			<input type="text" name="keywords" placeholder="关键字" class="layui-input" autocomplete="off" />
+			<input type="text" name="keywords" placeholder="输入关键字，姓名/手机/邮箱" class="layui-input" autocomplete="off" />
 		</div>
 		<div class="layui-input-inline" style="width:150px">
 			<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="table-search"><i class="layui-icon layui-icon-search mr-1"></i>搜索</button>

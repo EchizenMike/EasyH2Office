@@ -48,25 +48,3 @@ function purchase_types_name($types=1)
 	$purchase_types_array = get_purchase_types();
 	return $purchase_types_array[$types-1];
 }
-
-//写入日志
-function to_log($uid,$new,$old)
-{
-	$log_data = [];
-	$key_array = ['id', 'create_time', 'update_time', 'did'];
-	foreach ($new as $key => $value) {
-		if (!in_array($key, $key_array)) {
-			if(isset($old[$key]) && ($old[$key]!=$value)){
-				$log_data[] = array(
-					'field' => $key,
-					'contract_id' => $new['id'],
-					'admin_id' => $uid,
-					'old_content' => $old[$key],
-					'new_content' => $value,
-					'create_time' => time(),
-				);
-			}
-		}
-	}
-	Db::name('ContractLog')->strict(false)->field(true)->insertAll($log_data);
-}

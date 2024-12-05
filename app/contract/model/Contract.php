@@ -14,6 +14,7 @@
 namespace app\contract\model;
 use think\model;
 use think\facade\Db;
+use app\api\model\EditLog;
 class Contract extends Model
 {
     /**
@@ -91,6 +92,8 @@ class Contract extends Model
 			$param['create_time'] = time();
 			$insertId = self::strict(false)->field(true)->insertGetId($param);
 			add_log('add', $insertId, $param);
+			$log=new EditLog();
+			$log->add('Contract',$insertId);
         } catch(\Exception $e) {
 			return to_assign(1, '操作失败，原因：'.$e->getMessage());
         }
@@ -105,8 +108,11 @@ class Contract extends Model
     {
         try {
             $param['update_time'] = time();
+			$old = self::find($param['id']);
             self::where('id', $param['id'])->strict(false)->field(true)->update($param);
 			add_log('edit', $param['id'], $param);
+			$log=new EditLog();
+			$log->edit('Contract',$param['id'],$param,$old);
         } catch(\Exception $e) {
 			return to_assign(1, '操作失败，原因：'.$e->getMessage());
         }

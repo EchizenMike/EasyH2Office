@@ -36,7 +36,8 @@ class Income extends BaseController
 	
     public function datalist()
     {
-		$auth = isAuthIncome($this->uid);
+		$uid = $this->uid;
+		$auth = isAuthIncome($uid);
         if (request()->isAjax()) {
             $param = get_params();
             $where = array();
@@ -45,6 +46,15 @@ class Income extends BaseController
             $where[] = ['check_status', '=', 2];
             $where[] = ['open_status', '=', 1];
 			$where[] = ['invoice_type','>',0];
+			if($auth == 0){
+				$whereOr[] = ['admin_id','=',$this->uid];
+				$dids_a = get_leader_departments($uid);	
+				$dids_b = get_role_departments($uid);
+				$dids = array_merge($dids_a, $dids_b);
+				if(!empty($dids)){
+					$whereOr[] = ['did','in',$dids];
+				}
+			}
 			//按时间检索
 			if (!empty($param['diff_time'])) {
 				$diff_time =explode('~', $param['diff_time']);
@@ -53,9 +63,6 @@ class Income extends BaseController
             if (isset($param['enter_status']) && $param['enter_status']!='') {
                 $where[] = ['enter_status', '=', $param['enter_status']];
             }
-			if($auth == 0){
-				$where[] = ['admin_id','=',$this->uid];
-			}
 			$list = $this->model->datalist($param,$where,$whereOr);
             return table_assign(0, '', $list);
         } else {
@@ -220,8 +227,8 @@ class Income extends BaseController
 		}
         View::assign('uid', $this->uid);
         View::assign('detail', $detail);
-		if($detail['invoice_type'] == 0){
-			return view('view_a');
+		if(is_mobile()){
+			return view('qiye@/finance/view_income');
 		}
         return view();
     }

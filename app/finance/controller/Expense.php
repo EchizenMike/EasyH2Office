@@ -42,7 +42,7 @@ class Expense extends BaseController
 		$param = get_params();
         if (request()->isAjax()) {
 			$tab = isset($param['tab']) ? $param['tab'] : 0;
-			$uid=$this->uid;
+			$uid = $this->uid;
             $where = array();
             $whereOr = array();
 			$where[]=['delete_time','=',0];
@@ -52,6 +52,15 @@ class Expense extends BaseController
 				$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',check_uids)")];
 				$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',check_history_uids)")];
 				$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',check_copy_uids)")];
+				$auth = isAuthExpense($uid);
+				if($auth == 0){
+					$dids_a = get_leader_departments($uid);	
+					$dids_b = get_role_departments($uid);
+					$dids = array_merge($dids_a, $dids_b);
+					if(!empty($dids)){
+						$whereOr[] = ['did','in',$dids];
+					}
+				}
 			}
 			if($tab == 1){
 				//我创建的
@@ -72,6 +81,15 @@ class Expense extends BaseController
 			if($tab == 5){
 				//已打款的
 				$where[] = ['pay_status', '=', 1];
+				$auth = isAuthExpense($uid);
+				if($auth == 0){
+					$dids_a = get_leader_departments($uid);	
+					$dids_b = get_role_departments($uid);
+					$dids = array_merge($dids_a, $dids_b);
+					if(!empty($dids)){
+						$whereOr[] = ['did','in',$dids];
+					}
+				}
 			}
 			//按时间检索
 			if (!empty($param['diff_time'])) {
@@ -148,6 +166,9 @@ class Expense extends BaseController
 				return view('edit');
 			}
             View::assign('user', get_admin($this->uid));
+			if(is_mobile()){
+				return view('qiye@/finance/add_expense');
+			}
 			return view();
 		}
     }
@@ -159,9 +180,13 @@ class Expense extends BaseController
     {
 		$detail = $this->model->getById($id);
 		if (!empty($detail)) {
-			View::assign('detail', $detail);
 			$file_array = Db::name('File')->where('id','in',$detail['file_ids'])->select();
 			$detail['file_array'] = $file_array;
+			View::assign('detail', $detail);
+			View::assign('create_user', get_admin($detail['admin_id']));
+			if(is_mobile()){
+				return view('qiye@/finance/view_expense');
+			}
 			return view();
 		}
 		else{

@@ -220,8 +220,8 @@ class Payment extends BaseController
 		}
         View::assign('uid', $this->uid);
         View::assign('detail', $detail);
-		if($detail['invoice_type'] == 0){
-			return view('view_a');
+		if(is_mobile()){
+			return view('qiye@/finance/view_payment');
 		}
         return view();
     }

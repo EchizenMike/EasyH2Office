@@ -13,6 +13,7 @@
 namespace app\contract\model;
 use think\model;
 use think\facade\Db;
+use app\api\model\EditLog;
 class Purchase extends Model
 {
     /**
@@ -90,6 +91,8 @@ class Purchase extends Model
 			$param['create_time'] = time();
 			$insertId = self::strict(false)->field(true)->insertGetId($param);
 			add_log('add', $insertId, $param);
+			$log=new EditLog();
+			$log->add('Purchase',$insertId);
         } catch(\Exception $e) {
 			return to_assign(1, '操作失败，原因：'.$e->getMessage());
         }
@@ -104,8 +107,11 @@ class Purchase extends Model
     {
         try {
             $param['update_time'] = time();
+			$old = self::find($param['id']);
             self::where('id', $param['id'])->strict(false)->field(true)->update($param);
 			add_log('edit', $param['id'], $param);
+			$log=new EditLog();
+			$log->edit('Purchase',$param['id'],$param,$old);
         } catch(\Exception $e) {
 			return to_assign(1, '操作失败，原因：'.$e->getMessage());
         }

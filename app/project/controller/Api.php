@@ -15,8 +15,6 @@ namespace app\project\controller;
 
 use app\api\BaseController;
 use app\project\model\Project as ProjectModel;
-use app\project\model\ProjectLog;
-use app\project\model\ProjectComment;
 use app\project\model\ProjectTask;
 use app\oa\model\Schedule;
 use think\facade\Db;
@@ -37,17 +35,25 @@ class Api extends BaseController
     public function get_project()
     {
 		$param = get_params();
-		$auth = isAuth($this->uid,'project_admin','conf_1');
+		$uid = $this->uid;
+		$auth = isAuth($uid,'project_admin','conf_1');
 		$where = array();
 		$where[] = ['delete_time', '=', 0];		
 		if($auth == 0){
-			$project_ids = Db::name('ProjectUser')->where(['uid' => $this->uid, 'delete_time' => 0])->column('project_id');
-			$where[] = ['id', 'in', $project_ids];
+			$whereOr[] = ['director_uid', '=', $uid];
+			$project_ids = Db::name('ProjectUser')->where(['uid' => $uid, 'delete_time' => 0])->column('project_id');
+			$whereOr[] = ['id', 'in', $project_ids];
+			$dids_a = get_leader_departments($uid);	
+			$dids_b = get_role_departments($uid);
+			$dids = array_merge($dids_a, $dids_b);
+			if(!empty($dids)){
+				$whereOr[] = ['did','in',$dids];
+			}
 		}
 		if (!empty($param['keywords'])) {
 			$where[] = ['name|content', 'like', '%' . $param['keywords'] . '%'];
 		}
-		$list = $this->model->datalist($where, $param);
+		$list = $this->model->datalist($param,$where);
 		return table_assign(0, '', $list);
     }
 	
@@ -81,8 +87,16 @@ class Api extends BaseController
 			$auth = isAuth($uid,'project_admin','conf_1');
 			if($auth == 0){
 				$whereOr[] = ['admin_id', '=', $uid];
-				$whereOr[] = ['director_uid', '=', $uid];
 				$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',assist_admin_ids)")];
+				$dids_a = get_leader_departments($uid);	
+				$dids_b = get_role_departments($uid);
+				$dids = array_merge($dids_a, $dids_b);
+				if(!empty($dids)){
+					$whereOr[] = ['did','in',$dids];
+				}
+				if (empty($param['director_uid'])) {
+					$whereOr[] = ['director_uid', '=', $uid];
+				}
 			}
 		}
 		
@@ -149,17 +163,6 @@ class Api extends BaseController
         $param['admin_id'] = $this->uid;
         $fid = Db::name('ProjectFile')->strict(false)->field(true)->insertGetId($param);
         if ($fid) {
-            $log_data = array(
-                'module' => $param['module'],
-                'field' => 'file',
-                'action' => 'upload',
-                $param['module'] . '_id' => $param['topic_id'],
-                'admin_id' => $this->uid,
-                'old_content' => '',
-                'new_content' => $param['file_name'],
-                'create_time' => time(),
-            );
-            Db::name('ProjectLog')->strict(false)->field(true)->insert($log_data);
             return to_assign(0, '上传成功', $fid);
         }
     }
@@ -172,16 +175,6 @@ class Api extends BaseController
             $detail = Db::name('ProjectFile')->where('id', $id)->find();
             if (Db::name('ProjectFile')->where('id', $id)->delete() !== false) {
                 $file_name = Db::name('File')->where('id', $detail['file_id'])->value('name');
-                $log_data = array(
-                    'module' => $detail['module'],
-                    'field' => 'file',
-                    'action' => 'delete',
-                    $detail['module'] . '_id' => $detail['topic_id'],
-                    'admin_id' => $this->uid,
-                    'new_content' => $file_name,
-                    'create_time' => time(),
-                );
-                Db::name('ProjectLog')->strict(false)->field(true)->insert($log_data);
                 return to_assign(0, "删除成功");
             } else {
                 return to_assign(0, "删除失败");
@@ -363,16 +356,6 @@ class Api extends BaseController
 				$param['create_time'] = time();
 				$res = Db::name('ProjectUser')->strict(false)->field(true)->insert($param);
 				if ($res) {
-					$log_data = array(
-                        'module' => 'project',
-                        'field' => 'user',
-                        'action' => 'add',
-                        'project_id' => $param['project_id'],
-                        'admin_id' => $this->uid,
-                        'new_content' => $param['uid'],
-                        'create_time' => time(),
-                    );
-                    Db::name('ProjectLog')->strict(false)->field(true)->insert($log_data);
 					to_assign();
 				}				
 			}else{
@@ -396,17 +379,7 @@ class Api extends BaseController
 					to_assign(1, '该项目成员是项目的负责人，需要去除负责人权限才能移除');
 				}
 				$param['delete_time'] = time();
-				if (Db::name('ProjectUser')->update($param) !== false) {	
-					$log_data = array(
-						'module' => 'project',
-						'field' => 'user',
-						'action' => 'remove',
-						'project_id' => $detail['project_id'],
-						'admin_id' => $this->uid,
-						'new_content' => $detail['uid'],
-						'create_time' => time(),
-					);
-					Db::name('ProjectLog')->strict(false)->field(true)->insert($log_data);			
+				if (Db::name('ProjectUser')->update($param) !== false) {				
 					return to_assign(0, "移除成功");
 				} else {
 					return to_assign(1, "移除失败");
@@ -427,17 +400,7 @@ class Api extends BaseController
 			$project = Db::name('Project')->where(['id' => $detail['project_id']])->find();
 			if($this->uid == $project['admin_id'] || $this->uid == $project['director_uid']){
 				$param['delete_time'] = 0;
-				if (Db::name('ProjectUser')->update($param) !== false) {		
-					$log_data = array(
-						'module' => 'project',
-						'field' => 'user',
-						'action' => 'recover',
-						'project_id' => $detail['project_id'],
-						'admin_id' => $this->uid,
-						'new_content' => $detail['uid'],
-						'create_time' => time(),
-					);
-					Db::name('ProjectLog')->strict(false)->field(true)->insert($log_data);			
+				if (Db::name('ProjectUser')->update($param) !== false) {				
 					return to_assign(0, "恢复成功");
 				} else {
 					return to_assign(1, "恢复失败");
@@ -449,93 +412,6 @@ class Api extends BaseController
 			return to_assign(1, "错误的请求");
 		}
 	}
-
-
-	//项目日志列表
-    public function project_log()
-    {
-		$param = get_params();
-		$list = new ProjectLog();
-		$content = $list->project_log($param);
-		return to_assign(0, '', $content);
-    }
-	
-	//任务日志列表
-    public function task_log()
-    {
-		$param = get_params();
-		$list = new ProjectLog();
-		$content = $list->get_list($param);
-		return to_assign(0, '', $content);
-    }
-	
-	
-	//获取评论列表
-    public function project_comment()
-    {
-		$param = get_params();
-		$list = new ProjectComment();
-		$content = $list->get_list($param);
-		return to_assign(0, '', $content);
-    }
-	
-    //添加修改评论内容
-    public function add_comment()
-    {
-		$param = get_params();	
-		if (!empty($param['id']) && $param['id'] > 0) {
-			$param['update_time'] = time();
-			unset($param['pid']);
-			unset($param['padmin_id']);
-            $res = ProjectComment::where(['admin_id' => $this->uid,'id'=>$param['id']])->strict(false)->field(true)->update($param);
-			if ($res) {
-				add_log('edit', $param['id'], $param,'评论');
-				return to_assign();
-			}
-        } else {
-            $param['create_time'] = time();
-            $param['admin_id'] = $this->uid;
-            $cid = ProjectComment::strict(false)->field(true)->insertGetId($param);
-			if ($cid) {
-				add_log('add', $cid, $param,'评论');
-				return to_assign();
-			}			
-		}
-    }
-	
-	//设为已读评论内容
-    public function read_comment()
-    {
-		if (request()->isPost()) {
-			$id = get_params("id");
-			$res = Db::name('CommentRead')->strict(false)->field(true)->insertGetId(['comment_id'=>$id,'admin_id'=>$this->uid,'create_time'=>time()]);
-			if ($res!==false) {
-				add_log('view', $id,[],'评论');
-				return to_assign(0, "操作成功");
-			} else {
-				return to_assign(1, "操作失败");
-			}
-		}else{
-			return to_assign(1, "错误的请求");
-		}
-    }
-	
-	//删除评论内容
-    public function delete_comment()
-    {
-		if (request()->isDelete()) {
-			$id = get_params("id");
-			$res = ProjectComment::where('id',$id)->strict(false)->field(true)->update(['delete_time'=>time()]);
-			if ($res) {
-				add_log('delete', $id,[],'评论');
-				return to_assign(0, "删除成功");
-			} else {
-				return to_assign(1, "删除失败");
-			}
-		}else{
-			return to_assign(1, "错误的请求");
-		}
-    }	
 	
     //关闭项目
     public function close()
@@ -680,5 +556,18 @@ class Api extends BaseController
 				return to_assign(1,'已经是第一个阶段了');
 			}
 		}				
+    }
+	
+	//获取项目类别
+	public function get_project_cate()
+    {
+		$list = get_base_data('project_cate');
+		return to_assign(0, '', $list);
+    }
+	
+	public function project_edit()
+    {
+		$param = get_params();
+		$this->model->apiedit($param);
     }
 }

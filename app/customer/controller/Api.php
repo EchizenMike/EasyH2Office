@@ -14,10 +14,10 @@ declare (strict_types = 1);
 namespace app\customer\controller;
 
 use app\api\BaseController;
+use app\customer\model\Customer;
 use app\customer\model\CustomerTrace;
 use app\customer\model\CustomerContact;
 use app\customer\model\CustomerChance;
-use app\customer\model\CustomerLog;
 use think\facade\Db;
 use think\facade\View;
 
@@ -27,31 +27,35 @@ class Api extends BaseController
 	public function get_customer()
     {
         $param = get_params();
+		$uid = $this->uid;
 		$where = array();
+		$whereOr = array();
 		if (!empty($param['keywords'])) {
 			$where[] = ['id|name', 'like', '%' . $param['keywords'] . '%'];
 		}
-		$where[] = ['delete_time', '=', 0];
-		$uid = $this->uid;
-		$whereOr[] = ['belong_uid','=',$uid];
-		$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',share_ids)")];
-		$dids = get_role_departments($uid);
-		if(!empty($dids)){
-			$whereOr[] = ['belong_did','in',$dids];
+		$where[]=['delete_time','=',0];
+		$where[]=['discard_time','=',0];
+		
+		if (!empty($param['uid'])) {
+			$where[] = ['belong_uid', '=', $param['uid']];
 		}
-		$rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
-        $list = Db::name('Customer')->field('id,name,address,tax_num,tax_bank,tax_banksn,tax_mobile,tax_address')->order('id asc')->where($where)->paginate(['list_rows'=> $rows])->each(function($item, $key){
-			$contact = Db::name('CustomerContact')->where(['cid'=>$item['id'],'is_default'=>1])->find();
-			if(!empty($contact)){
-				$item['contact_name'] = $contact['name'];
-				$item['contact_mobile'] = $contact['mobile'];
+		else{
+			//是否是客户管理员
+			$auth = isAuth($uid,'customer_admin','conf_1');
+			if($auth == 0){
+				$whereOr[] = ['belong_uid','=',$uid];
+				$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',share_ids)")];
+				$dids_a = get_leader_departments($uid);
+				$dids_b = get_role_departments($uid);
+				$dids = array_merge($dids_a, $dids_b);
+				if(!empty($dids)){
+					$whereOr[] = ['belong_did','in',$dids];
+				}
 			}
-			else{
-				$item['contact_name'] = '';
-				$item['contact_mobile'] = '';
-			}
-			return $item;
-		});
+		}
+		
+		$model = new Customer();
+		$list = $model->datalist($param,$where,$whereOr);
         table_assign(0, '', $list);
     }
 	//分配客户
@@ -121,21 +125,12 @@ class Api extends BaseController
 			}			
 			$data['id'] = $params['id'];
 			$data['delete_time'] = -1;
-			$log_data = array(
-				'field' => 'del',
-				'action' => 'delete',
-				'type' => 0,
-				'customer_id' => $params['id'],
-				'admin_id' => $this->uid,
-				'create_time' => time()
-			);
 			if (Db::name('Customer')->update($data) !== false) {
 				//删除客户联系人
 				Db::name('CustomerContact')->where(['cid' => $params['id']])->update(['delete_time'=>time()]);
 				//删除客户机会
 				Db::name('CustomerChance')->where(['cid' => $params['id']])->update(['delete_time'=>time()]);
 				add_log('delete', $params['id']);
-				Db::name('CustomerLog')->strict(false)->field(true)->insert($log_data);
 				return to_assign();
 			} else {
 				return to_assign(1, "操作失败");
@@ -210,16 +205,6 @@ class Api extends BaseController
         $param['admin_id'] = $this->uid;
         $fid = Db::name('CustomerFile')->strict(false)->field(true)->insertGetId($param);
         if ($fid) {
-            $log_data = array(
-                'field' => 'file',
-                'action' => 'upload',
-                'customer_id' => $param['customer_id'],
-                'admin_id' => $param['admin_id'],
-                'old_content' => '',
-                'new_content' => $param['file_name'],
-                'create_time' => time(),
-            );
-            Db::name('CustomerLog')->strict(false)->field(true)->insert($log_data);
             return to_assign(0, '上传成功', $fid);
         }
     }
@@ -234,15 +219,6 @@ class Api extends BaseController
 			if (Db::name('CustomerFile')->update($data) !== false) {
 				$detail = Db::name('CustomerFile')->where('id', $id)->find();
 				$file_name = Db::name('File')->where('id', $detail['file_id'])->value('name');
-                $log_data = array(
-                    'field' => 'file',
-                    'action' => 'delete',
-                    'customer_id' => $detail['customer_id'],
-                    'admin_id' => $this->uid,
-                    'new_content' => $file_name,
-                    'create_time' => time(),
-                );
-                Db::name('CustomerLog')->strict(false)->field(true)->insert($log_data);
 				return to_assign(0, "删除成功");
 			} else {
 				return to_assign(1, "删除失败");
@@ -252,13 +228,23 @@ class Api extends BaseController
         }
     }
 	
-	//操作日志列表
-    public function customer_log()
+	//获取客户等级
+	public function get_customer_grade()
     {
-		$param = get_params();
-		$list = new CustomerLog();
-		$content = $list->customer_log($param);
-		return to_assign(0, '', $content);
+		$list = get_base_data('customer_grade');
+		return to_assign(0, '', $list);
+    }
+	//获取客户状态
+	public function get_customer_status()
+    {
+		$list = get_base_type_data('basic_customer',1);
+		return to_assign(0, '', $list);
+    }
+	//获取客户意向
+	public function get_intent_status()
+    {
+		$list = get_base_type_data('basic_customer',2);
+		return to_assign(0, '', $list);
     }
 
 }

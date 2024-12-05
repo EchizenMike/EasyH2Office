@@ -40,13 +40,13 @@ class Index extends BaseController
     public function datalist()
     {
 		$param = get_params();
-		$auth = isAuth($this->uid,'project_admin','conf_1');
+		$uid = $this->uid;
+		$auth = isAuth($uid,'project_admin','conf_1');
+		$tab = isset($param['tab']) ? $param['tab'] : 0;
         if (request()->isAjax()) {
 			$where = array();
+			$whereOr = array();
 			$where[] = ['delete_time', '=', 0];
-			if (!empty($param['director_uid'])) {
-				$where[] = ['director_uid', 'in', $param['director_uid']];
-			}
 			if (!empty($param['status'])) {
 				$where[] = ['status', '=', $param['status']];
 			}
@@ -55,12 +55,40 @@ class Index extends BaseController
             }
 			if (!empty($param['keywords'])) {
 				$where[] = ['name|content', 'like', '%' . $param['keywords'] . '%'];
-			}			
-			if($auth == 0){
-				$project_ids = Db::name('ProjectUser')->where(['uid' => $this->uid, 'delete_time' => 0])->column('project_id');
-				$where[] = ['id', 'in', $project_ids];
 			}
-            $list = $this->model->datalist($where, $param);
+			if (!empty($param['director_uid'])) {
+				$where[] = ['director_uid', 'in', $param['director_uid']];
+			}
+			else{
+				if($auth == 0){
+					$whereOr[] = ['director_uid', '=', $uid];
+					$project_ids = Db::name('ProjectUser')->where(['uid' => $uid, 'delete_time' => 0])->column('project_id');
+					$whereOr[] = ['id', 'in', $project_ids];
+					$dids_a = get_leader_departments($uid);	
+					$dids_b = get_role_departments($uid);
+					$dids = array_merge($dids_a, $dids_b);
+					if(!empty($dids)){
+						$whereOr[] = ['did','in',$dids];
+					}
+				}
+			}
+			if($tab == 0){
+
+			}
+			if($tab == 1){
+				$where[] = ['status', '=', 2];
+			}
+			if($tab == 2){
+				$time = time();
+				$dalay_time = time()+7*86400;
+				$where[] = ['status', '<', 3];
+				$where[] = ['end_time', 'between', [$time,$dalay_time]];
+			}
+			if($tab == 3){
+				$where[] = ['status', '<', 3];
+				$where[] = ['end_time', '<', time()];
+			}
+            $list = $this->model->datalist($param,$where,$whereOr);
             return table_assign(0, '', $list);
         }
         else{
@@ -235,6 +263,9 @@ class Index extends BaseController
             View::assign('step', $step);
 			View::assign('step_record', $step_record);
             View::assign('detail', $detail);
+			if(is_mobile()){
+				return view('qiye@/project/view');
+			}
 			return view();
 		}
 		else{

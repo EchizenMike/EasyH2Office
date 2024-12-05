@@ -15,9 +15,7 @@ namespace app\contract\controller;
 
 use app\api\BaseController;
 use app\contract\model\Contract;
-use app\contract\model\ContractLog;
 use app\contract\model\Purchase;
-use app\contract\model\PurchaseLog;
 use app\contract\model\SupplierContact;
 use think\facade\Db;
 use think\facade\View;
@@ -35,12 +33,20 @@ class Api extends BaseController
 			$where[] = ['id|name|code', 'like', '%' . $param['keywords'] . '%'];
 		}
 		$where[] = ['delete_time', '=', 0];
-		$where[] = ['check_status', '=', 2];
-		$whereOr[] =['admin_id|prepared_uid|sign_uid|keeper_uid', '=', $uid];
-		$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',share_ids)")];
-		$dids = get_role_departments($uid);
-		if(!empty($dids)){
-			$whereOr[] =['did', 'in', $dids];
+		$where[] = ['check_status', '=', 2];		
+		//是否是合同管理员
+		$auth = isAuth($uid,'contract_admin','conf_1');
+		if($auth == 0){
+			$whereOr[] =['admin_id|prepared_uid|sign_uid|keeper_uid', '=', $uid];
+			$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',share_ids)")];
+			$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',check_uids)")];
+			$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',check_history_uids)")];
+			$dids_a = get_leader_departments($uid);
+			$dids_b = get_role_departments($uid);
+			$dids = array_merge($dids_a, $dids_b);
+			if(!empty($dids)){
+				$whereOr[] = ['did','in',$dids];
+			}
 		}
 		$model = new Contract();
         $list = $model->datalist($param,$where,$whereOr);
@@ -52,8 +58,6 @@ class Api extends BaseController
     {
         if (request()->isPost()) {
 			$param = get_params();
-			$old=0;
-			$new=1;
 			$tips='操作成功，合同已转入到归档合同列表';
 			if($param['archive_status'] == 1){
 				$param['archive_uid'] = $this->uid;
@@ -62,20 +66,9 @@ class Api extends BaseController
 			else{
 				$param['archive_uid'] = 0;
 				$param['archive_time'] = 0;
-				$old=1;
-				$new=0;
 				$tips='操作成功，合同已从归档合同列表转出';
 			}
 			if (Db::name('Contract')->strict(false)->update($param) !== false) {
-                $log_data = array(
-                    'field' => 'archive_status',
-                    'contract_id' => $param['id'],
-                    'admin_id' => $this->uid,
-                    'new_content' => $new,
-                    'old_content' => $old,
-                    'create_time' => time(),
-                );
-                Db::name('ContractLog')->strict(false)->field(true)->insert($log_data);
 				return to_assign(0, $tips);
 			} else {
 				return to_assign(1, "操作失败");
@@ -90,8 +83,6 @@ class Api extends BaseController
     {
         if (request()->isPost()) {
 			$param = get_params();
-			$old=0;
-			$new=1;
 			$tips='操作成功，合同已转入到中止合同列表';
 			if($param['stop_status'] == 1){
 				$param['stop_uid'] = $this->uid;
@@ -100,20 +91,9 @@ class Api extends BaseController
 			else{
 				$param['stop_uid'] = 0;
 				$param['stop_time'] = 0;
-				$old=1;
-				$new=0;
 				$tips='操作成功，合同已从中止合同列表转出';
 			}
 			if (Db::name('Contract')->strict(false)->update($param) !== false) {
-                $log_data = array(
-                    'field' => 'stop_status',
-                    'contract_id' => $param['id'],
-                    'admin_id' => $this->uid,
-                    'new_content' => $new,
-                    'old_content' => $old,
-                    'create_time' => time(),
-                );
-                Db::name('ContractLog')->strict(false)->field(true)->insert($log_data);
 				return to_assign(0, $tips);
 			} else {
 				return to_assign(1, "操作失败");
@@ -127,8 +107,6 @@ class Api extends BaseController
     {
         if (request()->isPost()) {
 			$param = get_params();
-			$old=0;
-			$new=1;
 			$tips='操作成功，合同已转入到作废合同列表';
 			if($param['void_status'] == 1){
 				$param['void_uid'] = $this->uid;
@@ -137,20 +115,9 @@ class Api extends BaseController
 			else{
 				$param['void_uid'] = 0;
 				$param['void_time'] = 0;
-				$old=1;
-				$new=0;
 				$tips='操作成功，合同已从作废合同列表转出';
 			}
 			if (Db::name('Contract')->strict(false)->update($param) !== false) {
-                $log_data = array(
-                    'field' => 'void_status',
-                    'contract_id' => $param['id'],
-                    'admin_id' => $this->uid,
-                    'new_content' => $new,
-                    'old_content' => $old,
-                    'create_time' => time(),
-                );
-                Db::name('ContractLog')->strict(false)->field(true)->insert($log_data);
 				return to_assign(0, $tips);
 			} else {
 				return to_assign(1, "操作失败");
@@ -158,15 +125,6 @@ class Api extends BaseController
         } else {
             return to_assign(1, "错误的请求");
         }
-    }
-	
-	//销售合同操作日志列表
-    public function contract_log()
-    {
-		$param = get_params();
-		$list = new ContractLog();
-		$content = $list->contract_log($param);
-		return to_assign(0, '', $content);
     }
 	
 	//获取产品分类数据
@@ -207,11 +165,18 @@ class Api extends BaseController
 		}
 		$where[] = ['delete_time', '=', 0];
 		$where[] = ['check_status', '=', 2];
-		$whereOr[] =['admin_id|prepared_uid|sign_uid|keeper_uid', '=', $uid];
-		$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',share_ids)")];
-		$dids = get_role_departments($uid);
-		if(!empty($dids)){
-			$whereOr[] =['did', 'in', $dids];
+		$auth = isAuth($uid,'contract_admin','conf_1');
+		if($auth == 0){
+			$whereOr[] =['admin_id|prepared_uid|sign_uid|keeper_uid', '=', $uid];
+			$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',share_ids)")];
+			$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',check_uids)")];
+			$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',check_history_uids)")];
+			$dids_a = get_leader_departments($uid);
+			$dids_b = get_role_departments($uid);
+			$dids = array_merge($dids_a, $dids_b);
+			if(!empty($dids)){
+				$whereOr[] = ['did','in',$dids];
+			}
 		}
 		$model = new Purchase();
         $list = $model->datalist($param,$where,$whereOr);
@@ -223,8 +188,6 @@ class Api extends BaseController
     {
         if (request()->isPost()) {
 			$param = get_params();
-			$old=0;
-			$new=1;
 			$tips='操作成功，合同已转入到归档合同列表';
 			if($param['archive_status'] == 1){
 				$param['archive_uid'] = $this->uid;
@@ -233,20 +196,9 @@ class Api extends BaseController
 			else{
 				$param['archive_uid'] = 0;
 				$param['archive_time'] = 0;
-				$old=1;
-				$new=0;
 				$tips='操作成功，合同已从归档合同列表转出';
 			}
 			if (Db::name('Purchase')->strict(false)->update($param) !== false) {
-                $log_data = array(
-                    'field' => 'archive_status',
-                    'purchase_id' => $param['id'],
-                    'admin_id' => $this->uid,
-                    'new_content' => $new,
-                    'old_content' => $old,
-                    'create_time' => time(),
-                );
-                Db::name('PurchaseLog')->strict(false)->field(true)->insert($log_data);
 				return to_assign(0, $tips);
 			} else {
 				return to_assign(1, "操作失败");
@@ -261,8 +213,6 @@ class Api extends BaseController
     {
         if (request()->isPost()) {
 			$param = get_params();
-			$old=0;
-			$new=1;
 			$tips='操作成功，合同已转入到中止合同列表';
 			if($param['stop_status'] == 1){
 				$param['stop_uid'] = $this->uid;
@@ -271,20 +221,9 @@ class Api extends BaseController
 			else{
 				$param['stop_uid'] = 0;
 				$param['stop_time'] = 0;
-				$old=1;
-				$new=0;
 				$tips='操作成功，合同已从中止合同列表转出';
 			}
 			if (Db::name('Purchase')->strict(false)->update($param) !== false) {
-                $log_data = array(
-                    'field' => 'stop_status',
-                    'purchase_id' => $param['id'],
-                    'admin_id' => $this->uid,
-                    'new_content' => $new,
-                    'old_content' => $old,
-                    'create_time' => time(),
-                );
-                Db::name('PurchaseLog')->strict(false)->field(true)->insert($log_data);
 				return to_assign(0, $tips);
 			} else {
 				return to_assign(1, "操作失败");
@@ -298,8 +237,6 @@ class Api extends BaseController
     {
         if (request()->isPost()) {
 			$param = get_params();
-			$old=0;
-			$new=1;
 			$tips='操作成功，合同已转入到作废合同列表';
 			if($param['void_status'] == 1){
 				$param['void_uid'] = $this->uid;
@@ -308,20 +245,9 @@ class Api extends BaseController
 			else{
 				$param['void_uid'] = 0;
 				$param['void_time'] = 0;
-				$old=1;
-				$new=0;
 				$tips='操作成功，合同已从作废合同列表转出';
 			}
 			if (Db::name('Purchase')->strict(false)->update($param) !== false) {
-                $log_data = array(
-                    'field' => 'void_status',
-                    'purchase_id' => $param['id'],
-                    'admin_id' => $this->uid,
-                    'new_content' => $new,
-                    'old_content' => $old,
-                    'create_time' => time(),
-                );
-                Db::name('PurchaseLog')->strict(false)->field(true)->insert($log_data);
 				return to_assign(0, $tips);
 			} else {
 				return to_assign(1, "操作失败");
@@ -329,15 +255,6 @@ class Api extends BaseController
         } else {
             return to_assign(1, "错误的请求");
         }
-    }
-	
-	//采购合同操作日志列表
-    public function purchase_log()
-    {
-		$param = get_params();
-		$model = new PurchaseLog();
-		$content = $model->contract_log($param);
-		return to_assign(0, '', $content);
     }
 	
 	//获取采购品分类数据

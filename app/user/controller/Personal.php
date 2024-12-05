@@ -18,6 +18,7 @@ namespace app\user\controller;
 use app\base\BaseController;
 use app\user\model\DepartmentChange as DepartmentChange;
 use app\user\model\PersonalQuit as PersonalQuit;
+use app\user\model\Department as DepartmentModel;
 use think\exception\ValidateException;
 use think\facade\Db;
 use think\facade\View;
@@ -77,10 +78,16 @@ class Personal extends BaseController
                 $param['admin_id'] = $this->uid;
                 $res = Db::name('DepartmentChange')->strict(false)->field(true)->insertGetId($param);
 				if ($res!==false) {
+					add_log('add', $res, $param);
 					Db::name('Admin')->where('id', $param['uid'])->update(['did' => $param['to_did']]);
 					Db::name('DepartmentAdmin')->where(['admin_id'=>$param['uid'],'department_id'=>$param['to_did']])->delete();
+					
+					$info = Db::name('Admin')->where('id', $param['uid'])->find();
+					$model = new DepartmentModel();
+					$auth_dids = $model->get_auth_departments($info);
+					$son_dids = $model->get_son_departments($info);
+					Db::name('Admin')->where('id',$param['uid'])->update(['auth_dids'=>$auth_dids,'son_dids'=>$son_dids]);
 				}
-                add_log('add', $res, $param);
             }
             return to_assign();
         } else {

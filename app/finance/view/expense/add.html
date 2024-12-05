@@ -126,10 +126,7 @@
 				layer.msg('至少要保留一个报销选项');
 				return false;
 			}
-			layer.confirm('审核期间不能编辑修改，确定报销数据无误？', {
-					icon: 3,
-					title: '提示'
-				}, function(index) {
+			tool.ask('审核期间不能编辑修改，确定报销数据无误？', function(index) {
 					let callback = function (e) {
 						layer.msg(e.msg);
 						if (e.code == 0) {

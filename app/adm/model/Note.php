@@ -64,7 +64,7 @@ class Note extends Model
 					'action_id'=>$insertId
 				]
 			];
-			send_message($msg);
+			event('SendMessage',$msg);
         } catch(\Exception $e) {
 			return to_assign(1, '操作失败，原因：'.$e->getMessage());
         }

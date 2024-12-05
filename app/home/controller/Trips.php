@@ -66,6 +66,9 @@ class Trips extends BaseController
 			}
 			if(!empty($param['end_date'])){
 				$param['end_date'] = strtotime($param['end_date']);
+				if($param['end_date']<$param['start_date']){
+					return to_assign(1, '结束时间不能小于开始时间');
+				}
 			}
             if (!empty($param['id']) && $param['id'] > 0) {
 				$this->model->edit($param);
@@ -79,6 +82,9 @@ class Trips extends BaseController
 			if ($id>0) {
 				$detail = $this->model->getById($id);
 				View::assign('detail', $detail);
+			}
+			if(is_mobile()){
+				return view('qiye@/approve/add_chuchai');
 			}
 			return view();
 		}
@@ -99,7 +105,11 @@ class Trips extends BaseController
 			if($detail['end_span'] == 2){
 				$detail['end_span_name'] = '下午';
 			}
+			View::assign('create_user', get_admin($detail['admin_id']));
 			View::assign('detail', $detail);
+			if(is_mobile()){
+				return view('qiye@/approve/view_chuchai');
+			}			
 			return view();
 		}
 		else{

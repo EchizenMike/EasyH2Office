@@ -31,6 +31,10 @@ class Schedule extends Model
 				->join('Admin u', 'a.admin_id = u.id', 'LEFT')
 				->join('WorkCate w', 'w.id = a.cid', 'LEFT')
 				->where($where)
+				->where(function ($query) use ($whereOr) {
+				if (!empty($whereOr))
+					$query->whereOr($whereOr);
+				})
 				->order($order)
                 ->paginate(['list_rows'=> $rows])
                 ->each(function ($item, $key) {

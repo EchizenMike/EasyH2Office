@@ -322,14 +322,8 @@ class Flow extends BaseController
 				else{
 					$detail['departments']='全部';
 				}
-				if($detail['template_apply']>0){
-					$detail['template_apply_title'] = Db::name('Template')->where('id',$detail['template_apply'])->value('title');
-				}
-				if($detail['template_ok']>0){
-					$detail['template_ok_title'] = Db::name('Template')->where('id',$detail['template_ok'])->value('title');
-				}
-				if($detail['template_no']>0){
-					$detail['template_no_title'] = Db::name('Template')->where('id',$detail['template_no'])->value('title');
+				if($detail['template_id']>0){
+					$detail['template_title'] = Db::name('Template')->where('id',$detail['template_id'])->value('title');
 				}
                 View::assign('detail', $detail);
             }

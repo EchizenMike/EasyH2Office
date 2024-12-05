@@ -149,7 +149,7 @@ class Work extends BaseController
 								'action_id'=>$id
 							]
 						];
-						send_message($msg);
+						event('SendMessage',$msg);
 						return to_assign(0, '发送成功');
 					}
 					return to_assign();				
@@ -191,7 +191,7 @@ class Work extends BaseController
 								'action_id'=>$wid
 							]
 						];
-						send_message($msg);
+						event('SendMessage',$msg);
 						return to_assign(0, '发送成功');
 					}					
 					return to_assign();
@@ -269,6 +269,9 @@ class Work extends BaseController
 		}
 		$detail['comment']	= $comment;
         View::assign('detail', $detail);
+		if(is_mobile()){
+			return view('qiye@/index/work_view');
+		}
         return view();
     }
 	

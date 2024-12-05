@@ -41,8 +41,8 @@
 			<td colspan="4">	
 				<table style="width:100%" id="rule">
 					<tr>
-						<td style="text-align:center; background-color:#f8f8f8; width:160px;">选择可操作的顶级权限 <font style="color:red">↓</font></td>
-						<td style="text-align:left; background-color:#f8f8f8;">选择可操作的子级权限  <font style="color:red">↓</font></td>
+						<td style="text-align:center; background-color:#f8f8f8; width:160px;"><font style="color:red">选择可操作的顶级权限 ↓</font></td>
+						<td style="text-align:left; background-color:#f8f8f8;"><font style="color:red">选择可操作的子级权限 ↓</font></td>
 					</tr>
 					{volist name="role_rule" id="vo"}
 					<tr>
@@ -84,11 +84,39 @@
 			</td>
 		</tr>
 		<tr>
-			<td class="layui-td-gray" style="vertical-align: top;">首页展示模块</td>
+			<td class="layui-td-gray-3" style="vertical-align: top;">PC工作台展示模块</td>
 			<td colspan="3">
 				{volist name="layout" id="vo"}
 					<div class="layui-input-inline" style="margin-right:10px;">
 						<input type="checkbox" data-rule="{$vo.id}" name="layout[]" value="{$vo.id}" lay-skin="primary" title="{$vo.title}" {eq name="$vo.checked" value="true" }checked{/eq}>
+					</div>
+				{/volist}
+			</td>
+		</tr>
+		<tr>
+			<td class="layui-td-gray-3" style="vertical-align: top;">手机工作台展示模块</td>
+			<td colspan="3">
+				{volist name="mobile_menu" id="v"}
+					<dl>
+						<dt style="padding:12px 0 6px; font-weight:600">{$v.title}</dt>
+						<dd>
+						{volist name="v.list" id="vo"}
+						<div class="layui-input-inline" style="margin-right:10px;">
+							<input type="checkbox" data-rule="{$vo.id}" name="mobile_menu[]" value="{$vo.id}" lay-skin="primary" title="{$vo.title}" {eq name="$vo.checked" value="true" }checked{/eq}>
+						</div>
+						{/volist}
+						<dd>
+				    </dl>
+				{/volist}
+			</td>
+		</tr>
+		<tr>
+			<td class="layui-td-gray-3" style="vertical-align: top;">手机底部Bar菜单</td>
+			<td colspan="3">
+				<p style="color:red; padding-bottom:5px;">建议勾选5个，页面效果展示效果最佳</p>
+				{volist name="mobile_bar" id="vo"}
+					<div class="layui-input-inline" style="margin-right:10px;">
+						<input type="checkbox" data-rule="{$vo.id}" name="mobile_bar[]" value="{$vo.id}" lay-skin="primary" title="{$vo.title}" {eq name="$vo.checked" value="true" }checked{/eq}>
 					</div>
 				{/volist}
 			</td>

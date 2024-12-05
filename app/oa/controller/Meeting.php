@@ -67,6 +67,9 @@ class Meeting extends BaseController
     public function view($id)
     {
 		View::assign('detail', $this->model->getById($id));
+		if(is_mobile()){
+			return view('qiye@/index/meeting_view');
+		}
         return view();
     }
 }

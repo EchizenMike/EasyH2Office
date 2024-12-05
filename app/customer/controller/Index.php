@@ -86,38 +86,6 @@ class Index extends BaseController
         }
     }
 	
-	//移入公海
-	public function to_sea()
-    {
-		if (request()->isAjax()) {
-			$id = get_params("id");
-			$uid = $this->uid;
-			//是否有权限
-			$customer = customer_auth($uid,$id,1,1);
-			$data['id'] = $id;
-			$data['belong_uid'] = 0;
-			$data['belong_did'] = 0;
-			$data['belong_time'] = 0;
-			if (Db::name('Customer')->update($data) !== false) {
-				add_log('tosea', $id);
-				$log_data = array(
-					'field' => 'belong',
-					'action' => 'tosea',
-					'type' => 0,
-					'customer_id' => $data['id'],
-					'admin_id' => $this->uid,
-					'create_time' => time(),
-				);
-				Db::name('CustomerLog')->strict(false)->field(true)->insert($log_data);
-				return to_assign(0, "操作成功");
-			} else {
-				return to_assign(1, "操作失败");
-			}
-		} else {
-            return to_assign(1, "错误的请求");
-        }
-	}
-	
 	//废池客户
     public function trash()
     {
@@ -146,6 +114,26 @@ class Index extends BaseController
         }
     }
 	
+	//移入公海
+	public function to_sea()
+    {
+		if (request()->isAjax()) {
+			$id = get_params("id");
+			$data['id'] = $id;
+			$data['belong_uid'] = 0;
+			$data['belong_did'] = 0;
+			$data['belong_time'] = 0;
+			if (Db::name('Customer')->update($data) !== false) {
+				add_log('tosea', $id);
+				return to_assign(0, "操作成功");
+			} else {
+				return to_assign(1, "操作失败");
+			}
+		} else {
+            return to_assign(1, "错误的请求");
+        }
+	}
+	
 	//获取客户
 	public function to_get()
     {
@@ -163,15 +151,6 @@ class Index extends BaseController
 			$data['belong_time'] = time();
 			if (Db::name('Customer')->update($data) !== false) {
 				add_log('tosea', $id);
-				$log_data = array(
-					'field' => 'belong',
-					'action' => 'get',
-					'type' => 0,
-					'customer_id' => $data['id'],
-					'admin_id' => $this->uid,
-					'create_time' => time(),
-				);
-				Db::name('CustomerLog')->strict(false)->field(true)->insert($log_data);
 				return to_assign(0, "操作成功");
 			} else {
 				return to_assign(1, "操作失败");
@@ -187,19 +166,10 @@ class Index extends BaseController
 		if (request()->isAjax()) {
 			$params = get_params();			
 			$data['id'] = $params['id'];
-			$log_data = array(
-				'field' => 'del',
-				'action' => 'delete',
-				'type' => 0,
-				'customer_id' => $params['id'],
-				'admin_id' => $this->uid,
-				'create_time' => time(),
-			);
 			$data['delete_time'] = time();
 			$log_data['action'] = 'totrash';
 			if (Db::name('Customer')->update($data) !== false) {
 				add_log('totrash', $params['id']);
-				Db::name('CustomerLog')->strict(false)->field(true)->insert($log_data);
 				return to_assign();
 			} else {
 				return to_assign(1, "操作失败");
@@ -218,15 +188,6 @@ class Index extends BaseController
 			$data['delete_time'] = 0;
 			if (Db::name('Customer')->update($data) !== false) {
 				add_log('recovery', $params['id']);
-				$log_data = array(
-					'field' => 'del',
-					'action' => 'recovery',
-					'type' => 0,
-					'customer_id' => $params['id'],
-					'admin_id' => $this->uid,
-					'create_time' => time(),
-				);
-				Db::name('CustomerLog')->strict(false)->field(true)->insert($log_data);
 				return to_assign();
 			} else {
 				return to_assign(1, "操作失败");

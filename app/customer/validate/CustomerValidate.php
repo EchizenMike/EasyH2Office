@@ -39,5 +39,6 @@ class CustomerValidate extends Validate
     protected $scene = [
         'add' => ['name'],
         'edit' => ['name','id'],
+        'oaedit' => ['id'],
     ];
 }

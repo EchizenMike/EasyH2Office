@@ -1,6 +1,11 @@
 <div class="bg-white">
-<table class="layui-hide" id="scheduleApi" lay-filter="schedule"></table>
+	<table class="layui-hide" id="scheduleApi" lay-filter="schedule"></table>
 </div>
+<script type="text/html" id="toolbarschedule">
+  <div class="layui-btn-container">
+  	<span class="yellow">如需创建工作日志，请到项目任务的详情页创建</span>
+  </div>
+</script>
 <script>
 function project_schedule(){
 	if($('#projectTab').find('li').eq(2).data('load') =='true'){
@@ -12,6 +17,7 @@ function project_schedule(){
 	layui.scheduleTable = table.render({
 		elem: '#scheduleApi',
 		title: '工作记录列表',
+		toolbar: '#toolbarschedule',
 		cellMinWidth: 80,
 		url: "/oa/api/get_schedule", //数据接口
 		where: { 'project_id': project_id },

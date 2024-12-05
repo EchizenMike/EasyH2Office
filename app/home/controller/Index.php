@@ -23,7 +23,7 @@ use think\facade\Db;
 use think\facade\View;
 
 class Index extends BaseController
-{
+{	
     public function index()
     {
         if (request()->isAjax()) {
@@ -36,6 +36,10 @@ class Index extends BaseController
             $statistics['msg_num'] = $msg_count;
             return to_assign(0, 'ok', $statistics);
         } else {
+			$mobile = is_mobile();
+			if($mobile){
+				return redirect('/qiye/index/index');
+			}
             $admin = Db::name('Admin')->where('id',$this->uid)->find();
             if (get_cache('menu' . $this->uid)) {
                 $list = get_cache('menu' . $this->uid);
@@ -54,7 +58,7 @@ class Index extends BaseController
             View::assign('menu', $list);
 			View::assign('admin',$admin);
 			View::assign('system',get_system_config('system'));
-			View::assign('web',get_system_config('web'));				
+			View::assign('web',get_system_config('web'));
             return View();
         }
     }

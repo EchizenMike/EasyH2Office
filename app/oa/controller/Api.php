@@ -153,7 +153,7 @@ class Api extends BaseController
 						'action_id'=>$param['work_id']
 					]
 				];
-				send_message($msg);
+				event('SendMessage',$msg);
 				return to_assign();
 			}			
 		}

@@ -125,6 +125,9 @@ class Seal extends BaseController
 				}
 				return view(EEEOR_REPORTING,['code'=>403,'warning'=>'当前状态不支持编辑']);
 			}
+			if(is_mobile()){
+				return view('qiye@/approve/add_seal');
+			}
 			return view();
 		}
     }
@@ -141,6 +144,10 @@ class Seal extends BaseController
 				$detail['file_array'] = $file_array;
 			}
 			View::assign('detail', $detail);
+			View::assign('create_user', get_admin($detail['admin_id']));
+			if(is_mobile()){
+				return view('qiye@/approve/view_seal');
+			}
 			return view();
 		}
 		else{

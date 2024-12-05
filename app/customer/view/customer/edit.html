@@ -11,7 +11,7 @@
 			<td>
 				<select name="source_id" lay-verify="required" lay-reqText="请选择客户来源">
 				<option value="">请选择客户来源</option>
-				{volist name=":customer_source()" id="v"}
+				{volist name=":get_base_data('customer_source')" id="v"}
 				<option value="{$v.id}" {eq name="$v.id" value="$detail.source_id"} selected{/eq}>{$v.title}</option>
 				{/volist}
 			  </select>
@@ -35,23 +35,23 @@
 			<td>
 			  <select name="grade_id" lay-verify="required" lay-reqText="请选择客户等级">
 				<option value="">请选择客户等级</option>
-				{volist name=":customer_grade()" id="v"}
+				{volist name=":get_base_data('customer_grade')" id="v"}
 				<option value="{$v.id}" {eq name="$v.id" value="$detail.grade_id"} selected{/eq}>{$v.title}</option>
 				{/volist}
 			  </select>
 			</td>
-			<td class="layui-td-gray">客户状态</td>
+			<td class="layui-td-gray">客户状态<font>*</font></td>
 			<td>
-			  <select name="customer_status">
+			  <select name="customer_status" lay-verify="required" lay-reqText="请选择客户状态">
 				<option value="">请选择客户当前状态</option>
 				{volist name=":get_base_type_data('basic_customer',1)" id="v"}
 				<option value="{$v.id}" {eq name="$v.id" value="$detail.customer_status"} selected{/eq}>{$v.title}</option>
 				{/volist}
 			  </select>
 			</td>
-			<td class="layui-td-gray">客户意向</td>
+			<td class="layui-td-gray">客户意向<font>*</font></td>
 			<td>
-			  <select name="intent_status">
+			  <select name="intent_status" lay-verify="required" lay-reqText="请选择客户意向">
 				<option value="">请选择客户意向</option>
 				{volist name=":get_base_type_data('basic_customer',2)" id="v"}
 				<option value="{$v.id}" {eq name="$v.id" value="$detail.intent_status"} selected{/eq}>{$v.title}</option>
@@ -91,6 +91,7 @@
     </table>
     <div class="pt-4">
 	   <input type="hidden" name="id" value="{$detail.id}">
+	   <input type="hidden" name="scene" value="edit"/>
       <button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform">立即提交</button>
       <button type="reset" class="layui-btn layui-btn-primary">重置</button>
     </div>

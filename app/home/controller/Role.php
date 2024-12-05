@@ -46,6 +46,8 @@ class Role extends BaseController
         if (request()->isAjax()) {
             $ruleData = isset($param['rule']) ? $param['rule'] : 0;
             $layoutData = isset($param['layout']) ? $param['layout'] : 0;
+            $menuData = isset($param['mobile_menu']) ? $param['mobile_menu'] : 0;
+            $barData = isset($param['mobile_bar']) ? $param['mobile_bar'] : 0;
 			if($ruleData==0){
 				return to_assign(1, '权限节点至少选择一个');
 			}
@@ -54,6 +56,8 @@ class Role extends BaseController
 			}
             $param['rules'] = implode(',', $ruleData);
             $param['layouts'] = implode(',', $layoutData);
+            $param['mobile_menu'] = implode(',', $menuData);
+            $param['mobile_bar'] = implode(',', $barData);
             if (!empty($param['id']) && $param['id'] > 0) {
                 try {
                     validate(GroupCheck::class)->scene('edit')->check($param);
@@ -79,16 +83,22 @@ class Role extends BaseController
             }
             //清除菜单\权限缓存
             clear_cache('adminMenu');
+            clear_cache('MobileRules');
             return to_assign();
         } else {
             $id = isset($param['id']) ? $param['id'] : 0;
             $rule = admin_rule();
 			$layouts = get_config('layout');
+			$mobile_bar = Db::name('MobileBar')->where([['status','=',1]])->field('id,url,title,icon')->select()->toArray();
+			$mobile_menu = Db::name('MobileTypes')->where(['status'=>1])->select()->toArray();		
+
+			
             if ($id > 0) {
                 $rules = admin_group_info($id);
                 $role_rule = create_tree_list(0, $rule, $rules);
                 $role = Db::name('AdminGroup')->where(['id' => $id])->find();				
-
+                View::assign('role', $role);
+				
 				$layout_selected = explode(',', $role['layouts']);
 				foreach ($layouts as $key =>&$vo) {
 					if (!empty($layout_selected) and in_array($vo['id'], $layout_selected)) {
@@ -97,15 +107,51 @@ class Role extends BaseController
 						$vo['checked'] = false;
 					}
 				}
-                View::assign('role', $role);
+				
+				$mobile_bar_selected = explode(',', $role['mobile_bar']);
+				foreach ($mobile_bar as $key =>&$vo) {
+					if (!empty($mobile_bar_selected) and in_array($vo['id'], $mobile_bar_selected)) {
+						$vo['checked'] = true;
+					} else {
+						$vo['checked'] = false;
+					}
+				}
+				
+				$mobile_menu_selected = explode(',', $role['mobile_menu']);
+				foreach ($mobile_menu as &$row) {
+					$list = Db::name('MobileMenu')->where([['types','=',$row['id']],['status','=',1]])->select()->toArray();
+					foreach ($list as $key =>&$vo) {
+						if (!empty($mobile_menu_selected) and in_array($vo['id'], $mobile_menu_selected)) {
+							$vo['checked'] = true;
+						} else {
+							$vo['checked'] = false;
+						}
+					}	
+					$row['list'] = $list;
+				}
+
             } else {
                 $role_rule = create_tree_list(0, $rule, []);
 				foreach ($layouts as $key =>&$vo) {
 					$vo['checked'] = false;
 				}
-            }
+				
+				foreach ($mobile_bar as $key =>&$vo) {
+					$vo['checked'] = false;
+				}
+				
+				foreach ($mobile_menu as &$row) {
+					$list = Db::name('MobileMenu')->where([['types','=',$row['id']],['status','=',1]])->select()->toArray();
+					foreach ($list as $key =>&$vo) {
+						$vo['checked'] = false;
+					}	
+					$row['list'] = $list;
+				}
+            }	
             View::assign('role_rule', $role_rule);			
             View::assign('layout', $layouts);
+            View::assign('mobile_bar', $mobile_bar);
+            View::assign('mobile_menu', $mobile_menu);
             View::assign('id', $id);
             return view();
         }

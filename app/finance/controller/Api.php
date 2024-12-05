@@ -68,7 +68,7 @@ class Api extends BaseController
 						'title' => '报销'
 					]
 				];
-				send_message($msg);
+				event('SendMessage',$msg);
                 return to_assign();
             } else {
                 return to_assign(1, "操作失败");

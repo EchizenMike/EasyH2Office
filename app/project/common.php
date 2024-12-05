@@ -110,26 +110,6 @@ function isAuthProject($uid)
     $count = Db::name('DataAuth')->where($map)->count();
     return $count;
 }
-//写入日志
-function add_project_log($uid,$module,$param,$old)
-{
-	$log_data = [];
-	$key_array = ['id','scene', 'create_time', 'update_time', 'delete_time', 'over_time', 'md_content'];
-	foreach ($param as $key => $value) {
-		if (!in_array($key, $key_array)) {
-			$log_data[] = array(
-				'module' => $module,
-				'field' => $key,
-				$module . '_id' => $param['id'],
-				'admin_id' => $uid,
-				'old_content' => $old[$key],
-				'new_content' => $value,
-				'create_time' => time(),
-			);
-		}
-	}
-	Db::name('ProjectLog')->strict(false)->field(true)->insertAll($log_data);
-}
 //读取项目
 function get_project($uid = 0)
 {

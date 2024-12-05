@@ -12,7 +12,7 @@ mbui.define(['tool','layer','userPicker','loadData'], function (exports) {
 			loadData({
 				url:'/api/comment/datalist',
 				elem:'#'+comment_box,
-				where: {tid: topic_id, m: module},
+				where: {topic_id: topic_id, module: module},
 				limit:100,
 				template:function(data){
 					let to_names = '', ops = '' ,ptext='';

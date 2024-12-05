@@ -57,59 +57,6 @@ function leaves_types_name($types=0)
 	return $types_array[$types];
 }
 
-/**
- * curl 模拟GET请求
- * @author lee
- ***/
-function curl_get($url)
-{
-    //初始化
-    $ch = curl_init();
-    //设置抓取的url
-    curl_setopt($ch, CURLOPT_URL, $url);
-    //设置获取的信息以文件流的形式返回，而不是直接输出。
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE); // https请求 不验证证书
-    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE); // https请求 不验证hosts
-	curl_setopt($ch, CURLINFO_HEADER_OUT, TRUE);//添加这个获取请求头信息
-    //执行命令
-    $output = curl_exec($ch);
-	$meta = curl_getinfo($ch,CURLINFO_HEADER_OUT);
-	$accept = substr($meta,0,strpos($meta, 'Accept:'));
-	$host = substr($accept,strpos($accept, 'Host:')+5);
-    curl_close($ch); //释放curl句柄
-    return $output;
-}
-
-/**
- * 模拟post进行url请求
- * @param string $url
- * @param string $param
- */
-function curl_post($url = '', $post = array())
-{
-	$post['host'] = $_SERVER['HTTP_HOST'];
-    $curl = curl_init(); // 启动一个CURL会话
-    curl_setopt($curl, CURLOPT_URL, $url); // 要访问的地址
-    curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0); // 对认证证书来源的检查
-    curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0); // 从证书中检查SSL加密算法是否存在
-    curl_setopt($curl, CURLOPT_USERAGENT, $_SERVER['HTTP_USER_AGENT']); // 模拟用户使用的浏览器
-    curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1); // 使用自动跳转
-    curl_setopt($curl, CURLOPT_AUTOREFERER, 1); // 自动设置Referer
-    curl_setopt($curl, CURLOPT_POST, 1); // 发送一个常规的Post请求
-    curl_setopt($curl, CURLOPT_POSTFIELDS, $post); // Post提交的数据包
-    curl_setopt($curl, CURLOPT_TIMEOUT, 30); // 设置超时限制防止死循环
-    curl_setopt($curl, CURLOPT_HEADER, 0); // 显示返回的Header区域内容
-    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1); // 获取的信息以文件流的形式返回
-    $res = curl_exec($curl); // 执行操作
-    if (curl_errno($curl)) {
-        return 'Errno ' . curl_error($curl);//捕抓异常
-    }
-    curl_close($curl); // 关闭CURL会话
-    return $res; // 返回数据，json格式
-}
-
-
 //读取后台菜单列表
 function admin_menu()
 {

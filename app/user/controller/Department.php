@@ -16,6 +16,7 @@ declare (strict_types = 1);
 namespace app\user\controller;
 
 use app\base\BaseController;
+use app\user\model\Department as DepartmentModel;
 use app\user\validate\DepartmentCheck;
 use think\exception\ValidateException;
 use think\facade\Db;
@@ -55,7 +56,9 @@ class Department extends BaseController
                 if (in_array($param['pid'], $department_array)) {
                     return to_assign(1, '上级部门不能是该部门本身或其下属部门');
                 } else {
-                    Db::name('Department')->strict(false)->field(true)->update($param);					
+                    Db::name('Department')->strict(false)->field(true)->update($param);
+					$model = new DepartmentModel();
+					$model->update_auth_dids_son_dids();
                     add_log('edit', $param['id'], $param);
                     return to_assign();
                 }
@@ -67,6 +70,8 @@ class Department extends BaseController
                     return to_assign(1, $e->getError());
                 }
                 $did = Db::name('Department')->strict(false)->field(true)->insertGetId($param);
+				$model = new DepartmentModel();
+				$model->update_auth_dids_son_dids();
                 add_log('add', $did, $param);
                 return to_assign();
             }

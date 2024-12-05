@@ -10,15 +10,6 @@
 .content-content p{margin-bottom:6px;}
 .content-content img{max-width:100%; padding:8px; box-sizing: border-box;}
 
-.comment-input .comment-image{width:40px; height:40px; border-radius:50%}
-.comment-item .comment-avatar{width:50px; float:left}
-.comment-item .comment-image{width:36px; height:36px; border-radius:50%}
-.comment-item .comment-body{margin-left:50px;}
-.comment-item .comment-content blockquote{border-left:3px solid #f1f1f1; padding:4px 8px;}
-.comment-item .comment-actions a{color:#8c95a8; cursor:pointer; font-size:12px;}
-.comment-item .comment-actions a:hover{color:#3582fb;}
-.comment-meta span{font-size:12px;}
-
 .log-item i{font-weight:800; color:#323232}
 .log-content strong{margin:0 4px; color:#323232}
 .layui-unselect dl {max-height:188px;}
@@ -99,10 +90,10 @@
 				<div class="comment-input my-2">
 					<input type="text" id="commentInput" readonly placeholder="发表一下你的看法" class="layui-input" value="">
 				</div>
-				<div id="comment_task_{$detail.id}"></div>
+				<div id="commentBox"></div>
 			</div>
 			<div class="layui-tab-item logs-list">
-				<div id="log_task_{$detail.id}"></div>
+				<div id="logList" class="log-timeline p-3"></div>
 			</div>
 		</div>
 	</div>
@@ -125,6 +116,16 @@
 	const moduleInit = ['tool','oaPicker','oaEdit','oaSchedule','oaComment','uploadPlus'];
 	function gouguInit() {
 		const oaEdit = layui.oaEdit,work = layui.oaSchedule,comment = layui.oaComment, uploadPlus = layui.uploadPlus, tool = layui.tool, table = layui.table;
+		
+		oaEdit.log('logList','Task',detail_id);
+		
+		comment.init({
+			"box":'commentBox',//容器id
+			"input": 'commentInput',
+			"topic_id":detail_id,
+			"module": 'task',
+		});
+	
 		let edit_callback = function(e){
 			layer.msg(e.msg);
 			if(e.code==0){

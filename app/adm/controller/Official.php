@@ -122,6 +122,9 @@ class Official extends BaseController
             }	 
         }else{
 			$id = isset($param['id']) ? $param['id'] : 0;
+			if(is_mobile()){
+				return view('qiye@/index/405',['msg' => '由于公文包含了富文本编辑，手机端不方便操作，请到PC端新增或编辑']);
+			}
 			if ($id>0) {
 				$detail = $this->model->getById($id);
 				if(!empty($detail['file_ids'])){

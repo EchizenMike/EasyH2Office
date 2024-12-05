@@ -25,6 +25,14 @@ class Login
     //登录
     public function index()
     {
+		$wxwork = is_wxwork();
+		$mobile = is_mobile();
+		if($wxwork){
+			return redirect('/qiye/login/login');
+		}
+		if($mobile){
+			return redirect('/qiye/login/index');
+		}
         return View();
     }
     //提交登录

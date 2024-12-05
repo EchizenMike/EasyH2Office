@@ -19,16 +19,21 @@
 use think\facade\Db;
 
 //客户查看编辑数据权限判断
-function customer_auth($uid,$customer_id,$ajax=0,$level=0)
+function customer_auth($uid,$customer_id)
 {
 	$customer =  Db::name('Customer')->where(['id' => $customer_id])->find();
-	//是否是客户管理员
-    $auth = isAuth($uid,'customer_admin','conf_1');
 	if($customer['belong_uid']==0){
 		return $customer;
 	}
+	//是否是客户管理员
+    $auth = isAuth($uid,'customer_admin','conf_1');
+	$role= 0;
 	if($auth==1){
-		return $customer;
+		//可见部门数据
+		$dids = get_role_departments($uid);
+		if(in_array($customer['belong_did'],$dids)){
+			$role= 1;
+		}
 	}
 	else if($auth==0){
 		$auth_array=[];
@@ -39,32 +44,16 @@ function customer_auth($uid,$customer_id,$ajax=0,$level=0)
 		array_push($auth_array,$customer['belong_uid']);
 		//部门负责人
 		$dids = get_leader_departments($uid);
-		if(!in_array($uid,$auth_array) && !in_array($customer['belong_did'],$dids)){
-			if($ajax == 1){
-				to_assign(1,'无权限操作');
-			}
-			else{
-				throw new \think\exception\HttpException(405, '无权限访问');
-			}
-		}
-		else{
-			return $customer;
+		if(in_array($uid,$auth_array) || in_array($customer['belong_did'],$dids)){
+			$role= 1;
 		}
 	}
-}
-
-//读取分类列表
-function customer_grade()
-{
-    $cate = Db::name('CustomerGrade')->where(['status' => 1])->select()->toArray();
-    return $cate;
-}
-
-//读取签约主体
-function customer_source()
-{
-    $source = Db::name('CustomerSource')->where(['status' => 1])->select()->toArray();
-    return $source;
+	if($role == 0){
+		throw new \think\exception\HttpException(405, '无权限访问');
+	}
+	else{
+		return $customer;
+	}
 }
 
 //读取联系人
@@ -79,28 +68,4 @@ function customer_chance($cid)
 {
     $chance = Db::name('CustomerChance')->where(['delete_time' => 0,'cid'=>$cid])->select()->toArray();
     return $chance;
-}
-
-//写入日志
-function to_log($uid,$type,$new,$old)
-{
-	$log_data = [];
-	$key_array = ['id', 'create_time', 'update_time', 'admin_id','belong_did','belong_time','distribute_time'];
-	$type_array = ['customer_id', 'trace_id', 'contact_id', 'chance_id'];
-	foreach ($new as $key => $value) {
-		if (!in_array($key, $key_array)) {
-			if(isset($old[$key]) && ($old[$key]!=$value)){
-				$log_data[] = array(
-					'field' => $key,
-					'type' => $type,
-					$type_array[$type] => $new['id'],
-					'admin_id' => $uid,
-					'old_content' => $old[$key],
-					'new_content' => $value,
-					'create_time' => time(),
-				);
-			}
-		}
-	}
-	Db::name('CustomerLog')->strict(false)->field(true)->insertAll($log_data);
 }

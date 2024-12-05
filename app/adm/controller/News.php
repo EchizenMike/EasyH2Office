@@ -108,6 +108,9 @@ class News extends BaseController
 				$detail['file_array'] = $file_array;
 			}
 			View::assign('detail', $detail);
+			if(is_mobile()){
+				return view('qiye@/index/view_news');
+			}
 			return view();
 		}
 		else{
