@@ -150,7 +150,10 @@ class Official extends BaseController
 				$detail['file_array'] = $file_array;
 			}
 			View::assign('detail', $detail);
-			View::assign('auth_office', isAuth($this->uid,'office_admin','conf_1'));
+			View::assign('auth_office', isAuth($this->uid,'office_admin','conf_1'));			
+			if(is_mobile()){
+				return view('qiye@/index/official_view');
+			}
 			return view();
 		}
 		else{

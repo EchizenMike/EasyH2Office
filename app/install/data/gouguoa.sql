@@ -1094,6 +1094,15 @@ CREATE TABLE `oa_basic_user`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COMMENT = '人事模块常规数据';
 
 -- ----------------------------
+-- Records of oa_basic_user
+-- ----------------------------
+INSERT INTO `oa_basic_user` VALUES (1, '2', '初级', 1, 1733384661, 0);
+INSERT INTO `oa_basic_user` VALUES (2, '2', '中级', 1, 1733384671, 0);
+INSERT INTO `oa_basic_user` VALUES (3, '2', '高级', 1, 1733384675, 0);
+INSERT INTO `oa_basic_user` VALUES (4, '1', '总经理', 1, 1733384651, 0);
+INSERT INTO `oa_basic_user` VALUES (5, '1', '工程师', 1, 1733384651, 0);
+
+-- ----------------------------
 -- Table structure for oa_care_cate
 -- ----------------------------
 DROP TABLE IF EXISTS `oa_care_cate`;
@@ -1105,6 +1114,7 @@ CREATE TABLE `oa_care_cate`  (
   `update_time` bigint(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COMMENT = '关怀项目';
+
 -- ----------------------------
 -- Records of oa_care_cate
 -- ----------------------------
@@ -1317,6 +1327,8 @@ CREATE TABLE `oa_seal_cate`  (
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COMMENT = '印章类型';
 
+INSERT INTO `oa_seal_cate` VALUES (1, '合同章', 2, 1, '', 1733385406, 0);
+
 -- ----------------------------
 -- Table structure for oa_meeting_room
 -- ----------------------------
@@ -1451,30 +1463,6 @@ CREATE TABLE `oa_car_fee`  (
   `delete_time` bigint(11) NOT NULL DEFAULT 0 COMMENT '删除时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1000 CHARACTER SET = utf8mb4 COMMENT = '车辆费用明细';
-
--- ----------------------------
--- Table structure for oa_services
--- ----------------------------
-DROP TABLE IF EXISTS `oa_services`;
-CREATE TABLE `oa_services`  (
-  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `title` varchar(100) NOT NULL DEFAULT '' COMMENT '服务名称',
-  `status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '状态：-1删除 0禁用 1启用',
-  `create_time` bigint(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
-  `update_time` bigint(11) NOT NULL DEFAULT 0 COMMENT '更新时间',
-  `delete_time` bigint(11) NOT NULL DEFAULT 0 COMMENT '删除时间',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COMMENT = '企业服务';
-
--- ----------------------------
--- Records of oa_services
--- ----------------------------
-INSERT INTO `oa_services` VALUES (1, '定制服务', 1, 1637987189, 0,0);
-INSERT INTO `oa_services` VALUES (2, '注册公司', 1, 1637987199, 0,0);
-INSERT INTO `oa_services` VALUES (3, '推广运营', 1, 1637987199, 0,0);
-INSERT INTO `oa_services` VALUES (4, '财税咨询', 1, 1637987199, 0,0);
-INSERT INTO `oa_services` VALUES (5, '代理记账', 1, 1637987199, 0,0);
-INSERT INTO `oa_services` VALUES (6, '税务筹划', 1, 1637987199, 0,0);
 
 -- ----------------------------
 -- Table structure for oa_expense_cate
@@ -2381,6 +2369,12 @@ CREATE TABLE `oa_property_cate`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COMMENT = '资产分类';
 
 -- ----------------------------
+-- Records of oa_property_cate
+-- ----------------------------
+INSERT INTO `oa_property_cate` VALUES (1, '计算机', 0, 0, '', 1, 0, 1733384708, 1733385234);
+INSERT INTO `oa_property_cate` VALUES (2, '网络设备', 0, 0, '', 1, 0, 1733385274, 0);
+
+-- ----------------------------
 -- Table structure for oa_property_unit
 -- ----------------------------
 DROP TABLE IF EXISTS `oa_property_unit`;
@@ -2396,6 +2390,16 @@ CREATE TABLE `oa_property_unit`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COMMENT = '资产单位';
 
 -- ----------------------------
+-- Records of oa_property_unit
+-- ----------------------------
+INSERT INTO `oa_property_unit` VALUES (1, '台', 0, '', 1, 1733385300, 0);
+INSERT INTO `oa_property_unit` VALUES (2, '只', 0, '', 1, 1733385307, 0);
+INSERT INTO `oa_property_unit` VALUES (3, '个', 0, '', 1, 1733385313, 0);
+INSERT INTO `oa_property_unit` VALUES (4, '瓶', 0, '', 1, 1733385321, 0);
+INSERT INTO `oa_property_unit` VALUES (5, '盒', 0, '', 1, 1733385328, 0);
+INSERT INTO `oa_property_unit` VALUES (6, '箱', 0, '', 1, 1733385333, 0);
+
+-- ----------------------------
 -- Table structure for oa_property_brand
 -- ----------------------------
 DROP TABLE IF EXISTS `oa_property_brand`;
@@ -2409,6 +2413,11 @@ CREATE TABLE `oa_property_brand`  (
   `update_time` bigint(11) NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COMMENT = '资产品牌';
+-- ----------------------------
+-- Records of oa_property_brand
+-- ----------------------------
+INSERT INTO `oa_property_brand` VALUES (1, '品牌一', 0, '', 1, 1733385289, 0);
+INSERT INTO `oa_property_brand` VALUES (2, '品牌二', 0, '', 1, 1733385289, 0);
 
 -- ----------------------------
 -- Table structure for oa_property
@@ -2593,6 +2602,12 @@ CREATE TABLE `oa_product_cate`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COMMENT = '产品分类';
 
 -- ----------------------------
+-- Records of oa_product_cate
+-- ----------------------------
+INSERT INTO `oa_product_cate` VALUES (1, '产品分类一', 0, 0, '', 1, 0, 1733385454, 0);
+INSERT INTO `oa_product_cate` VALUES (2, '产品分类二', 0, 0, '', 1, 0, 1733385467, 0);
+
+-- ----------------------------
 -- Table structure for oa_product
 -- ----------------------------
 DROP TABLE IF EXISTS `oa_product`;
@@ -2638,7 +2653,13 @@ CREATE TABLE `oa_services`  (
   `update_time` bigint(11) NOT NULL DEFAULT 0 COMMENT '更新时间',
   `delete_time` bigint(11) NOT NULL DEFAULT 0 COMMENT '删除时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1000 CHARACTER SET = utf8mb4 COMMENT = '服务表';
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COMMENT = '服务表';
+
+-- ----------------------------
+-- Records of oa_services
+-- ----------------------------
+INSERT INTO `oa_services` VALUES (1, '定制服务', 0, 999.00, NULL, 0, 1, 1733385487, 1733385493, 0);
+INSERT INTO `oa_services` VALUES (2, '咨询服务', 0, 99.00, NULL, 0, 1, 1733385500, 0, 0);
 
 -- ----------------------------
 -- Table structure for oa_supplier
@@ -2713,6 +2734,12 @@ CREATE TABLE `oa_purchased_cate`  (
   `update_time` bigint(11) NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COMMENT = '采购品分类';
+
+-- ----------------------------
+-- Records of oa_purchased_cate
+-- ----------------------------
+INSERT INTO `oa_purchased_cate` VALUES (1, '采购品分类一', 0, 0, '', 1, 0, 1733385535, 0);
+INSERT INTO `oa_purchased_cate` VALUES (2, '采购品分类二', 0, 0, '', 1, 0, 1733385542, 0);
 
 -- ----------------------------
 -- Table structure for oa_purchased
@@ -2934,6 +2961,12 @@ CREATE TABLE `oa_project_cate`  (
   `delete_time` bigint(11) NOT NULL DEFAULT 0 COMMENT '删除时间',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COMMENT = '项目类别';
+
+-- ----------------------------
+-- Records of oa_work_cate
+-- ----------------------------
+INSERT INTO `oa_project_cate` VALUES (1, '项目分类一', 0, 1, 1733385561, 0, 0);
+INSERT INTO `oa_project_cate` VALUES (2, '项目分类二', 0, 1, 1733385567, 0, 0);
 
 -- ----------------------------
 -- Table structure for oa_project

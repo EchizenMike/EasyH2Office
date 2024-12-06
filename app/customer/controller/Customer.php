@@ -150,6 +150,9 @@ class Customer extends BaseController
 			if($this->uid>1){
 				View::assign('userinfo', get_admin($this->uid));
 			}
+			if(is_mobile()){
+				return view('qiye@/customer/add');
+			}
 			return view();
 		}
     }

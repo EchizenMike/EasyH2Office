@@ -3,13 +3,16 @@ html {
     -ms-text-size-adjust: 100%;
     -webkit-text-size-adjust: 100%;
 }
-html,body {background: #F1F2F3;margin:0; padding:0;height: 100%; width: 100%; overflow:hidden;
+html,body {background: #F1F2F3;margin:0; padding:0;height: 100%; width: 100%;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   -webkit-overflow-scrolling: touch;
   -webkit-touch-callout: none;
     background-origin: border-box;
 }
-body {font-size:14px; line-height: 1.5; color:#151515; font-family: -apple-system-font, Helvetica Neue, sans-serif; min-height: 100vh;}
+body {font-size:14px; line-height: 1.5; color:#151515; font-family: -apple-system-font, Helvetica Neue, sans-serif; min-height: 100vh; overflow: auto;}
+#root {-webkit-tap-highlight-color: transparent; width:100%;}
+#app {max-width: 480px; min-width: 320px; margin-left: auto; margin-right: auto; min-height: 100vh; position: relative;}
+
 div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,textarea,blockquote,p{padding:0; margin:0; font-family: -apple-system-font, Helvetica Neue, sans-serif; user-select: none; box-sizing: border-box;}
 table,td,tr,th{font-size:14px;}
 li{list-style-type:none;}
@@ -18,14 +21,6 @@ ol,ul {list-style:none;}
 h1,h2,h3,h4,h5,h6 {font-size:20px;}
 address,code,em,th,s,i{font-weight:normal; font-style:normal;}
 s{color:#909090; margin:0 10px; text-decoration:none;}
-#root {-webkit-tap-highlight-color: transparent; width:100%; position:absolute; top:0;left:0;right:0;bottom:0; transparent; overflow-y:auto;-webkit-overflow-scrolling: touch; overflow-scrolling: touch;}
-#app {max-width: 480px; min-width: 320px; margin-left: auto; margin-right: auto; min-height: 100vh; position: relative;
-/*
-    background: linear-gradient(to top right, #CEE0EC, #F3DFEB, #EEECEF, #CEE0EC);
-    background-size: 100% 100%;  
-    background-repeat: no-repeat; 
-*/
-}
 *, *:before, *:after {
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
@@ -233,8 +228,8 @@ a img {border: 0;}
 .mbui-tab-item{ display: none;}
 .mbui-tab-item.mbui-tab-show{ display: block;}
 
-.mbui-new-add{width:50px;height:50px; border-radius:50%; position:fixed;right:10px;bottom:50px; background-color:#267EF0;}
-.mbui-new-add a{width:50px;height:50px;color:#fff; font-size:24px;display: flex; justify-content: center;align-items: center;}
+.mbui-new-add{width:44px;height:44px; border-radius:50%; position:fixed;right:10px;bottom:48px; background-color:#267EF0;}
+.mbui-new-add a{width:44px;height:44px;color:#fff; font-size:24px;display: flex; justify-content: center;align-items: center;}
 .mbui-new-add a i{font-size:24px;}
 
 /*bar*/
@@ -1390,7 +1385,7 @@ ul.dropdown-month,.dropdown-month li,ul.dropdown-year, .dropdown-year li {list-s
 .load-data-list dd{line-height:24px;}
 .load-data-span i{color:#999999;}
 .load-data-span + .load-data-span{margin-left: 16px;}
-.load-data-none{padding-top:80px; padding-bottom:20px; color:#999; text-align:center; display:none;}
+.load-data-none{padding-top:50px; padding-bottom:20px; color:#999; text-align:center; display:none;}
 .load-data-none.load-data-0{display:block;}
 .load-data-none i{font-size:24px;}
 .load-data-loading {padding:12px 0;text-align:center;}
@@ -1414,6 +1409,7 @@ ul.dropdown-month,.dropdown-month li,ul.dropdown-year, .dropdown-year li {list-s
 	  color:#ffb800;
     }
 }
+.load-data-end{text-align:center; color:#aaa;}
 
 /*flow-check*/
 .flow-flex-row {box-direction: row;box-orient: horizontal;

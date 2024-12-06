@@ -18,6 +18,7 @@ mbui.define(['tool'], function (exports) {
 			url: "",
 			where: {},
 			limit: 10,
+			scroll: 1,
 			template: function (data) {
 				return JSON.parse(data);
 			}
@@ -32,16 +33,29 @@ mbui.define(['tool'], function (exports) {
 		var that = this;
 		$.extend(true, that.config, options);
 		var elem = $(that.config.elem);
-		elem.html('<div class="load-data-container"></div><div class="load-data-none"><i class="iconfont icon-none"></i><br>暂无数据</div><div class="load-data-loading"><span>努力加载中</span></div>');
-		// 监听滚动事件
-		$(window).scroll(function () {
-			if ($(window).scrollTop() + $(window).height() >= $(document).height()) {
-				// 滚动到页面底部时加载更多数据
-				if (that.total < that.count && that.loaded == 0){
-					that.ajax();
+		elem.html('<div class="load-data-container"></div><div class="load-data-none"><i class="iconfont icon-none"></i><br>暂无数据</div><div class="load-data-loading"><span>努力加载中</span></div><div class="load-data-end"><span>—— ● ——</span></div>');
+		
+		if(that.config.scroll==2){
+			$('#root').scroll(function(){
+				if ($(this).scrollTop() + $('#root').height() >= $('#app').height()) {					
+					// 滚动到页面底部时加载更多数据
+					if (that.total < that.count && that.loaded == 0){
+						that.ajax();
+					}
 				}
-			}
-		});
+			});
+		}
+		else{
+			// 监听滚动事件
+			$(window).scroll(function () {
+				if ($(window).scrollTop() + $(window).height() >= $(document).height()) {
+					// 滚动到页面底部时加载更多数据
+					if (that.total < that.count && that.loaded == 0){
+						that.ajax();
+					}
+				}
+			});
+		}
 		that.ajax();
 	};
 
@@ -57,6 +71,7 @@ mbui.define(['tool'], function (exports) {
 				// 显示加载按钮
 				that.loaded = 1;
 				elem.find('.load-data-loading').show();
+				elem.find('.load-data-end').hide();
 			},
 			success: function (res) {
 				that.count=res.count;
@@ -80,6 +95,7 @@ mbui.define(['tool'], function (exports) {
 			complete: function () {
 				that.loaded = 0;
 				elem.find('.load-data-loading').hide();
+				elem.find('.load-data-end').show();
 			}
 		});
 	}

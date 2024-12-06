@@ -74,9 +74,9 @@ mbui.define(['form','layer','userPicker'], function (exports) {
 		btnTemplate: function () {
 			let me = this;
 			let tem =`
-			<div class="padding center">
-				<button class="mbui-btn mbui-btn-normal mbui-btn-sm" data-event="submit">提交审批</button>
-				<button type="reset" class="mbui-btn mbui-btn-sm mbui-btn-primary">重置</button>
+			<div class="padding-xl center">
+				<button class="mbui-btn mbui-btn-normal" data-event="submit">提交审批</button>
+				<button type="reset" class="mbui-btn mbui-btn-primary">重置</button>
 				${me.sets.checking_btn}
 			</div>
 			`;			
@@ -252,13 +252,13 @@ mbui.define(['form','layer','userPicker'], function (exports) {
 									<textarea rows="3" name="content" class="mbui-form-input" placeholder="请输入审批意见" data-verify="required" data-errortips="请完善审批意见"></textarea>
 								</div>`;
 				
-			let btnCheck='<span class="mbui-btn mbui-btn-normal mbui-btn-sm btn-check" data-status="1"><i class="mbui-icon mbui-icon-ok"></i> 通过</span><span class="mbui-btn mbui-btn-sm mbui-btn-danger btn-check" data-status="2"><i class="mbui-icon mbui-icon-close"></i> 拒绝</span>';
+			let btnCheck='<span class="mbui-btn mbui-btn-normal btn-check" data-status="1"><i class="mbui-icon mbui-icon-ok"></i> 通过</span><span class="mbui-btn mbui-btn-danger btn-check" data-status="2"><i class="mbui-icon mbui-icon-close"></i> 拒绝</span>';
 			
 			if(detail.step.check_role==5){
-				btnCheck='<span class="mbui-btn mbui-btn-normal mbui-btn-sm btn-check" data-status="1"><i class="mbui-icon mbui-icon-ok"></i> 通过</span><span class="mbui-btn mbui-btn-danger btn-check" data-status="2"><i class="mbui-icon mbui-icon-close"></i> 退回</span>';
+				btnCheck='<span class="mbui-btn mbui-btn-normal btn-check" data-status="1"><i class="mbui-icon mbui-icon-ok"></i> 通过</span><span class="mbui-btn mbui-btn-danger btn-check" data-status="2"><i class="mbui-icon mbui-icon-close"></i> 退回</span>';
 			}
 			
-			let btnBack='<span class="mbui-btn mbui-btn-primary mbui-btn-sm btn-check" data-status="3"><i class="mbui-icon mbui-icon-reduce-circle"></i> 撤回</span>';
+			let btnBack='<span class="mbui-btn mbui-btn-primary btn-check" data-status="3"><i class="mbui-icon mbui-icon-reduce-circle"></i> 撤回</span>';
 			let btnCheckBack='<span class="mbui-btn mbui-btn-danger btn-check" data-event="check" data-status="4">反确认审核</span>';
 			
 			let checkHtml = `
@@ -297,7 +297,7 @@ mbui.define(['form','layer','userPicker'], function (exports) {
 						${detail.is_checker==1 && detail.step.check_role==0?checkNode:''}
 						${detail.is_checker==1?checkContent:''}
 					</div>
-					<div class="padding center">
+					<div class="padding-xl center">
 						<input type="hidden" name="check_role" value="${detail.step.check_role}">
 						${detail.is_checker==1?btnCheck:''}
 						${detail.is_creater==1 && (detail.check_status==1 || detail.check_status==3)?btnBack:''}
@@ -312,7 +312,7 @@ mbui.define(['form','layer','userPicker'], function (exports) {
 			let me = this;
 			let btnHtml ='';
 			if(me.sets.check_btn == 1){
-				btnHtml ='<div class="padding center"><button class="mbui-btn mbui-btn-sm mbui-btn-normal" data-event="submit">提交审批</button><button type="reset" class="mbui-btn mbui-btn-sm mbui-btn-primary">重置</button></div>';
+				btnHtml ='<div class="padding-xl center"><button class="mbui-btn mbui-btn-normal" data-event="submit">提交审批</button><button type="reset" class="mbui-btn mbui-btn-primary">重置</button></div>';
 			}
 			let checkHtml = `
 				<form class="mbui-form" id="formCheckBox">
