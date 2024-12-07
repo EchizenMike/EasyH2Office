@@ -37,7 +37,7 @@ mbui.define(['tool'], function (exports) {
 		
 		if(that.config.scroll==2){
 			$('#root').scroll(function(){
-				if ($(this).scrollTop() + $('#root').height() >= $('#app').height()) {					
+				if ($(this).scrollTop() + $('#root').height() >= $('#app').height()-10) {					
 					// 滚动到页面底部时加载更多数据
 					if (that.total < that.count && that.loaded == 0){
 						that.ajax();
@@ -48,7 +48,7 @@ mbui.define(['tool'], function (exports) {
 		else{
 			// 监听滚动事件
 			$(window).scroll(function () {
-				if ($(window).scrollTop() + $(window).height() >= $(document).height()) {
+				if ($(window).scrollTop() + $(window).height() >= $(document).height()-10) {
 					// 滚动到页面底部时加载更多数据
 					if (that.total < that.count && that.loaded == 0){
 						that.ajax();

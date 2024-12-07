@@ -1409,7 +1409,7 @@ ul.dropdown-month,.dropdown-month li,ul.dropdown-year, .dropdown-year li {list-s
 	  color:#ffb800;
     }
 }
-.load-data-end{text-align:center; color:#aaa;}
+.load-data-end{text-align:center; color:#ccc; padding:8px 0}
 
 /*flow-check*/
 .flow-flex-row {box-direction: row;box-orient: horizontal;
