@@ -163,6 +163,7 @@ layui.define(['tool'], function (exports) {
 			if(me.settings.ids!='' && me.settings.names!=''){
 				select_ids=me.settings.ids.split(',');
 				select_names=me.settings.names.split(',');
+				select_ids.sort((a, b) => a - b);
 				for(var m=0;m<select_ids.length;m++){
 					select_array.push({id:select_ids[m],name:select_names[m]});
 				}
