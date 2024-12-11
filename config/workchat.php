@@ -7,20 +7,20 @@ return [
 	// 是否打通企业微信
     'workweixin' => false,
     // 企业id
-    'corpid'        => 'xxxxxxxx',
+    'corpid'        => 'ww04cexxxxxxx7e2322',
     // 功能模块id
-    'agentid'       => 'xxxxxxxx',
+    'agentid'       => '1000015',
     // 功能模块secret
-    'corpsecret'    => 'xxxxxxxx',
+    'corpsecret'    => 'VvBCWVmm9DVaTs-xxxxxxx-psruoN01VwnVqlwgxScU',
     // 登录回调页面
-    'redirectUri'   =>'xxxxxxx',
-    'host'          =>'xxxxxxx',
+    'redirectUri'   =>'http://www.gouguoa.com/qiye/login/callback',
+    'host'          =>'http://www.gouguoa.com',
 	 // 是否是授权登录
     'authorization' => true,
     	//授权域名
-	'auth_host'     => 'xxxxxx',
+	'auth_host'     => '192.168.31.184',
 	//授权key
-	'auth_key'      => 'xxxxxx',
+	'auth_key'      => 'UtGcWvJkME',
 	//授权码
-	'auth_code'     => 'xxxxxx',
+	'auth_code'     => '1D9T2J.R1o6y8t.T3/1o.91X8L4ZUft7Gpc9Wiv8Jjk1MkEymboVbhixlQeVE0aVh6akQrME4zL05SeHc9PQ==',
 ];
