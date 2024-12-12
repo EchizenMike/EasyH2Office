@@ -15,7 +15,7 @@
 			<td>{$detail.to_unames|default=''}</td>
 			{/if}
 			<td class="layui-td-gray">汇报周期<font>*</font></td>
-			<td><input type="text" class="layui-input tool-time" name="start_date" readonly value="{$detail.start_date|default=''}" lay-verify="required" lay-reqText="请完善汇报周期"></td>
+			<td><input type="text" class="layui-input tool-time" name="start_date" readonly value="{$detail.range_date|default=''}" lay-verify="required" lay-reqText="请完善汇报周期"></td>
 		</tr>		
 		<tr>
 			<td class="layui-td-gray">今日工作<font>*</font></td>

@@ -1,4 +1,5 @@
-mbui.define([], function (exports) {
+mbui.define(['layer'], function (exports) {
+var layer = mbui.layer;
 var layPicker = {
 	index: 0, // 递增的index，作为元素的唯一标识
 	indexList: [], // 每个index的集合
@@ -1133,10 +1134,14 @@ $('body').on('click', '.picker-oa', function () {
 	if (typeof(field) == "undefined" || field === '') {
 		field = 'title';
 	}
+	let loading;
 	$.ajax({
 		url: url,
 		type: 'get',
 		data:{limit:999999},
+		beforeSend:function(){
+			loading = layer.loading('加载中...');
+		},
 		success: function (e) {
 			if (e.code == 0) {
 				let pickerData = e.data;
@@ -1172,6 +1177,9 @@ $('body').on('click', '.picker-oa', function () {
 					}
 				});
 			}
+		},
+		complete:function(){
+			layer.close(loading);
 		}
 	})
 	return false;

@@ -245,29 +245,11 @@ class Work extends BaseController
 		$user_names = Db::name('Admin')->where('status', 1)->where('id', 'in', $detail['to_uids'])->column('name');		
         $detail['users'] = implode(",", $user_names);
 		$detail['read_users'] = implode(",", $read_user_names);
-		$comment = Db::name('WorkComment')
-			->field('a.*,u.name,u.thumb')
-			->alias('a')
-			->join('Admin u', 'u.id = a.admin_id')
-			->order('a.create_time desc')
-			->where(['a.work_id'=>$detail['id'],'a.delete_time' => 0])
-			->select()->toArray();
-		foreach ($comment as $k => &$v) {
-			$v['times'] = time_trans($v['create_time']);
-			$v['create_time'] = date('Y-m-d H:i:s',$v['create_time']);
-			if($v['update_time']>0){
-				$v['update_time'] = '，最后编辑时间:'.time_trans($v['update_time']);
-			}
-			else{
-				$v['update_time'] = '';
-			}
-		}
 		$detail['comment_auth'] = 0;
 		$type_user_array = explode(",", $detail['to_uids']);
 		if (in_array($this->uid, $type_user_array)) {
 			$detail['comment_auth'] = 1;
 		}
-		$detail['comment']	= $comment;
         View::assign('detail', $detail);
 		if(is_mobile()){
 			return view('qiye@/index/work_view');
