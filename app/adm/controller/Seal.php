@@ -93,18 +93,24 @@ class Seal extends BaseController
     {
 		$param = get_params();	
         if (request()->isAjax()) {
-			if (isset($param['use_time'])) {
+			if (!empty($param['use_time'])) {
                 $param['use_time'] = strtotime($param['use_time']);
             }
-			if (isset($param['start_time'])) {
+			if (!empty($param['start_time'])) {
                 $param['start_time'] = strtotime($param['start_time']);
             }
-			if (isset($param['end_time'])) {
+			else{
+				$param['start_time'] = 0;
+			}
+			if (!empty($param['end_time'])) {
                 $param['end_time'] = strtotime($param['end_time']);
 				if($param['end_time']<$param['start_time']){
 					return to_assign(1, "结束借用日期需要大于等于印章借用日期");
 				}
-            }	
+            }
+			else{
+				$param['end_time'] = 0;
+			}
             if (!empty($param['id']) && $param['id'] > 0) {
 				$this->model->edit($param);
             } else {

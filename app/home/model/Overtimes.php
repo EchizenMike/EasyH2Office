@@ -47,7 +47,7 @@ class Overtimes extends Model
         try {
 			$param['create_time'] = time();
 			$insertId = self::strict(false)->field(true)->insertGetId($param);
-			add_log('add', $insertId, $param);
+			add_log('add', $insertId, $param,'加班申请');
         } catch(\Exception $e) {
 			return to_assign(1, '操作失败，原因：'.$e->getMessage());
         }
@@ -63,7 +63,7 @@ class Overtimes extends Model
         try {
             $param['update_time'] = time();
             self::where('id', $param['id'])->strict(false)->field(true)->update($param);
-			add_log('edit', $param['id'], $param);
+			add_log('edit', $param['id'], $param,'加班申请');
         } catch(\Exception $e) {
 			return to_assign(1, '操作失败，原因：'.$e->getMessage());
         }
