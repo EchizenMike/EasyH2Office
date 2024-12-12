@@ -109,7 +109,7 @@ class Api extends BaseController
 	public function get_chart_data()
     {
         $param = get_params();
-        $tasks = Db::name('ProjectTask')->field('id,plan_hours,end_time,status,over_time')->order('end_time asc')->where([['project_id', '=', $param['project_id']], ['delete_time', '=', 0]])->select()->toArray();
+        $tasks = Db::name('ProjectTask')->field('id,plan_hours,end_time,status,over_time')->order('end_time asc')->where([['project_id', '=', $param['project_id']],['end_time','>',0],['delete_time', '=', 0]])->select()->toArray();
 
         $task_count = count($tasks);
         $task_count_ok = Db::name('ProjectTask')->where([['project_id', '=', $param['project_id']], ['delete_time', '=', 0],['status', '>', 2]])->count();

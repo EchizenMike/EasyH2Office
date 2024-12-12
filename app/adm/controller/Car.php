@@ -384,7 +384,6 @@ class Car extends BaseController
 				}
             } else {
                 $param['create_time'] = time();
-                $param['types'] = 2;
                 $insertId = Db::name('CarFee')->strict(false)->field(true)->insertGetId($param);
                 if ($insertId) {
                     add_log('add', $insertId, $param);
