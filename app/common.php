@@ -1512,9 +1512,11 @@ function is_mobile()
         return true;
     } elseif (isset($_SERVER['HTTP_USER_AGENT']) && preg_match('/(blackberry|configuration\/cldc|hp |hp-|htc |htc_|htc-|iemobile|kindle|midp|mmp|motorola|mobile|nokia|opera mini|opera |Googlebot-Mobile|YahooSeeker\/M1A1-R2D2|android|iphone|ipod|mobi|palm|palmos|pocket|portalmmm|ppc;|smartphone|sonyericsson|sqh|spv|symbian|treo|up.browser|up.link|vodafone|windows ce|xda |xda_)/i', $_SERVER['HTTP_USER_AGENT'])) {
         return true;
-    } else {
-        return false;
-    }
+    }elseif (strpos($_SERVER['HTTP_USER_AGENT'] , 'wxwork') !== false ) {
+		return true;
+	}else {
+		return false;
+	}
 }
 
 /**

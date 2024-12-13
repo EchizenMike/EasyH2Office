@@ -53,7 +53,7 @@ class Api extends BaseController
 		if (!empty($param['keywords'])) {
 			$where[] = ['name|content', 'like', '%' . $param['keywords'] . '%'];
 		}
-		$list = $this->model->datalist($param,$where);
+		$list = $this->model->datalist($param,$where,$whereOr);
 		return table_assign(0, '', $list);
     }
 	
