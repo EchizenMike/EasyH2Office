@@ -38,6 +38,7 @@ class Api extends BaseController
 		$uid = $this->uid;
 		$auth = isAuth($uid,'project_admin','conf_1');
 		$where = array();
+		$whereOr = array();
 		$where[] = ['delete_time', '=', 0];		
 		if($auth == 0){
 			$whereOr[] = ['director_uid', '=', $uid];
