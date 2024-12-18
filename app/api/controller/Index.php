@@ -339,6 +339,16 @@ class Index extends BaseController
             return to_assign(1, '邮件发送失败');
         }
     }
+	
+	//获取未读消息
+	public function get_msg()
+	{
+		$msg_map[] = ['to_uid', '=', $this->uid];
+		$msg_map[] = ['read_time', '=', 0];
+		$msg_map[] = ['delete_time', '=', 0];
+		$msg_count = Db::name('Msg')->where($msg_map)->count();
+		return to_assign(0, 'ok', $msg_count);
+	}
 
     //获取部门
     public function get_department()

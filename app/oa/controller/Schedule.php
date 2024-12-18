@@ -237,7 +237,7 @@ class Schedule extends BaseController
         }
     }
 
-    public function view($id)
+    public function view()
     {
         $id = get_params('id');
         $schedule = Db::name('Schedule')->where(['id' => $id])->find();

@@ -214,15 +214,15 @@
 		
 		var getStatus = setInterval(function () {
 			$.ajax({
-				url: "/home/index/index",
+				url: "/api/index/get_msg",
 				type:'post',
 				success:function(e){
 					if(e.code==0 && e.data!==''){
-						if(e.data.msg_num>0){
-							$('#msgNum').show().find('span').html(e.data.msg_num);
-							if(e.data.msg_num!=msg_num && msg_bool == true && msg_sound==1){
+						if(e.data>0){
+							$('#msgNum').show().find('span').html(e.data);
+							if(e.data!=msg_num && msg_bool == true && msg_sound==1){
 								msgSound.play();
-								msg_num = e.data.msg_num;
+								msg_num = e.data;
 							}
 						}
 						else{

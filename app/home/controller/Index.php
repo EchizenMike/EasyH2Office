@@ -26,41 +26,30 @@ class Index extends BaseController
 {	
     public function index()
     {
-        if (request()->isAjax()) {
-            $admin_id = $this->uid;
-            //未读消息统计
-            $msg_map[] = ['to_uid', '=', $admin_id];
-            $msg_map[] = ['read_time', '=', 0];
-            $msg_map[] = ['delete_time', '=', 0];
-            $msg_count = Db::name('Msg')->where($msg_map)->count();
-            $statistics['msg_num'] = $msg_count;
-            return to_assign(0, 'ok', $statistics);
-        } else {
-			$mobile = is_mobile();
-			if($mobile){
-				return redirect('/qiye/index/index');
+		$mobile = is_mobile();
+		if($mobile){
+			return redirect('/qiye/index/index');
+		}
+		$admin = Db::name('Admin')->where('id',$this->uid)->find();
+		if (get_cache('menu' . $this->uid)) {
+			$list = get_cache('menu' . $this->uid);
+		} else {
+			$adminGroup = Db::name('PositionGroup')->where(['pid' => $admin['position_id']])->column('group_id');
+			$adminMenu = Db::name('AdminGroup')->where('id', 'in', $adminGroup)->column('rules');
+			$adminMenus = [];
+			foreach ($adminMenu as $k => $v) {
+				$v = explode(',', $v);
+				$adminMenus = array_merge($adminMenus, $v);
 			}
-            $admin = Db::name('Admin')->where('id',$this->uid)->find();
-            if (get_cache('menu' . $this->uid)) {
-                $list = get_cache('menu' . $this->uid);
-            } else {
-                $adminGroup = Db::name('PositionGroup')->where(['pid' => $admin['position_id']])->column('group_id');
-                $adminMenu = Db::name('AdminGroup')->where('id', 'in', $adminGroup)->column('rules');
-                $adminMenus = [];
-                foreach ($adminMenu as $k => $v) {
-                    $v = explode(',', $v);
-                    $adminMenus = array_merge($adminMenus, $v);
-                }
-                $menu = Db::name('AdminRule')->where(['menu' => 1, 'status' => 1])->where('id', 'in', $adminMenus)->order('sort asc,id asc')->select()->toArray();
-                $list = list_to_tree($menu);
-                \think\facade\Cache::tag('adminMenu')->set('menu' . $this->uid, $list);
-            }
-            View::assign('menu', $list);
-			View::assign('admin',$admin);
-			View::assign('system',get_system_config('system'));
-			View::assign('web',get_system_config('web'));
-            return View();
-        }
+			$menu = Db::name('AdminRule')->where(['menu' => 1, 'status' => 1])->where('id', 'in', $adminMenus)->order('sort asc,id asc')->select()->toArray();
+			$list = list_to_tree($menu);
+			\think\facade\Cache::tag('adminMenu')->set('menu' . $this->uid, $list);
+		}
+		View::assign('menu', $list);
+		View::assign('admin',$admin);
+		View::assign('system',get_system_config('system'));
+		View::assign('web',get_system_config('web'));
+		return View();
     }
 
     public function main()
