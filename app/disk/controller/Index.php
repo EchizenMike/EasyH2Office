@@ -282,7 +282,7 @@ class Index extends BaseController
 					return to_assign(1, "删除失败,【".$file['name']."】不是你上传的文件");
 					break;
 				}
-				$count = Db::name('Disk')->where('pid',$val)->count();
+				$count = Db::name('Disk')->where(['pid'=>$val,'delete_time'=>0])->count();
 				if($count>0){
 					return to_assign(1, "删除失败,请先清空【".$file['name']."】里面的文件");
 					break;
