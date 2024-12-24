@@ -1494,6 +1494,7 @@ INSERT INTO `oa_expense_cate` VALUES (6, '其他费', 1, 1637987199, 0,0);
 DROP TABLE IF EXISTS `oa_expense`;
 CREATE TABLE `oa_expense`  (
   `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `subject_id` int(11)  NOT NULL DEFAULT 0 COMMENT '报销企业主体',
   `code` varchar(100) NOT NULL DEFAULT '' COMMENT '报销编码',
   `cost` decimal(15, 2) NULL DEFAULT 0.00 COMMENT '报销总金额',
   `income_month` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '入账月份',
@@ -1503,7 +1504,7 @@ CREATE TABLE `oa_expense`  (
   `project_id` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '预定字段:关联项目ID',
   `file_ids` varchar(500) NOT NULL DEFAULT '' COMMENT '附件ID，如:1,2,3',
   `pay_status` tinyint(4) NOT NULL DEFAULT 0 COMMENT '打款状态 0待打款,1已打款',
-  `pay_admin_id` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '打款人ID',
+  `pay_admin_id` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '打款人ID',
   `pay_time` bigint(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '最后打款时间',
   `remark` varchar(1000) NULL DEFAULT '' COMMENT '备注',
   `create_time` bigint(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
@@ -1629,6 +1630,7 @@ CREATE TABLE `oa_ticket`  (
   `other_file_ids` varchar(500) NOT NULL DEFAULT '' COMMENT '其他附件ID，如:1,2,3',
   `remark` mediumtext  NULL COMMENT '备注',
   `pay_amount` decimal(15, 2) NULL DEFAULT 0.00 COMMENT '已付款金额',
+  `cash_type` int(11) UNSIGNED NULL DEFAULT 1 COMMENT '付款类型：1银行,2现金,3支付宝,4微信,5汇票,6支票,7托收,8其他',
   `pay_status` tinyint(1) UNSIGNED NULL DEFAULT 0 COMMENT '付款状态：0未付款 1部分付款 2全部付款',
   `pay_time` bigint(11) NOT NULL DEFAULT 0 COMMENT '最新回款时间',
   `create_time` bigint(11) NOT NULL DEFAULT 0 COMMENT '创建时间',
@@ -2302,7 +2304,7 @@ CREATE TABLE `oa_customer_contact`  (
   `nickname` varchar(50) NOT NULL DEFAULT '' COMMENT '称谓',
   `department` varchar(50) NOT NULL DEFAULT '' COMMENT '部门',
   `position` varchar(50) NOT NULL DEFAULT '' COMMENT '职位',
-  `birthday` bigint(11) NOT NULL DEFAULT 0 COMMENT '生日',
+  `birthday` varchar(50) NOT NULL DEFAULT '' COMMENT '生日',
   `address` varchar(255) NOT NULL DEFAULT '' COMMENT '家庭住址',
   `family` mediumtext NULL COMMENT '家庭成员',
   `admin_id` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建人',
