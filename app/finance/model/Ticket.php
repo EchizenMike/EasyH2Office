@@ -104,6 +104,12 @@ class Ticket extends Model
 		if($info['project_id']>0){
 			$info['project_name'] = Db::name('Project')->where('id',$info['project_id'])->value('name');
 		}
+		if($info['open_time']>0){
+			$info['open_time'] = date('Y-m-d');
+		}
+		else{
+			$info['open_time']='';
+		}
 		$file_array = Db::name('File')->where('id','in',$info['file_ids'])->select();
 		$info['file_array'] = $file_array;
 		return $info;

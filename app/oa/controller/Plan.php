@@ -126,6 +126,12 @@ class Plan extends BaseController
     {
         $param = get_params();
         $admin_id = $this->uid;
+		if (isset($param['start_time'])) {
+			$param['start_time'] = strtotime($param['start_time']);
+		}
+		if (isset($param['end_time'])) {
+			$param['end_time'] = strtotime($param['end_time']);
+		}
         if (isset($param['start_time_a'])) {
             $param['start_time'] = strtotime($param['start_time_a'] . '' . $param['start_time_b']);
         }

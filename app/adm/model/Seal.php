@@ -96,6 +96,12 @@ class Seal extends Model
 			$info['start_time'] = '';
 			$info['end_time'] = '';	
 		}
+		if($info['use_time']>0){
+			$info['use_time'] = date('Y-m-d',$info['use_time']);
+		}
+		else{
+			$info['use_time'] = '';
+		}
 		$status_str = '未使用';
 		if($info['status'] == 1){
 			$status_str = '已使用';

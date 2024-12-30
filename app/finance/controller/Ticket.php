@@ -135,6 +135,9 @@ class Ticket extends BaseController
 			if ($id>0) {
 				$detail = $this->model->getById($id);
 				View::assign('detail', $detail);
+				if(is_mobile()){
+					return view('qiye@/finance/add_ticket');
+				}
 				return view('edit');
 			}
 			if(is_mobile()){
@@ -169,8 +172,10 @@ class Ticket extends BaseController
    /**
     * 删除
     */
-    public function del($id)
+    public function del()
     {
+		$param = get_params();
+		$id = isset($param['id']) ? $param['id'] : 0;
 		if (request()->isDelete()) {
 			$this->model->delById($id);
 		} else {
@@ -295,6 +300,9 @@ class Ticket extends BaseController
 			if ($id>0) {
 				$detail = $this->model->getById($id);
 				View::assign('detail', $detail);
+				if(is_mobile()){
+					return view('qiye@/finance/add_ticket_a');
+				}
 				return view('edit_a');
 			}
 			if(is_mobile()){

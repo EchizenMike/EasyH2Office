@@ -975,16 +975,14 @@ function file_item($file,$view=''){
 	}
 	$filesize = to_size($file['filesize']);
 	$filedate = date('Y-m-d H:i',$file['create_time']);
-	$item = '<li data-id="'.$file['id'].'">
-							<div class="mbui-file-div">
-								'.$fileshow.'
-								<div class="mbui-file-info">
-									<div class="mbui-file-name line-limit-1">'.$file['name'].'</div>
-									<div class="mbui-file-size">'.$filesize.'，'.$filedate.'</div>
-								</div>
-								'.$file_del.'
-							</div>
-						</li>';
+	$item = '<div class="mbui-file-div"data-id="'.$file['id'].'">
+				'.$fileshow.'
+				<div class="mbui-file-info">
+					<div class="mbui-file-name line-limit-1">'.$file['name'].'</div>
+					<div class="mbui-file-size">'.$filesize.'，'.$filedate.'</div>
+				</div>
+				'.$file_del.'
+			</div>';
 	return $item;
 }
 

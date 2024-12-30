@@ -12,6 +12,10 @@
 			<td class="layui-td-gray-2">原始单据日期</td>
 			<td>{$detail.expense_time}</td>
 		</tr>
+		<tr>
+			<td class="layui-td-gray">报销主体</td>
+			<td colspan="5">{$detail.subject_name|default='-'}</td>
+		</tr>
 		{if condition="$detail.project_id > 0"}
 		<tr>
 			<td class="layui-td-gray">关联项目</td>

@@ -168,6 +168,9 @@ class Expense extends Model
 		else{
 			$info['ptname'] = '';
 		}
+		if ($info['subject_id'] > 0) {
+			$info['subject_name'] = Db::name('Enterprise')->where(['id' => $info['subject_id']])->value('title');
+		}
 		$info['list'] = Db::name('ExpenseInterfix')
 			->field('a.*,c.title as cate_title')
 			->alias('a')

@@ -112,6 +112,9 @@ class Work extends BaseController
 			if(!empty($param['start_date'])){
 				$param['start_date'] = strtotime($param['start_date']);
 			}
+			if(!empty($param['start_date'])){
+				$param['end_date'] = strtotime($param['end_date']);
+			}
 			if(!empty($param['range_date'])){
 				$range_date =explode('~', $param['range_date']);
 				$param['start_date'] = strtotime(urldecode($range_date[0]));

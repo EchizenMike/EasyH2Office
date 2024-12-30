@@ -160,12 +160,15 @@ class Expense extends BaseController
         }else{
 			$id = isset($param['id']) ? $param['id'] : 0;
             View::assign('expense_cate', Db::name('ExpenseCate')->where(['status' => 1])->select()->toArray());
+			View::assign('user', get_admin($this->uid));
 			if ($id>0) {
 				$detail = $this->model->getById($id);
 				View::assign('detail', $detail);
+				if(is_mobile()){
+					return view('qiye@/finance/add_expense');
+				}
 				return view('edit');
 			}
-            View::assign('user', get_admin($this->uid));
 			if(is_mobile()){
 				return view('qiye@/finance/add_expense');
 			}
@@ -197,8 +200,10 @@ class Expense extends BaseController
    /**
     * 删除
     */
-    public function del($id)
+    public function del()
     {
+		$param = get_params();
+		$id = isset($param['id']) ? $param['id'] : 0;
 		if (request()->isDelete()) {
 			$this->model->delById($id);
 		} else {
