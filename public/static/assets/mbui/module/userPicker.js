@@ -57,9 +57,9 @@ mbui.define(['layer'], function (exports) {
 				userGroups[firstLetter].push(users[i]);
 			}
 			alphabet.sort();
-			var $container = $('<div class="user-selector"><header class="mbui-bar"><a class="mbui-bar-item left" href="javascript:;"><i class="mbui-bar-arrow-left"></i>返回</a><a class="mbui-bar-item right" href="javascript:;">确认</a><h1 class="mbui-bar_title">选择员工</h1></header></div>');
+			var $container = $('<div class="user-selector"><header class="mbui-bar"><a class="mbui-bar-item left" href="javascript:;"><i class="mbui-bar-arrow-left"></i>关闭</a><a class="mbui-bar-item right text-blue" href="javascript:;">确认</a><h1 class="mbui-bar-title">选择员工</h1></header></div>');
 			var $letters = $('<div class="letters"></div>');
-			var $userList = $('<div class="contacts mbui-' + types + '" data-toggle="buttons"></div>');
+			var $userList = $('<div class="contacts mbui-' + types + '"></div>');
 
 			var item = '';
 			for (var j = 0; j < alphabet.length; j++) {
@@ -96,17 +96,18 @@ mbui.define(['layer'], function (exports) {
 			});
 
 			$container.find('.right').click(function () {
-				let selected = $container.find('input:checked').val();
+				let selected = $container.find('input:checked');
 				if (selected.length == 0) {
 					layer.msg('请选择员工');
 					return false;
 				}
 				let ids = [], names = [], dids = [],departments=[];
 				for (var m = 0; m < selected.length; m++) {
-					ids.push($(selected[m]).data('id'));
-					names.push($(selected[m]).data('name'));
-					dids.push($(selected[m]).data('dids'));
-					departments.push($(selected[m]).data('departments'));
+					let selected_item = $(selected[m]).parent();
+					ids.push(selected_item.data('id'));
+					names.push(selected_item.data('name'));
+					dids.push(selected_item.data('dids'));
+					departments.push(selected_item.data('departments'));
 				}
 				that.config.callback(ids,names,dids,departments);
 				$container.fadeOut(function () {
