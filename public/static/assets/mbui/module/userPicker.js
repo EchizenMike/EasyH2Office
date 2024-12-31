@@ -57,7 +57,7 @@ mbui.define(['layer'], function (exports) {
 				userGroups[firstLetter].push(users[i]);
 			}
 			alphabet.sort();
-			var $container = $('<div class="user-selector"><header class="mbui-bar"><a class="mbui-bar-item left" href="javascript:;"><i class="mbui-bar-arrow-left"></i>关闭</a><a class="mbui-bar-item right text-blue" href="javascript:;">确认</a><h1 class="mbui-bar-title">选择员工</h1></header></div>');
+			var $container = $('<div class="mbui-picker-selector"><header class="mbui-bar"><a class="mbui-bar-item left" href="javascript:;"><i class="mbui-bar-arrow-left"></i>关闭</a><a class="mbui-bar-item right text-blue" href="javascript:;">确认</a><h1 class="mbui-bar-title">选择员工</h1></header></div>');
 			var $letters = $('<div class="letters"></div>');
 			var $userList = $('<div class="contacts mbui-' + types + '"></div>');
 
