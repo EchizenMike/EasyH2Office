@@ -17,7 +17,12 @@
     ],
     "require": {
         "php": ">=8.0",
-        "topthink/framework": "8.0.3",
+		"ext-curl": "*",
+        "ext-fileinfo": "*",
+        "ext-openssl": "*",
+        "ext-pdo": "*",
+        "ext-zip": "*",
+        "topthink/framework": "^8.0.3",
 		"topthink/think-filesystem": "^2.0",
         "topthink/think-multi-app": "^1.0",
         "topthink/think-view": "^2.0",
@@ -49,5 +54,11 @@
             "@php think service:discover",
             "@php think vendor:publish"
         ]
+    },
+	"repositories": {
+        "packagist": {
+            "type": "composer",
+            "url": "https://mirrors.tencent.com/composer/"
+        }
     }
 }
