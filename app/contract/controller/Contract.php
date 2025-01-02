@@ -58,7 +58,7 @@ class Contract extends BaseController
 			if (!empty($param['cate_id'])) {
                 $where[] = ['cate_id', '=',$param['cate_id']];
             }
-			if (!empty($param['check_status'])) {
+			if (isset($param['check_status']) && $param['check_status']!='') {
                 $where[] = ['check_status', '=',$param['check_status']];
             }
 			if (!empty($param['sign_time'])) {

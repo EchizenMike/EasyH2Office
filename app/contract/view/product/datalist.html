@@ -152,7 +152,7 @@
 							layui.pageTable.reload();
 						}
 					}
-					tool.delete("/contract/product/set", { id: obj.data.id,status: 1,title: obj.data.title}, callback);
+					tool.delete("/contract/product/del", { id: obj.data.id,status: 1,title: obj.data.title}, callback);
 					layer.close(index);
 				});
 			}
