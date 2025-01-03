@@ -21,7 +21,7 @@ define('CMS_VERSION','5.6');
 define('MB_VERSION','1.0');
 
 // 定义Layui版本号
-define('LAYUI_VERSION','2.9.20');
+define('LAYUI_VERSION','2.9.21');
 
 // 定义项目目录
 define('CMS_ROOT', __DIR__ . '/../');
