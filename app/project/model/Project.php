@@ -95,6 +95,25 @@ class Project extends Model
         try {
 			$param['create_time'] = time();
 			$insertId = self::strict(false)->field(true)->insertGetId($param);
+			$step_users=[];
+			//项目阶段
+			foreach ($step as $key => &$value) {
+				if($key==0){
+					$value['is_current'] = 1;
+				}
+				else{
+					$value['is_current'] = 0;
+				}
+				$value['project_id'] = $insertId;
+				if(!empty($value['director_uid'])){
+					$step_users[] = $value['director_uid'];
+				}
+				if(!empty($value['uids'])){
+					$step_users[] = $value['uids'];
+				}
+			}
+			Db::name('ProjectStep')->strict(false)->field(true)->insertAll($step);
+			$step_users_str = implode(',',$step_users);
 			//项目成员
 			$project_users = $param['admin_id'];
 			if (!empty($param['director_uid'])){
@@ -102,6 +121,9 @@ class Project extends Model
 			}
 			if (!empty($param['team_admin_ids'])){
 				$project_users.=",".$param['team_admin_ids'];
+			}
+			if (!empty($step_users_str)){
+				$project_users.=",".$step_users_str;
 			}
 			$project_array = explode(",",(string)$project_users);
 			$project_array = array_unique($project_array);
@@ -117,17 +139,8 @@ class Project extends Model
 				}
 			}
 			Db::name('ProjectUser')->strict(false)->field(true)->insertAll($project_user_array);
-			//项目阶段
-			foreach ($step as $key => &$value) {
-				if($key==0){
-					$value['is_current'] = 1;
-				}
-				else{
-					$value['is_current'] = 0;
-				}
-				$value['project_id'] = $insertId;
-			}
-			Db::name('ProjectStep')->strict(false)->field(true)->insertAll($step);	
+			
+			
 			add_log('add', $insertId, $param);
 			$log=new EditLog();
 			$log->add('Project',$insertId);

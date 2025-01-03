@@ -232,15 +232,6 @@
 		$('.add-schedule').on('click', function () {
 			work.add(detail_id,{'id':0});	
 		})
-		
-		//任务日志
-		comment.log(detail_id,'task');
-
-		//评论
-		comment.load(detail_id,'task');
-		$('#commentInput').on('click', function () {
-			comment.textarea(0,detail_id,'task','',0,0,'');
-		})
 		//回复
 		$('#comment_task_' + detail_id).on('click', '[data-event="replay"]', function () {
 			let pid = $(this).data('id');
