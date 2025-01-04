@@ -40,13 +40,17 @@
 	<div class="px-3 py-1 border-b">
 		<div class="flow-flexbox check-items flow-flex-row">
 			{volist name="$detail.step_array" id="vo"}
-			<div class='flow-flexbox flow-flex-row check-item {eq name="$vo.is_current" value="1"} blue{/eq} {notempty name="$step"}{lt name="$vo.sort" value="$step.sort"} green{/lt}{else/} green{/notempty}'>
-				<strong class="iconfont icon-bianji blue"></strong>
-				<strong class="iconfont icon-kaoheguanli green"></strong>
-				<strong class="iconfont icon-genjinjilu black"></strong>
-				<div class="check-item-name">{$vo.title}</div>
-				<div class="check-item-status">{$vo.check_name|default=''}</div>
-				<span class="layui-icon layui-icon-right"></span>
+			<div class='flow-flexbox flow-flex-row check-item {eq name="$vo.is_current" value="1"} blue{/eq} {notempty name="$step"}{lt name="$vo.sort" value="$step.sort"} gray{/lt}{else/} green{/notempty}'>
+				<div class="check-item-icon">
+					<strong class="iconfont icon-bianji blue"></strong>
+					<strong class="iconfont icon-kaoheguanli gray"></strong>
+					<strong class="iconfont icon-genjinjilu black"></strong>
+				</div>
+				<div>
+					<div class="check-item-name"><strong class="f16">{$vo.title}</strong> {$vo.director_name|default=''}</div>
+					<div class="check-item-time">{$step.start_time|date='Y-m-d'} 到 {$step.end_time|date='Y-m-d'}</div>
+				</div>
+				<div class="layui-icon layui-icon-right"></div>
 			</div>
 			{/volist}
 		</div>

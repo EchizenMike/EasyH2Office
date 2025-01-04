@@ -170,6 +170,7 @@ class Index extends BaseController
 			$id = isset($param['id']) ? $param['id'] : 0;
 			if ($id>0) {
 				$detail = $this->model->getById($id);
+				$detail['current_step'] = Db::name('ProjectStep')->where(['project_id' => $id, 'is_current' => 1,'delete_time'=>0])->value('sort');
 				View::assign('detail', $detail);
 				return view('edit');
 			}

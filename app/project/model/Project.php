@@ -166,6 +166,7 @@ class Project extends Model
             $param['update_time'] = time();
 			$old = self::find($param['id']);
             self::where('id', $param['id'])->strict(false)->field(true)->update($param);
+			$current_step = Db::name('ProjectStep')->where(['project_id' => $param['id'], 'is_current' => 1,'delete_time'=>0])->value('sort');
 			//项目阶段
 			foreach ($step as $key => $value) {
 				$value['project_id'] = $param['id'];
@@ -174,6 +175,12 @@ class Project extends Model
 				}
 				else{
 					$value['update_time'] = time();
+					if($value['sort'] == $current_step){
+						$value['is_current'] = 1;
+					}
+					else{
+						$value['is_current'] = 0;
+					}
 					Db::name('ProjectStep')->strict(false)->field(true)->update($value);
 				}
 			}			
