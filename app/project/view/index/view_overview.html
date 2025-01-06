@@ -88,7 +88,7 @@
 					{if ($vo.status == 1)}
 					<p style="padding-left:24px">{$vo.check_time_str}<span class="black mx-1">{$vo.check_name}</span><span class="mr-1 green">{$vo.status_str}</span>了『{$vo.title}』的工作。操作意见：<span class="green">{$vo.content|default='-'}</span></p>
 					{else /}
-					<p style="padding-left:24px">{$vo.check_time_str}<span class="black mx-1">{$vo.check_name}</span>在了『{$vo.title}』执行了<span class="mx-1 red">{$vo.status_str}</span>操作。操作意见：<span class="red">{$vo.content|default='-'}</span></p>
+					<p style="padding-left:24px">{$vo.check_time_str}<span class="black mx-1">{$vo.check_name}</span>在阶段『{$vo.title}』执行了<span class="mx-1 red">{$vo.status_str}</span>操作。操作意见：<span class="red">{$vo.content|default='-'}</span></p>
 					{/if}					
 				</li>
 			{/volist}

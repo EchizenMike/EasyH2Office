@@ -529,6 +529,7 @@ class Api extends BaseController
 				'check_uid' => $this->uid,
 				'check_time' => time(),
 				'status' => $param['check'],
+				'content' => $param['content'],
 				'create_time' => time()
 			);
 			Db::name('ProjectStepRecord')->strict(false)->field(true)->insertGetId($checkData);
