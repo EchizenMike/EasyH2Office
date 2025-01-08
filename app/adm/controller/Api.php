@@ -122,9 +122,10 @@ class Api extends BaseController
     }
 	
 	//获取审核类型
-    public function get_flow_item($cate=0)
+    public function get_flow_item()
     {
-		$flows = Db::name('FlowItem')->where(['flow_cate'=>$cate,'status'=>1])->select()->toArray();
+        $param = get_params();
+		$flows = Db::name('FlowItem')->where(['flow_cate'=>$param['cate'],'status'=>1])->select()->toArray();
 		return to_assign(0, '', $flows);
 	} 
 
