@@ -129,9 +129,10 @@ class Api extends BaseController
 	} 
 
 	//修改公章状态
-    public function set_seal_status($id,$status)
+    public function set_seal_status()
     {
-		$res = Db::name('Seal')->where(['id'=>$id])->update(['status'=>$status]);
+		$param = get_params();
+		$res = Db::name('Seal')->where(['id'=>$param['id']])->update(['status'=>$param['status']]);
 		if($res!==false){
 			return to_assign();
 		}

@@ -97,8 +97,8 @@ abstract class BaseController
 				$is_lock = $login_admin['is_lock'];
 				$last_login_time = Db::name('Admin')->where(['id' => $this->uid])->value('last_login_time');
 				$timeDiff = time() - $last_login_time;
-				// 如果超过2小时（7200秒），则用户需要重新登录
-				if ($timeDiff > 7200) {
+				// 如果超过10小时（36000秒），则用户需要重新登录
+				if ($timeDiff > 36000) {
 					Session::delete($session_admin);
 					redirect('/home/login/index.html')->send();
                     exit;
