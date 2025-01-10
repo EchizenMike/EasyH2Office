@@ -105,7 +105,7 @@ class Ticket extends Model
 			$info['project_name'] = Db::name('Project')->where('id',$info['project_id'])->value('name');
 		}
 		if($info['open_time']>0){
-			$info['open_time'] = date('Y-m-d');
+			$info['open_time'] = date('Y-m-d',$info['open_time']);
 		}
 		else{
 			$info['open_time']='';
