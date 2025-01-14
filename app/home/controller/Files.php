@@ -164,7 +164,8 @@ class Files extends BaseController
     public function del_group()
     {
         if (request()->isDelete()) {
-            $id = get_params("id");
+			$param = get_params();
+            $id = get_params("ids");
             $count = Db::name('File')->where(["group_id" => $id])->count();
             if ($count > 0) {
                 return to_assign(1, "该分组还存在文件，请去除文件或者转移文件后再删除");
