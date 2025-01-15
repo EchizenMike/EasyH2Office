@@ -11,7 +11,7 @@ mbui.define(['layer'], function (exports) {
 			uploadBtn: "#uploadBtn",
 			uploadBox: "#uploadBox",
 			url: "/api/index/upload",
-			accept: ".png,.jpg,.gif,.jpeg,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.pdf,.zip,.rar,.7z,.txt,.wps,.avi,.wmv,.mpg,.mov,.rm,.flv,.mp4,.mp3,.wav,.wma,.flac,.midi,.dwg,.dxf,.dwt,.xmind",
+			accept: "application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/pdf,.csv,image/*,text/plain,video/*,audio/*,application/x-zip-compressed",
 			onlyImage: false,
 			template:function(data){
 				let exts = ['jpg', 'png', 'gif', 'jpeg'];
