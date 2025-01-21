@@ -29,7 +29,7 @@ layui.define(function(exports) {
 						url: options.url,
 						data: tableWhere,
 						success:function(res){
-							table.exportFile(options.id, res.data,'xls');
+							table.exportFile(options.id, res.data,'csv');
 							setTimeout(function(){
 								layer.msg('导出完成');			
 							},2000)	
