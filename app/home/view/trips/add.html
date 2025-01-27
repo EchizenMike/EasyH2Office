@@ -69,7 +69,8 @@ const moduleInit = ['tool','uploadPlus','oaCheck'];
 					oaCheck.submit(data.field,checkCallback);
 				}
 			}
-			tool.post("/home/trips/add", data.field, callback);
+			let clickbtn = $(this);
+			tool.post("/home/trips/add", data.field, callback,clickbtn);
 			return false;
 		});	
 	}

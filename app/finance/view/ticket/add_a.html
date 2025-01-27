@@ -96,7 +96,8 @@
 					oaCheck.submit(data.field,checkCallback);
 				}
 			}
-			tool.post("/finance/ticket/add_a", data.field, callback);
+			let clickbtn = $(this);
+			tool.post("/finance/ticket/add_a", data.field, callback,clickbtn);
 			return false;
 		});
 	}

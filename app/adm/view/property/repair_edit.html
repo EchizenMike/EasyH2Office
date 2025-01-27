@@ -70,7 +70,8 @@ function gouguInit() {
 				tool.sideClose(1000);				
 			}
 		}
-		tool.post("/adm/property/repair_add", data.field, callback);
+		let clickbtn = $(this);
+		tool.post("/adm/property/repair_add", data.field, callback,clickbtn);
 		return false;
 	});
 }

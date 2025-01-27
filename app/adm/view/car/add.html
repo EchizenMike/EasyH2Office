@@ -110,7 +110,8 @@
 					tool.sideClose(1000);				
 				}
 			}
-			tool.post("/adm/car/add", data.field, callback);
+			let clickbtn = $(this);
+			tool.post("/adm/car/add", data.field, callback,clickbtn);
 			return false;
 		});
 	}

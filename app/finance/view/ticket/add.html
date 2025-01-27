@@ -111,7 +111,8 @@
 					oaCheck.submit(data.field,checkCallback);
 				}
 			}
-			tool.post("/finance/ticket/add", data.field, callback);
+			let clickbtn = $(this);
+			tool.post("/finance/ticket/add", data.field, callback,clickbtn);
 			return false;
 		});
 	}

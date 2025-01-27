@@ -136,7 +136,8 @@
 					tool.sideClose(1000);
 				}
 			}
-			tool.post("/user/laborcontract/add", data.field, callback);
+			let clickbtn = $(this);
+			tool.post("/user/laborcontract/add", data.field, callback,clickbtn);
 			return false;
 		});
 	}

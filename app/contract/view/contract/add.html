@@ -217,7 +217,8 @@
 					tool.sideClose(1000);
 				}
 			}
-			tool.post("/contract/contract/add", data.field, callback);
+			let clickbtn = $(this);
+			tool.post("/contract/contract/add", data.field, callback,clickbtn);
 			return false;
 		});
 	}

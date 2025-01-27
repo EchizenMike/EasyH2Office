@@ -155,7 +155,8 @@
 					oaCheck.submit(data.field,checkCallback);
 				}
 			}
-			tool.post("/finance/invoice/add", data.field, callback);
+			let clickbtn = $(this);
+			tool.post("/finance/invoice/add", data.field, callback,clickbtn);
 			return false;
 		});
 	}

@@ -85,7 +85,8 @@ function gouguInit() {
 				tool.sideClose(1000,'repairTable');				
 			}
 		}
-		tool.post("/adm/car/repair_add", data.field, callback);
+		let clickbtn = $(this);
+		tool.post("/adm/car/repair_add", data.field, callback,clickbtn);
 		return false;
 	});
 }

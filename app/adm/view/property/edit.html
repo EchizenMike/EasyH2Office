@@ -180,7 +180,8 @@ function gouguInit() {
 			layer.msg('请选择资产来源');
 			return false;
 		}
-		tool.post("/adm/property/add", data.field, callback);
+		let clickbtn = $(this);
+		tool.post("/adm/property/add", data.field, callback,clickbtn);
 		return false;
 	});
 }

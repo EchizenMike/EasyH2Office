@@ -254,7 +254,8 @@
 					tool.sideClose(1000);
 				}
 			}
-			tool.post("/project/index/add", data.field, callback);
+			let clickbtn = $(this);
+			tool.post("/project/index/add", data.field, callback,clickbtn);
 			return false;
 		});
 	}

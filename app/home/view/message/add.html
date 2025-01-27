@@ -178,7 +178,8 @@
 					tool.sideClose(1000);
 				}
 			}
-			tool.post("/home/message/save", data.field, callback);
+			let clickbtn = $(this);
+			tool.post("/home/message/save", data.field, callback,clickbtn);
 			return false;
 		});
 		  
@@ -191,7 +192,8 @@
 					tool.sideClose(1000);
 				}
 			}
-			tool.post("/home/message/save", data.field, callback);
+			let clickbtn = $(this);
+			tool.post("/home/message/save", data.field, callback),clickbtn;
 			return false;
 		});
 

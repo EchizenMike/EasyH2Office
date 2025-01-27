@@ -136,23 +136,23 @@
 				return false;
 			}
 			tool.ask('审核期间不能编辑修改，确定报销数据无误？', function(index) {
-					let callback = function (e) {
-						layer.msg(e.msg);
-						if (e.code == 0) {
-							let checkCallback = function (e) {
-								layer.msg(e.msg);
-								if (e.code == 0) {
-									tool.sideClose(1000);				
-								}
+				let callback = function (e) {
+					layer.msg(e.msg);
+					if (e.code == 0) {
+						let checkCallback = function (e) {
+							layer.msg(e.msg);
+							if (e.code == 0) {
+								tool.sideClose(1000);				
 							}
-							data.field.check_name = 'expense';
-							data.field.action_id = e.data.return_id;
-							oaCheck.submit(data.field,checkCallback);
 						}
+						data.field.check_name = 'expense';
+						data.field.action_id = e.data.return_id;
+						oaCheck.submit(data.field,checkCallback);
 					}
-					tool.post("/finance/expense/add", data.field, callback);
-					layer.close(index);
-				});
+				}
+				tool.post("/finance/expense/add", data.field, callback);
+				layer.close(index);
+			});
 			return false;
 		});
 	}		
