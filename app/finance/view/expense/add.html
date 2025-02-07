@@ -21,7 +21,7 @@
 		</tr>
 		<tr>
 			<td class="layui-td-gray">凭证编号<font>*</font></td>
-			<td><input type="text" name="code" autocomplete="off" lay-verify="required" placeholder="请输入报销凭证编号" lay-reqText="请填写报销凭证编号" class="layui-input" value=""></td>
+			<td><input type="text" name="code" value="{$codeno}" {eq name="$is_codeno" value="1"}readonly{/eq} lay-verify="required" placeholder="请输入报销凭证编号" lay-reqText="请填写报销凭证编号" class="layui-input" value=""></td>
 			<td class="layui-td-gray">单据日期<font>*</font></td>
 			<td><input type="text" class="layui-input tool-time" name="expense_time" lay-verify="required" placeholder="请选择原始单据日期" lay-reqText="请选择原始单据日期" readonly value="">	
 			</td>

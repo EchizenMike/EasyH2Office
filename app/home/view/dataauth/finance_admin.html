@@ -55,6 +55,15 @@
 			<td class="layui-td-gray">权限标识</td>
 			<td style="width:100px;">conf_4</td>
 		</tr>
+		<tr>		
+			<td class="layui-td-gray-3">报销编号自动生成</td>
+			<td>
+				<input type="radio" name="conf_10" value="1" title="开启" {eq name="$detail.conf_10" value="1"}checked{/eq}>
+				<input type="radio" name="conf_10" value="0" title="不开启" {eq name="$detail.conf_10" value="0"}checked{/eq}>
+			</td>
+			<td class="layui-td-gray">权限标识</td>
+			<td style="width:100px;">conf_10</td>
+		</tr>
 	</table>
 	<div class="pt-4">
 		<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform">立即提交</button>
