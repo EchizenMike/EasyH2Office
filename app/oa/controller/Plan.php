@@ -203,8 +203,9 @@ class Plan extends BaseController
         }
     }
 
-    public function detail($id)
+    public function detail()
     {
+		$id = get_params("id");
         $schedule = Db::name('Plan')->where(['id' => $id])->find();
         if (!empty($schedule)) {
             $schedule['remind_time'] = $schedule['remind_time'] == 0?'-':date('Y-m-d H:i', $schedule['remind_time']);
@@ -221,8 +222,9 @@ class Plan extends BaseController
     }
 
     //读取日程弹层详情
-    public function view($id)
+    public function view()
     {
+		$id = get_params("id");
         $schedule = $this->detail($id);
         if (request()->isAjax()) {
             return to_assign(0, "", $schedule);
