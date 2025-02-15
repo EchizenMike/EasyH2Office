@@ -46,7 +46,7 @@ class Customer extends BaseController
 			$uid = $this->uid;
 			$tab = isset($param['tab']) ? $param['tab'] : 0;
             if (!empty($param['keywords'])) {
-                $where[] = ['id|title', 'like', '%' . $param['keywords'] . '%'];
+                $where[] = ['id|name', 'like', '%' . $param['keywords'] . '%'];
             }
 			if (!empty($param['customer_status'])) {
                 $where[] = ['customer_status', '=', $param['customer_status']];
