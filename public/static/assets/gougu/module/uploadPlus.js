@@ -126,7 +126,7 @@ layui.define(['tool'],function(exports){
 					else{
 						//虚拟删除
 						boxInput.val(idsArray.join(','));
-						$('#uploadImg' + id).remove();
+						$('#uploadFile' + id).remove();
 					}
 					layer.close(index);
 				});
@@ -201,7 +201,7 @@ layui.define(['tool'],function(exports){
 							
 							let view_btn = '<span class="file-ctrl blue" data-ctrl="edit" data-type="'+type+'" data-fileid="'+res.data.id+'" data-ext="'+ext+'" data-filename="'+res.data.name+'" data-href="'+res.data.filepath+'" data-id="'+res.data.id+'" data-uid="'+res.data.uid+'" title="附件操作"><i class="iconfont icon-gengduo1"></i></span>';
 							
-							let temp = `<div class="layui-col-md${attachment.colmd}" id="uploadImg${res.data.id}">
+							let temp = `<div class="layui-col-md${attachment.colmd}" id="uploadFile${res.data.id}">
 									<div class="file-card" id="fileItem${res.data.id}">
 										<i class="file-icon iconfont ${type_icon}"></i>
 										<div class="file-info">
@@ -578,4 +578,4 @@ layui.define(['tool'],function(exports){
 	}
 	//输出接口
 	exports('uploadPlus', uploadPlus);
-});   
+});
