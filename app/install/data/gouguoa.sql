@@ -294,7 +294,7 @@ INSERT INTO `oa_admin_rule` VALUES (73, 70, 'adm/flow/check', '设置', '审批�
 
 INSERT INTO `oa_admin_rule` VALUES (74, 59, 'home/cate/enterprise', '企业主体', '企业主体', 'home', '', 1, 1, 1, 0, 0);
 INSERT INTO `oa_admin_rule` VALUES (75, 74, 'home/cate/enterprise_add', '新建/编辑', '企业主体', 'home', '', 2, 1, 1, 0, 0);
-INSERT INTO `oa_admin_rule` VALUES (76, 74, 'home/cate/enterprise_set', '设置', '企业主体', 'home', '', 2, 1, 1, 0, 0);
+INSERT INTO `oa_admin_rule` VALUES (76, 74, 'home/cate/enterprise_check', '设置', '企业主体', 'home', '', 2, 1, 1, 0, 0);
 
 INSERT INTO `oa_admin_rule` VALUES (77, 59, 'home/area/datalist', '全国省市', '全国省市', 'home', '', 1, 1, 1, 0, 0);
 INSERT INTO `oa_admin_rule` VALUES (78, 77, 'home/area/add', '新建/编辑', '全国省市', 'home', '', 2, 1, 1, 0, 0);
