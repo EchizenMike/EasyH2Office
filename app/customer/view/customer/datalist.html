@@ -12,10 +12,8 @@
 		<div class="body-table layui-tab layui-tab-brief" lay-filter="tab">
 			<ul class="layui-tab-title">
 				<li class="layui-this">全部客户</li>
-				<li>我的客户</li>
-				{gt name="$is_leader" value="0"}
-				<li>下属客户</li>
-				{/gt}
+				<li>我的客户</li>				
+				<li {eq name="$is_leader" value="0"} style="display:none;"{/eq}>下属客户</li>				
 				<li>共享客户</li>
 			</ul>
 		</div>
