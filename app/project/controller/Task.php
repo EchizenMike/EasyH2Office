@@ -134,6 +134,9 @@ class Task extends BaseController
                     return to_assign(1, $e->getError());
                 }
                 $param['update_time'] = time();
+				if(empty(!$param['director_uid'])){
+					$param['did'] = Db::name('Admin')->where(['id' => $param['director_uid']])->value('did');
+				}
                 $res = ProjectTask::where('id', $param['id'])->strict(false)->field(true)->update($param);
                 if ($res) {
                     add_log('edit', $param['id'], $param);
@@ -150,6 +153,12 @@ class Task extends BaseController
                 }
                 $param['create_time'] = time();
                 $param['admin_id'] = $this->uid;
+				if(empty($param['director_uid'])){
+					$param['did'] = $this->did;
+				}
+				else{
+					$param['did'] = Db::name('Admin')->where(['id' => $param['director_uid']])->value('did');
+				}
                 $insertId = ProjectTask::strict(false)->field(true)->insertGetId($param);
                 if ($insertId) {
                     add_log('add', $insertId, $param);
