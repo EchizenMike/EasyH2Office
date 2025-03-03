@@ -92,7 +92,7 @@ class Customer extends BaseController
 						}
 					}
 					else{
-						$whereOr[] = ['belong_uid','>',0];
+						$where[] = ['belong_did','=',99999];
 					}
 				}
 			}
