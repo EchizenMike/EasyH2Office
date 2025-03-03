@@ -91,6 +91,9 @@ class Customer extends BaseController
 							$whereOr[] = ['belong_did','in',$dids];
 						}
 					}
+					else{
+						$whereOr[] = ['belong_uid','>',0];
+					}
 				}
 			}
 			//我的客户
