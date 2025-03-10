@@ -118,11 +118,14 @@ class Task extends BaseController
         if (request()->isPost()) {
             if (isset($param['end_time'])) {
                 $param['end_time'] = strtotime(urldecode($param['end_time']));
-            }if (isset($param['status'])) {
+            }
+			if (isset($param['status'])) {
                 if ($param['status'] == 3) {
                     $param['over_time'] = time();
+                    $param['done_ratio'] = 100;
                 } else {
                     $param['over_time'] = 0;
+					$param['done_ratio'] = 10;
                 }
             }
             if (!empty($param['id']) && $param['id'] > 0) {
