@@ -63,6 +63,10 @@ class Work extends BaseController
         if (request()->isAjax()) {
             $param = get_params();
             $map = [];
+			//按关键字检索
+			if( !empty($param['keywords']) ){
+				$map[] = ['works', 'like', '%'.$param['keywords'].'%'];
+			}
 			if($param['send']==1){
 				if (!empty($param['types'])) {
 					$map[] = ['types', '=', $param['types']];
