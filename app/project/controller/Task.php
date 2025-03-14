@@ -242,12 +242,16 @@ class Task extends BaseController
             $param = get_params();
 			$uid = $this->uid;
 			$auth = isAuth($uid,'project_admin','conf_1');
-            //按时间检索
-            $start_time = isset($param['start_time']) ? strtotime($param['start_time']) : 0;
-            $end_time = isset($param['end_time']) ? strtotime($param['end_time']) : 0;
             $tid = isset($param['tid']) ? $param['tid'] : 0;
             $where = [];
             $whereOr = [];
+			
+            //按时间检索
+			if (!empty($param['range_time'])) {
+				$range_time =explode('至', $param['range_time']);
+				$where[] = ['a.start_time', 'between',[strtotime($range_time[0]),strtotime($range_time[1])]];
+			}
+			
 			if ($tid>0) {
                 $task_ids = Db::name('ProjectTask')->where(['delete_time' => 0, 'project_id' => $param['tid']])->column('id');
 				$where[] = ['a.tid', 'in', $task_ids];
@@ -256,9 +260,6 @@ class Task extends BaseController
 				$where[] = ['a.tid', '>', 0];
 				if (!empty($param['keywords'])) {
 					$where[] = ['a.title', 'like', '%' . trim($param['keywords']) . '%'];
-				}
-				if ($start_time > 0 && $end_time > 0) {
-					$where[] = ['a.start_time', 'between', [$start_time, $end_time]];
 				}
 				if($auth == 0){
 					if (!empty($param['uid'])) {
