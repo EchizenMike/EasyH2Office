@@ -42,6 +42,7 @@
 				<textarea name="content" class="layui-textarea">{$detail.content|default=''}</textarea>
 			</td>
 		</tr>
+		{lt name="$detail.status" value="3"}
 		<tr>
 			<td colspan="6" style="background-color:#FAFAFA;"><strong>项目阶段</strong><span style="color: red">*</span> <span class="layui-btn layui-btn-xs" id="stepAdd">+ 添加阶段</span></td>
 		</tr>
@@ -105,6 +106,7 @@
 				</table>
 			</td>
 		</tr>
+		{/lt}
 	</table>
 	<div class="pt-3">
 		<input type="hidden" name="id" value="{$detail.id|default=0}"/>
