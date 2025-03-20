@@ -30,8 +30,13 @@ layui.define(['tool'],function(exports){
 		return size+unitArr[index];
 	}	
 	//是否是对象
-	let isObject = function(obj) {
+	function isObject(obj) {
 		return Object.prototype.toString.call(obj) === '[object Object]';
+	}
+	//名称是否合法
+	function isValidFileName(fileName) {
+		const illegalChars = /[\\\/\*\:"<>|\?]/;
+		return !illegalChars.test(fileName);
 	}
 	const opts={
 		"title":'上传文件',
@@ -149,6 +154,10 @@ layui.define(['tool'],function(exports){
 						// 获取文本框输入的值
 						var value = layero.find(".layui-layer-input").val();
 						if (value!='') {
+							if(isValidFileName(value)==false){
+								layer.msg('文件名不能包含下列任何字符：\/:*?".<>|');
+								return false;
+							}
 							let new_title = value+'.'+fileext;
 							let callback = function (e) {
 								layer.msg(e.msg);

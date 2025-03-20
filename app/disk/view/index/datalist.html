@@ -133,6 +133,11 @@
 		audio:['mp3','wav','wma','flac','midi']
 	};
 	
+	function isValidFileName(fileName) {
+		const illegalChars = /[\\\/\*\:"<>|\?]/;
+		return !illegalChars.test(fileName);
+	}
+	
 	const moduleInit = ['tool','uploadPlus'];
 	function gouguInit() {
 		var tool = layui.tool,uploadPlus = layui.uploadPlus,form = layui.form,laypage = layui.laypage;
@@ -308,14 +313,21 @@
 		
 		//新增目录
 		$('#addFolder').on('click',function(){
-			layer.prompt({title: '请输入目录名称'}, function(value, index, elem){
-				if(value === '') return elem.focus();
+			layer.prompt({title: '请输入目录名称'}, function(val, index, elem){
+				if(val==''){
+					layer.msg('目录名称不能为空');
+					return false;
+				}
+				if(isValidFileName(val)==false){
+					layer.msg('目录名称不能包含下列任何字符：\/:*?".<>|');
+					return false;
+				}
 				$.ajax({
 					url: "/disk/index/add_folder",
 					type:'post',
 					data:{
 						'pid':$('[name="pid"]').val(),
-						'name':value
+						'name':val
 					},
 					success: ctrl_callback
 				})
@@ -358,9 +370,16 @@
 			let title = $(this).parent().parent().data('title');
 			let ext = $(this).parent().parent().data('ext');
 			let types = $(this).parent().parent().data('types');
-			title = title.toString().replace(/\.[^.]+$/, "")
+			title = title.toString().replace(/\.[^.]+$/, "");
 			layer.prompt({title: '重命名',value:title}, function(val, index, elem){
-				if(val === '') return elem.focus();
+				if(val==''){
+					layer.msg('文件名不能为空');
+					return false;
+				}
+				if(isValidFileName(val)==false){
+					layer.msg('文件名不能包含下列任何字符：\/:*?".<>|');
+					return false;
+				}
 				if(types == 0){
 					val =  val+'.'+ext;
 				}

@@ -138,6 +138,10 @@
 {block name="script"}
 <script>
 	const moduleInit = ['tool'];
+	function isValidFileName(fileName) {
+		const illegalChars = /[\\\/\*\:"<>|\?]/;
+		return !illegalChars.test(fileName);
+	}
 	function gouguInit() {
 		var table = layui.table, tool = layui.tool ,form = layui.form,laypage = layui.laypage,upload = layui.upload, element=layui.element, dropdown=layui.dropdown;
 		let fileGroup = [{id:0,title:'未分组'}];
@@ -419,6 +423,10 @@
 					// 获取文本框输入的值
 					var value = layero.find(".layui-layer-input").val();
 					if (value!='') {
+						if(isValidFileName(value)==false){
+							layer.msg('文件名不能包含下列任何字符：\/:*?".<>|');
+							return false;
+						}
 						let callback = function (e) {
 							layer.msg(e.msg);
 							$('[lay-filter="webform"]').click();
