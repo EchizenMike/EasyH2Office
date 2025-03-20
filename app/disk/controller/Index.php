@@ -305,7 +305,7 @@ class Index extends BaseController
    /**
     * 恢复
     */
-    public function back($ids)
+    public function back()
     {
 		$param = get_params();
         if (request()->isAjax()) {
@@ -332,7 +332,7 @@ class Index extends BaseController
    /**
     * 清除
     */
-    public function clear($ids)
+    public function clear()
     {
 		$param = get_params();
         if (request()->isAjax()) {
