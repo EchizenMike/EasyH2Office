@@ -43,14 +43,10 @@ class Index extends BaseController
         if (request()->isAjax()) {
 			$pid = isset($param['pid']) ? $param['pid'] : 0;
 			$where=[];
-			$where[]=['pid','=',$pid];
 			$where[]=['admin_id','=',$this->uid];
 			$where[]=['delete_time','=',0];
             if (!empty($param['keywords'])) {
                 $where[] = ['name', 'like', '%' . $param['keywords'] . '%'];
-            }
-			if (!empty($param['ext'])) {
-                $where[] = ['file_ext', 'in',$param['ext']];
             }
 			if (!empty($param['is_share'])) {
                 $where[]=['is_share','=',1];
@@ -58,7 +54,13 @@ class Index extends BaseController
 			if (!empty($param['is_star'])) {
                 $where[]=['is_star','=',1];
             }
-            $list = $this->model->datalist($where, $param);
+			if (!empty($param['ext'])) {
+                $where[] = ['file_ext', 'in',$param['ext']];
+            }
+			else{
+				$where[]=['pid','=',$pid];
+			}
+            $list = $this->model->datalist($param,$where);
 			$folder = get_pfolder($param['pid']);
             return table_assign(0, '', $list,$folder);
         }
@@ -89,7 +91,7 @@ class Index extends BaseController
             if (!empty($param['keywords'])) {
                 $where[] = ['name', 'like', '%' . $param['keywords'] . '%'];
             }
-            $list = $this->model->datalist($where, $param);
+            $list = $this->model->datalist($param,$where);
 			$folder = get_pfolder($param['pid']);
             return table_assign(0, '', $list,$folder);
         }
@@ -120,11 +122,67 @@ class Index extends BaseController
             if (!empty($param['keywords'])) {
                 $where[] = ['name', 'like', '%' . $param['keywords'] . '%'];
             }
-            $list = $this->model->datalist($where, $param);
+            $list = $this->model->datalist($param,$where);
 			$folder = get_pfolder($param['pid']);
             return table_assign(0, '', $list,$folder);
         }
         else{
+            return view();
+        }
+    }
+	
+    /**
+    * 全部文件列表
+    */
+    public function alllist()
+    {
+		$param = get_params();
+		$uid = $this->uid;
+		$auth = isAuth($uid,'disk_admin','conf_1');
+        if (request()->isAjax()) {
+			$pid = isset($param['pid']) ? $param['pid'] : 0;
+			$where=[];
+			$whereOr=[];
+			$where[]=['delete_time','=',0];
+			$where[]=['clear_time','=',0];
+			if (!empty($param['ext'])) {
+                $where[] = ['file_ext', 'in',$param['ext']];
+            }
+            if (!empty($param['keywords'])) {
+                $where[] = ['name', 'like', '%' . $param['keywords'] . '%'];
+            }
+			if (!empty($param['ext'])) {
+                $where[] = ['file_ext', 'in',$param['ext']];
+            }
+			else{
+				$where[]=['pid','=',$pid];
+			}
+			if($auth == 0){
+				if (!empty($param['admin_id'])) {
+					$where[] = ['admin_id', '=', $param['admin_id']];
+				}
+				else{
+					$whereOr[] = ['admin_id', '=', $uid];
+					$dids_a = get_leader_departments($uid);	
+					$dids_b = get_role_departments($uid);
+					$dids = array_merge($dids_a, $dids_b);
+					if(!empty($dids)){
+						$whereOr[] = ['did','in',$dids];
+					}
+				}
+			}
+			else{
+				if (!empty($param['admin_id'])) {
+					$where[] = ['admin_id', '=', $param['admin_id']];
+				}
+			}
+            $list = $this->model->datalist($param,$where,$whereOr);
+			$folder = get_pfolder($param['pid']);
+            return table_assign(0, '', $list,$folder);
+        }
+        else{
+			View::assign('auth', $auth);
+			View::assign('is_leader', isLeader($this->uid));
             return view();
         }
     }
@@ -143,6 +201,7 @@ class Index extends BaseController
 				return to_assign(1, $e->getError());
 			}
 			$param['admin_id'] = $this->uid;
+			$param['did'] = $this->did;
 			$this->model->add($param);
 		}
     }
@@ -162,6 +221,7 @@ class Index extends BaseController
 			}
 			$param['types'] = 2;
 			$param['admin_id'] = $this->uid;
+			$param['did'] = $this->did;
 			$this->model->add($param);	 
         }
     }
@@ -192,6 +252,7 @@ class Index extends BaseController
 					$param['action_id'] = $aid;
 					$param['types'] = 1;
 					$param['ext'] = 'article';
+					$param['did'] = $this->did;
 					$this->model->add($param);
 				} else {
 					 return to_assign(1, "操作失败");

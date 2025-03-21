@@ -3127,6 +3127,7 @@ CREATE TABLE `oa_disk`  (
   `share_dids` varchar(200) NOT NULL DEFAULT '' COMMENT '共享部门',
   `share_ids` varchar(200) NOT NULL DEFAULT '' COMMENT '共享人',
   `admin_id` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建人',
+  `did` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '所属部门',
   `create_time` bigint(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
   `update_time` bigint(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '修改时间',
   `delete_time` bigint(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '删除时间',
