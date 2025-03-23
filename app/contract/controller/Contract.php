@@ -74,8 +74,8 @@ class Contract extends BaseController
 					$where[] = ['sign_uid', '=', $param['uid']];
 				}
 				else{
-					//是否是客户管理员
-					$auth = isAuth($uid,'customer_admin','conf_1');
+					//是否是合同管理员
+					$auth = isAuth($uid,'contract_admin','conf_1');
 					if($auth == 0){
 						$whereOr[] =['admin_id|prepared_uid|sign_uid|keeper_uid', '=', $uid];
 						$whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}',share_ids)")];
