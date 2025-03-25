@@ -89,6 +89,7 @@ class Expense extends BaseController
 					if(!empty($dids)){
 						$whereOr[] = ['did','in',$dids];
 					}
+					$whereOr[] = ['admin_id', '=', $this->uid];
 				}
 			}
 			//按时间检索
