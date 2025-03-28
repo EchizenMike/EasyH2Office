@@ -386,7 +386,7 @@ class Contract extends BaseController
 				if($detail['check_status'] == 1 || $detail['check_status'] == 2 || $detail['check_status'] == 3){
 					return view(EEEOR_REPORTING,['code'=>403,'warning'=>'当前状态不支持编辑']);
 				}
-				$detail['content'] = unserialize($detail['content']);
+				$detail['content_array'] = unserialize($detail['content']);
 				View::assign('detail', $detail);
 				return view('edit');
 			}
@@ -412,7 +412,7 @@ class Contract extends BaseController
 		$detail = $this->model->getById($id);
 		if (!empty($detail)) {
 			if($detail['types'] > 1){
-				$detail['content'] = unserialize($detail['content']);
+				$detail['content_array'] = unserialize($detail['content']);
 			}
 			$detail['status_name'] = check_status_name($detail['check_status']);
 			$detail['cate_title'] = Db::name('ContractCate')->where(['id' => $detail['cate_id']])->value('title');

@@ -246,7 +246,7 @@ class Work extends BaseController
 		$sender = get_admin($detail['admin_id']);
 		$detail['person_name'] = $sender['name'];
 		if($detail['send_time']>0){
-			$detail['send_time'] = date('Y-m-d H:i:s',$detail['send_time']);
+			$detail['send_time'] = to_date($detail['send_time']);
 		}
         //接收人查询
 		$user_names = Db::name('Admin')->where('status', 1)->where('id', 'in', $detail['to_uids'])->column('name');		

@@ -86,12 +86,16 @@ class Files extends BaseController
 					'update_time' => time()
 				];
 			}
-			$res = (new File())->saveAll($list);
-            if ($res!== false) {
-                return to_assign(0, "操作成功");
-            } else {
-                return to_assign(1, "操作失败");
-            }
+			if(!empty($list)){
+				$model = new File();
+				foreach ($list as $item) {
+					$model->update($item);
+				}
+				return to_assign();
+			}
+			else{
+				return to_assign(1, "操作失败");
+			}
         }
     }
     //删除
@@ -107,12 +111,16 @@ class Files extends BaseController
 					'delete_time' => time()
 				];
 			}
-			$res = (new File())->saveAll($list);
-            if ($res!== false) {
-                return to_assign(0, "删除成功");
-            } else {
-                return to_assign(1, "删除失败");
-            }
+			if(!empty($list)){
+				$model = new File();
+				foreach ($list as $item) {
+					$model->update($item);
+				}
+				return to_assign();
+			}
+			else{
+				return to_assign(1, "操作失败");
+			}
         } else {
             return to_assign(1, "错误的请求");
         }

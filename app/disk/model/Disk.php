@@ -16,6 +16,7 @@ use think\model;
 use think\facade\Db;
 class Disk extends Model
 {
+	protected $autoWriteTimestamp=false;
     /**
     * 获取分页列表
     * @param $where

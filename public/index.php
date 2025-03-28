@@ -15,7 +15,7 @@ if (empty(file_exists(__DIR__ . '/../vendor/autoload.php'))) {
 require __DIR__ . '/../vendor/autoload.php';
 
 // 定义当前版本号
-define('CMS_VERSION','5.6.9');
+define('CMS_VERSION','5.7.2');
 
 // 定义手机端当前版本号
 define('MB_VERSION','1.0');

@@ -98,7 +98,6 @@ class Care extends BaseController
 			if ($id>0) {
 				$detail = $this->model->getById($id);
 				$detail['user_name'] = Db::name('Admin')->where('id',$detail['uid'])->value('name');
-				$detail['care_time'] = date('Y-m-d',$detail['care_time']);
 				View::assign('detail', $detail);
 			}
 			View::assign('id', $id);
@@ -116,7 +115,6 @@ class Care extends BaseController
 			$detail['cate'] = Db::name('CareCate')->where('id',$detail['care_cate'])->value('title');
 			$detail['user_name'] = Db::name('Admin')->where('id',$detail['uid'])->value('name');
 			$detail['admin_name'] = Db::name('Admin')->where('id',$detail['admin_id'])->value('name');
-			$detail['care_time'] = date('Y-m-d',$detail['care_time']);
 			View::assign('detail', $detail);
 			return view();
 		}

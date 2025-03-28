@@ -39,6 +39,7 @@ class Seal extends Model
 				$item->admin_name = Db::name('Admin')->where('id','=',$item->admin_id)->value('name');
 				$item->use_dname = Db::name('Department')->where('id','=',$item->did)->value('title');
 				$item->seal_cate = Db::name('SealCate')->where('id','=',$item->seal_cate_id)->value('title');
+				$item->create_time = to_date($item->create_time);
 			});
 			return $list;
         } catch(\Exception $e) {

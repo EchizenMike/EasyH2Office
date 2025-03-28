@@ -27,7 +27,7 @@
 .layui-btn-reset:hover{color: #323232;}
 
 .layui-tab-brief>.layui-tab-title .layui-this{color:#1A75FF}
-.layui-tab-brief>.layui-tab-more li.layui-this:after, .layui-tab-brief>.layui-tab-title .layui-this:after{border-color:#1A75FF;z-index:1}
+.layui-tab-brief>.layui-tab-more li.layui-this:after, .layui-tab-brief>.layui-tab-title .layui-this:after{border-color:#1A75FF;}
 .layui-form-radio{padding-right:4px;}
 .layui-form-radio>i{margin-right:4px;}
 .layui-form-label{padding:9px; color:#909399}

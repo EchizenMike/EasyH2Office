@@ -39,6 +39,7 @@ class Expense extends Model
 				$item->expense_time = empty($item->expense_time) ? '-' : date('Y-m-d', $item->expense_time);
 				$item->admin_name = Db::name('Admin')->where(['id' => $item->admin_id])->value('name');
 				$item->department = Db::name('Department')->where(['id' => $item->did])->value('title');
+				$item->create_time = to_date($item->create_time);
 				$item['check_user'] = '-';
 				if($item['check_status']==1 && !empty($item['check_uids'])){
 					$check_user = Db::name('Admin')->where('id','in',$item['check_uids'])->column('name');

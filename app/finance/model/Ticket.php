@@ -38,6 +38,7 @@ class Ticket extends Model
 				$item->admin_name = Db::name('Admin')->where('id',$item->admin_id)->value('name');
 				$item->department = Db::name('Department')->where(['id' => $item->did])->value('title');
 				$item->supplier_name = Db::name('Supplier')->where(['id' => $item->supplier_id])->value('title');
+				$item->create_time = to_date($item->create_time);
 				$item['check_user'] = '-';
 				if($item['check_status']==1 && !empty($item['check_uids'])){
 					$check_user = Db::name('Admin')->where('id','in',$item['check_uids'])->column('name');

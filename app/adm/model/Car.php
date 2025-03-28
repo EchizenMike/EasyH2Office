@@ -40,6 +40,7 @@ class Car extends Model
 				else{
 					$item->driver_name='-';
 				}
+				$item->create_time = to_date($item->create_time);
 			});
 			return $list;
         } catch(\Exception $e) {

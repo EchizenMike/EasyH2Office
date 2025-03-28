@@ -64,6 +64,7 @@ class Project extends Model
 				else{						
 					$item->step = '-';
 				}
+				$item['create_time'] = to_date($item['create_time'],'Y-m-d H:i:s');
 			});
 			return $list;
         } catch(\Exception $e) {
@@ -223,6 +224,8 @@ class Project extends Model
 		$info['director_name'] = Db::name('Admin')->where(['id' => $info['director_uid']])->value('name');
 		$info['department'] = Db::name('Department')->where(['id' => $info['did']])->value('title');
 		$info['contract_name'] = Db::name('Contract')->where(['id' => $info['contract_id']])->value('name');
+		$info['create_time'] = to_date($info['create_time'],'Y-m-d H:i:s');
+		$info['update_time'] = to_date($info['update_time'],'Y-m-d H:i:s');
 		//项目阶段			
 		$step_array = Db::name('ProjectStep')
 			->field('s.*,a.name as director_name')

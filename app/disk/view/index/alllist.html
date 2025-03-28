@@ -57,10 +57,10 @@
 {block name="body"}
 <div class="p-page">
 	<div class="disk-left">
-		<h3>回收站文件</h3>
+		<h3>全部文件</h3>
 		<div id="diskTypes" class="disk-types">
 			<ul>
-				<li class="on-this" data-tab=""><strong class="iconfont icon-kaohezhibiao"></strong>全部</li>
+				<li class="on-this" data-tab=""><strong class="iconfont icon-dingdanguanli"></strong>全部</li>
 				<li data-tab="image"><strong class="iconfont icon-sucaiguanli"></strong>图片</li>
 				<li data-tab="video"><strong class="iconfont icon-wodekecheng"></strong>视频</li>
 				<li data-tab="audio"><strong class="iconfont icon-tuiguang"></strong>音频</li>
@@ -72,19 +72,32 @@
 	</div>
 	<div class="disk-table">
 		<form class="layui-form gg-form-bar border-b" lay-filter="barsearchform">
+			{gt name="$auth" value="0"}
+			<div class="layui-input-inline user-name" style="width:90px;">
+				<input type="text" name="admin" placeholder="选择员工" class="layui-input picker-admin" readonly  />
+				<input type="text" name="admin_id" value="" style="display:none" />	
+			</div>
+			{else/}
+			{gt name="$is_leader" value="0"}
+			<div class="layui-input-inline user-name" style="width:90px;">
+				<input type="text" name="admin" placeholder="选择员工" class="layui-input picker-sub" readonly />
+				<input type="text" name="admin_id" value="" style="display:none" />	
+			</div>
+			{/gt}
+			{/gt}
 			<div class="layui-input-inline" style="width:300px">
 				<input type="text" name="keywords" placeholder="输入关键字，文件名称/目录名称" class="layui-input" autocomplete="off" />
 			</div>
 			<div class="layui-input-inline" style="width:150px">
 				<input type="hidden" name="pid" value="0" />
 				<input type="hidden" name="ext" value="" />
-				<input type="hidden" name="limit" value="48" />
+				<input type="hidden" name="limit" value="30" />
 				<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform"><i class="layui-icon layui-icon-search mr-1"></i>搜索</button>
 				<button type="reset" class="layui-btn layui-btn-reset">清空</button>
 			</div>
 		</form>
 		<div class="disk-path layui-form border-b">
-			<div class="disk-breadcrumb" id="diskPath"><i class="layui-icon layui-icon-component"></i> <a href="javascript:void(0);" data-id="0">回收站文件</a></div>
+			<div class="disk-breadcrumb" id="diskPath"><i class="layui-icon layui-icon-component"></i> <a href="javascript:void(0);" data-id="0">全部文件</a></div>
 		</div>
 		<!-- 主体 -->
 		<div class="file-item">
@@ -112,7 +125,7 @@
 		video:['mpg','mp4','mpeg','avi','wmv','mov','flv','m4v'],
 		audio:['mp3','wav','wma','flac','midi']
 	};
-	const moduleInit = ['tool','uploadPlus'];
+	const moduleInit = ['tool','uploadPlus','oaPicker'];
 	function gouguInit() {
 		var tool = layui.tool,uploadPlus = layui.uploadPlus,form = layui.form,laypage = layui.laypage;
 		
@@ -181,22 +194,6 @@
 			}
 		})
 		
-		//单文件还原
-		$('#filesBox').on('click','.file-back',function(){
-			let id = $(this).parent().parent().data('id');
-			layer.confirm('确定要还原该文件吗？', { icon: 3, title: '提示' }, function (index) {
-				tool.delete("/disk/index/back", {ids:id}, ctrl_callback);
-			});
-		})
-		
-		//单文件清除
-		$('#filesBox').on('click','.file-clear',function(){
-			let id = $(this).parent().parent().data('id');
-			layer.confirm('确定要清除该文件吗？清除后将不可恢复', { icon: 3, title: '提示' }, function (index) {
-				tool.post("/disk/index/clear", {ids:id}, ctrl_callback);
-			});
-		})
-		
 		//加载数据
 		var data = form.val('barsearchform');
 		get_files(data);
@@ -213,7 +210,7 @@
 		function get_files(param){
 			var loadIndex = layer.load(0);
 			$.ajax({
-				url:"/disk/index/clearlist",
+				url:"/disk/index/alllist",
 				data:param,
 				complete:function(){
 					setTimeout(function(){
@@ -242,7 +239,7 @@
 						});
 
 						let folder = res.totalRow;
-						let folderHtml='<i class="layui-icon layui-icon-windows"></i> <a href="javascript:void(0);" data-id="0">回收站文件</a>';
+						let folderHtml='<i class="layui-icon layui-icon-windows"></i> <a href="javascript:void(0);" data-id="0">全部文件</a>';
 						if(folder.length>0){
 							for(var f=0;f<folder.length;f++){
 								folderHtml+='<span> 〉</span><a href="javascript:void(0);" data-id="'+folder[f].id+'">'+folder[f].name+'</a>';
@@ -258,36 +255,36 @@
 								let path='/static/home/images/icon/file.png';
 								if (fileExt.image.includes(item[a].file_ext)) {
 									path=item[a].filepath;
-									type = '0,1,10,11';
+									type = '0,1';
 									ext="image";
 								}
 								if (fileExt.office.includes(item[a].file_ext)) {
-									type = '0,1,10,11';
+									type = '0,1';
 									ext="office";
 									path='/static/home/images/icon/'+item[a].file_ext+'.png';
 								}
 								if (item[a].file_ext == 'pdf' || item[a].file_ext == 'txt') {
-									type = '0,1,10,11';
+									type = '0,1';
 									ext="pdf";
 									path='/static/home/images/icon/'+item[a].file_ext+'.png';
 								}								
 								if (fileExt.video.includes(item[a].file_ext)) {
-									type = '0,1,10,11';
+									type = '0,1';
 									ext="video";
 									path='/static/home/images/icon/video.png';
 								}
 								if (fileExt.audio.includes(item[a].file_ext)) {
-									type = '0,10,11';
+									type = '0,1';
 									ext="audio";
 									path='/static/home/images/icon/audio.png';
 								}
 								if (fileExt.zip.includes(item[a].file_ext)) {
-									type = '0,10,11';
+									type = '0';
 									ext="zip";
 									path='/static/home/images/icon/rar.png';
 								}
 								if(item[a].types==1){
-									type = '1,10,11';
+									type = '1';
 									ext="article";
 									path='/static/home/images/icon/article.png';
 								}
@@ -304,10 +301,7 @@
 								}
 								
 								li+='<li data-id="'+item[a].id+'" data-title="'+item[a].name+'" data-ext="'+item[a].file_ext+'" data-types="'+item[a].types+'"><img src="'+path+'" alt="'+item[a].name+'" style="object-fit: contain;" class="file-item file-'+ext+'" data-href="'+item[a].filepath+'" data-ext="'+ext+'"><p title="'+item[a].name+'">'+item[a].name+'</p>\
-									<div class="layui-btn-ctrl">'+ctrl+'\
-									<span class="file-back" style="display:none;" id="fileBack'+item[a].id+'" title="还原"></span>\
-									<span class="file-clear" style="display:none;" id="fileClear'+item[a].id+'" title="清除"></span>\
-									</div>'+is_share+'</li>';
+									<div class="file-info">'+item[a].department+'：'+item[a].admin_name+'</div><div class="layui-btn-ctrl">'+ctrl+'</div>'+is_share+'</li>';
 							}
 							$('#filesBox').html(li);
 							$('#laypage').show();

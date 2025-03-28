@@ -847,14 +847,14 @@ function time_trans($time, $format = 'd')
  * @param string $format 默认'Y-m-d H:i:s'
  * @return string 完整的时间显示
  */
-function to_date($time = NULL, $format = 'Y-m-d H:i:s')
+function to_date($time = 0, $format = 'Y-m-d H:i:s')
 {
 	if(empty($time)){
 		return '';
 	}
 	else{
 		if (is_numeric($time)) {
-		return date($format, intval($time));
+			return date($format, intval($time));
 		}
 		else{
 			return $time;

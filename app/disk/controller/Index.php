@@ -49,13 +49,26 @@ class Index extends BaseController
                 $where[] = ['name', 'like', '%' . $param['keywords'] . '%'];
             }
 			if (!empty($param['is_share'])) {
-                $where[]=['is_share','=',1];
+				if($pid>0){
+					$where[]=['pid','=',$pid];
+				}
+				else{
+					$where[]=['is_share','=',1];
+				}                
             }
 			if (!empty($param['is_star'])) {
-                $where[]=['is_star','=',1];
+				if($pid>0){
+					$where[]=['pid','=',$pid];
+				}
+				else{
+					$where[]=['is_star','=',1];
+				}
             }
 			if (!empty($param['ext'])) {
                 $where[] = ['file_ext', 'in',$param['ext']];
+            }
+			if (!empty($param['is_share']) || !empty($param['is_star']) || !empty($param['ext'])) {
+
             }
 			else{
 				$where[]=['pid','=',$pid];
@@ -353,12 +366,16 @@ class Index extends BaseController
 					'delete_time' => time()
 				];
 			}
-			$res = $this->model->saveAll($list);
-            if ($res!== false) {
-                return to_assign(0, "删除成功");
-            } else {
-                return to_assign(1, "删除失败");
-            }
+			if(!empty($list)){
+				$model = new DiskModel();
+				foreach ($list as $item) {
+					$model->update($item);
+				}
+				return to_assign();
+			}
+			else{
+				return to_assign(1, "操作失败");
+			}
         } else {
             return to_assign(1, "错误的请求");
         }
@@ -379,12 +396,16 @@ class Index extends BaseController
 					'delete_time' => 0
 				];
 			}
-			$res = $this->model->saveAll($list);
-            if ($res!== false) {
-                return to_assign(0, "恢复成功");
-            } else {
-                return to_assign(1, "恢复失败");
-            }
+			if(!empty($list)){
+				$model = new DiskModel();
+				foreach ($list as $item) {
+					$model->update($item);
+				}
+				return to_assign();
+			}
+			else{
+				return to_assign(1, "操作失败");
+			}
         } else {
             return to_assign(1, "错误的请求");
         }
@@ -406,16 +427,51 @@ class Index extends BaseController
 					'clear_time' => time()
 				];
 			}
-			$res = $this->model->saveAll($list);
-            if ($res!== false) {
-                return to_assign(0, "清除成功");
-            } else {
-                return to_assign(1, "清除失败");
-            }
+			if(!empty($list)){
+				$model = new DiskModel();
+				foreach ($list as $item) {
+					$model->update($item);
+				}
+				return to_assign();
+			}
+			else{
+				return to_assign(1, "操作失败");
+			}
         } else {
             return to_assign(1, "错误的请求");
         }
     } 
+	
+	//查找父文件的所有父ids
+	public function get_pidsa($id)
+    {
+		$pid = Db::name('Disk')->where('id',$id)->value('pid');
+		if($pid==0){
+			return [];
+		}
+		else{
+			$pids=$this->get_pids($pid);
+			$pids[] = $pid;
+			return $pids;			
+		}
+		return [];
+	}
+	//while方法
+	public function get_pids($categoryId)
+	{
+		$parentIds = [];
+		while ($categoryId > 0) {
+			$category = Db::name('Disk')->where('id',$categoryId)->find();
+			if ($category && $category['pid'] > 0) {
+				$parentIds[] = $category['id'];
+				$categoryId = $category['pid'];
+			} else {
+				break;
+			}
+		}
+		return $parentIds;
+	}
+
    /**
     * 移动
     */
@@ -425,12 +481,13 @@ class Index extends BaseController
         if (request()->isAjax()) {
             $ids = $param["ids"];
             $pid = $param["pid"];
+			$pids = $this->get_pids($pid);
 			$idArray = explode(',', strval($ids));
 			$list = [];
 			foreach ($idArray as $key => $val) {
-				$file = Db::name('Disk')->find($val);
-				if($pid == $val){
-					return to_assign(1, "移动失败,【".$file['name']."】不能移动到文件夹本身");
+				if(in_array($val,$pids) || $val==$pid){
+					$file = Db::name('Disk')->find($val);
+					return to_assign(1, "移动失败,【".$file['name']."】不能移动到文件夹本身或其子目录");
 					break;
 				}
 				$list[] = [
@@ -439,13 +496,16 @@ class Index extends BaseController
 					'update_time' => time()
 				];
 			}
-			$model = new DiskModel();
-			$res = $model->saveAll($list);
-            if ($res!== false) {
-                return to_assign(0, "转移成功");
-            } else {
-                return to_assign(1, "转移失败");
-            }
+			if(!empty($list)){
+				$model = new DiskModel();
+				foreach ($list as $item) {
+					$model->update($item);
+				}
+				return to_assign();
+			}
+			else{
+				return to_assign(1, "转移失败");
+			}
         }else{
 			$pid = isset($param['pid']) ? $param['pid']: 0 ;
 			$path = get_pfolder($pid);
@@ -479,13 +539,16 @@ class Index extends BaseController
 					'update_time' => time()
 				];
 			}
-			$model = new DiskModel();
-			$res = $model->saveAll($list);
-            if ($res!== false) {
-                return to_assign(0, "分享成功");
-            } else {
-                return to_assign(1, "分享失败");
-            }
+			if(!empty($list)){
+				$model = new DiskModel();
+				foreach ($list as $item) {
+					$model->update($item);
+				}
+				return to_assign();
+			}
+			else{
+				return to_assign(1, "操作失败");
+			}
         }
 	}
 	
@@ -506,13 +569,16 @@ class Index extends BaseController
 					'update_time' => time()
 				];
 			}
-			$model = new DiskModel();
-			$res = $model->saveAll($list);
-            if ($res!== false) {
-                return to_assign(0, "取消成功");
-            } else {
-                return to_assign(1, "取消失败");
-            }
+			if(!empty($list)){
+				$model = new DiskModel();
+				foreach ($list as $item) {
+					$model->update($item);
+				}
+				return to_assign();
+			}
+			else{
+				return to_assign(1, "操作失败");
+			}
         }
 	}
 	
@@ -533,13 +599,16 @@ class Index extends BaseController
 					'update_time' => time()
 				];
 			}
-			$model = new DiskModel();
-			$res = $model->saveAll($list);
-            if ($res!== false) {
-                return to_assign(0, "标星成功");
-            } else {
-                return to_assign(1, "标星失败");
-            }
+			if(!empty($list)){
+				$model = new DiskModel();
+				foreach ($list as $item) {
+					$model->update($item);
+				}
+				return to_assign();
+			}
+			else{
+				return to_assign(1, "操作失败");
+			}
         }
 	}
 	
@@ -560,13 +629,16 @@ class Index extends BaseController
 					'update_time' => time()
 				];
 			}
-			$model = new DiskModel();
-			$res = $model->saveAll($list);
-            if ($res!== false) {
-                return to_assign(0, "操作成功");
-            } else {
-                return to_assign(1, "操作失败");
-            }
+			if(!empty($list)){
+				$model = new DiskModel();
+				foreach ($list as $item) {
+					$model->update($item);
+				}
+				return to_assign();
+			}
+			else{
+				return to_assign(1, "操作失败");
+			}
         }
 	}
 }
