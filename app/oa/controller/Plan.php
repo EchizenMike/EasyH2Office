@@ -52,7 +52,7 @@ class Plan extends BaseController
                 ->order('a.id desc')
                 ->paginate(['list_rows'=> $rows])
                 ->each(function ($item, $key) {
-                    $item->remind_time = empty($item->remind_time) ? '-' : to_date($item->remind_time,'Y-m-d H:i', );
+                    $item->remind_time = empty($item->remind_time) ? '-' : to_date($item->remind_time,'Y-m-d H:i');
                     $item->start_time = empty($item->start_time) ? '' : to_date($item->start_time,'Y-m-d H:i');
                     $item->end_time = empty($item->end_time) ? '': to_date($item->end_time,'Y-m-d H:i');
                 });
