@@ -58,7 +58,6 @@ class MobileMenu extends Model
 				$newGroup['id'] = 1;
 				$newGroup['mobile_menu'] = $group['mobile_menu'] . ',' . $insertId;
 				Db::name('AdminGroup')->strict(false)->field(true)->update($newGroup);
-				add_log('add', $rid, $param);
 			}
 			add_log('add', $insertId, $param);
         } catch(\Exception $e) {
