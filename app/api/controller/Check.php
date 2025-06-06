@@ -550,7 +550,7 @@ class Check extends BaseController
 					];
 					event('SendMessage',$msg);
 				}
-				return to_assign();
+				return to_assign(0,'操作成功',['check_status'=>$param['check_status']]);
 			}
 			else{
 				return to_assign(1,'操作失败');
@@ -581,7 +581,7 @@ class Check extends BaseController
 				);
 				$aid = Db::name('FlowRecord')->strict(false)->field(true)->insertGetId($checkData);
 				add_log('back', $action_id, $param,$subject);
-				return to_assign();
+				return to_assign(0,'操作成功',['check_status'=>$param['check_status']]);
 			}else{
 				return to_assign(1,'操作失败');
 			}
@@ -602,13 +602,13 @@ class Check extends BaseController
 					'check_uid' => $this->uid,
 					'flow_id' => $detail['check_flow_id'],
 					'check_time' => time(),
-					'check_status' => $param['check'],
+					'check_status' => 0,
 					'content' => $param['content'],
 					'create_time' => time()
 				);
 				$aid = Db::name('FlowRecord')->strict(false)->field(true)->insertGetId($checkData);
 				add_log('back', $action_id, $param,$subject);
-				return to_assign();
+				return to_assign(0,'操作成功',['check_status'=>0]);
 			}else{
 				return to_assign(1,'操作失败');
 			}

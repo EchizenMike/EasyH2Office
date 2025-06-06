@@ -460,8 +460,8 @@ layui.define(function (exports) {
 
 	//附件操作	
 	const ctrlBtn=function(ctrl){
-			//操作按钮'0下载','1查看','2编辑','3重命名','4删除','5移动','6分享','7取消分享','8标星','9取消标星','10还原','11清除'
-		let ctrl_types = ['下载','查看','编辑','重命名','删除','移动','分享','取消分享','标星','取消标星','还原','清除'];
+			//操作按钮'0下载','1查看','2编辑','3重命名','4删除','5移动','6标星','7取消标星','8还原','9清除'
+		let ctrl_types = ['下载','查看','编辑','重命名','删除','移动','标星','取消标星','还原','清除'];
 		let	ctrls=[];
 		for(let i=0;i<ctrl.length;i++){
 			ctrls.push({"id":ctrl[i]+'',"title":ctrl_types[ctrl[i]]});
@@ -562,22 +562,16 @@ layui.define(function (exports) {
 				  case '5'://移动
 					$('#fileMove'+fileid).click();
 					break;
-				  case '6'://分享
-					$('#fileShare'+fileid).click();
-					break;
-				  case '7'://取消分享
-					$('#fileShareno'+fileid).click();
-					break;
-				 case '8'://标星
+				 case '6'://标星
 					$('#fileStar'+fileid).click();
 					break;
-				  case '9'://取消标星
+				  case '7'://取消标星
 					$('#fileStarno'+fileid).click();
 					break;
-				  case '10'://还原
+				  case '8'://还原
 					$('#fileBack'+fileid).click();
 					break;
-				  case '11'://清除
+				  case '9'://清除
 					$('#fileClear'+fileid).click();
 					break;
 				  default:

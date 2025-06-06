@@ -15,20 +15,27 @@ namespace app\disk\validate;
 use think\Validate;
 use think\facade\Db;
 
-class IndexValidate extends Validate
+class DiskValidate extends Validate
 {	
+	// 自定义验证规则
+	protected function checkOne($value,$rule,$data=[])
+	{
+		$count = Db::name('Disk')->where([['name','=',$data['name']],['group_id','=',$data['group_id']],['id','<>',$data['id']]])->count();
+		return $count == 0 ? true : false;
+	}
     protected $rule = [
-		'name' => 'require',
+		'name' => 'require|checkOne',
 		'id' => 'require',
 	];
 
     protected $message = [
 		'name.require' => '名称不能为空',
+		'name.checkOne' => '同一目录下不能有相同名称的文件',
 		'id.require' => '缺少更新条件',
 	];
 	
     protected $scene = [
-        'add' => ['title'],
-        'edit' => ['title', 'id'],
+        'add' => ['name'],
+        'edit' => ['name', 'id'],
     ];
 }

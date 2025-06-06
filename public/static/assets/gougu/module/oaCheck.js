@@ -6,8 +6,10 @@ layui.define(['tool','oaPicker'], function (exports) {
 		"checkBox":"checkBox",//审核容器id
 		"check_copy": 1,//是否需要操送人
 		"check_name": "",//审核类型标识
+		"export":0,//是否支持导出
 		"check_btn":1,//是否显示提交审核按钮
 		"check_back":0,//是否支持反确认审核操作
+		"back_btn":1,//是否支持撤回重新提交审批
 		"checking_btn":''//待审核状态下添加的按钮
 	};
 	const obj = {
@@ -251,6 +253,7 @@ layui.define(['tool','oaPicker'], function (exports) {
 			
 			let btnBack='<span class="layui-btn layui-btn-primary btn-check" data-status="3"><i class="layui-icon layui-icon-reduce-circle"></i> 撤回</span>';
 			let btnCheckBack='<span class="layui-btn layui-btn-danger btn-check" data-event="check" data-status="4">反确认审核</span>';
+			let btnExport='<a href="/api/export/pdf?types='+me.sets.check_name+'&id='+detail.id+'" class="layui-btn" target="_blank"><i class="layui-icon layui-icon-print"></i>导出打印</a>';
 			
 			let checkHtml = `
 				<form class="layui-form">
@@ -284,8 +287,9 @@ layui.define(['tool','oaPicker'], function (exports) {
 					<div class="pt-3">
 						<input type="hidden" name="check_role" value="${detail.step.check_role}">
 						${detail.is_checker==1?btnCheck:''}
-						${detail.is_creater==1 && (detail.check_status==1 || detail.check_status==3)?btnBack:''}
-						${me.sets.check_back == 1 && detail.check_status==2?btnCheckBack:''}						
+						${detail.is_creater==1 && me.sets.back_btn==1 && (detail.check_status==1 || detail.check_status==3)?btnBack:''}
+						${me.sets.check_back == 1 && detail.check_status==2?btnCheckBack:''}	
+						${me.sets.export == 1 && detail.check_status==2?btnExport:''}					
 					</div>
 				</form>
 			`;
@@ -320,7 +324,7 @@ layui.define(['tool','oaPicker'], function (exports) {
 					</table>
 				</form>
 			`;
-			if(detail.is_creater==1){
+			if(detail.is_creater==1 && me.sets.back_btn==1){
 				return checkHtml;
 			}
 			else{
@@ -454,7 +458,20 @@ layui.define(['tool','oaPicker'], function (exports) {
 						tool.sideClose(1000);				
 					}
 				}
-				tool.post("/api/check/submit_check", data.field, callback);
+				if(typeof me.sets.post_form ==='string' && typeof me.sets.post_url ==='string'){
+					let postData = form.val(me.sets.post_form);
+					tool.post(me.sets.post_url, postData, function(res){
+						if (res.code == 0) {
+							tool.post("/api/check/submit_check", data.field, callback);				
+						}
+						else{
+							layer.msg(res.msg);
+						}
+					});
+				}
+				else{
+					tool.post("/api/check/submit_check", data.field, callback);
+				}
 				return false;
 			});
 			
@@ -487,28 +504,68 @@ layui.define(['tool','oaPicker'], function (exports) {
 						confirmTips='确定拒绝该审批？';
 					}				
 					tool.ask(confirmTips, function(index){
-						$.ajax({
-							url: "/api/check/flow_check",
-							type:'post',
-							data:{
-								action_id:action_id,
-								check_name:me.sets.check_name,
-								check_flow_id:check_flow_id,
-								check_node:check_node,
-								check_uids:check_uids,
-								check:check_status,
-								content:content
-							},
-							success: function (e) {
-								layer.msg(e.msg);
-								if (e.code == 0) {
-									if(e.check_status==2 && typeof me.sets.check_ok ==='function'){
-										me.sets.check_ok();
-									}
-									tool.sideClose(1000);
+						if(typeof me.sets.post_form ==='string' && typeof me.sets.post_url ==='string'){
+							let postData = form.val(me.sets.post_form);
+							tool.post(me.sets.post_url, postData, function(res){
+								if (res.code == 0) {
+									$.ajax({
+										url: "/api/check/flow_check",
+										type:'post',
+										data:{
+											action_id:action_id,
+											check_name:me.sets.check_name,
+											check_flow_id:check_flow_id,
+											check_node:check_node,
+											check_uids:check_uids,
+											check:check_status,
+											content:content
+										},
+										success: function (e) {
+											layer.msg(e.msg);
+											if (e.code == 0) {
+												if(e.data.check_status==2 && typeof me.sets.check_ok ==='function'){
+													me.sets.check_ok(e);
+												}
+												if(e.data.check_status==3 && typeof me.sets.check_no ==='function'){
+													me.sets.check_no(e);
+												}
+												tool.sideClose(1000);
+											}
+										}
+									})			
 								}
-							}
-						})
+								else{
+									layer.msg(res.msg);
+								}
+							});
+						}
+						else{
+							$.ajax({
+								url: "/api/check/flow_check",
+								type:'post',
+								data:{
+									action_id:action_id,
+									check_name:me.sets.check_name,
+									check_flow_id:check_flow_id,
+									check_node:check_node,
+									check_uids:check_uids,
+									check:check_status,
+									content:content
+								},
+								success: function (e) {
+									layer.msg(e.msg);
+									if (e.code == 0) {
+										if(e.data.check_status==2 && typeof me.sets.check_ok ==='function'){
+											me.sets.check_ok(e);
+										}
+										if(e.data.check_status==3 && typeof me.sets.check_no ==='function'){
+											me.sets.check_no(e);
+										}
+										tool.sideClose(1000);
+									}
+								}
+							})
+						}
 						layer.close(index);
 					});   
 				}
@@ -534,7 +591,10 @@ layui.define(['tool','oaPicker'], function (exports) {
 							},
 							success: function (e) {
 								layer.msg(e.msg);
-								if (e.code == 0) {	
+								if (e.code == 0) {
+									if(e.data.check_status==4 && typeof me.sets.check_back ==='function'){
+										me.sets.check_back(e);
+									}
 									tool.sideClose(1000);
 								}
 							}
