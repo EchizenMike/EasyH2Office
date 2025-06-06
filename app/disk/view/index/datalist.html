@@ -152,9 +152,11 @@
                         type:'post',
                         data:{
 							'pid':$('[name="pid"]').val(),
+							'group_id':0,
                             'action_id':res.data.id,
                             'name':res.data.name,
                             'file_size':res.data.filesize,
+                            'id':0,
                             'file_ext':res.data.fileext
                         },
                         success: function (e) {
