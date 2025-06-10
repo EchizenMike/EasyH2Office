@@ -352,7 +352,7 @@ class Message extends BaseController
         $ids = empty($param['ids']) ? 0 : $param['ids'];
         $idArray = explode(',', $ids);
         foreach ($idArray as $key => $val) {
-			MessageList::update(['id' => $val,'delete_time' => time()]);
+			MessageList::where(['id' => $val])->update(['delete_time' => time()]);
 			add_log('delete', $val,[],'消息');
         }
         return to_assign(0, '操作成功');
