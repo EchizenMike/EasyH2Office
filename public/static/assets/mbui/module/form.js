@@ -102,7 +102,7 @@ mbui.define(['layer'], function (exports) {
 				}
 				var $this = $(this),errMsg = '至少要有一个单选按钮被选中';
 				if ($this.find('[type="radio"]').is(':checked')) {
-					console.log('至少有一个单选按钮被选中');
+					console.log(errMsg);
 				} else {
 					errMsg = $this.data('errortips') || errMsg;
 					isValid = false;
@@ -117,7 +117,7 @@ mbui.define(['layer'], function (exports) {
 				}
 				var $this = $(this),errMsg = '至少要有一个多选按钮被选中';
 				if ($this.find('[type="checkbox"]').is(':checked')) {
-					console.log('至少要有一个多选按钮被选中');
+					console.log(errMsg);
 				} else {
 					errMsg = $this.data('errortips') || errMsg;
 					isValid = false;
@@ -140,8 +140,7 @@ mbui.define(['layer'], function (exports) {
 			, fieldElem = $(itemForm).find('input,select,textarea') // 获取所有表单域
 
 		$.each(fieldElem, function (_, item) {
-			var othis = $(this)
-				, init_name; // 初始 name
+			var othis = $(this), init_name; // 初始 name
 
 			item.name = (item.name || '').replace(/^\s*|\s*&/, '');
 			if (!item.name) return;
