@@ -1280,7 +1280,7 @@ function set_recursion($result, $pid = 0, $level=-1)
 {
     /*记录排序后的类别数组*/
     static $list = array();
-    static $space = ['','├─','§§├─','§§§§├─','§§§§§§├─'];
+    static $space = ['','├─','§§├─','§§§§├─','§§§§§§├─','§§§§§§§§├─','§§§§§§§§§§├─'];
 	$level++;
     foreach ($result as $k => $v) {
         if ($v['pid'] == $pid) {
