@@ -1136,9 +1136,10 @@ function string_to_array($string='',$separator=',')
  * @param string $delimiter 数字和单位分隔符
  * @return string            格式化后的带单位的大小
  */
-function format_bytes($size, $delimiter = '')
+function format_bytes($size=0, $delimiter = '')
 {
     $units = array('B', 'KB', 'MB', 'GB', 'TB', 'PB');
+	$size = (float) $size;
     for ($i = 0; $size >= 1024 && $i < 5; $i++) {
         $size /= 1024;
     }
