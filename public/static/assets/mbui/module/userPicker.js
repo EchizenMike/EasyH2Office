@@ -106,8 +106,8 @@ mbui.define(['layer'], function (exports) {
 					let selected_item = $(selected[m]).parent();
 					ids.push(selected_item.data('id'));
 					names.push(selected_item.data('name'));
-					dids.push(selected_item.data('dids'));
-					departments.push(selected_item.data('departments'));
+					dids.push(selected_item.data('did'));
+					departments.push(selected_item.data('department'));
 				}
 				that.config.callback(ids,names,dids,departments);
 				$container.fadeOut(function () {
@@ -131,6 +131,7 @@ mbui.define(['layer'], function (exports) {
 			callback:function(ids,names,dids,departments){
 				that.val(names.join(','));
 				that.next().val(ids.join(','));
+				that.next().next().val(dids.join(','));
 			}
 		});
 	});
