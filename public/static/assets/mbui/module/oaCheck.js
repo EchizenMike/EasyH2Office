@@ -1,13 +1,12 @@
-mbui.define(['form','layer','userPicker'], function (exports) {
+mbui.define(['form','layer','userPicker','fileupload'], function (exports) {
 	const layer = mbui.layer;
 	const form = mbui.form;
 	const tool = mbui.tool;
+	const fileupload = mbui.fileupload;
 	const opts={
 		"checkBox":"checkBox",//审核容器id
-		"check_copy": 1,//是否需要抄送人
 		"check_name": "",//审核类型标识
 		"check_btn":1,//是否显示提交审核按钮
-		"check_back":0,//是否支持反确认审核操作
 		"checking_btn":''//待审核状态下添加的按钮
 	};
 	const obj = {
@@ -56,20 +55,16 @@ mbui.define(['form','layer','userPicker'], function (exports) {
 			`;
 			return tem;
 		},
-		copyTemplate: function () {
+		copyTemplate: function (detail) {
 			let me = this;
 			let tem =`
-				<div class="mbui-form-line">
+				<div class="mbui-form-line" style="${detail.is_copy==0?'display:none':''}">
 					<label class="mbui-form-label">抄 送 人</label>
 					<input class="mbui-form-input picker-admin" name="check_copy_unames" value="" readonly placeholder="请选择" placeholder="请选择审批通过后的抄送人" data-type="2">
 					<input type="text" name="check_copy_uids" value="" readonly style="display:none;">
 				</div>
 			`;
-			if(me.sets.check_copy == 1){
-				return tem;
-			}else{
-				return '';
-			}			
+			return tem;		
 		},
 		btnTemplate: function () {
 			let me = this;
@@ -94,7 +89,17 @@ mbui.define(['form','layer','userPicker'], function (exports) {
 				tem+='<div class="padding-12-b"><span class="f16 mbui-text-gray">审批记录</span></div>';
 				tem+='<div class="mbui-steps">';
 						for(let l=0;l<record.length;l++){
-						tem+='<div class="mbui-steps-item delete-'+record[l].delete_time+'">'+record[l].check_time_str+'<small><span class="text-black">'+record[l].name+'</span><span class="check-status-color-'+(record[l].check_status+1)+'">『'+record[l].status_str+'』</span>了此申请。审批意见：<span class="text-black">'+record[l].content+'。</span></small></div>';
+							tem+='<div class="mbui-steps-item delete-'+record[l].delete_time+'">'+record[l].check_time_str+'<small><span class="text-black">'+record[l].name+'</span><span class="check-status-color-'+(record[l].check_status+1)+'">『'+record[l].status_str+'』</span>了此申请。审批意见：<span class="text-black">'+record[l].content+'。</span></small>';
+						
+							let file_array= record[l].file_array;	
+							if(file_array.length>0){
+								tem+='<div style="padding:4px 0; color:#666666">审批附件</div><div class="bg-white"><div class="mbui-file-list" style="padding-bottom:0;">';
+								for(let f=0;f<file_array.length;f++){
+									tem+=tool.file_item(file_array[f],1);
+								}
+								tem+='</div></div>';
+							}
+							tem+='</div>';
 						}
 					tem+='</div>';
 				tem+='</div>';
@@ -109,7 +114,7 @@ mbui.define(['form','layer','userPicker'], function (exports) {
 					<div class="bg-white">
 						${me.flowTemplate(flow)}
 						<div id="checkTR">${me.uidsTemplate()}</div>
-						${me.copyTemplate()}
+						${me.copyTemplate(flow)}
 					</div>
 				</form>
 			`;
@@ -126,7 +131,7 @@ mbui.define(['form','layer','userPicker'], function (exports) {
 						${me.recordTemplate(detail.check_record)}
 						${me.flowTemplate(detail.flow)}
 						<div id="checkTR">${me.uidsTemplate()}</div>
-						${me.copyTemplate()}
+						${me.copyTemplate(detail)}
 					</div>
 					${me.btnTemplate()}
 				</form>
@@ -250,7 +255,17 @@ mbui.define(['form','layer','userPicker'], function (exports) {
 								<div class="mbui-form-line">
 									<label class="mbui-form-label">审批意见</label>
 									<textarea rows="3" name="content" class="mbui-form-input" placeholder="请输入审批意见" data-verify="required" data-errortips="请完善审批意见"></textarea>
-								</div>`;
+								</div>
+								<div class="mbui-form-line" ${detail.is_file==0?'style="display:none;"':''}>
+									<label class="mbui-form-label">审批附件</label>
+									<div class="mbui-form-uploader">
+										<div class="mbui-uploader-btn-border" id="uploadBtnCheck"><i class="iconfont icon-shangchuan"></i></div>
+									</div>
+									<div id="uploadBoxCheck" class="mbui-file-list" style="padding:0 12px 2px;">
+										<input data-type="file" name="check_files" type="hidden" value="">
+									</div>
+								</div>
+								`;
 				
 			let btnCheck='<span class="mbui-btn mbui-btn-normal btn-check" data-status="1"><i class="mbui-icon mbui-icon-ok"></i> 通过</span><span class="mbui-btn mbui-btn-danger btn-check" data-status="2"><i class="mbui-icon mbui-icon-close"></i> 拒绝</span>';
 			
@@ -299,8 +314,8 @@ mbui.define(['form','layer','userPicker'], function (exports) {
 					<div class="padding-16 center">
 						<input type="hidden" name="check_role" value="${detail.step.check_role}">
 						${detail.is_checker==1?btnCheck:''}
-						${detail.is_creater==1 && (detail.check_status==1 || detail.check_status==3)?btnBack:''}
-						${me.sets.check_back == 1 && detail.check_status==2?btnCheckBack:''}						
+						${detail.is_creater==1 && detail.is_back==1 && (detail.check_status==1 || detail.check_status==3)?btnBack:''}
+						${detail.is_reversed == 1 && detail.check_status==2?btnCheckBack:''}						
 					</div>
 				</form>
 			`;
@@ -321,7 +336,7 @@ mbui.define(['form','layer','userPicker'], function (exports) {
 						${me.recordTemplate(detail.check_record)}
 						${me.flowTemplate(detail.flow)}
 						<div id="checkTR">${me.uidsTemplate()}</div>
-						${me.copyTemplate()}
+						${me.copyTemplate(detail)}
 					</div>
 					${me.btnTemplate()}
 				</form>
@@ -375,6 +390,11 @@ mbui.define(['form','layer','userPicker'], function (exports) {
 						}
 						else{
 							checkBox.append(me.checkTemplate(e.data));
+							//附件上传
+							fileupload({
+								uploadBtn: "#uploadBtnCheck",
+								uploadBox: "#uploadBoxCheck"
+							});							
 						}
 						//提交审批
 						form({
@@ -482,10 +502,11 @@ mbui.define(['form','layer','userPicker'], function (exports) {
 				let check_status=$(this).data('status');
 				let check_role = checkBox.find('input[name="check_role"]').val();
 				
-				let check_node=0,check_uids='';
+				let check_node=0,check_uids='',check_files='';
 				if(check_role == 0 && check_status==1){
 					check_node = checkBox.find('input[name="check_node"]:checked').val();
 					check_uids = checkBox.find('input[name="check_uids"]').val();
+					check_files = checkBox.find('input[name="check_files"]').val();
 					if(!check_node){
 						layer.msg('请选择下一审批节点');
 						return false;
@@ -515,6 +536,7 @@ mbui.define(['form','layer','userPicker'], function (exports) {
 								check_node:check_node,
 								check_uids:check_uids,
 								check:check_status,
+								check_files:check_files,
 								content:content
 							},
 							success: function (e) {

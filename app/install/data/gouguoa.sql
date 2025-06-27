@@ -1185,6 +1185,11 @@ CREATE TABLE `oa_flow_cate`  (
   `icon` varchar(255) NOT NULL DEFAULT '' COMMENT '图标',
   `department_ids` varchar(255) NOT NULL DEFAULT '' COMMENT '应用部门ID（空为全部）1,2,3',
   `sort` int(11) NOT NULL DEFAULT 0 COMMENT '排序：越大越靠前',
+  `is_copy` int(11) NOT NULL DEFAULT 1 COMMENT '是否支持抄送人',
+  `is_file` int(11) NOT NULL DEFAULT 0 COMMENT '审批过程是否支持上传附件',
+  `is_export` int(11) NOT NULL DEFAULT 0 COMMENT '审批通过后是否支持导出PDF打印',
+  `is_back` int(11) NOT NULL DEFAULT 1 COMMENT '是否支持撤回',
+  `is_reversed` int(11) NOT NULL DEFAULT 0 COMMENT '是否支持反确认',
   `form` tinyint(1) NOT NULL DEFAULT 1 COMMENT '预设字段，表单模式：1固定表单,2自定义表单',
   `add_url` varchar(255) NOT NULL DEFAULT '' COMMENT '新建链接：固定表单模式必填',
   `view_url` varchar(255) NOT NULL DEFAULT '' COMMENT '查看链接：固定表单模式必填',
@@ -1200,19 +1205,20 @@ CREATE TABLE `oa_flow_cate`  (
 -- ----------------------------
 -- Records of oa_flow_cate
 -- ----------------------------
-INSERT INTO `oa_flow_cate` VALUES (1, '请假', 'leaves', 1, 'leaves', 'icon-kechengziyuanguanli', '', 0, 1, '/home/leaves/add', '/home/leaves/view', 0, 1, 1, 2, 1723604674, 0);
-INSERT INTO `oa_flow_cate` VALUES (2, '出差', 'trips', 1, 'trips', 'icon-jiaoshiguanli', '', 0, 1, '/home/trips/add', '/home/trips/view', 0, 1, 1, 3, 1723799422, 1724138037);
-INSERT INTO `oa_flow_cate` VALUES (3, '外出', 'outs', 1, 'outs', 'icon-tuiguangguanli', '', 0, 1, '/home/outs/add', '/home/outs/view', 0, 1, 1, 4,1723800336, 1724138021);
-INSERT INTO `oa_flow_cate` VALUES (4, '加班', 'overtimes', 1, 'overtimes', 'icon-xueshengchengji', '', 0, 1, '/home/overtimes/add', '/home/overtimes/view', 0, 1, 1, 5, 1723800393, 1724138004);
-INSERT INTO `oa_flow_cate` VALUES (5, '用章', 'seal', 2, 'seal', 'icon-shenpishezhi', '', 0, 1, '/adm/seal/add', '/adm/seal/view', 0, 1, 1, 6, 1723469451, 1724138203);
-INSERT INTO `oa_flow_cate` VALUES (6, '公文', 'official_docs', 2, 'official_docs', 'icon-lunwenguanli', '', 0, 1, '/adm/official/add', '/adm/official/view', 0, 1, 1, 7, 1723469614, 1724138182);
-INSERT INTO `oa_flow_cate` VALUES (7, '报销', 'expense', 4, 'expense', 'icon-jizhang', '', 0, 1, '/finance/expense/add', '/finance/expense/view', 0, 1, 1, 8, 1723469732, 1724138154);
-INSERT INTO `oa_flow_cate` VALUES (8, '发票', 'invoice', 4, 'invoice', 'icon-duizhangdan', '', 0, 1, '/finance/invoice/add', '/finance/invoice/view', 0, 1, 1, 9,1723469814, 1724138127);
-INSERT INTO `oa_flow_cate` VALUES (9, '收票', 'ticket', 4, 'ticket', 'icon-yingjiaoqingdan', '', 0, 1, '/finance/ticket/add', '/finance/ticket/view', 0, 1, 1, 10, 1724749856, 1724828690);
-INSERT INTO `oa_flow_cate` VALUES (10, '无发票回款', 'invoicea', 4, 'invoice', 'icon-shoufeipeizhi', '', 0, 1, '/finance/invoice/add_a', '/finance/invoice/view_a', 0, 1, 1, 11,1725856435, 1725935194);
-INSERT INTO `oa_flow_cate` VALUES (11, '无发票付款', 'ticketa', 4, 'ticket', 'icon-bulujiesuan', '', 0, 1, '/finance/ticket/add_a', '/finance/ticket/view_a', 0, 1, 1, 12,1725856613, 1725935703);
-INSERT INTO `oa_flow_cate` VALUES (12, '销售合同', 'contract', 3, 'contract', 'icon-hetongguanli', '', 0, 1, '/contract/contract/add', '/contract/contract/view', 0, 0, 1, 13,1723469917, 1724828537);
-INSERT INTO `oa_flow_cate` VALUES (13, '采购合同', 'purchase', 3, 'purchase', 'icon-dianshang', '', 0, 1, '/contract/purchase/add', '/contract/purchase/view', 0, 0, 1, 14,1723470017, 1724828575);
+INSERT INTO `oa_flow_cate` VALUES (1, '请假', 'leaves', 1, 'leaves', 'icon-kechengziyuanguanli', '', 0, 1, 0, 0, 1, 0, 1, '/home/leaves/add', '/home/leaves/view', 0, 1, 1, 2, 1723604674, 0);
+INSERT INTO `oa_flow_cate` VALUES (2, '出差', 'trips', 1, 'trips', 'icon-jiaoshiguanli', '', 0, 1, 0, 0, 1, 0, 1, '/home/trips/add', '/home/trips/view', 0, 1, 1, 3, 1723799422, 1724138037);
+INSERT INTO `oa_flow_cate` VALUES (3, '外出', 'outs', 1, 'outs', 'icon-tuiguangguanli', '', 0, 1, 0, 0, 1, 0, 1, '/home/outs/add', '/home/outs/view', 0, 1, 1, 4, 1723800336, 1724138021);
+INSERT INTO `oa_flow_cate` VALUES (4, '加班', 'overtimes', 1, 'overtimes', 'icon-xueshengchengji', '', 0, 1, 0, 0, 1, 0, 1, '/home/overtimes/add', '/home/overtimes/view', 0, 1, 1, 5, 1723800393, 1724138004);
+INSERT INTO `oa_flow_cate` VALUES (5, '用章', 'seal', 2, 'seal', 'icon-shenpishezhi', '',0, 1, 0, 0, 1, 0, 1, '/adm/seal/add', '/adm/seal/view', 0, 1, 1, 6, 1723469451, 1724138203);
+INSERT INTO `oa_flow_cate` VALUES (6, '公文', 'official_docs', 2, 'official_docs', 'icon-lunwenguanli', '', 0, 1, 0, 0, 1, 0, 1, '/adm/official/add', '/adm/official/view', 0, 1, 1, 7, 1723469614, 1724138182);
+INSERT INTO `oa_flow_cate` VALUES (7, '报销', 'expense', 4, 'expense', 'icon-jizhang', '', 0, 1, 0, 0, 1, 0, 1, '/finance/expense/add', '/finance/expense/view', 0, 1, 1, 8, 1723469732, 1724138154);
+INSERT INTO `oa_flow_cate` VALUES (8, '发票', 'invoice', 4, 'invoice', 'icon-duizhangdan', '', 0, 1, 0, 0, 1, 0, 1, '/finance/invoice/add', '/finance/invoice/view', 0, 1, 1, 9, 1723469814, 1724138127);
+INSERT INTO `oa_flow_cate` VALUES (9, '收票', 'ticket', 4, 'ticket', 'icon-yingjiaoqingdan', '', 0, 1, 0, 0, 1, 0, 1, '/finance/ticket/add', '/finance/ticket/view', 0, 1, 1, 10, 1724749856, 1724828690);
+INSERT INTO `oa_flow_cate` VALUES (10, '无发票回款', 'invoicea', 4, 'invoice', 'icon-shoufeipeizhi', '', 0, 1, 0, 0, 1, 0, 1, '/finance/invoice/add_a', '/finance/invoice/view_a', 0, 1, 1, 11, 1725856435, 1725935194);
+INSERT INTO `oa_flow_cate` VALUES (11, '无发票付款', 'ticketa', 4, 'ticket', 'icon-bulujiesuan', '', 0, 1, 0, 0, 1, 0, 1, '/finance/ticket/add_a', '/finance/ticket/view_a', 0, 1, 1, 12, 1725856613, 1725935703);
+INSERT INTO `oa_flow_cate` VALUES (12, '销售合同', 'contract', 3, 'contract', 'icon-hetongguanli', '', 0, 0, 0, 0, 1, 0, 1, '/contract/contract/add', '/contract/contract/view', 0, 0, 1, 13, 1723469917, 1724828537);
+INSERT INTO `oa_flow_cate` VALUES (13, '采购合同', 'purchase', 3, 'purchase', 'icon-dianshang', '', 0, 0, 0, 0, 1, 0, 1, '/contract/purchase/add', '/contract/purchase/view', 0, 0, 1, 14, 1723470017, 1724828575);
+
 
 -- ----------------------------
 -- Table structure for oa_flow
@@ -1281,6 +1287,7 @@ CREATE TABLE `oa_flow_record`  (
   `check_table` varchar(255) NOT NULL DEFAULT '审批数据表',
   `flow_id` int(11) NOT NULL COMMENT '审批模版流程id',
   `step_id` int(11) NOT NULL DEFAULT 0 COMMENT '审批步骤ID',
+  `check_files` varchar(500) NOT NULL DEFAULT '' COMMENT '审批附件',
   `check_uid` int(11) NOT NULL DEFAULT 0 COMMENT '审批人ID',
   `check_time` bigint(11) NOT NULL COMMENT '审批时间',
   `check_status` tinyint(4) NOT NULL DEFAULT 0 COMMENT '审批状态:0发起,1通过,2拒绝,3撤销',

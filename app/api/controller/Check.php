@@ -251,6 +251,11 @@ class Check extends BaseController
 			$is_checker=1;
 		}
 		$detail['is_checker'] = $is_checker;
+		$detail['is_copy'] = $flow_cate['is_copy'];
+		$detail['is_file'] = $flow_cate['is_file'];
+		$detail['is_export'] = $flow_cate['is_export'];
+		$detail['is_back'] = $flow_cate['is_back'];
+		$detail['is_reversed'] = $flow_cate['is_reversed'];
 		//审批记录
 		$check_record = Db::name('FlowRecord')
 						->field('f.*,a.name')
@@ -271,6 +276,13 @@ class Check extends BaseController
 			}
 			if($vv['check_status'] == 4){
 				$vv['status_str'] = '反确认';
+			}
+			if(!empty($vv['check_files'])){
+				$file_array = Db::name('File')->where('id','in',$vv['check_files'])->select()->toArray();
+				$vv['file_array'] = $file_array;
+			}
+			else{
+				$vv['file_array'] = [];
 			}
 		}
 		$detail['check_record'] = $check_record;
@@ -345,6 +357,7 @@ class Check extends BaseController
     public function flow_check()
     {
         $param = get_params();
+		$param['check_files'] = isset($param['check_files']) ? $param['check_files'] : '';
 		$flow_cate = Db::name('FlowCate')->where(['name' => $param['check_name']])->find();
 		$subject = $flow_cate['title'];
 		$action_id = $param['action_id'];
@@ -442,6 +455,7 @@ class Check extends BaseController
 					'check_uid' => $this->uid,
 					'flow_id' => $detail['check_flow_id'],
 					'check_time' => time(),
+					'check_files' => $param['check_files'],
 					'check_status' => $param['check'],
 					'content' => $param['content'],
 					'create_time' => time()
@@ -530,6 +544,7 @@ class Check extends BaseController
 					'flow_id' => $detail['check_flow_id'],
 					'check_time' => time(),
 					'check_status' => $param['check'],
+					'check_files' => $param['check_files'],
 					'content' => $param['content'],
 					'create_time' => time()
 				);	
@@ -602,7 +617,7 @@ class Check extends BaseController
 					'check_uid' => $this->uid,
 					'flow_id' => $detail['check_flow_id'],
 					'check_time' => time(),
-					'check_status' => 0,
+					'check_status' => 4,
 					'content' => $param['content'],
 					'create_time' => time()
 				);
