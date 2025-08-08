@@ -104,7 +104,7 @@ class Invoice extends BaseController
             return table_assign(0, '', $list);
         }
         else{
-            echo "<script>alert(-1)</script>";
+//            echo "<script>alert(-1)</script>";
             return view();
         }
     }
