@@ -1,0 +1,148 @@
+{extend name="../../base/view/common/base" /}
+
+{block name="body"}
+
+<div class="p-page">
+    <div class="layui-card border-x border-t" style="margin-bottom:0;">
+        <div class="body-table layui-tab layui-tab-brief" lay-filter="tab">
+            <ul class="layui-tab-title">
+                <li class="layui-this">全部</li>
+                <li>我申请的</li>
+                <li>待我审批</li>
+                <li>我已审批</li>
+                <li>抄送我的</li>
+            </ul>
+        </div>
+    </div>
+
+    <form class="layui-form gg-form-bar border-x tab-0" id="barsearchform">
+        <div class="layui-input-inline" style="width:175px;">
+            <input type="text" class="layui-input" id="diff_time" placeholder="选择申请时间区间" readonly name="diff_time">
+        </div>
+        <div class="layui-input-inline search-item" style="width:120px;">
+            <select name="check_status">
+                <option value="">审批状态</option>
+                {volist name=":get_check_status()" id="vo"}
+                <option value="{$key}">{$vo}</option>
+                {/volist}
+            </select>
+        </div>
+        <div class="layui-input-inline" style="width:150px">
+            <input type="hidden" name="tab" value="0"/>
+            <button class="layui-btn layui-btn-normal" lay-submit lay-filter="table-search"><i class="layui-icon layui-icon-search mr-1"></i>搜索</button>
+            <button type="reset" class="layui-btn layui-btn-reset" lay-filter="table-reset">清空</button>
+        </div>
+    </form>
+
+    <table class="layui-hide" id="table_quote" lay-filter="table_quote"></table>
+</div>
+
+<script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm tool-add" type="button" data-href="/finance/quote/add">+ 新增报价申请</button>
+    </div>
+</script>
+
+{/block}
+
+{block name="script"}
+<script>
+    const moduleInit = ['tool','tablePlus','laydatePlus'];
+    function gouguInit() {
+        var table = layui.tablePlus, tool = layui.tool, laydatePlus = layui.laydatePlus, element = layui.element;
+
+        //tab切换
+        element.on('tab(tab)', function(data){
+            $('[name="tab"]').val(data.index);
+            $("#barsearchform")[0].reset();
+            $("#barsearchform").attr('class','layui-form gg-form-bar border-x tab-'+data.index);
+            layui.pageTable.reload({where:{tab:data.index},page:{curr:1}});
+            return false;
+        });
+
+        var diff_time = new laydatePlus({ target: 'diff_time' });
+
+        layui.pageTable = table.render({
+            elem: "#table_quote"
+            ,toolbar: "#toolbarDemo"
+            ,title: '报价申请列表'
+            ,url: "/finance/quote/datalist"
+            ,page: true
+            ,limit: 20
+            ,height: 'full-154'
+            ,cellMinWidth: 80
+            ,cols: [[
+                { field: 'id', title: 'ID', align: 'center', width: 60, align: 'center' },
+                { field: 'quote_code', title: '报价编号', width: 130, align:'center' },
+                { field: 'customer_name', title: '客户名称', minWidth: 150, align:'center' },
+                // { field: 'invoice_title', title: '开票抬头', minWidth: 150 },
+                // { field: 'types_str', title: '抬头类型', width: 90, align: 'center' },
+                // { field: 'invoice_type_str', title: '开票类型', width: 110, align: 'center' },
+                { field: 'tax_rate', title: '税率(%)', align: 'center', width: 90, align:'center', templet: d => d.tax_rate * 100 },
+                { field: 'amount_total_without_tax', title: '总金额（不含税）', align: 'center', width: 90, align:'center'},
+                // { field: 'amount_exclude_tax', title: '未税金额', align: 'right', width: 110, align:'center' },
+                { field: 'amount_tax', title: '税额', align: 'right', width: 100 , align:'center', templet: d => d.amount_total_without_tax * d.tax_rate },
+                { field: 'amount_total_with_tax', title: '含税金额', align: 'right', width: 120 , align:'center'},
+                // {
+                //     field: 'profit', title: '利润', align: 'right', width: 120, align: 'center', templet: d => {
+                //         const amountTotal = parseFloat((d.amount_total || '0').replace(/,/g, '')) || 0;
+                //         const costTotal = parseFloat((d.cost_total || '0').replace(/,/g, '')) || 0;
+                //         const taxRate = parseFloat(d.tax_rate) || 0;
+                //         const profit = amountTotal - costTotal - (amountTotal * taxRate);
+                //         return profit.toFixed(2);
+                //     }
+                // },
+                // { field: 'profit_rate', title: '利润率(%)', align: 'right', width: 120 , align:'center', templet: d => d.profit_rate * 100},
+                { field: 'project_name', title: '项目名称', width: 160 , align:'center'},
+                { field: 'contract_name', title: '合同名称', width: 160 , align:'center'},
+                { field: 'check_status', title: '审批状态', width: 100, align:'center', templet: d => `<span class="check-status-color-${d.check_status}">『${d.check_status_str ?? '未知'}』</span>` },
+                { field: 'admin_name', title: '申请人', align: 'center', width: 100 },
+                { field: 'department', title: '申请部门', align: 'center', width: 120 },
+                { field: 'create_time', title: '申请时间', align: 'center', width: 160 },
+                { field: 'check_user', title: '当前审批人', align: 'center', width: 120 },
+                { field: 'remark', title: '备注', minWidth: 150 },
+                {
+                    field: 'right',
+                    fixed: 'right',
+                    title: '操作',
+                    width: 140,
+                    align: 'center',
+                    templet: function (d) {
+                        let html = '<div class="layui-btn-group">';
+                        html += `<span class="layui-btn layui-btn-normal layui-btn-xs" lay-event="view">详情</span>`;
+                        if ((d.check_status == 0 || d.check_status == 4) && d.admin_id == login_admin) {
+                            html += `<span class="layui-btn layui-btn-xs" lay-event="edit">编辑</span>`;
+                            html += `<span class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</span>`;
+                        }
+                        html += '</div>';
+                        return html;
+                    }
+                }
+            ]]
+
+        });
+
+        // 工具栏事件
+        table.on('tool(table_quote)', function (obj) {
+            const data = obj.data;
+            if (obj.event === 'view') {
+                tool.side(`/finance/quote/view?id=${data.id}`);
+            }
+            if (obj.event === 'edit') {
+                tool.side(`/finance/quote/add?id=${data.id}`);
+            }
+            if (obj.event === 'del') {
+                layer.confirm('确定删除该报价申请吗？', { icon: 3, title: '提示' }, function (index) {
+                    tool.delete("/finance/quote/del", { id: data.id }, function (res) {
+                        layer.msg(res.msg);
+                        if (res.code === 0) obj.del();
+                    });
+                    layer.close(index);
+                });
+            }
+        });
+    }
+</script>
+{/block}
+
+

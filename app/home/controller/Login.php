@@ -83,7 +83,9 @@ class Login
 			'create_time' => time()
         ];
 		Db::name('AdminLog')->strict(false)->field(true)->insert($logdata);
-        return to_assign(0, '登录成功', ['uid' => $admin['id']]);
+        // 登录成功后将该用户的用户名写入Cookie
+        setcookie('username', $param['username'], time() + 86400, '/'); // 第4个参数是路径，"/" 表示全站有效 24小时后过期
+        return to_assign(0, '登录成功，正在进入系统...', ['uid' => $admin['id']]);
     }
 
     //退出登录

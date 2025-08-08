@@ -144,6 +144,19 @@ mbui.define(['tool'], function (exports) {
 								</div>\
 							</label>'
 			}
+		},
+        'quote':{
+			title:'选择报价单',
+			url:'/contract/api/get_quote',
+			template:function (item,types){
+				return '<label class="mbui-picker-item" data-id="' + item.id + '" data-title="' + item.title + '">\
+								<input class="mbui-input-'+types+'" name="radio_picker[]" type="'+types+'" value="' + item.id + '">\
+								<div style="margin-left:8px;">\
+									<div class="line-limit-1">' + item.title + '</div>\
+									<div class="f12"><span class="text-gray">负责人：</span>'+item.director_name+'<span class="text-gray" style="margin-left:12px;">任务状态：</span>'+item.status_name+'</div>\
+								</div>\
+							</label>'
+			}
 		}
 	};
 	//html转义，防止XSS

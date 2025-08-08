@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=0">
+	<link rel="mobile-prefetch" href=""/>
+<!--    引入 OnlyOffice JS API-->
+    <script src="http://192.168.180.128:8000/web-apps/apps/api/documents/api.js"></script>
+	<title>文档信息</title>
+</head>
+<body style="width:100%;height:100vh; margin:0; padding:0">
+<div id="docEditor" style="width:100%; height:100%;"></div>
+</body>
+
+<script>
+    const url = "{$url}";
+    const regex = /\/([^\/]+)\.([a-zA-Z0-9]+)(?:\?.*)?$/;
+
+    const match = url.match(regex);
+    const filename = match[1];
+    const suffix = match[2];
+
+    console.log("文件名：" + filename);
+    console.log("扩展名：" + suffix);
+
+    // 根据扩展名判断 documentType
+    let documentType = "word";
+    if (["ppt", "pptx"].includes(suffix.toLowerCase())) {
+        documentType = "presentation";
+    } else if (["xls", "xlsx"].includes(suffix.toLowerCase())) {
+        documentType = "spreadsheet";
+    } else if (["doc", "docx", "odt"].includes(suffix.toLowerCase())) {
+        documentType = "word";
+    }
+
+    var docEditor = new DocsAPI.DocEditor("docEditor", {
+        width: "100%",
+        height: "100%",  // 建议使用 100% 而不是固定高度
+        type: "desktop",
+        documentType: documentType,
+        document: {
+            fileType: suffix,
+            key: filename,
+            title: "文档预览",
+            url: url
+        },
+        editorConfig: {
+            lang: "zh-CN", // 设置界面语言为中文
+            mode: "view"
+        }
+    });
+</script>
+
+</html>

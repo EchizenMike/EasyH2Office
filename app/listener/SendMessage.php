@@ -32,6 +32,7 @@ class SendMessage
 			$content = $template[$content_field];
 			$msg_link = $template['msg_link'];
 			$data = $msg['content'];
+            // 消息模板中的占位符
 			$data['from_user'] = Db::name('Admin')->where('id',$msg['from_uid'])->value('name');
 			$data['date'] = date('Y-m-d');
 			if(!isset($data['action_id'])){

@@ -33,7 +33,7 @@ layui.define(['tool'],function(exports){
 		"use":'attachment',//attachment(附件上传),shard(大文件分片上传),single(单图上传),multi(多图上传),import(excel导入上传)
 		"attachment":{
 			"type":0,//0ajax多文件模式，1ajax单文件单记录模式
-			"exts": 'png|jpg|gif|jpeg|doc|docx|ppt|pptx|xls|xlsx|pdf|zip|rar|7z|txt|wps|avi|wmv|mpg|mov|rm|flv|mp4|mp3|wav|wma|flac|midi|dwg|dxf|dwt|xmind', //只允许上传文件格式
+			"exts": 'sldprt|png|jpg|gif|jpeg|doc|docx|ppt|pptx|xls|xlsx|pdf|zip|rar|7z|txt|wps|avi|wmv|mpg|mov|rm|flv|mp4|mp3|wav|wma|flac|midi|dwg|dxf|dwt|xmind', //只允许上传文件格式
 			"colmd":4,
 			"uidDelete":false,//是否开启只有上传人自己才能删除自己的附件
 			"ajaxSave":null,
@@ -167,9 +167,51 @@ layui.define(['tool'],function(exports){
 				multiple: true,
 				before: function(obj){
 					layer.msg('上传中...', {icon: 16, time: 0});
+
+                    // 👇 捕获上传的文件对象
+                    obj.preview(function (index, file, result) {
+                        uploadedFile = file;  // ✅ 保存上传的文件对象
+                        // file.name 可用于获取文件名
+                    });
 				},
 				done: function(res){
 					if (res.code == 0) {
+
+                        // 2025-07-17 添加上传逻辑，将上传的SLDPRT文件上传到Windows服务器
+                        // if (res.filename)
+                        // alert("上传文件的文件名："+res.data.name)
+                        const ext_solidworks = ["SLDPRT","sldprt","SLDASM","sldasm","SLDDRW","slddrw"];
+                        const filename = res.data.name;
+                        // 传入的文件名字符串
+                        // 提取扩展名（小写）
+                        const ext = filename.split('.').pop().toLowerCase();
+
+                        // 判断是否在允许的扩展名列表中
+                        if (ext_solidworks.includes(ext)) {
+                            // ✅ 创建 FormData 并上传到第二个服务器
+                            const formData = new FormData();
+                            formData.append('file', uploadedFile);  // 使用保存的文件
+
+                            fetch('http://192.168.180.131:5000/upload', {
+                                method: 'POST',
+                                body: formData
+                            })
+                                .then(response => response.json())
+                                .then(result => {
+                                    if (result.message) {
+                                        layer.msg('第二次上传成功: ' + result.filename);
+                                    } else {
+                                        layer.msg('⚠️第二次上传失败: ' + result.error);
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('第二次上传请求失败:', error);
+                                    layer.msg('无法连接目标服务器');
+                                });
+                        }
+
+
+
 						//上传成功
 						if(attachment.type==0){
 							let image=['jpg','jpeg','png','gif'],office=['doc','docx','xls','xlsx','ppt','pptx'];

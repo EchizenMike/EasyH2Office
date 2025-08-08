@@ -17,7 +17,7 @@ use think\facade\Db;
 class Property extends Model
 {
 	//资产来源
-	public static $property_source = ['','采购','赠与','自产','其他'];
+	public static $property_source = ['','采购','赠与','自产','其他','111'];
 	
 	//资产状态
 	public static $property_status = ['闲置','在用','维修','报废','丢失'];

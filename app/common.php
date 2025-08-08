@@ -237,6 +237,7 @@ function add_log($type, $param_id = 0, $param = [] ,$subject='')
 		if($type_action[$type]){
 			$title = $type_action[$type];
 		}
+
 		$data = [
 			'uid' => $uid,
 			'type' => $type,
@@ -250,6 +251,7 @@ function add_log($type, $param_id = 0, $param = [] ,$subject='')
 			'create_time' => time(),
 			'subject' => 'OA系统'
 		];
+
 		if($subject!=''){
 			$data['subject'] =$subject;
 		}
@@ -264,6 +266,7 @@ function add_log($type, $param_id = 0, $param = [] ,$subject='')
 	} catch (\Exception $e) {
 	// 处理异常，记录日志或者其他逻辑
 	// 但不要抛出异常，以免中断主程序流程
+        echo $e;exit;
 	}
 }
 
@@ -736,6 +739,17 @@ function get_codeno($prefix=1){
 }
 
 /**
+ * 生成报价编号
+ * $prefix前缀
+ */
+function get_quotecode($prefix=1){
+    $no = $prefix . date('YmdHis') . rand(1,9);
+    return $no;
+}
+
+
+
+/**
  * 去除空格
  * @param string $str 字符串
  * @return string     字符串
@@ -916,6 +930,8 @@ function file_card($file,$view=''){
 	}
 	$image=['jpg','jpeg','png','gif'];
 	$office=['doc','docx','xls','xlsx','ppt','pptx'];
+	$digifax=['sldasm','sldprt','SLDASM','SLDPRT'];
+
 	$type_icon = 'icon-xiangmuguanli';
 	$type = 0;//0下载+重命名+删除，1下载+查看+重命名+删除，2下载+查看+编辑+重命名+删除
 	$ext = 'zip';
@@ -935,7 +951,12 @@ function file_card($file,$view=''){
 		$type_icon = 'icon-shenbao';
 		$ext = 'office';
 		$type = 2;
-	}	
+	}
+    if(in_array($file['fileext'], $digifax)){
+		$type_icon = 'icon-shenbao';
+		$ext = 'digifax';
+		$type = 1;
+	}
 	
 	if(empty($view)){
 		$view_btn = '<span class="file-ctrl blue" data-ctrl="edit" data-type="'.$type.'" data-fileid="'.$file['file_id'].'" data-ext="'.$ext.'" data-filename="'.$file['name'].'" data-href="'.$file['filepath'].'" data-id="'.$file['id'].'" data-uid="'.$file['admin_id'].'" title="附件操作"><i class="iconfont icon-gengduo1"></i></span><span class="name-edit green" style="display:none;" data-id="'.$file['id'].'" data-fileid="'.$file['file_id'].'" id="fileEdit'.$file['file_id'].'" data-name="'.$file['name'].'" data-fileext="'.$file['fileext'].'" title="重命名"></span><span class="file-delete red" style="display:none;" data-uid="'.$file['admin_id'].'" data-id="'.$file['id'].'" data-fileid="'.$file['file_id'].'" id="fileDel'.$file['file_id'].'" title="删除"></span>';

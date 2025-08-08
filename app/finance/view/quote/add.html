@@ -1,0 +1,854 @@
+<!--{extend name="../../base/view/common/base" /}-->
+<!--&lt;!&ndash; 主体 &ndash;&gt;-->
+<!--{block name="body"}-->
+<!--<form class="layui-form p-page">-->
+<!--	<h3 class="pb-3">新增报价申请</h3>-->
+<!--	<table class="layui-table layui-table-form">-->
+<!--		<tr>-->
+<!--			<td class="layui-td-gray">开票金额<font>*</font></td>-->
+<!--			<td>-->
+<!--				<input type="text" class="layui-input" name="amount" lay-verify="required|number" placeholder="请输入开票金额" lay-reqText="请输入开票金额" value="">	-->
+<!--			</td>-->
+<!--			<td class="layui-td-gray">开票类型<font>*</font></td>-->
+<!--			<td>-->
+<!--			<select name="invoice_type" lay-verify="required" lay-reqText="请选择开票类型">-->
+<!--				<option value="">请选择开票类型</option>-->
+<!--				<option value="1">增值税专用发票</option>-->
+<!--				<option value="2">普通发票</option>-->
+<!--				<option value="3">专业发票</option>-->
+<!--			  </select>-->
+<!--			</td>-->
+<!--			<td class="layui-td-gray">开票主体<font>*</font></td>-->
+<!--			<td>-->
+<!--				<select name="invoice_subject" lay-verify="required" lay-reqText="请选择开票主体">-->
+<!--					<option value="">请选择开票主体</option>-->
+<!--					{volist name=":get_base_data('enterprise')" id="vo"}-->
+<!--					<option value="{$vo.id}">{$vo.title}</option>-->
+<!--					{/volist}-->
+<!--				</select>-->
+<!--			</td>-->
+<!--		</tr>-->
+<!--		<tr>-->
+<!--			<td class="layui-td-gray">抬头类型<font>*</font></td>-->
+<!--			<td>-->
+<!--				<input type="radio" name="types" lay-filter="type" value="1" title="企业" checked>-->
+<!--				<input type="radio" name="types" lay-filter="type" value="2" title="个人">-->
+<!--			</td>-->
+<!--			<td class="layui-td-gray-2">开票抬头<span class="layui-btn layui-btn-xs invoice-qiye customer-picker">选择</span></td>-->
+<!--			<td><input type="text" name="invoice_title" class="layui-input" value="" placeholder="请输入开票抬头" lay-verify="required"  lay-reqText="请输入开票抬头"></td>-->
+<!--			<td class="layui-td-gray-2">纳税人识别号<font>*</font></td>-->
+<!--			<td><input type="text" name="invoice_tax" class="layui-input" value=""  placeholder="请输入纳税人识别号，个人输入身份证号码"lay-verify="required"  lay-reqText="请输入纳税人识别号，个人输入身份证号码"></td>-->
+<!--		</tr>-->
+<!--		<tr class="invoice-qiye">-->
+<!--			<td class="layui-td-gray">开户行<font>*</font></td>-->
+<!--			<td><input type="text" name="invoice_bank" class="layui-input" value=""></td>-->
+<!--			<td class="layui-td-gray">银行账号<font>*</font></td>-->
+<!--			<td><input type="text" name="invoice_account" class="layui-input" value=""></td>-->
+<!--			<td class="layui-td-gray-2">银行营业网点</td>-->
+<!--			<td><input type="text" name="invoice_banking" class="layui-input" value=""></td>-->
+<!--		</tr>-->
+<!--		<tr>-->
+<!--			<td class="layui-td-gray">电话号码</td>-->
+<!--			<td><input type="text" name="invoice_phone" class="layui-input" value=""></td>-->
+<!--			<td class="layui-td-gray">地址</td>-->
+<!--			<td colspan="3"><input type="text" name="invoice_address" class="layui-input" value=""></td>-->
+<!--		</tr>-->
+<!--		<tr>-->
+<!--			<td class="layui-td-gray">关联合同</td>-->
+<!--			<td colspan="5">-->
+<!--				<input type="text" class="layui-input picker-oa" data-types="contract" name="contract_name" placeholder="请选择需要关联的合同" readonly value="">		-->
+<!--				<input type="hidden" class="layui-input" name="contract_id" value="0">		-->
+<!--			</td>-->
+<!--		</tr>-->
+<!--		<tr>-->
+<!--			<td class="layui-td-gray">关联项目</td>-->
+<!--			<td colspan="5">-->
+<!--				<input type="text" class="layui-input picker-oa" data-types="project" name="project_name" placeholder="请选择需要关联的项目" readonly value="">		-->
+<!--				<input type="hidden" class="layui-input" name="project_id" value="0">		-->
+<!--			</td>-->
+<!--		</tr>-->
+<!--		<tr>-->
+<!--			<td class="layui-td-gray">-->
+<!--				<div class="layui-input-inline">附件</div>-->
+<!--				<div class="layui-input-inline">-->
+<!--					<button type="button" class="layui-btn layui-btn-xs" id="uploadBtn"><i class="layui-icon"></i></button>-->
+<!--				</div>-->
+<!--			</td>-->
+<!--			<td colspan="5">-->
+<!--				<div class="layui-row" id="uploadBox">-->
+<!--					<input type="hidden" data-type="file" name="file_ids" value="">-->
+<!--				</div>-->
+<!--			</td>-->
+<!--		</tr>-->
+<!--		<tr>-->
+<!--			<td class="layui-td-gray">备注信息</td>-->
+<!--			<td colspan="5"><textarea name="remark" placeholder="请输入备注信息" class="layui-textarea"></textarea></td>-->
+<!--		</tr>-->
+<!--	</table>-->
+<!--	<div id="checkBox" data-status="0" data-id="0" data-checkflowid="0" class="pt-3"></div>-->
+<!--	<div class="pt-4">-->
+<!--		<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform">立即提交</button>-->
+<!--		<button type="reset" class="layui-btn layui-btn-primary">重置</button>-->
+<!--	</div>-->
+<!--</form>-->
+<!--{/block}-->
+<!--&lt;!&ndash; /主体 &ndash;&gt;-->
+
+<!--&lt;!&ndash; 脚本 &ndash;&gt;-->
+<!--{block name="script"}-->
+<!--<script>-->
+<!--	var moduleInit = ['tool','oaPicker','oaCheck','uploadPlus'];-->
+<!--	function gouguInit() {-->
+<!--		var form = layui.form, tool = layui.tool, oaPicker = layui.oaPicker,oaCheck = layui.oaCheck,uploadPlus = layui.uploadPlus;-->
+<!--		//选择抬头类型-->
+<!--		form.on('radio(type)', function (data) {-->
+<!--			if(data.value==2){-->
+<!--				$('.invoice-qiye').hide();-->
+<!--			}-->
+<!--			else{-->
+<!--				$('.invoice-qiye').show();-->
+<!--			}-->
+<!--		});-->
+<!--		-->
+<!--		//相关附件上传-->
+<!--		var attachment = new uploadPlus();-->
+<!--		-->
+<!--		//审批相关-->
+<!--		oaCheck.init({-->
+<!--			check_name:'quote',-->
+<!--			check_btn:0-->
+<!--		});-->
+<!--		-->
+<!--		$('.customer-picker').on('click',function(){-->
+<!--			let that = $(this),ids = [],titles=[],tax_num=[],tax_bank=[],tax_banksn=[],tax_mobile=[],tax_address=[];-->
+<!--			let callback = function(data){-->
+<!--				for ( var i = 0; i <data.length; i++){-->
+<!--					ids.push(data[i].id);-->
+<!--					titles.push(data[i].name);-->
+<!--					tax_num.push(data[i].tax_num);-->
+<!--					tax_bank.push(data[i].tax_bank);-->
+<!--					tax_banksn.push(data[i].tax_banksn);-->
+<!--					tax_mobile.push(data[i].tax_mobile);-->
+<!--					tax_address.push(data[i].tax_address);-->
+<!--				}-->
+<!--				//that.val(titles.join(','));-->
+<!--				//that.next().val(ids.join(','));-->
+<!--				$('[name="invoice_title"]').val(titles.join(','));-->
+<!--				$('[name="invoice_tax"]').val(tax_num.join(','));-->
+<!--				$('[name="invoice_bank"]').val(tax_bank.join(','));-->
+<!--				$('[name="invoice_account"]').val(tax_banksn.join(','));-->
+<!--				$('[name="invoice_phone"]').val(tax_mobile.join(','));-->
+<!--				$('[name="invoice_address"]').val(tax_address.join(','));-->
+<!--			}-->
+<!--			oaPicker.picker('customer',1,callback,{});-->
+<!--		});-->
+<!--		//监听提交-->
+<!--		form.on('submit(webform)', function (data) {-->
+<!--			let callback = function (e) {-->
+<!--				layer.msg(e.msg);-->
+<!--				if (e.code == 0) {-->
+<!--					let checkCallback = function (e) {-->
+<!--						layer.msg(e.msg);-->
+<!--						if (e.code == 0) {-->
+<!--							tool.sideClose(1000);				-->
+<!--						}-->
+<!--					}-->
+<!--					data.field.check_name = 'quote';-->
+<!--					data.field.action_id = e.data.return_id;-->
+<!--					oaCheck.submit(data.field,checkCallback);-->
+<!--				}-->
+<!--			}-->
+<!--			let clickbtn = $(this);-->
+<!--			tool.post("/finance/quote/add", data.field, callback,clickbtn);-->
+<!--			return false;-->
+<!--		});-->
+<!--	}-->
+<!--</script>-->
+<!--{/block}-->
+<!--&lt;!&ndash; /脚本 &ndash;&gt;-->
+
+
+
+{extend name="../../base/view/common/base" /}
+<!-- 主体 -->
+{block name="body"}
+<form class="layui-form p-page">
+    <h3 class="pb-3">新增报价申请</h3>
+    <table class="layui-table layui-table-form">
+        <tr>
+            <td class="layui-td-gray">报价编号<font>*</font></td>
+            <td>
+                <input type="text" class="layui-input" name="quote_code" placeholder="自动生成"  lay-verify="required" value="{:get_quotecode('Q')}">
+            </td>
+            <td class="layui-td-gray">客户名称<font>*</font></td>
+            <td>
+                <input type="text" class="layui-input customer-picker" name="customer_name" lay-verify="required" lay-reqText="请选择客户" placeholder="请选择客户" readonly>
+                <input type="hidden" name="customer_id" value="0">
+            </td>
+            <td class="layui-td-gray">项目名称</td>
+            <td colspan="4">
+                <input type="text" class="layui-input" name="project_name" placeholder="请输入项目名称">
+            </td>
+        </tr>
+
+        <tr>
+            <td class="layui-td-gray">产品明细</td>
+            <td colspan="5">
+                <table class="layui-table" id="product-table">
+                    <thead>
+                    <tr>
+                        <th>产品类型</th>
+<!--                        <th>产品名称</th>-->
+                        <th>冷却方式</th>
+                        <th>电堆类型</th>
+                        <th class="head_polar_metrials_and_system_type">极板材料/系统类型</th>
+<!--                        <th class="head_system_type" style="display: none">系统类型</th>-->
+                        <th>功率</th>
+<!--                        <th>产品型号</th>-->
+                        <th>订货数量</th>
+                        <th>单位</th>
+                        <th>单价</th>
+                        <th>总价</th>
+                        <th>备注</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="product-tbody">
+
+                    <tr>
+                        <td>
+                            <select type="text" name="product_type[]" class="layui-select" placeholder="产品类型" lay-filter="productType">
+                                <option value="">请选择</option>
+                                <option value="电堆">电堆</option>
+                                <option value="系统">系统</option>
+                            </select>
+                        </td>
+<!--                        <td>-->
+                            <!--                <select name="product_name[]" class="layui-select">-->
+                            <!--                    <option value="">请选择</option>-->
+                            <!--                    <option value="风冷系统">风冷系统</option>-->
+                            <!--                    <option value="水冷系统">水冷系统</option>-->
+                            <!--                </select>-->
+<!--                            <input type="text" name="product_name[]" class="layui-input" placeholder="产品名称">-->
+<!--                        </td>-->
+                        <td>
+                            <select name="cooling_method[]" lay-filter="cooling_method" id="cooling_method">
+                                <option value="">请选择</option>
+                                    <option value="水冷" data-fulltext="水冷">水冷</option>
+                                    <option value="风冷-开放式" data-fulltext="风冷">风冷</option>
+                            </select>
+
+                        </td>
+                        <td>
+                            <select type="text" name="stack_type[]" class="layui-input layui-disabled" placeholder="电堆类型" disabled>
+                                <option value="">（自动判断）</option>
+                                <!--                                    <option value="开放式" data-fulltext="开放式">开放式</option>-->
+                                <!--                                    <option value="封闭式" data-fulltext="封闭式">封闭式</option>-->
+                            </select>
+                        </td>
+                        <td >
+                        <select type="text" name="polar_metrials_and_system_type[]" class="layui-select  layui-disabled" placeholder="极板材料/系统类型" disabled>
+                            <option value="">（自动判断）</option>
+                            <option value="石墨极板">石墨极板</option>
+                            <option value="金属极板">金属极板</option>
+                        </select>
+                        </td>
+                        <td style="display: none">
+<!--                        <select type="text" name="system_type[]" class="layui-select" placeholder="系统类型">-->
+<!--                            <option>发电系统</option>-->
+<!--                            <option>动力系统</option>-->
+<!--                        </select>-->
+                        </td>
+
+                        <td>
+                        <input type="text" name="power_rate[]" class="layui-select" placeholder="例如（100W/1kW/1.5kW）">
+<!--                            <option value="">请选择</option>-->
+<!--                            <option value="100">100W</option>-->
+<!--                            <option value="150">150W</option>-->
+<!--                            <option value="200">200W</option>-->
+<!--                        </select>-->
+                        </td>
+<!--                        <td>-->
+                            <!--                <select name="product_model[]" class="layui-select">-->
+                            <!--                    <option value="">请选择</option>-->
+                            <!--                    <option value="型号1">型号1</option>-->
+                            <!--                    <option value="型号2">型号2</option>-->
+                            <!--                </select>-->
+<!--                            <input type="text" name="product_model[]" class="layui-input" placeholder="产品型号">-->
+<!--                        </td>-->
+                        <td><input type="number" name="quantity[]" class="layui-input" placeholder="数量"></td>
+                        <td>
+                            <select name="unit[]" class="layui-select">
+                                <option value="">请选择</option>
+                                <option value="台">台</option>
+                                <option value="只">只</option>
+                                <option value="个">个</option>
+                                <option value="盒">盒</option>
+                                <option value="箱">箱</option>
+                                <option value="件">件</option>
+                            </select>
+                        </td>
+                        <td><input type="number" name="price[]" class="layui-input" placeholder="单价"></td>
+                        <td><input type="number" name="total[]" class="layui-input" placeholder="(自动计算)" readonly></td>
+                        <td><input type="text" name="remark[]" class="layui-input" placeholder="备注"></td>
+                        <td><button type="button" class="layui-btn layui-btn-danger layui-btn-xs del-row" style="visibility: hidden">删除</button></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <button type="button" class="layui-btn layui-btn-sm" id="add-row">新增一行</button>
+            </td>
+        </tr>
+
+        <tr>
+            <td class="layui-td-gray">税率<font>*</font></td>
+            <td>
+                <select name="tax_rate" lay-verify="required" lay-filter="tax_rate">
+                    <option value="0.13">13%</option>
+                    <option value="0.09">9%</option>
+                    <option value="0.06">6%</option>
+                    <option value="0">免税</option>
+                </select>
+            </td>
+            <td class="layui-td-gray">付款方式</td>
+            <td colspan="3">
+                <input type="text" class="layui-input" name="payment_terms" placeholder="例如：30%预付款，70%验收后">
+            </td>
+        </tr>
+        <tr>
+            <td class="layui-td-gray">总金额（不含税）<font>*</font></td>
+            <td>
+                <input type="text" class="layui-input" name="amount_total_without_tax" lay-verify="required|number" placeholder="（自动生成）" lay-reqText="" readonly>
+            </td>
+            <td class="layui-td-gray" >总金额（含税）</td>
+            <td colspan="3">
+                <input type="text" class="layui-input" name="amount_total_with_tax" lay-verify="number" placeholder="（自动生成）" readonly>
+            </td>
+<!--            <td class="layui-td-gray">利润</td>-->
+<!--            <td>-->
+<!--                <input type="text" class="layui-input" name="profit“ lay-verify="number" placeholder="（自动生成）" readonly>-->
+<!--            </td>-->
+<!--            <td class="layui-td-gray">利润率</td>-->
+<!--            <td>-->
+<!--                <input type="text" class="layui-input" name="profit_rate" readonly>-->
+<!--            </td>-->
+        </tr>
+        <tr>
+            <td class="layui-td-gray">关联合同</td>
+            <td colspan="5">
+                <input type="text" class="layui-input picker-oa" data-types="contract" name="contract_name" placeholder="请选择需要关联的合同" readonly>
+                <input type="hidden" name="contract_id" value="0">
+            </td>
+        </tr>
+        <tr>
+            <td class="layui-td-gray">关联项目</td>
+            <td colspan="5">
+                <input type="text" class="layui-input picker-oa" data-types="project" name="related_project" placeholder="请选择需要关联的项目" readonly>
+                <input type="hidden" name="project_id" value="0">
+            </td>
+        </tr>
+        <tr>
+            <td class="layui-td-gray">附件</td>
+            <td colspan="5">
+                <button type="button" class="layui-btn layui-btn-xs" id="uploadBtn"><i class="layui-icon"></i> 上传附件</button>
+                <div class="layui-row mt-2" id="uploadBox">
+                    <input type="hidden" data-type="file" name="file_ids" value="">
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="layui-td-gray">备注信息</td>
+            <td colspan="5">
+                <textarea name="remark" placeholder="请输入备注信息" class="layui-textarea"></textarea>
+            </td>
+        </tr>
+    </table>
+    <div id="checkBox" data-status="0" data-id="0" data-checkflowid="0" class="pt-3"></div>
+    <div class="pt-4">
+        <button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="webform">立即提交</button>
+        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+    </div>
+</form>
+{/block}
+
+<!-- 脚本 -->
+{block name="script"}
+<script>
+    var moduleInit = ['tool','oaPicker','oaCheck','uploadPlus'];
+    function gouguInit() {
+        var form = layui.form, tool = layui.tool, oaPicker = layui.oaPicker, oaCheck = layui.oaCheck, uploadPlus = layui.uploadPlus;
+
+        // 客户选择
+        $('.customer-picker').on('click', function(){
+            oaPicker.picker('customer', 1, function(data){
+                if(data.length){
+                    $('[name="customer_name"]').val(data[0].name);
+                    $('[name="customer_id"]').val(data[0].id);
+                }
+            });
+        });
+
+        // 附件上传
+        var attachment = new uploadPlus();
+
+        // 审批初始化
+        oaCheck.init({
+            check_name:'quote',
+            check_btn:0
+        });
+
+        // 利润(率)计算
+        // $('[name="amount_total"], [name="cost_total"]').on('input', function(){
+        //     var total = parseFloat($('[name="amount_total"]').val()) || 0;
+        //     var cost = parseFloat($('[name="cost_total"]').val()) || 0;
+        //     if(cost > 0){
+        //         var rate = ((total - cost) / cost * 100).toFixed(2);
+        //         $('[name="profit"]').val(total - cost);
+        //         // $('[name="profit_rate"]').val(rate + '%');
+        //         $('[name="profit_rate"]').val(rate + '%');
+        //     }else{
+        //         $('[name="profit_rate"]').val('');
+        //     }
+        // });
+
+        // 提交表单
+        form.on('submit(webform)', function (data) {
+            // 处理 profit_rate 字段，将前面带百分比的值转为小数 0.3333
+            // if (data.field.profit_rate && data.field.profit_rate.includes('%')) {
+            //     const raw = parseFloat(data.field.profit_rate.replace('%', ''));  // 得到 33.33
+            //     if (!isNaN(raw)) {
+            //         data.field.profit_rate = (raw / 100).toFixed(4);  // 转为 0.3333，保留 4 位小数
+            //     } else {
+            //         data.field.profit_rate = 0;
+            //     }
+            // }
+            function restructureFormData(rawData) {
+                const result = {};
+                const productDetail = [];
+
+                for (const key in rawData) {
+                    const match = key.match(/^(\w+)\[(\d+)\]$/);
+                    if (match) {
+                        const field = match[1];
+                        const index = parseInt(match[2]);
+
+                        if (!productDetail[index]) productDetail[index] = {};
+                        productDetail[index][field] = rawData[key];
+                    } else {
+                        result[key] = rawData[key];
+                    }
+                }
+
+                // 类型转换（可选）
+                for (const item of productDetail) {
+                    item.quantity = parseFloat(item.quantity) || 0;
+                    item.price = parseFloat(item.price) || 0;
+                    item.total = parseFloat(item.total) || 0;
+                }
+
+                result.product_detail = productDetail;
+
+                return result;
+            }
+
+
+            let callback = function (e) {
+                layer.msg("callback："+e.msg);
+                console.log(restructureFormData(data.field)); // 转为字符串查看内容
+                console.log("Raw:"+data.field); // 转为字符串查看内容
+                if (e.code == 0) {
+                    let checkCallback = function (e) {
+                        layer.msg(e.msg);
+                        if (e.code == 0) {
+                            tool.sideClose(1000);
+                        }
+                        else{
+                            layer.msg(e.msg)
+                        }
+                    }
+                    data.field.check_name = 'quote';
+                    data.field.action_id = e.data.return_id;
+                    oaCheck.submit(restructureFormData(data.field), checkCallback);
+                }
+            }
+            let clickbtn = $(this);
+            tool.post("/finance/quote/add", restructureFormData(data.field), callback, clickbtn);
+            return false;
+        });
+
+        // 更新所有 select 的 fulltext 显示
+        function updateSelectedFullText() {
+            $('.layui-form-select').each(function(){
+                var $select = $(this);
+                var value = $select.find('dl dd.layui-this').attr('lay-value');
+                var $option = $select.prev('select').find(`option[value="${value}"]`);
+                var fullText = $option.attr('data-fulltext');
+                if (fullText) {
+                    $select.find('.layui-select-title input').val(fullText);
+                }
+            });
+        }
+
+        // 添加一行
+        $('#add-row').on('click', function () {
+            var newRow = `
+        <tr>
+         <td>
+                            <select type="text" name="product_type[]" class="layui-select" placeholder="产品类型" lay-filter="productType">
+                                <option value="">请选择</option>
+                                <option value="电堆">电堆</option>
+                                <option value="系统">系统</option>
+                            </select>
+                        </td>
+<!--            <td>-->
+<!--                <select name="product_name[]" class="layui-select">-->
+<!--                    <option value="">请选择</option>-->
+<!--                    <option value="风冷系统">风冷系统</option>-->
+<!--                    <option value="水冷系统">水冷系统</option>-->
+<!--                </select>-->
+<!--                    <input type="text" name="product_name[]" class="layui-input" placeholder="产品名称">-->
+<!--            </td>-->
+<!--            <td>-->
+<!--&lt;!&ndash;                <select name="product_model[]" class="layui-select">&ndash;&gt;-->
+<!--&lt;!&ndash;                    <option value="">请选择</option>&ndash;&gt;-->
+<!--&lt;!&ndash;                    <option value="型号1">型号1</option>&ndash;&gt;-->
+<!--&lt;!&ndash;                    <option value="型号2">型号2</option>&ndash;&gt;-->
+<!--&lt;!&ndash;                </select>&ndash;&gt;-->
+<!--                    <input type="text" name="product_model[]" class="layui-input" placeholder="产品名称">-->
+<!--            </td>-->
+            <td>
+                      <select name="cooling_method[]" lay-filter="cooling_method" id="cooling_method">
+                                <option value="">请选择</option>
+                                    <option value="水冷" data-fulltext="水冷">水冷</option>
+                                    <option value="风冷" data-fulltext="风冷">风冷</option>
+                            </select>
+             </td>
+             <td>
+                <select type="text" name="stack_type[]" lay-filter="stack_type" class="layui-input layui-disabled" placeholder="电堆类型" readonly>
+                    <option value="">（自动判断）</option>
+<!--                                    <option value="开放式" data-fulltext="开放式">开放式</option>-->
+<!--                                    <option value="封闭式" data-fulltext="封闭式">封闭式</option>-->
+                    </select>
+              </td>
+              <td>
+             <select type="text" name="polar_metrials_and_system_type[]" class="layui-select layui-disabled" placeholder="极板材料/系统类型" disabled>
+                            <option value="">（自动判断）</option>
+                            <option value="石墨极板">石墨极板</option>
+                            <option value="金属极板">金属极板</option>
+                        </select>
+              </td>
+
+               </td>
+               <td>
+                        <input type="text" name="power_rate[]" class="layui-select" placeholder="例如（100W/1kW/1.5kW）">
+<!--                            <option value="">请选择</option>-->
+<!--                            <option value="100">100W</option>-->
+<!--                            <option value="150">150W</option>-->
+<!--                            <option value="200">200W</option>-->
+<!--                        </select>-->
+                 </td>
+<!--                 <td>-->
+<!--                        <input type="text" name="product_model[]" class="layui-input" placeholder="产品型号">-->
+<!--                  </td>-->
+            <td><input type="number" name="quantity[]" class="layui-input" placeholder="数量"></td>
+            <td>
+                <select name="unit[]" class="layui-select">
+                    <option value="">请选择</option>
+                    <option value="台">台</option>
+                    <option value="只">只</option>
+                    <option value="个">个</option>
+                    <option value="盒">盒</option>
+                    <option value="箱">箱</option>
+                    <option value="件">件</option>
+                </select>
+            </td>
+            <td><input type="number" name="price[]" class="layui-input" placeholder="单价"></td>
+            <td><input type="number" name="total[]" class="layui-input" placeholder="(自动计算)" readonly></td>
+            <td><input type="text" name="remark[]" class="layui-input" placeholder="备注"></td>
+            <td><button type="button" class="layui-btn layui-btn-danger layui-btn-xs del-row">删除</button></td>
+        </tr>`;
+            $('#product-tbody').append(newRow);
+            form.render('select'); // 重新渲染 select
+            // 渲染后实时更新 fulltext 显示
+            // updateSelectedFullText();
+
+        });
+
+
+        // 监听 select[name="product_type[]"]
+        // form.on('select(productType)', function (data) {
+        //     var selectedValue = data.value;
+        //
+        //     if (selectedValue === '电堆') {
+        //         // 隐藏系统类型列（表头和对应列）
+        //         // $('.head_system_type').hide();
+        //         $('[name="system_type[]"]').closest('td,th').hide();
+        //
+        //         // 显示极板材料列
+        //         $('.head_polar_metrials').show();
+        //         $('[name="polar_metrial[]"]').closest('td,th').show();
+        //     } else if (selectedValue === '系统') {
+        //         // 隐藏极板材料列
+        //         // $('.head_polar_metrials').hide();
+        //         $('[name="polar_metrial[]"]').closest('td,th').hide();
+        //
+        //         // 显示系统类型列
+        //         $('.head_system_type').show();
+        //         $('[name="system_type[]"]').closest('td,th').show();
+        //     } else {
+        //         // 如果选择了其他或空，全部显示
+        //         $('.head_system_type, .head_polar_metrials').show();
+        //         $('[name="system_type"], [name="polar_metrial[]"]').closest('td,th').show();
+        //     }
+        // });
+        form.on('select(productType)', function (data) {
+            var selectedValue = data.value;
+
+            // 获取当前行（table中的tr）
+            var $tr = $(data.elem).closest('tr');
+
+            // 获取同一行的另一个 select（极板材料/系统类型）
+            var $targetSelect = $tr.find('select[name="polar_metrials_and_system_type[]"]');
+            var $stacktypeSelect = $tr.find('select[name="stack_type[]"]');
+            // var $polarSelect = $tr.find('select[name="polar_metrials_and_system_type[]"]');
+            // var $collingtargetSelect = $tr.find('select[name="cooling_method[]"]');
+
+            if (selectedValue === '电堆') {
+                // 隐藏系统类型列（表头和对应列）
+                $('[name="system_type[]"]').closest('td,th').hide();
+
+                // 显示极板材料列
+                $('.head_polar_metrials').show();
+                $('[name="polar_metrial[]"]').closest('td,th').show();
+
+                // 设置极板选项
+                $targetSelect.html(`
+        <option value="">请选择</option>
+        <option value="石墨极板">石墨极板</option>
+        <option value="金属极板">金属极板</option>
+      `);
+
+                // $collingtargetSelect.html(`<option value="">请选择</option>
+                //                 <optgroup label="水冷">
+                //                     <option value="水冷" data-fulltext="水冷">水冷</option>
+                //                 </optgroup>
+                //                 <optgroup label="风冷">
+                //                     <option value="风冷-开放式" data-fulltext="风冷-开放式">开放式</option>
+                //                     <option value="风冷-封闭式" data-fulltext="风冷-封闭式">封闭式</option>
+                //                 </optgroup>`)
+                $targetSelect.prop('disabled', false);
+                form.render();
+
+            } else if (selectedValue === '系统') {
+
+                // 隐藏极板材料列
+                // $('[name="polar_metrial[]"]').closest('td,th').hide();
+
+                // 显示系统类型列
+                // $('.head_system_type').show();
+                // $('[name="system_type[]"]').closest('td,th').show();
+
+                // 设置系统选项
+                $targetSelect.html(`
+        <option value="">请选择</option>
+        <option value="发电系统">发电系统</option>
+        <option value="动力系统">动力系统</option>
+      `);
+
+                // $collingtargetSelect.html(`<option value="">请选择</option>
+                //                 <optgroup label="水冷">
+                //                     <option value="水冷" data-fulltext="水冷">水冷</option>
+                //                 </optgroup>
+                //                 <optgroup label="风冷">
+                //                     <option value="风冷-开放式" data-fulltext="风冷-开放式">开放式</option>
+                //                     <option value="风冷-封闭式" data-fulltext="风冷-封闭式">封闭式</option>
+                //                 </optgroup>`)
+
+                $targetSelect.prop('disabled', false);
+                form.render();
+            }
+            else {
+                // 显示所有列
+                // $('.head_system_type, .head_polar_metrials').show();
+                // $('[name="system_type[]"], [name="polar_metrial[]"]').closest('td,th').show();
+
+                // 清空下拉框
+                // $targetSelect.html(`<option value="">请选择</option>`);
+                $targetSelect.html(`<option value="">（自动判断）</option>`)
+                // 设置为禁用
+                $targetSelect.prop('disabled', true);
+                console.log($targetSelect.prop('disabled'))
+                // 重新渲染 layui 的 select，让禁用生效
+                form.render('select');
+
+                // $collingtargetSelect.html(`<option value="">请选择</option>`);
+
+            }
+
+                $tr.find('select').each(function () {
+                    var name = $(this).attr('name');
+                    var value = $(this).val();  // 获取当前 select 的值
+                    console.log('product_type[] value:', value);
+                    // 下面补充要获取product_type[]的select的value值
+                    // 如果是 product_type[]，获取值并跳过后续操作
+                    if (name === 'product_type[]' && value === "") {
+                        // console.log('product_type[] value:', value); // 你可以用这个值做后续操作
+                        $stacktypeSelect.html(`<option>（自动判断）</option>`);
+                        $(this).prop('disabled', false); // 如果之前被禁用了，也恢复可用
+                        // return; // 跳过其余处理
+                    }
+                    //补充完毕
+                    if (name !== 'product_type[]') {
+                        if (name === 'stack_type[]'){
+                            // $(this).val('（自动判断）');
+                            $stacktypeSelect.html(`<option>（自动判断）</option>`);
+                            $(this).prop('disabled', true); // 如果之前被禁用了，也恢复可用
+                        }
+                        // else if (name === 'polar_metrials_and_system_type[]' ){
+                        //     $targetSelect.html(`<option>（自动判断）</option>`);
+                        // }
+                        else{
+                            $(this).val(''); // 重置为第一个 value 为空的 option
+                            // $(this).prop('disabled', false); // 如果之前被禁用了，也恢复可用
+                        }
+
+                    }
+                });
+            // 刷新 Layui 渲染的 select
+            form.render('select');
+            // 渲染后实时更新 fulltext 显示
+            // updateSelectedFullText();
+        });
+
+
+        // 删除一行
+        $(document).on('click', '.del-row', function () {
+            $(this).closest('tr').remove();
+            calculateAmountTotal(); // ✅ 删除时重新汇总
+        });
+
+        // 自动计算总价、含税价
+        $(document).on('input', 'input[name="quantity[]"], input[name="price[]"]', function () {
+            var $tr = $(this).closest('tr'); // 当前行
+            var quantity = parseFloat($tr.find('input[name="quantity[]"]').val()) || 0;
+            var price = parseFloat($tr.find('input[name="price[]"]').val()) || 0;
+            var total = (quantity * price).toFixed(2); // 保留两位小数
+            $tr.find('input[name="total[]"]').val(total);
+            calculateAmountTotal(); // ✅ 自动计算汇总
+        });
+
+        $(document).on('click', '.layui-form-select', function () {
+            // 获取对应的原始 <select> 元素
+            var $select = $(this).prev('select');
+            var selectName = $select.attr('name');
+            var value = $select.val();  // ✅ 正确获取选中值
+            console.log('当前值:', value);
+
+            // 判断是否被禁用
+            if ($select.prop('disabled')) {
+                if (selectName === 'stack_type[]' && value !== '/') {
+                    // 弹出提示
+                    layer.msg('请选择冷却方式', { icon: 2,anim: 6 });
+                }else if(selectName === 'polar_metrials_and_system_type[]' && value !== '/'){
+                    layer.msg('请选择产品类型', { icon: 2,anim: 6 });
+                }else{
+                    layer.msg('该项无需填写', { icon: 6,anim: 0 });
+                }
+
+                return false; // 阻止下拉框展开
+            }
+        });
+
+
+
+
+
+        // 🔁 监听税率下拉框变化
+        layui.use(['form'], function () {
+            var form = layui.form;
+
+            // Layui 风格监听 select
+            form.on('select(tax_rate)', function (data) {
+                calculateAmountTotal();
+            });
+        });
+
+        //监听select
+        layui.use(['form', 'jquery'], function(){
+            var form = layui.form;
+            var $ = layui.jquery;
+
+
+            form.render();  // ⚠️ 一定要加，确保 select 被 Layui 渲染
+
+        //     form.on('select(cooling_method)', function(data){
+        //     var selectedElem = data.elem[data.elem.selectedIndex];
+        //     var fullText = selectedElem.getAttribute('data-fulltext');
+        //
+        //     // 选中的那一项显示值
+        //     var $inputElem = $(data.othis).find('.layui-select-title input');
+        //     if (fullText) {
+        //     $inputElem.val(fullText);
+        //     }
+        // });
+
+            form.on('select(cooling_method)', function(data) {
+                var selectedValue = data.value;
+                // var $coolingMethod = $('#cooling_method');
+                // 获取当前行（table中的tr）
+                var $tr = $(data.elem).closest('tr');
+                var $stackType = $tr.find('select[name="stack_type[]"]');
+
+                if (selectedValue === '水冷') {
+                    // 清空选项并添加“无需填写”
+                    $stackType.empty();
+                    $stackType.append('<option value="/">（无需填写）</option>');
+
+                    // 设置为禁用
+                    $stackType.prop('disabled', true);
+                } else if (selectedValue == ""){
+                    $stackType.empty();
+                    // 设置为禁用
+                    $stackType.prop('disabled', true);
+                    $stackType.append('<option value="/">（自动判断）</option>');
+                }
+                else {
+                    // 恢复默认选项
+                    $stackType.empty();
+                    // $stackType.append('<option value="">请选择</option>');
+                    $stackType.append('<option value="开放式">开放式</option>');
+                    $stackType.append('<option value="封闭式">封闭式</option>');
+
+
+                    // 启用选择框
+                    $stackType.prop('disabled', false);
+                }
+
+                // 重新渲染 select 以生效 layui 样式
+                form.render('select');
+            });
+
+
+
+
+        });
+
+
+
+        // 汇总所有产品的总价
+        function calculateAmountTotal() {
+            var total = 0;
+            $('input[name="total[]"]').each(function () {
+                var val = parseFloat($(this).val()) || 0;
+                total += val;
+            });
+            $('input[name="amount_total_without_tax"]').val(total.toFixed(2));
+            // 计算含税价格
+            var taxRate = parseFloat($('select[name="tax_rate"]').val()) || 0;
+            var totalWithTax = total * (1 + taxRate);
+            $('input[name="amount_total_with_tax"]').val(totalWithTax.toFixed(2));
+        }
+
+    }
+</script>
+
+{/block}

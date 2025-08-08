@@ -104,6 +104,7 @@ class Invoice extends BaseController
             return table_assign(0, '', $list);
         }
         else{
+            echo "<script>alert(-1)</script>";
             return view();
         }
     }
@@ -169,6 +170,7 @@ class Invoice extends BaseController
 			$detail['subject'] = Db::name('Enterprise')->where(['id' =>$detail['invoice_subject']])->value('title');
 			$other_file_array = Db::name('File')->where('id','in',$detail['other_file_ids'])->select();
 			$detail['other_file_array'] = $other_file_array;
+//            echo "这是 Quote 控制器".$other_file_array; exit;
 			if($detail['open_status']>0){
 				$detail['open_admin_name'] = Db::name('Admin')->where('id','=',$detail['open_admin_id'])->value('name');
 			}

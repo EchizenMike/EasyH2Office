@@ -97,7 +97,14 @@ layui.define(['tool'], function (exports) {
 			url:'/project/api/get_task',
 			area: ['800px', '568px'],
 			cols:[{field:'id',width:90,title:'序号',align:'center'},{ field:'title',title:'任务主题'},{field:'project',width:240,title:'关联项目'}]
-		}
+		},
+        'quote':{
+            title:'选择报价单',
+            url:'/contract/api/get_quote',
+            area: ['800px', '568px'],
+            cols:[{ field: 'quote_code',width:160,title:'报价编号',align:'center'},{field:'project_name',title:'项目名称',align:'center'},{ field:'customer_name',title:'关联客户',width: 240,align:'center'}]
+        }
+
 	}
 
 	let select_ids=[];select_names=[];select_array=[];
@@ -320,109 +327,145 @@ layui.define(['tool'], function (exports) {
 					}
 			})	
 		},
-		picker:function(types,type,callback,map){
-			let pickerIndex = new Date().getTime();
-			let pickerTable,options;
-			const opts={
-				"title":"选择",
-				"url": "",
-				"ids":"",
-				"titles":"",
-				"where":map,
-				"area": ['600px', '568px'],
-				"cols":[{field: 'id',width: 80,title:'序号',align:'center'},{field:'title',title:'名称'}],
-				"searchbar":'<form class="layui-form pb-2"><div class="layui-input-inline" style="width:420px; margin-right:5px;"><input type="text" name="keywords" placeholder="请输入关键字" class="layui-input" autocomplete="off" /></div><button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="picker">提交搜索</button><button type="reset" class="layui-btn layui-btn-reset" lay-filter="picker-reset">清空</button></form>',
-				"page":true,
-				"type":type,//1单选择,2多选
-				"btnno":true,
-				"add": "",//新增url
-				"callback": callback
-			};
-			if(Object.prototype.toString.call(types) === '[object Object]'){
-				options = types;
-			}
-			else{
-				options = dataPicker[types];
-			}
-			let settings = $.extend({},opts,options);
-			//console.log(settings);
-			let btn = ['确定选择'];
-			if(settings.btnno==true){
-				btn = ['确定选择','清空已选'];
-			}
-			if(settings.add!=''){
-				btn = ['确定选择','清空已选','新增'];
-			}
-			$(parent.$('.express-close')).addClass('parent-colse');
-			layer.open({
-				title: settings.title,
-				area: settings.area,
-				type: 1,
-				skin: 'gougu-picker',
-				content: '<div class="picker-table" id="pickerBox'+pickerIndex+'">'+settings.searchbar+'<div id="pickerTable'+pickerIndex+'"></div></div>',
-				end: function(){
-					$(parent.$('.express-close')).removeClass('parent-colse');
-				},
-				success: function () {
-					let cols=JSON.parse(JSON.stringify(settings.cols));
-					if(settings.type==1){
-						cols.splice(0, 0, {type: 'radio', title: '选择'});
-					}
-					if(settings.type==2){
-						cols.splice(0, 0, {type: 'checkbox', title: '选择'});
-					}
-					pickerTable = table.render({
-						elem: '#pickerTable'+pickerIndex,
-						url: settings.url,
-						where:settings.where,
-						page: settings.page, //开启分页
-						limit: 10,
-						height: '407',
-						cols: [cols]
-					});
-					//搜索提交
-					form.on('submit(picker)', function (data) {
-						let maps = $.extend({}, settings.where, data.field);
-						pickerTable.reload({where:maps,page:{curr: 1}});
-						return false;
-					});
-					//重置搜索提交
-					$('#pickerBox'+pickerIndex).on('click', '[lay-filter="picker-reset"]', function () {
-						let prev = $(this).prev();
-						if (typeof(prev) != "undefined" ) {
-							setTimeout(function () {
-								prev.click();
-							}, 10)
-						}
-					});	
-				},
-				btn: btn,
-				btnAlign: 'c',
-				btn1: function (idx) {
-					var checkStatus = table.checkStatus(pickerTable.config.id);
-					var data = checkStatus.data;
-					if (data.length > 0) {
-						callback(data);
-						layer.close(idx);
-					}
-					else {
-						layer.msg('请先选择内容');
-						return false;
-					}
-				},
-				btn2: function (idx) {
-					callback([{'id':0,'title':'','name':''}]);
-					layer.close(idx);
-				},
-				btn3: function (idx) {
-					tool.side(settings.add);
-					layer.close(idx);
-				}
-			})
-		}
-	}
-	
-	//选择员工弹窗		
+		// picker:function(types,type,callback,map){
+		// 	let pickerIndex = new Date().getTime();
+		// 	let pickerTable,options;
+		// 	const opts={
+		// 		"title":"选择",
+		// 		"url": "",
+		// 		"ids":"",
+		// 		"titles":"",
+		// 		"where":map,
+		// 		"area": ['600px', '568px'],
+		// 		"cols":[{field: 'id',width: 80,title:'序号',align:'center'},{field:'title',title:'名称'}],
+		// 		"searchbar":'<form class="layui-form pb-2"><div class="layui-input-inline" style="width:420px; margin-right:5px;"><input type="text" name="keywords" placeholder="请输入关键字" class="layui-input" autocomplete="off" /></div><button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="picker">提交搜索</button><button type="reset" class="layui-btn layui-btn-reset" lay-filter="picker-reset">清空</button></form>',
+		// 		"page":true,
+		// 		"type":type,//1单选择,2多选
+		// 		"btnno":true,
+		// 		"add": "",//新增url
+		// 		"callback": callback
+		// 	};
+		// 	if(Object.prototype.toString.call(types) === '[object Object]'){
+		// 		options = types;
+		// 	}
+		// 	else{
+		// 		options = dataPicker[types];
+		// 	}
+		// 	let settings = $.extend({},opts,options);
+		// 	//console.log(settings);
+		// 	let btn = ['确定选择'];
+		// 	if(settings.btnno==true){
+		// 		btn = ['确定选择','清空已选'];
+		// 	}
+		// 	if(settings.add!=''){
+		// 		btn = ['确定选择','清空已选','新增'];
+		// 	}
+		// 	$(parent.$('.express-close')).addClass('parent-colse');
+		// 	// 父页面显示
+        //     layer.open({
+		// 		title: settings.title,
+		// 		area: settings.area,
+		// 		type: 1,
+		// 		skin: 'gougu-picker',
+		// 		content: '<div class="picker-table" id="pickerBox'+pickerIndex+'">'+settings.searchbar+'<div id="pickerTable'+pickerIndex+'"></div></div>',
+		// 		end: function(){
+		// 			$(parent.$('.express-close')).removeClass('parent-colse');
+		// 		},
+		// 		success: function () {
+		// 			let cols=JSON.parse(JSON.stringify(settings.cols));
+		// 			if(settings.type==1){
+		// 				cols.splice(0, 0, {type: 'radio', title: '选择'});
+		// 			}
+		// 			if(settings.type==2){
+		// 				cols.splice(0, 0, {type: 'checkbox', title: '选择'});
+		// 			}
+		// 			pickerTable = table.render({
+		// 				elem: '#pickerTable'+pickerIndex,
+		// 				url: settings.url,
+		// 				where:settings.where,
+		// 				page: settings.page, //开启分页
+		// 				limit: 10,
+		// 				height: '407',
+		// 				cols: [cols]
+		// 			});
+		// 			//搜索提交
+		// 			form.on('submit(picker)', function (data) {
+		// 				let maps = $.extend({}, settings.where, data.field);
+		// 				pickerTable.reload({where:maps,page:{curr: 1}});
+		// 				return false;
+		// 			});
+		// 			//重置搜索提交
+		// 			$('#pickerBox'+pickerIndex).on('click', '[lay-filter="picker-reset"]', function () {
+		// 				let prev = $(this).prev();
+		// 				if (typeof(prev) != "undefined" ) {
+		// 					setTimeout(function () {
+		// 						prev.click();
+		// 					}, 10)
+		// 				}
+		// 			});
+		// 		},
+		// 		btn: btn,
+		// 		btnAlign: 'c',
+		// 		btn1: function (idx) {
+		// 			var checkStatus = table.checkStatus(pickerTable.config.id);
+		// 			var data = checkStatus.data;
+		// 			if (data.length > 0) {
+		// 				callback(data);
+		// 				layer.close(idx);
+		// 			}
+		// 			else {
+		// 				layer.msg('请先选择内容');
+		// 				return false;
+		// 			}
+		// 		},
+		// 		btn2: function (idx) {
+		// 			callback([{'id':0,'title':'','name':''}]);
+		// 			layer.close(idx);
+		// 		},
+		// 		btn3: function (idx) {
+		// 			tool.side(settings.add);
+		// 			layer.close(idx);
+		// 		}
+		// 	})
+		// }
+        picker: function(types, type, callback, map) {
+            let options;
+            const opts = {
+                "title": "选择",
+                "url": "",
+                "ids": "",
+                "titles": "",
+                "where": map,
+                "area": ['600px', '568px'],
+                "cols": [{field: 'id', width: 80, title: '序号', align: 'center'}, {field: 'title', title: '名称'}],
+                "searchbar": '<form class="layui-form pb-2"><div class="layui-input-inline" style="width:420px; margin-right:5px;"><input type="text" name="keywords" placeholder="请输入关键字" class="layui-input" autocomplete="off" /></div><button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="picker">提交搜索</button><button type="reset" class="layui-btn layui-btn-reset" lay-filter="picker-reset">清空</button></form>',
+                "page": true,
+                "type": type,
+                "btnno": true,
+                "add": "",
+                "callback": callback
+            };
+
+            if (Object.prototype.toString.call(types) === '[object Object]') {
+                options = types;
+            } else {
+                options = dataPicker[types];
+            }
+
+            const settings = $.extend({}, opts, options);
+
+            // 💡 改成调用最外层页面的方法
+            if (parent.parent.openGlobalPicker) {
+                parent.parent.openGlobalPicker(settings);  // 交给最外层执行弹窗逻辑
+            } else {
+                console.error('最外层页面未定义 openGlobalPicker 方法');
+            }
+        }
+    }
+
+
+
+	//选择员工弹窗
 	$('body').on('click','.picker-admin',function () {
 		let that = $(this);
 		let type = that.data('type');
@@ -486,7 +529,7 @@ layui.define(['tool'], function (exports) {
 		let type = that.data('type');
 		let where = that.data('where');
 		if (typeof(types) == "undefined" || types == '') {
-			layer.msg('请设置【picker】的类型');
+			layer.msg('请设置【picker】的类型'+types);
 			return false;
 		}
 		if (typeof(type) == "undefined" || type == '') {
@@ -515,4 +558,86 @@ layui.define(['tool'], function (exports) {
 	
 	//输出接口
 	exports('oaPicker', obj);
-});   
+});
+
+window.openGlobalPicker = function(settings) {
+    let pickerIndex = new Date().getTime();
+    let pickerTable;
+    let btn = ['确定选择'];
+    if (settings.btnno == true) {
+        btn = ['确定选择', '清空已选'];
+    }
+    if (settings.add != '') {
+        btn = ['确定选择', '清空已选', '新增'];
+    }
+
+    layer.open({
+        title: settings.title,
+        area: settings.area,
+        type: 1,
+        skin: 'gougu-picker',
+        content: '<div class="picker-table" id="pickerBox'+pickerIndex+'">'+settings.searchbar+'<div id="pickerTable'+pickerIndex+'"></div></div>',
+        success: function () {
+            let cols = JSON.parse(JSON.stringify(settings.cols));
+            if (settings.type == 1) {
+                cols.splice(0, 0, {type: 'radio', title: '选择'});
+            }
+            if (settings.type == 2) {
+                cols.splice(0, 0, {type: 'checkbox', title: '选择'});
+            }
+
+            layui.use(['table', 'form'], function () {
+                const table = layui.table;
+                const form = layui.form;
+
+                pickerTable = table.render({
+                    elem: '#pickerTable'+pickerIndex,
+                    url: settings.url,
+                    where: settings.where,
+                    page: settings.page,
+                    limit: 10,
+                    height: '407',
+                    cols: [cols]
+                });
+
+                form.on('submit(picker)', function (data) {
+                    let maps = $.extend({}, settings.where, data.field);
+                    pickerTable.reload({where: maps, page: {curr: 1}});
+                    return false;
+                });
+
+                $('#pickerBox'+pickerIndex).on('click', '[lay-filter="picker-reset"]', function () {
+                    let prev = $(this).prev();
+                    if (typeof(prev) != "undefined") {
+                        setTimeout(function () {
+                            prev.click();
+                        }, 10);
+                    }
+                });
+            });
+        },
+        btn: btn,
+        btnAlign: 'c',
+        btn1: function (idx) {
+            const checkStatus = layui.table.checkStatus(pickerTable.config.id);
+            const data = checkStatus.data;
+            if (data.length > 0) {
+                settings.callback(data);
+                layer.close(idx);
+            } else {
+                layer.msg('请先选择内容');
+                return false;
+            }
+        },
+        btn2: function (idx) {
+            settings.callback([{'id': 0, 'title': '', 'name': ''}]);
+            layer.close(idx);
+        },
+        btn3: function (idx) {
+            if (typeof tool !== 'undefined') {
+                tool.side(settings.add);
+            }
+            layer.close(idx);
+        }
+    });
+};

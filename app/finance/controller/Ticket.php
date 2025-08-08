@@ -17,7 +17,7 @@ namespace app\finance\controller;
 
 use app\base\BaseController;
 use app\finance\model\Ticket as TicketModel;
-use app\finance\validate\TicketValidate;
+use app\finance\model\validate\TicketValidate;
 use think\exception\ValidateException;
 use think\facade\Db;
 use think\facade\View;

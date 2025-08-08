@@ -226,7 +226,7 @@ layui.define([], function (exports) {
 		officeView:function (id,mode){
 			layer.open({
 				type: 2,
-				title: 'OFFICE文件查看（当前使用的是微软官方的OFFICE接口，服务器需要连接外网才能查看）',
+				title: 'OFFICE文档预览（OnlyOffice Doc）',
 				id:'officeView',
 				shadeClose: false,
 				maxmin: false, //开启最大化最小化按钮
@@ -237,7 +237,8 @@ layui.define([], function (exports) {
 				anim: 2,
 				scrollbar:false,
 				//content: '/api/office/view?id='+id+'&mode='+mode,
-				content: '/api/office/officeapps?id='+id+'&mode='+mode,
+				// content: '/api/office/officeapps?id='+id+'&mode='+mode,
+                content: '/api/office/onlyoffice?id='+id+'&mode='+mode,
 				cancel: function(index, layero, that){
 					//layer.msg('文件在后台保存中，请稍再查看或下载...', {time: 3*1000});
 				}
@@ -284,7 +285,45 @@ layui.define([], function (exports) {
 				photos: photos,
 				anim: 5 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
 			});
-		}
+		},
+        digifaxView:function (href,filename){
+        //     layer.open({
+        //         type: 2,
+        //         title: '数模文件查看器(首次预览较慢，请耐心等待!)',
+        //         id:'digifaxView',
+        //         shadeClose: false,
+        //         anim: 2,
+        //         maxmin: false, //开启最大化最小化按钮
+        //         area: ['100%', window.innerHeight+'px'],
+        //         offset: 'b',
+        //         //zIndex:2999,
+        //         resize:false,
+        //         content: "http://192.168.180.131:5000/convert?file="+filename
+        // });
+            layer.open({
+                type: 2,
+                title: '数模文件查看器(首次预览较慢，可稍后查看)',
+                id: 'digifaxView',
+                shadeClose: false,
+                anim: 2,
+                maxmin: false, // 不显示最大化最小化按钮
+                area: ['100%', window.innerHeight + 'px'],
+                offset: 'b',
+                resize: false,
+                content: "http://192.168.180.131:5000/convert?file=" + filename,
+                success: function(layero, index) {
+                    // ⚠️ 获取 iframe 并添加全屏权限
+                    const iframe = layero.find('iframe')[0];
+                    if (iframe) {
+                        iframe.setAttribute('allowfullscreen', 'true');
+                        iframe.setAttribute('webkitallowfullscreen', 'true');
+                        iframe.setAttribute('mozallowfullscreen', 'true');
+                    }
+                }
+            });
+
+        }
+
 	};
 	//切换tab
 	element.on('tab(gg-admin-tab)', function (data) {

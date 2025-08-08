@@ -27,7 +27,7 @@ class Contract extends BaseController
 	/**
      * 构造函数
      */
-	protected $model; 
+	protected $model;
     public function __construct()
     {
 		parent::__construct(); // 调用父类构造函数
@@ -257,7 +257,7 @@ class Contract extends BaseController
     */
     public function add()
     {
-		$param = get_params();	
+		$param = get_params();
         if (request()->isAjax()) {
 			if (isset($param['sign_time'])) {
                 $param['sign_time'] = strtotime($param['sign_time']);
@@ -273,7 +273,7 @@ class Contract extends BaseController
             }
 			if($param['scene'] == 'add' || $param['scene'] == 'edit'){
 				$param['content'] = serialize([]);
-				if($param['types']==2){			
+				if($param['types']==2){			 // 合同类型是 产品合同
 					$product_title_data = isset($param['product_title']) ? $param['product_title'] : '';
 					$product_id_data = isset($param['product_id']) ? $param['product_id'] : 0;
 					$product_unit_data = isset($param['product_unit']) ? $param['product_unit'] : '';
@@ -302,7 +302,7 @@ class Contract extends BaseController
 					}
 					$param['content'] = serialize($product);
 				}	
-				if($param['types']==3){			
+				if($param['types']==3){			// 合同类型为 服务合同
 					$service_title_data = isset($param['service_title']) ? $param['service_title'] : '';
 					$service_id_data = isset($param['service_id']) ? $param['service_id'] : 0;
 					$service_date_data = isset($param['service_date']) ? $param['service_date'] : '';

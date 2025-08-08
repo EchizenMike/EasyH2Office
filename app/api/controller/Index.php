@@ -53,8 +53,10 @@ class Index extends BaseController
 				'file' => 'zip,gz,7z,rar,tar',
 				'video' => 'mpg,mp4,mpeg,avi,wmv,mov,flv,m4v',
 				'audio' => 'mp3,wav,wma,flac,midi',
+                'digifax' => 'sldprt,sldasm'  // 这里添加需要添加的文件类型
 			];
-			$fileExt = $rule['image'] . ',' . $rule['doc'] . ',' . $rule['file'] . ',' . $rule['video'] . ',' . $rule['audio'];
+            // 需要修改文件类型加规则即可
+			$fileExt = $rule['image'] . ',' . $rule['doc'] . ',' . $rule['file'] . ',' . $rule['video'] . ',' . $rule['audio']. ',' . $rule['digifax'];
 			//1M=1024*1024=1048576字节
 			$file_size = get_system_config('system','upload_max_filesize');
 			if(!isset($file_size)){

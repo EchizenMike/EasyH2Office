@@ -80,6 +80,14 @@
 			<td class="layui-td-gray">合同编号<font>*</font></td>
 			<td><input type="text" name="code" value="{$codeno}" autocomplete="off" {eq name="$is_codeno" value="1"}readonly{/eq} lay-verify="required" lay-reqText="请输入合同编号" placeholder="请输入合同编号" class="layui-input"></td>
 		</tr>
+        <tr>
+            <td class="layui-td-gray">关联报价单</td>
+            <td colspan="5">
+<!--                <input type="text" class="layui-input picker-oa quote-picker" data-types="quote" name="quote" placeholder="请选择需要关联的报价单" readonly >-->
+                <input type="text" class="layui-input quote-picker" name="quote_code" placeholder="请选择需要关联的报价单" readonly >
+                <input type="hidden" name="quote" value="0">
+            </td>
+        </tr>
 		<tr>
 			<td colspan="6"><strong>签订信息</strong></td>
 		</tr>
@@ -208,6 +216,19 @@
 			}
 			oaPicker.picker(types,type,callback,map);
 		});
+
+        $('body').on('click','.quote-picker',function(){
+            let that = $(this),ids = [],titles=[],quote_code=[],contact_mobile=[],address=[],map = {},types = 'quote',type = 1;
+            let callback = function(data) {
+                // layer.msg('选择了报价单');
+                for ( var i = 0; i <data.length; i++){
+                    quote_code.push(data[i].quote_code);
+                }
+                console.log(data);
+                $('[name="quote_code"]').val(quote_code.join(','));
+            }
+            oaPicker.picker(types,type,callback,map);
+        })
 		
 		//监听提交
 		form.on('submit(webform)', function (data) {

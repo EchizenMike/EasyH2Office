@@ -38,7 +38,7 @@ return [
     // 错误显示信息,非调试模式有效
     'error_message'    => '😔错误～',
     // 显示错误信息
-    'show_error_msg'   => false,
+    'show_error_msg'   => true,
 	
 	'page_size'    => 20,//分页默认数据长度
 	
@@ -60,6 +60,6 @@ return [
 		// 找不到数据
 		406 => public_path() . 'tpl/406.html',
 		//内部服务器错误
-		500 => public_path() . 'tpl/500.html',
+//		500 => public_path() . 'tpl/500.html',
 	]
 ];

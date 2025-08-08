@@ -17,7 +17,7 @@ namespace app\finance\controller;
 
 use app\base\BaseController;
 use app\finance\model\CostCate as CostCateModel;
-use app\finance\validate\CostcateValidate;
+use app\finance\model\validate\CostcateValidate;
 use think\exception\ValidateException;
 use think\facade\Db;
 use think\facade\View;

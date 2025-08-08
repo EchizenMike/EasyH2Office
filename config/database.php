@@ -22,7 +22,8 @@ return [
             // 用户名
             'username'           =>  'root',
             // 密码
-            'password'           =>  '123456',
+//            'password'           =>  '6619b7fb42ac5bc2',
+            'password'           =>  'd3b94a5fee522fed',
             // 端口
             'hostport'           =>  '3306',
             // 数据库表前缀

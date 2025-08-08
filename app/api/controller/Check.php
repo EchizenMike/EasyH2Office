@@ -159,7 +159,8 @@ class Check extends BaseController
 						]
 					];
 					event('SendMessage',$msg);
-				}
+
+                }
 				return to_assign();
 			}
 			else{
@@ -200,7 +201,9 @@ class Check extends BaseController
 						]
 					];
 					event('SendMessage',$msg);
-				}
+				}else{
+                    return to_assign(500,"flow_cate['template_id']字段值小于0,未发送消息,当前值为： ".$flow_cate['template_id']);
+                }
 				return to_assign();
 			}
 			else{

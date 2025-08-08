@@ -12,8 +12,8 @@
 */
 
 namespace app\finance\validate;
-use think\Validate;
 use think\facade\Db;
+use think\Validate;
 
 class InvoiceValidate extends Validate
 {

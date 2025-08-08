@@ -43,6 +43,10 @@
 			<td class="layui-td-gray">合同类别</td>
 			<td>{$detail.cate_title}</td>
 		</tr>
+        <tr>
+            <td class="layui-td-gray">关联报价单</td>
+            <td colspan="3"><a href="#" id="quote_code" class="quote_code" style="color: dodgerblue">{$detail.quote_code}</a></td>
+        </tr>
 		<tr>
 			<td colspan="6"><strong>签订信息</strong></td>
 		</tr>
@@ -254,7 +258,7 @@
 	var moduleInit = ['tool','oaCheck','oaPicker','oaEdit'];
 	let checking_btn='<span class="layui-btn layui-btn-warm" data-event="stop" data-status="1">中止合同</span><span class="layui-btn layui-btn-danger" data-event="void" data-status="1">作废合同</span>';
 	function gouguInit() {
-		var tool = layui.tool,element = layui.element,oaCheck=layui.oaCheck,oaPicker=layui.oaPicker;	
+		var tool = layui.tool,element = layui.element, dropdown = layui.dropdown,oaCheck=layui.oaCheck,oaPicker=layui.oaPicker;
 		
 		element.on('tab(contract)', function(data){
 			let index = data.index;
@@ -376,8 +380,20 @@
 					layer.close(index);
 				});
 			}
-		})		
-	}
+		})
+
+        $(document).on('click', '.quote_code', function (e) {
+            // e.preventDefault();
+            var text =  $(this).text();
+            // var id = $(this).data('id');
+            // layer.msg('点击了自定义链接，ID是：'+ text);
+            const url = `/finance/quote/view?id=-1&quote_code=`+text;
+            // const url = `/finance/quote/view?id=1`;
+            console.log(url);
+            tool.side(url);
+        });
+
+    }
 </script>
 {/block}
 <!-- /脚本 -->

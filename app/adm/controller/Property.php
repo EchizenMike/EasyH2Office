@@ -17,7 +17,7 @@ namespace app\adm\controller;
 
 use app\base\BaseController;
 use app\adm\model\Property as PropertyModel;
-use app\adm\validate\PropertyCheck;
+use app\finance\model\validate\PropertyCheck;
 use think\exception\ValidateException;
 use think\facade\Db;
 use think\facade\View;

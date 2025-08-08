@@ -89,6 +89,20 @@ class Office extends BaseController
 		$path = $file['filepath'];
 		$domain = $_SERVER['HTTP_HOST'];
 		$url = "//".$domain.$path;
-        return View('',['url'=>$url]); 
+        return View('',['url'=>$url]);
+    }
+
+    // 更换office接口为OnlyOffice Doc Server
+    public function onlyoffice($id=0,$mode='edit')
+    {
+        $file = Db::name('File')->where('id',$id)->find();
+		if(empty($file)){
+			return view('../../base/view/common/filetemplate');
+		}
+		$path = $file['filepath'];
+		$domain = $_SERVER['HTTP_HOST'];
+		$url = "http://".$domain.$path;
+        echo "<script>console.log('URL: " . $url . "');</script>";
+        return View('',['url'=>$url]);
     }
 }

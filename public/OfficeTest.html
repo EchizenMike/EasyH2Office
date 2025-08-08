@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>OnlyOffice 文档预览测试</title>
+</head>
+<body>
+  <h2>OnlyOffice 预览测试</h2>
+  <div id="docEditor" style="width:100%; height:100%;"></div>
+
+  <!-- 引入 OnlyOffice JS API -->
+ <script src="http://192.168.180.128:8000/web-apps/apps/api/documents/api.js"></script>
+
+<script>
+  var docEditor = new DocsAPI.DocEditor("docEditor", {
+    width: "100%",
+    height: "880px",
+    type: "desktop",
+    documentType: "word",
+    document: {
+      fileType: "doc",
+      key: "doc-unique-id-003",
+      title: "预览测试.docx",
+      url: "http://192.168.180.128/storage/202507/j2gb8_17a305afd3afcb52b8275f36006be6c2.doc"
+    },
+    editorConfig: {
+      mode: "view"
+    }
+  });
+</script>
+
+</body>
+</html>

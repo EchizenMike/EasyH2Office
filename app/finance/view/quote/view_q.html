@@ -1,0 +1,293 @@
+{extend name="../../base/view/common/base" /}
+<!-- 主体 -->
+{block name="body"}
+<div class="layui-form p-page">
+	<h3 class="pb-3">报价详情</h3>
+	<table class="layui-table layui-table-form">
+		<tr>
+			<td class="layui-td-gray">报价编号</td>
+			<td>{$detail.quote_code}</td>
+			<td class="layui-td-gray">客户名称</td>
+            <td colspan="4">{$detail.customer_name}</td>
+<!--			<td>-->
+<!--				{eq name="$detail.invoice_type" value="1"}增值税专用发票{/eq}-->
+<!--				{eq name="$detail.invoice_type" value="2"}普通发票{/eq}-->
+<!--				{eq name="$detail.invoice_type" value="3"}专业发票{/eq}-->
+<!--			</td>-->
+<!--			<td class="layui-td-gray">项目名称</td>-->
+<!--			<td>{$detail.project_name}</td>-->
+		</tr>
+		<tr>
+<!--			<td class="layui-td-gray">成本(元)</td>-->
+<!--			<td>{$detail.cost_total}</td>-->
+			<td class="layui-td-gray">税率</td>
+			<td>{$detail.tax_rate * 100}%</td>
+			<td class="layui-td-gray">税额</td>
+            <td>{:sprintf('%.2f', $detail.amount_total_without_tax * $detail.tax_rate)}元</td>
+
+
+
+        </tr>
+		<tr class="invoice-type" {eq name="$detail.types" value="2"}style="display:none"{/eq}>
+			<td class="layui-td-gray-2">总金额<br>（不含税）</td>
+			<td>{$detail.amount_total_without_tax}元</td>
+			<td class="layui-td-gray">总金额（含税）</td>
+            <td>{$detail.amount_total_with_tax}元</td>
+<!--            <td>{$detail.amount_total - $detail.cost_total - $detail.amount_total * $detail.tax_rate | number_format=2}</td>-->
+<!--			<td class="layui-td-gray">利润率</td>-->
+<!--			<td>{$detail.profit_rate * 100}%</td>-->
+		</tr>
+<!--		<tr class="invoice-type" {eq name="$detail.types" value="2"}style="display:none"{/eq}>-->
+<!--			<td class="layui-td-gray-2">合同名称</td>-->
+<!--			<td>{$detail.contract_name}</td>-->
+<!--			<td class="layui-td-gray">地址</td>-->
+<!--			<td colspan="3">{$detail.invoice_address}</td>-->
+<!--		</tr>-->
+		{if condition="$detail.contract_id > 0"}
+		<tr>
+		<td class="layui-td-gray">关联的合同</td>
+			<td colspan="5">{$detail.contract_name|default=''}</td>
+		</tr>
+		{/if}
+		{if condition="$detail.project_id > 0"}
+		<tr>
+		<td class="layui-td-gray">关联的项目</td>
+			<td colspan="5">{$detail.project_name|default=''}</td>
+		</tr>
+		{/if}
+		{notempty name="$detail.remark"}
+		<tr>
+			<td class="layui-td-gray">备注信息</td>
+			<td colspan="5">{$detail.remark}</td>
+		</tr>
+		{/notempty}
+		{notempty name="$detail.file_ids"}
+		<tr>
+			<td class="layui-td-gray">关联附件</td>
+			<td colspan="5">
+				<div class="layui-row">
+					{volist name="$detail.file_array" id="vo"}
+					<div class="layui-col-md4" id="uploadFile{$vo.id}">{:file_card($vo,'view')}</div>
+					{/volist}
+				</div>
+			</td>
+		</tr>
+		{/notempty}
+		{if ( $detail.open_status gt 0)}
+		<tr>
+			<td class="layui-td-gray">发票号码</td>
+			<td>{$detail.code}{eq name="$detail.open_status" value="2"}<span class="yellow">『已作废』</span>{/eq}</td>
+			<td class="layui-td-gray">开票人</td>
+			<td>{$detail.open_admin_name}</td>
+			<td class="layui-td-gray">开票日期</td>
+			<td colspan="3">{$detail.open_time|date='Y-m-d'}</td>
+		</tr>
+		<tr>
+			<td class="layui-td-gray">物流单号</td>
+			<td colspan="5">{$detail.delivery}</td>
+		</tr>
+		<tr>
+			<td class="layui-td-gray">			
+				<div class="layui-input-inline">发票附件</div>
+				<div class="layui-input-inline">
+					<button type="button" class="layui-btn layui-btn-xs" id="uploadBtn"><i class="layui-icon"></i></button>
+				</div>
+			</td>
+			<td colspan="5">
+				<div class="layui-row" id="uploadBox">
+					<input type="hidden" data-type="file" name="other_file_ids" value="{$detail.other_file_ids}">
+					{notempty name="$detail.other_file_ids"}
+					{volist name="$detail.other_file_array" id="vo"}
+					<div class="layui-col-md4" id="uploadFile{$vo.id}">{:file_card($vo)}</div>
+					{/volist}
+					{/notempty}
+				</div>
+			</td>
+		</tr>
+		{/if}
+	</table>
+    <h3 class="pb-3">产品明细</h3>
+    <table class="layui-table layui-table-form" name="product_detail">
+        <thead>
+        <tr>
+            <td class="layui-td-gray" style="text-align: center">产品类型</td>
+            <td class="layui-td-gray" style="text-align: center">冷却方式</td>
+            <td class="layui-td-gray" style="text-align: center">电堆类型</td>
+            <td class="layui-td-gray" style="text-align: center">极板材料/系统类型</td>
+            <td class="layui-td-gray" style="text-align: center">功率</td>
+<!--            <td class="layui-td-gray" style="text-align: center">产品型号</td>-->
+            <td class="layui-td-gray" style="text-align: center">订货数量</td>
+            <td class="layui-td-gray" style="text-align: center">单位</td>
+            <td class="layui-td-gray" style="text-align: center">单价(元)</td>
+            <td class="layui-td-gray" style="text-align: center">总价(元)</td>
+            <td class="layui-td-gray" style="text-align: center">备注</td>
+        </tr>
+        </thead>
+        <tbody id="product_detail_body">
+        <tr><td colspan="7" style="text-align: center">加载中...</td></tr>
+        </tbody>
+    </table>
+
+    <div id="checkBox" class="pt-3" data-status="{$detail.check_status}" data-id="{$detail.id}" data-checkflowid="{$detail.check_flow_id}"></div>
+
+    {assign name="status" value="$detail.check_status ?? -1" /}
+    {assign name="tip_text" value="" /}
+
+    {switch name="$status"}
+    {case value="0"}{assign name="tip_text" value="待审批"/}{/case}
+    {case value="1"}{assign name="tip_text" value="审批中"/}{/case}
+    {case value="2"}{assign name="tip_text" value="审批通过"/}{/case}
+    {case value="3"}{assign name="tip_text" value="审批不通过"/}{/case}
+    {case value="4"}{assign name="tip_text" value="撤销审批"/}{/case}
+    {default}{assign name="tip_text" value="未知状态"/}{/default}
+    {/switch}
+
+
+    {if $detail.check_status == 2}
+    <div style="display: flex; align-items: center;">
+        <h3 style="margin: 0; padding-bottom: 0;">报价单</h3>
+        <a style="margin-left: 10px;color:red">提示：请下载后签字盖章！</a>
+    </div>
+    <span class="layui-btn layui-btn-normal btn-check" data-status="1" onclick="quote_export()">
+        <i class="iconfont icon-xiazai"></i> 下载报价单</span>
+    {else}
+    <div style="display: flex; align-items: center;">
+        <h3 style="margin: 0; padding-bottom: 0;">(预)报价单</h3>
+        <a style="margin-left: 10px;color:red">提示：当前状态为『{$tip_text}』，下载行为将被记录！</a>
+    </div>
+    <span class="layui-btn layui-btn-normal btn-check" data-status="1" onclick="confirmExport()">
+        <i class="iconfont icon-xiazai"></i> 下载报价单</span>
+    {/if}
+
+</div>
+{/block}
+<!-- /主体 -->
+
+<!-- 脚本 -->
+{block name="script"}
+<script>
+const invoice_id = {$detail.id};
+const moduleInit = ['tool','oaCheck','uploadPlus'];
+function gouguInit() {
+	var form = layui.form,tool=layui.tool, oaCheck=layui.oaCheck,uploadPlus = layui.uploadPlus;	
+	oaCheck.init({
+		check_name:'quote'
+	});
+	//相关附件上传
+	var attachment = new uploadPlus({
+		"attachment":{
+			uidDelete:true,
+			ajaxSave:function(val){
+				$.ajax({
+					url: "/finance/api/upload_invoice",
+					type:'post',
+					data:{
+						id:invoice_id,
+						other_file_ids:val
+					},
+					success: function (e) {
+						location.reload();
+					}
+				})
+			},
+			ajaxDelete:function(val){
+				$.ajax({
+					url: "/finance/api/upload_invoice",
+					type:'post',
+					data:{
+						id:invoice_id,
+						other_file_ids:val
+					},
+					success: function (e) {
+						location.reload();
+					}
+				})
+			}
+		}
+	})
+}
+
+
+
+var productDetailStr = '{$detail.product_detail|raw}'; // 先不转义，确保是纯 JSON 字符串（后端保证）
+
+try {
+    var productDetails = JSON.parse(productDetailStr);
+    var tbody = document.getElementById('product_detail_body');
+    tbody.innerHTML = ''; // 清空“加载中”提示
+
+    if (Array.isArray(productDetails) && productDetails.length > 0) {
+        productDetails.forEach(function(item) {
+            var tr = document.createElement('tr');
+            // tr.innerHTML = '<td style="text-align:center">' + item.product_name + '</td>'
+            tr.innerHTML = '<td style="text-align:center">' + item.product_type + '</td>'
+                + '<td style="text-align:center">' + item.cooling_method + '</td>'
+                + '<td style="text-align:center">' + item.stack_type + '</td>'
+                + '<td style="text-align:center">' + item.polar_metrials_and_system_type + '</td>'
+                + '<td style="text-align:center">' + item.power_rate + '</td>'
+                // + '<td style="text-align:center">' + item.product_model + '</td>'
+                + '<td style="text-align:center">' + item.quantity + '</td>'
+                + '<td style="text-align:center">' + item.unit + '</td>'
+                + '<td style="text-align:center">' + parseFloat(item.price).toFixed(2) + '</td>'
+                + '<td style="text-align:center">' + parseFloat(item.total).toFixed(2) + '</td>'
+                + '<td style="text-align:center">' + item.remark + '</td>';
+            tbody.appendChild(tr);
+        });
+    } else {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center">无产品数据</td></tr>';
+    }
+} catch(e) {
+    document.getElementById('product_detail_body').innerHTML = '<tr><td colspan="7" style="text-align:center;color:red">产品明细数据格式错误</td></tr>';
+}
+function downloadFile(url) {
+    let iframe = document.getElementById('download_iframe');
+    if (!iframe) {
+        iframe = document.createElement('iframe');
+        iframe.style.display = 'none';
+        iframe.id = 'download_iframe';
+        document.body.appendChild(iframe);
+    }
+    iframe.src = url;
+}
+
+    function quote_export(){
+        // 创建一个数组来存储 content
+        let checkerList = [];
+
+        layer.msg('正在下载...');
+        const divs = document.querySelectorAll('.check-item-name');
+
+        // 提取每个 div 的内容并存入 checkerList 数组
+        divs.forEach((div, index) => {
+            if (index === 0) return; // 跳过第一个 div
+            const content = div.innerText || div.textContent;
+            checkerList.push(content);  // 将 content 添加到数组中
+        });
+
+        // 将数组转为 JSON 字符串，并进行 URL 编码
+        const checkerParam = encodeURIComponent(JSON.stringify(checkerList));
+
+        // 通过 URL 传递数据
+        window.open(`/finance/quote/download?quote_code={$detail.quote_code}&checker=${checkerParam}`, '_blank');
+        // window.open('/finance/quote/download?quote_code={$detail.quote_code}', '_blank');
+        // 调用示例：
+        // downloadFile(`/finance/quote/download?quote_code={$detail.quote_code}&checker=${checkerParam}`);
+}
+
+function confirmExport() {
+    parent.parent.layer.confirm(
+        "当前流程状态为<span class='layui-font-red'>『{$tip_text}』</span>，如继续下载，将自动记录操作并通知相关审批人。是否确认继续下载报价单？",
+        { title: "操作确认", icon: 3 },
+        function(index) {
+            // 这里关闭弹窗
+            parent.parent.layer.close(index);
+
+            // 这里执行导出操作
+            quote_export();
+        }
+    );
+}
+
+</script>
+{/block}
+<!-- /脚本 -->

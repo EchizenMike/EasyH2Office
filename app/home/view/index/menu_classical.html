@@ -1,6 +1,6 @@
-<div class="layui-side layui-side-menu layui-side-{$admin.theme}">
+<div class="layui-side layui-side-menu layui-side-{$admin.theme} layout-left-menu">
 	<div class="layui-logo" gg-event="closeAllTabs">
-		<img src="{$web.logo|default=''}" onerror="javascript:this.src='{__IMG__}/syslogo.png';this.onerror=null;" style="height: 40px;" class="syslogo">
+		<img src="{$web.logo|default=''}" onerror="javascript:this.src='{__IMG__}/syslogo.png';this.onerror=null;" style="height: 40px;margin-left:50px" class="syslogo">
 		<img src="{$web.small_logo|default=''}" onerror="javascript:this.src='{__IMG__}/syslogo_small.png';this.onerror=null;" style="height: 40px;" class="logo">
 	</div>
 
@@ -39,7 +39,27 @@
 		</li>			
 	{/foreach}
 	</ul>
+	  <!--<div class="water-wave">-->
+   <!--     <div class="wave1"></div>-->
+   <!--     <div class="wave2"></div>-->
+   <!--     <div class="wave3"></div>-->
+   <!-- </div>-->
+    {if $admin.theme == 'hlblue'}
+    <div class="layui-side-hlblue">
+        <div class="floating-text">
+            <div class="line1">H₂</div>
+            <div class="line2">O₂</div>
+            <div class="line3">H₂O</div>
+        </div>
+        <div class="water-wave">
+            <div class="wave1"></div>
+            <div class="wave2"></div>
+            <div class="wave3"></div>
+        </div>
+    </div>
+    {/if}
 </div>
+
 <script>
 function menuInit() {
 

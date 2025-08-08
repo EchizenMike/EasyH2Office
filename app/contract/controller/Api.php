@@ -17,6 +17,7 @@ use app\api\BaseController;
 use app\contract\model\Contract;
 use app\contract\model\Purchase;
 use app\contract\model\SupplierContact;
+use app\finance\model\Quote;
 use think\facade\Db;
 use think\facade\View;
 
@@ -341,4 +342,105 @@ class Api extends BaseController
            return to_assign(1, '参数错误');
         }
     }
+    // 获取关联的报价单
+    public function get_quote()
+    {
+        $param = get_params();
+        $uid = $this->uid;
+        $where = [];
+        $whereOr = [];
+
+        // 关键词搜索支持 quote_code、project_name、customer_name
+        if (!empty($param['keywords'])) {
+            $where[] = ['quote_code|project_name|customer_name', 'like', '%' . $param['keywords'] . '%'];
+        }
+
+        // 只查未删除 且 审核状态为已通过
+        $where[] = ['delete_time', '=', 0];
+        $where[] = ['check_status', '=', 2];
+
+        // 权限控制：非管理员用户需要限定数据范围
+        // 对于报价单取消权限控制
+//        $auth = isAuth($uid, 'contract_admin', 'conf_1');
+//        if ($auth == 0) {
+//            $whereOr[] = ['admin_id|prepared_uid|sign_uid|keeper_uid', '=', $uid];
+//            $whereOr[] = ['admin_id', '=', $uid];
+//            $whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}', share_ids)")];
+//            $whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}', check_uids)")];
+//            $whereOr[] = ['', 'exp', Db::raw("FIND_IN_SET('{$uid}', check_history_uids)")];
+//
+//            $dids_a = get_leader_departments($uid);
+//            $dids_b = get_role_departments($uid);
+//            $dids = array_merge($dids_a, $dids_b);
+//            if (!empty($dids)) {
+//                $whereOr[] = ['did', 'in', $dids];
+//            }
+//        }
+
+        // 使用 Quote 模型
+        $model = new Quote();  // 确保路径正确
+        $list = $model->datalist($param,$where,$whereOr);
+//        $list = $model->datalist();
+//        var_dump($list);exit();
+
+        // 返回字段限制在 quote_code, project_name, customer_name
+//        foreach ($list['data'] as &$item) {
+//            $item = [
+//                'quote_code' => $item['quote_code'] ?? '',
+//                'project_name' => $item['project_name'] ?? '',
+//                'customer_name' => $item['customer_name'] ?? '',
+//            ];
+//        }
+        // ⚠️ 处理分页器的数据部分
+        $data = [];
+        foreach ($list->items() as $item) {
+            $newlist[] = [
+                'quote_code'    => $item['quote_code'] ?? '',
+                'project_name'  => $item['project_name'] ?? '',
+                'customer_name' => $item['customer_name'] ?? '',
+            ];
+        }
+        $data['data'] = $newlist;
+        $data['total'] = count($newlist);
+//        $output = json([
+//            'code' => 0,
+//            'msg'  => '',
+//            'count' => count($newList),  // 总数用于分页
+//            'data' => $newList
+//        ]);
+
+//        echo print_r($data);exit();
+        return table_assign(0, '', $data);
+    }
+//    public function get_quote()
+//    {
+//        // 模拟一个分页列表结构
+//        $list = [
+//            'data' => [
+//                [
+//                    'quote_code' => 'Q2025073001',
+//                    'project_name' => '智能物流项目A',
+//                    'customer_name' => '上海智达科技有限公司'
+//                ],
+//                [
+//                    'quote_code' => 'Q2025073002',
+//                    'project_name' => '城市更新项目B',
+//                    'customer_name' => '深圳盛达建设集团'
+//                ],
+//                [
+//                    'quote_code' => 'Q2025073003',
+//                    'project_name' => '新基建项目C',
+//                    'customer_name' => '北京万通工程咨询'
+//                ]
+//            ],
+//            'count' => 3,   // 总条数（用于分页）
+//            'limit' => 20,  // 每页条数（前端可能会用）
+////            'total' => 3,
+//            'page' => 1     // 当前页码
+//        ];
+//
+//        return table_assign(0, '', $list);
+//    }
+
+
 }

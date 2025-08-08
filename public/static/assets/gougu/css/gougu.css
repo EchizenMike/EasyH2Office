@@ -86,7 +86,21 @@
 html {background-color: #F9F9F9;}
 html,body{height:100%;scrollbar-width: thin; color:#323232;}
 .p-page{padding:15px 12px 0;box-sizing: border-box; width:100%; position:relative;}
-.copyright{padding:10px 0; text-align:center; font-size:12px; color: #989898; text-shadow: 2px 2px 0px #fff}
+/*.copyright{padding:10px 0; text-align:center; font-size:12px; color: #989898; text-shadow: 2px 2px 0px #fff}*/
+.copyright {
+    position: fixed;
+    bottom: 0;
+    left: 70%;
+    transform: translateX(-68%);
+    width: 100%;
+    text-align: center;
+    padding: 10px 0;
+    font-size: 12px;
+    color: #989898;
+    text-shadow: 2px 2px 0px #fff;
+    background: #fff; /* 可选，避免文字和背景重叠 */
+}
+
 .copyright a{margin-left:12px; color: #989898;text-shadow: 2px 2px 0px #fff}
 .bg-white{background-color:#fff;}
 a.tab-a,a.open-a,a.link-a,a.right-a,a.side-a{color:#1A75FF; cursor:pointer;}
@@ -259,14 +273,14 @@ a.tab-a:hover,a:hover,a.open-a:hover,a.link-a:hover,a.right-a:hover{color:#1A75F
 ::-webkit-scrollbar-thumb:hover{background-color:rgba(0,0,0,.4);border:1px solid transparent}
 ::-webkit-scrollbar-thumb:active{background-color:rgba(0,0,0,.65)}
 
-::-moz-scrollbar {
-	width: 8px;
-	background-color: transparent;
-}
-::-moz-scrollbar-thumb {
-	background-color: #c1c1c1;
-	border-radius: 8px;
-}
+/*::-moz-scrollbar {*/
+/*	width: 8px;*/
+/*	background-color: transparent;*/
+/*}*/
+/*::-moz-scrollbar-thumb {*/
+/*	background-color: #c1c1c1;*/
+/*	border-radius: 8px;*/
+/*}*/
 body.right-open{overflow-y:clip;overflow:hidden;}
 div.layui-table-main::-webkit-scrollbar{width:12px;height:12px}
 div.layui-table-main::-webkit-scrollbar-thumb{min-width:12px;min-height:12px;background-color:rgba(0,0,0,.15);background-clip:content-box;border:2px solid transparent;border-radius:12px}
@@ -408,9 +422,25 @@ div.layui-table-main::-webkit-scrollbar-thumb:active{background-color:rgba(0,0,0
 
 /*uploadPlus*/
 .gougu-upload-files{background-color: #ffffff; border:1px solid #e4e7ed;color: #c0c4cc; min-width:400px; cursor: not-allowed; padding:0 12px; box-sizing: border-box; display: inline-block; font-size: inherit; height: 38px; line-height: 35px; margin-right:8px; border-radius:2px;}
-.gougu-upload-box{background-color:#f8f8f8; border:1px solid #eee; border-radius:6px; width:888px; height:440px; padding:5px; overflow-y:auto; margin:0 auto; position:relative;-webkit-user-select:none;-moz-user-select:none-ms-user-select:none;}
+/*.gougu-upload-box{background-color:#f8f8f8; border:1px solid #eee; border-radius:6px; width:888px; height:440px; padding:5px; overflow-y:auto; margin:0 auto; position:relative;-webkit-user-select:none;-moz-user-select:none-ms-user-select: none;}*/
+.gougu-upload-box {
+    background-color: #f8f8f8;
+    border: 1px solid #eee;
+    border-radius: 6px;
+    width: 888px;
+    height: 440px;
+    padding: 5px;
+    overflow-y: auto;
+    margin: 0 auto;
+    position: relative;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
 .select .gougu-upload-btn{width:100%; height:100%; position:absolute;top:0;left:0; line-height:440px;}
-.select .gougu-upload-btn-box{width:100%; height:100%; box-sizing: border-box; padding-top:160px; line-height:1.2;text-align:center; cursor:pointer; color:#49bc85;font-size:22px;}\
+.select .gougu-upload-btn-box{width:100%; height:100%; box-sizing: border-box; padding-top:160px; line-height:1.2;text-align:center; cursor:pointer; color:#49bc85;font-size:22px;}
 .select .gougu-upload-btn-box i{font-size:60px;}
 .selected .gougu-upload-btn{width:100px; height:100px; float:left; padding:5px;}
 .selected .gougu-upload-btn-box{width:100px; height:100px; box-sizing: border-box; background-color:#eaf7f0; border:1px solid #49bc85; padding-top:16px; line-height:1.2;font-size:14px; text-align:center; cursor:pointer; color:#49bc85}
@@ -418,12 +448,26 @@ div.layui-table-main::-webkit-scrollbar-thumb:active{background-color:rgba(0,0,0
 .gougu-upload-card{width:100px; height:100px; float:left; padding:5px;}
 .gougu-upload-card-box{width:100px; height:100px; box-sizing: border-box; background-color:#fff; border:1px solid #eee;position: relative;overflow: hidden;}
 .gougu-upload-card-box img {width: 100px; height: 100px; object-fit: cover;}
-.gougu-upload-card-text{background-color:rgba(0,0,0,.618); color:#fff; position:absolute;left:0; bottom:0; line-height:1.6; font-size:12px; width:100px; text-overflow:hidden; white-space: nowrap; text-overflow: ellipsis;}
+/*.gougu-upload-card-text{background-color:rgba(0,0,0,.618); color:#fff; position:absolute;left:0; bottom:0; line-height:1.6; font-size:12px; width:100px; text-overflow:hidden; white-space: nowrap; text-overflow: ellipsis;}*/
+.gougu-upload-card-text {
+    background-color: rgba(0, 0, 0, 0.618);
+    color: #fff;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    line-height: 1.6;
+    font-size: 12px;
+    width: 100px;
+    white-space: nowrap;
+    overflow: hidden;            /* 必须有！ */
+    text-overflow: ellipsis;     /* 正确生效 */
+}
+
 .gougu-upload-card-reload{width:50px; height:32px; position:absolute; top:5px; left:3px; font-size:12px;display:none;}
 .gougu-upload-card-del{width:32px; height:32px; position:absolute; top:5px; right:0; display:none;}
 .gougu-upload-card:hover .gougu-upload-card-del{display:block;}
 .uploadok.gougu-upload-card .gougu-upload-card-del{display:none;}
-.reload.gougu-upload-card .gougu-upload-card-reload{display:block;}\
+.reload.gougu-upload-card .gougu-upload-card-reload{display:block;}
 .gougu-upload-card-bar{width:100%; position:absolute;left:0; bottom:16px;}
 .gougu-upload-tips{color:#969696; font-size:12px; margin-right:24px;}
 .gougu-import-tips{color:#969696; font-size:14px; padding-right:20px;line-height:1.8;}
@@ -440,7 +484,8 @@ div.layui-table-main::-webkit-scrollbar-thumb:active{background-color:rgba(0,0,0
 }
 .file-card .file-icon{font-size:48px; color:#646464; margin-right: 4px;}
 .file-card .file-info {width: calc(100% - 86px); line-height:1.6;}
-.file-card .file-title {font-size: 14px; word-break:keep-all; overflow: hidden; text-overflow: ellipsis; display: width: 100%;}
+/*.file-card .file-title {font-size: 14px; word-break:keep-all; overflow: hidden; text-overflow: ellipsis; display: width: 100%;}*/
+.file-card .file-title {font-size: 14px; word-break:keep-all; overflow: hidden; text-overflow: ellipsis; width: 100%;}
 .file-card .file-ops{font-size:12px; color:#aaa;}
 .file-card .file-tool{padding:5px 0;}
 .file-card .file-tool .iconfont{font-size:28px; font-weight:400; padding:3px 0; display:inline-block; cursor:pointer;}

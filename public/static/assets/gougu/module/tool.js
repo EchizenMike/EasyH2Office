@@ -391,6 +391,12 @@ layui.define(function (exports) {
 				parentAdmin.audioView(href);
 			}		
 		},
+        digifaxView:function(href,filename){ // 添加数模查看窗口
+            let parentAdmin = this.parentAdmin();
+            if(parentAdmin){
+                parentAdmin.digifaxView(href,filename);
+            }
+        },
 		articleView:function(fileid) {
 			tool.side('/disk/index/view_article?id='+fileid);
 		},
@@ -581,6 +587,7 @@ layui.define(function (exports) {
 					tool.downloadFile(href,filename);
 					break;
 				  case '1':
+                      // alert(ext);
 					if(ext=='image'){
 						tool.photoView(href);
 					}
@@ -601,6 +608,9 @@ layui.define(function (exports) {
 							tool.officeView(fileid,'view');
 						}
 					}
+                    if(ext=="digifax"){
+                        tool.digifaxView(href,filename);
+                    }
 					if(ext=='article'){
 						tool.articleView(fileid);
 					}

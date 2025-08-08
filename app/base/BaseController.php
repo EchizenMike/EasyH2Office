@@ -63,6 +63,7 @@ abstract class BaseController
         $this->uid = 0;
         $this->did = 0;
         $this->pid = 0;
+        $this->types = 0;
         // 控制器初始化
         $this->initialize();
     }
@@ -93,7 +94,7 @@ abstract class BaseController
                 $this->uid = Session::get($session_admin);
 				$login_admin = get_admin($this->uid);
 				$this->did = $login_admin['did'];
-				$this->pid = $login_admin['pid'];			
+				$this->pid = $login_admin['pid'];
 				$is_lock = $login_admin['is_lock'];
 				$last_login_time = Db::name('Admin')->where(['id' => $this->uid])->value('last_login_time');
 				$timeDiff = time() - $last_login_time;
@@ -142,13 +143,30 @@ abstract class BaseController
      */
     protected function checkAuth()
     {
+        $param = get_params();
+//        echo count($param);exit;
         //Cache::delete('RulesSrc' . $uid);
-		$uid = $this->uid;
+		$uid = $this->uid; // 用户ID
 		$GOUGU = new Systematic();
         $GOUGU->auth($uid);
 		$auth_list_all = Cache::get('RulesSrc0');
         $auth_list = Cache::get('RulesSrc' . $uid);
+//        echo print_r($auth_list);exit();
+        // 如果auth_list中含参数的权限,则遍历param的key和对应的value然后拼接成对应的地址
+        // 如果请求的是合同（contract)权限,则遍历param的key和对应的value然后拼接成对应的地址
+//        if ($this->module == 'contract' && $this->controller == 'contract' && isset($param['types']) && $uid != 1) {
+//            // 补充完整这部分代码
+//            $pathUrl = $this->module . '/' . $this->controller . '/' . $this->action . '?' . http_build_query($param);
+//        }else{
+//        }
+//        if (isset($param['types']) && $uid != 1) {
+////            // 补充完整这部分代码
+//            $pathUrl = $this->module . '/' . $this->controller . '/' . $this->action . '?' . http_build_query($param);
+//        }
         $pathUrl = $this->module . '/' . $this->controller . '/' . $this->action;
+//        echo $pathUrl;
+//        echo print_r($auth_list);
+        //单独判断带参数的权限
         if (!in_array($pathUrl, $auth_list)) {
             return false;
         } else {

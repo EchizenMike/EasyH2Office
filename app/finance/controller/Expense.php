@@ -17,7 +17,7 @@ namespace app\finance\controller;
 
 use app\base\BaseController;
 use app\finance\model\Expense as ExpenseModel;
-use app\finance\validate\ExpenseValidate;
+use app\finance\model\validate\ExpenseValidate;
 use think\exception\ValidateException;
 use think\facade\Db;
 use think\facade\View;

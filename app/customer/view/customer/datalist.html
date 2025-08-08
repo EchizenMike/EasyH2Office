@@ -202,7 +202,7 @@
 							var html = '<div class="layui-btn-group">';
 							var btn0='<span class="layui-btn layui-btn-xs layui-bg-blue" lay-event="view">查看</span>';
 							var btn1='<span class="layui-btn layui-btn-xs" lay-event="edit">编辑</span>';
-							var btn2='<span class="layui-btn layui-btn-danger layui-btn-xs" lay-event="remove">移入公海</span>';
+							var btn2='<span class="layui-btn layui-btn-danger layui-btn-xs" lay-event="remove">删除</span>';
 							if(d.belong_uid == login_admin && d.is_lock==0){
 								return html+btn0+btn1+btn2+'</div>';
 							}
@@ -214,7 +214,7 @@
 				]
 			]
 		});
-			
+
 		//表头工具栏事件
 		table.on('toolbar(table_customer)', function(obj){
 			if (obj.event === 'import') {
@@ -246,7 +246,7 @@
 				return;
 			}
 			if (obj.event === 'remove') {
-				layer.confirm('确定把该客户移入公海吗?', { icon: 3, title: '提示' }, function (index) {
+				layer.confirm('确定删除该客户吗?', { icon: 3, title: '提示' }, function (index) {
 					let callback = function (e) {
 						layer.msg(e.msg);
 						if (e.code == 0) {

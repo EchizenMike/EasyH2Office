@@ -24,7 +24,7 @@ class Customer extends Model
     public function datalist($param=[],$where=[],$whereOr=[])
     {
 		$rows = empty($param['limit']) ? get_config('app.page_size') : $param['limit'];
-		$order = 'id desc';
+//		$order = 'id desc';
 		if(!empty($param['order_field']) && !empty($param['order_type'])){
 			$order = $param['order_field'].' '.$param['order_type'];
 		}
@@ -35,7 +35,7 @@ class Customer extends Model
 					$query->whereOr($whereOr);
 				}
 			})
-			->orderRaw($order)
+//			->orderRaw($order)
 			->paginate(['list_rows'=> $rows])
 			->each(function ($item, $key){
 				$item->create_time = to_date($item->create_time);

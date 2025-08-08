@@ -86,6 +86,9 @@ return [
 		'reset'      => '重新设置',
 		'install'    => '安装',
 		'uninstall'  => '卸载',
+
+        'quote_export'  => '导出', // 导出了报价单
+
     ],
 
 ];
