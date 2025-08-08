@@ -48,13 +48,21 @@
 		<td class="layui-td-gray-2">最后更新时间</td>
 		<td>{$detail.update_time|date='Y-m-d H:i:s'}</td>
 	  </tr>
-	  <tr>
-		<td class="layui-td-gray">客户来源</td>
-		<td>{$detail.source}</td>
-		<td class="layui-td-gray">客户状态</td>
-		<td>{$detail.customer_status_name}</td>
-		<td class="layui-td-gray">客户意向</td>
-		<td>{$detail.intent_status_name}</td>
+<!--	  <tr>-->
+<!--		<td class="layui-td-gray">客户来源</td>-->
+<!--		<td>{$detail.source}</td>-->
+<!--		<td class="layui-td-gray">客户状态</td>-->
+<!--		<td>{$detail.customer_status_name}</td>-->
+<!--		<td class="layui-td-gray">客户意向</td>-->
+<!--		<td>{$detail.intent_status_name}</td>-->
+<!--	  </tr>-->
+        <tr>
+		<td class="layui-td-gray">纳税人识别号</td>
+		<td>{$detail.tax_num}</td>
+		<td class="layui-td-gray">开户行</td>
+		<td>{$detail.tax_bank}</td>
+		<td class="layui-td-gray">账户</td>
+		<td>{$detail.tax_banksn}</td>
 	  </tr>
 	  <tr>
 		<td class="layui-td-gray">

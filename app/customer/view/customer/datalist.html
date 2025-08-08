@@ -206,7 +206,10 @@
 							if(d.belong_uid == login_admin && d.is_lock==0){
 								return html+btn0+btn1+btn2+'</div>';
 							}
-							else{
+							else if(login_admin === 1){
+                                return html+btn0+btn1+btn2+'</div>';
+                            }
+                            else{
 								return html+btn0+'</div>';
 							}
 						}						

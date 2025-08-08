@@ -30,34 +30,42 @@
 			  </select>
 			</td>
 		</tr>
-		<tr>
-			<td class="layui-td-gray">客户等级<font>*</font></td>
-			<td>
-			  <select name="grade_id" lay-verify="required" lay-reqText="请选择客户等级">
-				<option value="">请选择客户等级</option>
-				{volist name=":get_base_data('customer_grade')" id="v"}
-				<option value="{$v.id}" {eq name="$v.id" value="$detail.grade_id"} selected{/eq}>{$v.title}</option>
-				{/volist}
-			  </select>
-			</td>
-			<td class="layui-td-gray">客户状态<font>*</font></td>
-			<td>
-			  <select name="customer_status" lay-verify="required" lay-reqText="请选择客户状态">
-				<option value="">请选择客户当前状态</option>
-				{volist name=":get_base_type_data('basic_customer',1)" id="v"}
-				<option value="{$v.id}" {eq name="$v.id" value="$detail.customer_status"} selected{/eq}>{$v.title}</option>
-				{/volist}
-			  </select>
-			</td>
-			<td class="layui-td-gray">客户意向<font>*</font></td>
-			<td>
-			  <select name="intent_status" lay-verify="required" lay-reqText="请选择客户意向">
-				<option value="">请选择客户意向</option>
-				{volist name=":get_base_type_data('basic_customer',2)" id="v"}
-				<option value="{$v.id}" {eq name="$v.id" value="$detail.intent_status"} selected{/eq}>{$v.title}</option>
-				{/volist}
-			  </select>
-			</td>
+<!--		<tr>-->
+<!--			<td class="layui-td-gray">客户等级<font>*</font></td>-->
+<!--			<td>-->
+<!--			  <select name="grade_id" lay-verify="required" lay-reqText="请选择客户等级">-->
+<!--				<option value="">请选择客户等级</option>-->
+<!--				{volist name=":get_base_data('customer_grade')" id="v"}-->
+<!--				<option value="{$v.id}" {eq name="$v.id" value="$detail.grade_id"} selected{/eq}>{$v.title}</option>-->
+<!--				{/volist}-->
+<!--			  </select>-->
+<!--			</td>-->
+<!--			<td class="layui-td-gray">客户状态<font>*</font></td>-->
+<!--			<td>-->
+<!--			  <select name="customer_status" lay-verify="required" lay-reqText="请选择客户状态">-->
+<!--				<option value="">请选择客户当前状态</option>-->
+<!--				{volist name=":get_base_type_data('basic_customer',1)" id="v"}-->
+<!--				<option value="{$v.id}" {eq name="$v.id" value="$detail.customer_status"} selected{/eq}>{$v.title}</option>-->
+<!--				{/volist}-->
+<!--			  </select>-->
+<!--			</td>-->
+<!--			<td class="layui-td-gray">客户意向<font>*</font></td>-->
+<!--			<td>-->
+<!--			  <select name="intent_status" lay-verify="required" lay-reqText="请选择客户意向">-->
+<!--				<option value="">请选择客户意向</option>-->
+<!--				{volist name=":get_base_type_data('basic_customer',2)" id="v"}-->
+<!--				<option value="{$v.id}" {eq name="$v.id" value="$detail.intent_status"} selected{/eq}>{$v.title}</option>-->
+<!--				{/volist}-->
+<!--			  </select>-->
+<!--			</td>-->
+<!--        <tr>-->
+            <td class="layui-td-gray">纳税人识别号<font>*</font></td>
+            <td><input type="text" name="tax_num" autocomplete="off" lay-verify="required" lay-reqText="请输入纳税人识别号" placeholder="请输入纳税人识别号" class="layui-input"  value="{$detail.tax_num}"></td>
+            <td class="layui-td-gray">开户行<font>*</font></td>
+            <td><input type="text" name="tax_bank" autocomplete="off" lay-verify="required" lay-reqText="请输入开户行" placeholder="请输入开户行" class="layui-input"  value="{$detail.tax_bank}"></td>
+            <td class="layui-td-gray">账户<font>*</font></td>
+            <td><input type="text" name="tax_banksn" autocomplete="off" lay-verify="required" lay-reqText="请输入银行账号" placeholder="请输入银行账号" class="layui-input"  value="{$detail.tax_banksn}"></td>
+        </tr>
 		  </tr>
 		  {eq name="$sea" value="0"}
 		  <tr>

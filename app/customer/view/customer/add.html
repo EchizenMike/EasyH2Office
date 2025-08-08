@@ -38,7 +38,15 @@
 				{/volist}
 			  </select>
 			</td>
-		</tr>
+        </tr>
+        <tr>
+            <td class="layui-td-gray">纳税人识别号<font>*</font></td>
+            <td><input type="text" name="tax_num" autocomplete="off" lay-verify="required" lay-reqText="请输入纳税人识别号" placeholder="请输入纳税人识别号" class="layui-input"></td>
+            <td class="layui-td-gray">开户行<font>*</font></td>
+            <td><input type="text" name="tax_bank" autocomplete="off" lay-verify="required" lay-reqText="请输入开户行" placeholder="请输入开户行" class="layui-input"></td>
+            <td class="layui-td-gray">账户<font>*</font></td>
+            <td><input type="text" name="tax_banksn" autocomplete="off" lay-verify="required" lay-reqText="请输入银行账号" placeholder="请输入银行账号" class="layui-input"></td>
+        </tr>
 		{eq name="$sea" value="0"}
 		<tr>
 			<td class="layui-td-gray">归属员工</td>
