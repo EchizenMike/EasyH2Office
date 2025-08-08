@@ -841,11 +841,11 @@
                 var val = parseFloat($(this).val()) || 0;
                 total += val;
             });
-            $('input[name="amount_total_without_tax"]').val(total.toFixed(2));
+            $('input[name="amount_total_with_tax"]').val(total.toFixed(2));
             // 计算含税价格
             var taxRate = parseFloat($('select[name="tax_rate"]').val()) || 0;
-            var totalWithTax = total * (1 + taxRate);
-            $('input[name="amount_total_with_tax"]').val(totalWithTax.toFixed(2));
+            var totalWithTax = total / (1 + taxRate);
+            $('input[name="amount_total_without_tax"]').val(totalWithTax.toFixed(2));
         }
 
     }
