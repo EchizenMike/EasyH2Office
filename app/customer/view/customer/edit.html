@@ -18,11 +18,11 @@
 			</td>
 		</tr>
 		<tr>
-			<td class="layui-td-gray">联系地址<font>*</font></td>
-			<td colspan="3"><input type="text" name="address" value="{$detail.address}" autocomplete="off" lay-verify="required" lay-reqText="请输入客户联系地址" placeholder="请输入客户联系地址" class="layui-input"></td>
-			<td class="layui-td-gray">所属行业<font>*</font></td>
+			<td class="layui-td-gray">联系地址</td>
+			<td colspan="3"><input type="text" name="address" value="{$detail.address}" autocomplete="off" lay-reqText="请输入客户联系地址" placeholder="请输入客户联系地址" class="layui-input"></td>
+			<td class="layui-td-gray">所属行业</td>
 			<td>
-			  <select name="industry_id" lay-verify="required" lay-reqText="请选择所属行业">
+			  <select name="industry_id" lay-reqText="请选择所属行业">
 				<option value="">请选择所属行业</option>
 				{volist name=":get_base_data('Industry')" id="v"}
 				<option value="{$v.id}" {eq name="$v.id" value="$detail.industry_id"} selected{/eq}>{$v.title}</option>
@@ -59,12 +59,12 @@
 <!--			  </select>-->
 <!--			</td>-->
 <!--        <tr>-->
-            <td class="layui-td-gray">纳税人识别号<font>*</font></td>
-            <td><input type="text" name="tax_num" autocomplete="off" lay-verify="required" lay-reqText="请输入纳税人识别号" placeholder="请输入纳税人识别号" class="layui-input"  value="{$detail.tax_num}"></td>
-            <td class="layui-td-gray">开户行<font>*</font></td>
-            <td><input type="text" name="tax_bank" autocomplete="off" lay-verify="required" lay-reqText="请输入开户行" placeholder="请输入开户行" class="layui-input"  value="{$detail.tax_bank}"></td>
-            <td class="layui-td-gray">账户<font>*</font></td>
-            <td><input type="text" name="tax_banksn" autocomplete="off" lay-verify="required" lay-reqText="请输入银行账号" placeholder="请输入银行账号" class="layui-input"  value="{$detail.tax_banksn}"></td>
+            <td class="layui-td-gray">纳税人识别号</td>
+            <td><input type="text" name="tax_num" autocomplete="off"  lay-reqText="请输入纳税人识别号" placeholder="请输入纳税人识别号" class="layui-input"  value="{$detail.tax_num}"></td>
+            <td class="layui-td-gray">开户行</td>
+            <td><input type="text" name="tax_bank" autocomplete="off" lay-reqText="请输入开户行" placeholder="请输入开户行" class="layui-input"  value="{$detail.tax_bank}"></td>
+            <td class="layui-td-gray">账户</td>
+            <td><input type="text" name="tax_banksn" autocomplete="off"  lay-reqText="请输入银行账号" placeholder="请输入银行账号" class="layui-input"  value="{$detail.tax_banksn}"></td>
         </tr>
 		  </tr>
 		  {eq name="$sea" value="0"}
@@ -85,8 +85,8 @@
 		  </tr>
 		  {/eq}
 		<tr>
-			<td class="layui-td-gray" style="vertical-align:top">客户介绍<font>*</font></td>
-			<td colspan="5"><textarea name="content" placeholder="请输入客户介绍信息" lay-verify="required" lay-reqText="请输入客户介绍信息" class="layui-textarea">{$detail.content|default=""}</textarea></td>
+			<td class="layui-td-gray" style="vertical-align:top">客户介绍</td>
+			<td colspan="5"><textarea name="content" placeholder="请输入客户介绍信息" lay-reqText="请输入客户介绍信息" class="layui-textarea">{$detail.content|default=""}</textarea></td>
 		</tr>
 		<tr>
 			<td class="layui-td-gray" style="vertical-align:top">经营业务</td>

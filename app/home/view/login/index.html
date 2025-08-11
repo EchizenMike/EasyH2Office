@@ -1,386 +1,628 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		<meta name="renderer" content="webkit" />
-		<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
-		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-		<title>{:get_system_config('web','admin_title')}</title>
-		<link rel="stylesheet" href="{__GOUGU__}/layui/css/layui.css?v={:get_system_config('system','version')}" media="all">
-		<style type="text/css">
-			html,body {width: 100%;height: 100%;background: #EAF3FF;}
-			canvas{display:block;width:100%;height:100%; position: fixed; top: 0;left: 0;}
-			input:-webkit-autofill {
-				-webkit-box-shadow: 0 0 0px 1000px white inset;
-			}
-			/*#container {width: 100%;height: 100%;position: fixed;top: 0;left: 0;z-index: 99;background: url({__IMG__}/bg.png);background-size: cover;}*/
-			#container {width: 100%;height: 100%;position: fixed;top: 0;left: 0;z-index: 99;background: #1e3c72 ;background-size: cover;}
-			/*.login-wrap {position: relative;overflow: hidden; background-color:#fff; width:800px; height: 448px; position: absolute;top: 50%;left: 50%;margin-top: -240px;margin-left: -400px; border-radius: 12px; display: flex;box-shadow: 0 0 16px rgba(31, 84, 167, 0.2);}*/
-			.login-wrap {position: relative;overflow: hidden; background-color:#fff; height: 448px; position: absolute;top: 50%;left: 50%;margin-top: -240px;margin-left: -200px; border-radius: 12px; display: flex;box-shadow: 0 0 16px rgba(31, 84, 167, 0.2);}
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="renderer" content="webkit"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>{:get_system_config('web','admin_title')}</title>
+    <link rel="stylesheet" href="{__GOUGU__}/layui/css/layui.css?v={:get_system_config('system','version')}"
+          media="all">
+    <style type="text/css">
+        html, body {
+            width: 100%;
+            height: 100%;
+            background: #EAF3FF;
+        }
 
-			.login-side {width:400px; height:440px; padding:4px}
-			.login-side .side-img{border-radius: 8px; width:100%; height:100%; background: url({__IMG__}/login.jpg);background-size: cover;}
-			
-			.login-box{width: 392px;height: 404px;background: rgba(255,255,255,0.1); backdrop-filter: blur(10px);border-radius: 20px;animation: fadeIn .8s ease-out;}
-			.login-box .top {width: 392px; padding:36px 0; text-align:center; border-bottom:1px solid #eee;}
-			.login-box .bottom {padding:32px;}
-			
-			.layui-input,.layui-textarea {height: 44px;border: 1px solid #ddd;}
-			.captcha_img img{width:150px; height:44px; cursor:pointer;}
-			/*.layui-btn {height: 45px;font-size: 16px;margin-top: 6px;background-color: #FF6347!important}*/
-			.layui-btn {height: 45px;font-size: 16px;border:0px;margin-top: 6px;background-color: #002A95!important}
-			.foot {position: absolute; font-size: 12px; bottom: 24px;text-align: center;width: 100%;color: #458BF3;}
-            /*.login-container {*/
-            /*    position: relative;*/
-            /*    width: 400px;*/
-            /*    background: rgba(255,255,255,0.1);*/
-            /*    backdrop-filter: blur(10px);*/
-            /*    border-radius: 20px;*/
-            /*    padding: 40px;*/
-            /*    box-shadow: 0 15px 35px rgba(0,0,0,0.2);*/
-            /*    z-index: 10;*/
-            /*    overflow: hidden;*/
-            /*    animation: fadeIn .8s ease-out;*/
-            /*}*/
-        </style>
-        <style type="text/css">
-            * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-                font-family: 'Arial',sans-serif
-            }
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
 
-            body {
-                background: linear-gradient(135deg,#1e3c72 0,#2a5298 100%);
-                height: 100vh;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                overflow: hidden
-            }
+        input:-webkit-autofill {
+            -webkit-box-shadow: 0 0 0px 1000px white inset;
+        }
 
-            .login-container {
-                position: relative;
-                width: 400px;
-                background: rgba(255,255,255,0.1);
-                backdrop-filter: blur(10px);
-                border-radius: 20px;
-                padding: 40px;
-                box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-                z-index: 10;
-                overflow: hidden;
-                animation: fadeIn .8s ease-out
-            }
+        /*#container {width: 100%;height: 100%;position: fixed;top: 0;left: 0;z-index: 99;background: url({__IMG__}/bg.png);background-size: cover;}*/
+        #container {
+            width: 100%;
+            height: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 99;
+            background: #1e3c72;
+            background-size: cover;
+        }
 
-            .login-container::before {
-                content: '';
-                position: absolute;
-                top: -50%;
-                left: -50%;
-                width: 200%;
-                height: 200%;
-                background: linear-gradient(to bottom right,rgba(255,255,255,0.1) 0,rgba(255,255,255,0) 50%);
-                transform: rotate(30deg);
-                z-index: -1
-            }
+        /*.login-wrap {position: relative;overflow: hidden; background-color:#fff; width:800px; height: 448px; position: absolute;top: 50%;left: 50%;margin-top: -240px;margin-left: -400px; border-radius: 12px; display: flex;box-shadow: 0 0 16px rgba(31, 84, 167, 0.2);}*/
+        .login-wrap {
+            position: relative;
+            overflow: hidden;
+            background-color: #fff;
+            height: 448px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-top: -240px;
+            margin-left: -200px;
+            border-radius: 12px;
+            display: flex;
+            box-shadow: 0 0 16px rgba(31, 84, 167, 0.2);
+        }
 
-            h2 {
-                color: #fff;
-                text-align: center;
-                margin-bottom: 30px;
-                font-size: 28px;
-                font-weight: 600;
-                letter-spacing: 1px
-            }
+        .login-side {
+            width: 400px;
+            height: 440px;
+            padding: 4px
+        }
 
-            .input-group {
-                position: relative;
-                margin-bottom: 30px
-            }
+        .login-side .side-img {
+            border-radius: 8px;
+            width: 100%;
+            height: 100%;
+            background: url({__IMG__}/login.jpg);
+            background-size: cover;
+        }
 
-            .input-group input {
-                width: 100%;
-                padding: 15px 20px;
-                background: rgba(255,255,255,0.1);
-                border: 0;
-                border-radius: 50px;
-                color: #fff;
-                font-size: 16px;
-                outline: 0;
-                transition: all .3s ease
-            }
+        .login-box {
+            width: 392px;
+            height: 404px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            animation: fadeIn .8s ease-out;
+        }
 
-            .input-group input:focus {
-                background: rgba(255,255,255,0.2);
-                box-shadow: 0 0 10px rgba(0,195,255,0.5)
-            }
+        .login-box .top {
+            width: 392px;
+            padding: 36px 0;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+        }
 
-            .input-group label {
-                position: absolute;
-                top: 15px;
-                left: 20px;
-                color: rgba(255,255,255,0.7);
-                font-size: 16px;
-                pointer-events: none;
-                transition: all .3s ease
-            }
+        .login-box .bottom {
+            padding: 32px;
+        }
 
-            .input-group input:focus+label,.input-group input:valid+label {
-                top: -10px;
-                left: 15px;
-                font-size: 12px;
-                background: #2a5298;
-                padding: 0 10px;
-                color: #fff;
-                border-radius: 10px
-            }
+        .layui-input, .layui-textarea {
+            height: 44px;
+            border: 1px solid #ddd;
+        }
 
-            button {
-                width: 100%;
-                padding: 15px;
-                background: linear-gradient(to right,#00c6ff,#002A95);
-                border: 0;
-                border-radius: 50px;
-                color: white;
-                font-size: 16px;
-                font-weight: 600;
-                cursor: pointer;
-                transition: all .3s ease;
-                box-shadow: 0 5px 15px rgba(0,114,255,0.4)
-            }
+        .captcha_img img {
+            width: 150px;
+            height: 44px;
+            cursor: pointer;
+        }
 
-            button:hover {
-                transform: translateY(-3px);
-                box-shadow: 0 8px 20px rgba(0,114,255,0.6)
-            }
+        /*.layui-btn {height: 45px;font-size: 16px;margin-top: 6px;background-color: #FF6347!important}*/
+        .layui-btn {
+            height: 45px;
+            font-size: 16px;
+            border: 0px;
+            margin-top: 6px;
+            background-color: #002A95 !important
+        }
 
-            .footer {
-                text-align: center;
-                margin-top: 20px;
-                color: rgba(255,255,255,0.7);
-                font-size: 14px
-            }
+        .foot {
+            position: absolute;
+            font-size: 12px;
+            bottom: 24px;
+            text-align: center;
+            width: 100%;
+            color: #458BF3;
+        }
 
-            .footer a {
-                color: #00c6ff;
-                text-decoration: none;
-                transition: all .3s ease
-            }
+        /*.login-container {*/
+        /*    position: relative;*/
+        /*    width: 400px;*/
+        /*    background: rgba(255,255,255,0.1);*/
+        /*    backdrop-filter: blur(10px);*/
+        /*    border-radius: 20px;*/
+        /*    padding: 40px;*/
+        /*    box-shadow: 0 15px 35px rgba(0,0,0,0.2);*/
+        /*    z-index: 10;*/
+        /*    overflow: hidden;*/
+        /*    animation: fadeIn .8s ease-out;*/
+        /*}*/
+    </style>
+    <!--        <style type="text/css">-->
+    <!--            * {-->
+    <!--                margin: 0;-->
+    <!--                padding: 0;-->
+    <!--                box-sizing: border-box;-->
+    <!--                font-family: 'Arial',sans-serif-->
+    <!--            }-->
 
-            .footer a:hover {
-                color: #fff;
-                text-decoration: underline
-            }
+    <!--            body {-->
+    <!--                background: linear-gradient(135deg,#1e3c72 0,#2a5298 100%);-->
+    <!--                height: 100vh;-->
+    <!--                display: flex;-->
+    <!--                justify-content: center;-->
+    <!--                align-items: center;-->
+    <!--                overflow: hidden-->
+    <!--            }-->
 
-            .bubbles {
-                position: absolute;
-                width: 100%;
-                height: 100%;
-                z-index: 0; /*衬于登陆界面下方*/
-                overflow: hidden;
-                top: 0;
-                left: 0
-            }
+    <!--            .login-container {-->
+    <!--                position: relative;-->
+    <!--                width: 400px;-->
+    <!--                background: rgba(255,255,255,0.1);-->
+    <!--                backdrop-filter: blur(10px);-->
+    <!--                border-radius: 20px;-->
+    <!--                padding: 40px;-->
+    <!--                box-shadow: 0 15px 35px rgba(0,0,0,0.2);-->
+    <!--                z-index: 10;-->
+    <!--                overflow: hidden;-->
+    <!--                animation: fadeIn .8s ease-out-->
+    <!--            }-->
 
-            .bubble {
-                position: absolute;
+    <!--            .login-container::before {-->
+    <!--                content: '';-->
+    <!--                position: absolute;-->
+    <!--                top: -50%;-->
+    <!--                left: -50%;-->
+    <!--                width: 200%;-->
+    <!--                height: 200%;-->
+    <!--                background: linear-gradient(to bottom right,rgba(255,255,255,0.1) 0,rgba(255,255,255,0) 50%);-->
+    <!--                transform: rotate(30deg);-->
+    <!--                z-index: -1-->
+    <!--            }-->
+
+    <!--            h2 {-->
+    <!--                color: #fff;-->
+    <!--                text-align: center;-->
+    <!--                margin-bottom: 30px;-->
+    <!--                font-size: 28px;-->
+    <!--                font-weight: 600;-->
+    <!--                letter-spacing: 1px-->
+    <!--            }-->
+
+    <!--            .input-group {-->
+    <!--                position: relative;-->
+    <!--                margin-bottom: 30px-->
+    <!--            }-->
+
+    <!--            .input-group input {-->
+    <!--                width: 100%;-->
+    <!--                padding: 15px 20px;-->
+    <!--                background: rgba(255,255,255,0.1);-->
+    <!--                border: 0;-->
+    <!--                border-radius: 50px;-->
+    <!--                color: #fff;-->
+    <!--                font-size: 16px;-->
+    <!--                outline: 0;-->
+    <!--                transition: all .3s ease-->
+    <!--            }-->
+
+    <!--            .input-group input:focus {-->
+    <!--                background: rgba(255,255,255,0.2);-->
+    <!--                box-shadow: 0 0 10px rgba(0,195,255,0.5)-->
+    <!--            }-->
+
+    <!--            .input-group label {-->
+    <!--                position: absolute;-->
+    <!--                top: 15px;-->
+    <!--                left: 20px;-->
+    <!--                color: rgba(255,255,255,0.7);-->
+    <!--                font-size: 16px;-->
+    <!--                pointer-events: none;-->
+    <!--                transition: all .3s ease-->
+    <!--            }-->
+
+    <!--            .input-group input:focus+label,.input-group input:valid+label {-->
+    <!--                top: -10px;-->
+    <!--                left: 15px;-->
+    <!--                font-size: 12px;-->
+    <!--                background: #2a5298;-->
+    <!--                padding: 0 10px;-->
+    <!--                color: #fff;-->
+    <!--                border-radius: 10px-->
+    <!--            }-->
+
+    <!--            button {-->
+    <!--                width: 100%;-->
+    <!--                padding: 15px;-->
+    <!--                background: linear-gradient(to right,#00c6ff,#002A95);-->
+    <!--                border: 0;-->
+    <!--                border-radius: 50px;-->
+    <!--                color: white;-->
+    <!--                font-size: 16px;-->
+    <!--                font-weight: 600;-->
+    <!--                cursor: pointer;-->
+    <!--                transition: all .3s ease;-->
+    <!--                box-shadow: 0 5px 15px rgba(0,114,255,0.4)-->
+    <!--            }-->
+
+    <!--            button:hover {-->
+    <!--                transform: translateY(-3px);-->
+    <!--                box-shadow: 0 8px 20px rgba(0,114,255,0.6)-->
+    <!--            }-->
+
+    <!--            .footer {-->
+    <!--                text-align: center;-->
+    <!--                margin-top: 20px;-->
+    <!--                color: rgba(255,255,255,0.7);-->
+    <!--                font-size: 14px-->
+    <!--            }-->
+
+    <!--            .footer a {-->
+    <!--                color: #00c6ff;-->
+    <!--                text-decoration: none;-->
+    <!--                transition: all .3s ease-->
+    <!--            }-->
+
+    <!--            .footer a:hover {-->
+    <!--                color: #fff;-->
+    <!--                text-decoration: underline-->
+    <!--            }-->
+
+    <!--            .bubbles {-->
+    <!--                position: absolute;-->
+    <!--                width: 100%;-->
+    <!--                height: 100%;-->
+    <!--                z-index: 0; /*衬于登陆界面下方*/-->
+    <!--                overflow: hidden;-->
+    <!--                top: 0;-->
+    <!--                left: 0-->
+    <!--            }-->
+
+    <!--            .bubble {-->
+    <!--                position: absolute;-->
+    <!--                bottom: -100px;-->
+    <!--                background: rgba(255,255,255,0.1);-->
+    <!--                border-radius: 50%;-->
+    <!--                animation: rise 10s infinite ease-in-->
+    <!--            }-->
+
+    <!--            .bubble:nth-child(1) {-->
+    <!--                width: 40px;-->
+    <!--                height: 40px;-->
+    <!--                left: 10%;-->
+    <!--                animation-duration: 8s-->
+    <!--            }-->
+
+    <!--            .bubble:nth-child(2) {-->
+    <!--                width: 20px;-->
+    <!--                height: 20px;-->
+    <!--                left: 20%;-->
+    <!--                animation-duration: 5s;-->
+    <!--                animation-delay: 1s-->
+    <!--            }-->
+
+    <!--            .bubble:nth-child(3) {-->
+    <!--                width: 50px;-->
+    <!--                height: 50px;-->
+    <!--                left: 35%;-->
+    <!--                animation-duration: 7s;-->
+    <!--                animation-delay: 2s-->
+    <!--            }-->
+
+    <!--            .bubble:nth-child(4) {-->
+    <!--                width: 80px;-->
+    <!--                height: 80px;-->
+    <!--                left: 50%;-->
+    <!--                animation-duration: 11s;-->
+    <!--                animation-delay: 0s-->
+    <!--            }-->
+
+    <!--            .bubble:nth-child(5) {-->
+    <!--                width: 35px;-->
+    <!--                height: 35px;-->
+    <!--                left: 55%;-->
+    <!--                animation-duration: 6s;-->
+    <!--                animation-delay: 1s-->
+    <!--            }-->
+
+    <!--            .bubble:nth-child(6) {-->
+    <!--                width: 45px;-->
+    <!--                height: 45px;-->
+    <!--                left: 65%;-->
+    <!--                animation-duration: 8s;-->
+    <!--                animation-delay: 3s-->
+    <!--            }-->
+
+    <!--            .bubble:nth-child(7) {-->
+    <!--                width: 25px;-->
+    <!--                height: 25px;-->
+    <!--                left: 75%;-->
+    <!--                animation-duration: 7s;-->
+    <!--                animation-delay: 2s-->
+    <!--            }-->
+
+    <!--            .bubble:nth-child(8) {-->
+    <!--                width: 80px;-->
+    <!--                height: 80px;-->
+    <!--                left: 80%;-->
+    <!--                animation-duration: 6s;-->
+    <!--                animation-delay: 1s-->
+    <!--            }-->
+
+    <!--            @keyframes rise {-->
+    <!--                0% {-->
+    <!--                    bottom: -100px;-->
+    <!--                    transform: translateX(0)-->
+    <!--                }-->
+
+    <!--                50% {-->
+    <!--                    transform: translateX(100px)-->
+    <!--                }-->
+
+    <!--                100% {-->
+    <!--                    bottom: 1080px;-->
+    <!--                    transform: translateX(-200px)-->
+    <!--                }-->
+    <!--            }-->
+
+    <!--            @keyframes fadeIn {-->
+    <!--                from {-->
+    <!--                    opacity: 0;-->
+    <!--                    transform: translateY(20px)-->
+    <!--                }-->
+
+    <!--                to {-->
+    <!--                    opacity: 1;-->
+    <!--                    transform: translateY(0)-->
+    <!--                }-->
+    <!--            }-->
+
+
+    <!--        </style>-->
+    <style>
+        .bubbles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+            top: 0;
+            left: 0;
+        }
+
+        .bubble {
+            position: absolute;
+            bottom: -100px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: rise 10s infinite ease-in;
+            display: flex; /* 让文字居中 */
+            justify-content: center;
+            align-items: center;
+            color: rgba(255,255,255, 0.2); /* 文字颜色 */
+            font-weight: bold;
+            font-size: 14px;
+            text-shadow: 0 0 5px rgba(255,255,255, 0.2); /* 提高可读性 */
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(to right, #00c6ff, #002A95);
+            border: 0;
+            border-radius: 50px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .3s ease;
+            box-shadow: 0 5px 15px rgba(0, 114, 255, 0.4)
+        }
+
+       button:hover {
+           transform: translateY(-3px);
+           box-shadow: 0 8px 20px rgba(0,114,255,0.6)
+       }
+        .bubble:nth-child(1) {
+            width: 40px;
+            height: 40px;
+            left: 10%;
+            animation-duration: 8s;
+        }
+
+        .bubble:nth-child(2) {
+            width: 20px;
+            height: 20px;
+            left: 20%;
+            animation-duration: 5s;
+            animation-delay: 1s;
+        }
+
+        .bubble:nth-child(3) {
+            width: 50px;
+            height: 50px;
+            left: 35%;
+            animation-duration: 7s;
+            animation-delay: 2s;
+        }
+
+        .bubble:nth-child(4) {
+            width: 80px;
+            height: 80px;
+            left: 50%;
+            animation-duration: 11s;
+        }
+
+        .bubble:nth-child(5) {
+            width: 35px;
+            height: 35px;
+            left: 55%;
+            animation-duration: 6s;
+            animation-delay: 1s;
+        }
+
+        .bubble:nth-child(6) {
+            width: 45px;
+            height: 45px;
+            left: 65%;
+            animation-duration: 8s;
+            animation-delay: 3s;
+        }
+
+        .bubble:nth-child(7) {
+            width: 25px;
+            height: 25px;
+            left: 75%;
+            animation-duration: 7s;
+            animation-delay: 2s;
+        }
+
+        .bubble:nth-child(8) {
+            width: 80px;
+            height: 80px;
+            left: 80%;
+            animation-duration: 6s;
+            animation-delay: 1s;
+        }
+
+        @keyframes rise {
+            0% {
                 bottom: -100px;
-                background: rgba(255,255,255,0.1);
-                border-radius: 50%;
-                animation: rise 10s infinite ease-in
+                transform: translateX(0);
             }
-
-            .bubble:nth-child(1) {
-                width: 40px;
-                height: 40px;
-                left: 10%;
-                animation-duration: 8s
+            50% {
+                transform: translateX(100px);
             }
-
-            .bubble:nth-child(2) {
-                width: 20px;
-                height: 20px;
-                left: 20%;
-                animation-duration: 5s;
-                animation-delay: 1s
+            100% {
+                bottom: 1080px;
+                transform: translateX(-200px);
             }
+        }
+    </style>
 
-            .bubble:nth-child(3) {
-                width: 50px;
-                height: 50px;
-                left: 35%;
-                animation-duration: 7s;
-                animation-delay: 2s
-            }
+</head>
+<body>
+<div id="container">
+    <!--			<canvas id="canvas"></canvas>-->
+    <div class="bubbles">
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+    </div>
+    <div class="login-wrap layui-anim layui-anim-upbit">
+        <!--				<div class="login-side"><div class="side-img"></div></div>-->
+        <div class="login-box">
+            <div class="top layui-anim layui-anim-downbit">
+                <img src="{:get_system_config('loginlogo','loginlogo')}"
+                     onerror="javascript:this.src='{__IMG__}/loginlogo.png';this.onerror=null;" style="height: 66px;">
+            </div>
+            <div class="bottom">
+                <form class="layui-form" id="gougu-login">
+                    <div class="layui-form-item layui-anim layui-anim-downbit">
+                        <input type="text" name="username" lay-verify="required" value=""
+                               placeholder="请输入账户或手机号码" lay-reqText="请输入账户或手机号码" autocomplete="off"
+                               class="layui-input">
+                    </div>
+                    <div class="layui-form-item layui-anim layui-anim-downbit">
+                        <input type="password" name="password" lay-verify="required" value="" placeholder="请输入密码"
+                               lay-reqText="请输入密码" autocomplete="off" class="layui-input">
+                    </div>
+                    <div class="layui-form-item layui-anim layui-anim-downbit">
+                        <div class="layui-input-inline" style="width:168px;">
+                            <input type="text" name="captcha" lay-verify="required" placeholder="验证码"
+                                   lay-reqText="请输入验证码" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-input-inline captcha_img" style="width:142px; height:44px; margin-right:0">
+                            {:captcha_img()}
+                            <input type="hidden" value="{:make_token()}"/>
+                        </div>
+                    </div>
 
-            .bubble:nth-child(4) {
-                width: 80px;
-                height: 80px;
-                left: 50%;
-                animation-duration: 11s;
-                animation-delay: 0s
-            }
+                    <button id="login-submit"
+                            class="layui-btn layui-btn-fluid layui-bg-cyan layui-anim layui-anim-upbit" lay-submit
+                            lay-filter="login-submit">登录
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!--			<div class="foot">-->
+    <!--				&lt;!&ndash; 版权标识 &ndash;&gt;-->
+    <!--				&lt;!&ndash; -->
+    <!--				+&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;-->
+    <!--				勾股OA系统开源且可免费使用，但并不是自由软件，未经授权许可不能去除勾股OA的相关版权信息-->
+    <!--				+&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;-->
+    <!--				如需去除版权标识使用的，请微信(hdm588)联系作者去除，开源不易，请多支持！-->
+    <!--				+&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;-->
+    <!--				勾股工作室 <hdm58@qq.com>-->
+    <!--				+&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;-->
+    <!--				&ndash;&gt;-->
+    <!--				Copyright © 2022-2024 勾股OA - {:CMS_VERSION}  ，Powered by GouguOPEN，<a href="https://beian.miit.gov.cn/" target="_blank" rel="nofollow" style="color:#458BF3">{:get_system_config('web','icp')}</a><a target="_blank" rel="nofollow" style="margin-left: 15px;color:#458BF3" href="http://www.beian.gov.cn/portal/registerSystemInfo"> {:get_system_config('web','beian')}</a>-->
+    <!--				&lt;!&ndash; /版权标识 &ndash;&gt;-->
+    <!--			</div>-->
+    <div class="foot">
+        <!-- 版权标识 -->
+        <!--
+        +------------------------------------------------------------------------------------------
+        勾股OA系统开源且可免费使用，但并不是自由软件，未经授权许可不能去除勾股OA的相关版权信息
+        +------------------------------------------------------------------------------------------
+        如需去除版权标识使用的，请微信(hdm588)联系作者去除，开源不易，请多支持！
+        +------------------------------------------------------------------------------------------
+        勾股工作室 <hdm58@qq.com>
+        +------------------------------------------------------------------------------------------
+        -->
 
-            .bubble:nth-child(5) {
-                width: 35px;
-                height: 35px;
-                left: 55%;
-                animation-duration: 6s;
-                animation-delay: 1s
-            }
+        使用本产品即代表阅读并同意 <a style="color:#458BF3; text-decoration: underline;" target="_blank" href="">服务条款</a>
+        <br>
+        Copyright © 2015-2025 青岛汉缆氢能装备科技有限公司 - {:CMS_VERSION} ，Powered by GouguOPEN，<a
+            href="https://beian.miit.gov.cn/" target="_blank" rel="nofollow" style="color:#458BF3; text-decoration: underline;">{:get_system_config('web','icp')}</a><a
+            target="_blank" rel="nofollow" style="margin-left: 15px;color:#458BF3"
+            href="http://www.beian.gov.cn/portal/registerSystemInfo"> {:get_system_config('web','beian')}</a>
 
-            .bubble:nth-child(6) {
-                width: 45px;
-                height: 45px;
-                left: 65%;
-                animation-duration: 8s;
-                animation-delay: 3s
-            }
+        <!-- /版权标识 -->
+    </div>
+</div>
+<script src="{__GOUGU__}/layui/layui.js?v={:get_system_config('system','version')}"></script>
+<script type="text/javascript">
+    // var canvas=document.querySelector("#canvas"),ctx=canvas.getContext("2d");canvas.width=window.innerWidth,canvas.height=window.innerHeight,ctx.lineWidth=.3,ctx.strokeStyle=new Color(150).style;var movePos={x:30*canvas.width/100,y:30*canvas.height/100},dots={nb:250,distance:100,d_radius:150,array:[]};function colorValue(t){return Math.floor(255*Math.random()+t)}function createColorStyle(t,o,i){return"rgba("+t+","+o+","+i+", 0.618)"}function mixComponents(t,o,i,a){return(t*o+i*a)/(o+a)}function averageColorStyles(t,o){var i=t.color,a=o.color,s=mixComponents(i.r,t.radius,a.r,o.radius),n=mixComponents(i.g,t.radius,a.g,o.radius),e=mixComponents(i.b,t.radius,a.b,o.radius);return createColorStyle(Math.floor(s),Math.floor(n),Math.floor(e))}function Color(t){t=t||0,this.r=colorValue(t),this.g=colorValue(t),this.b=colorValue(t),this.style=createColorStyle(this.r,this.g,this.b)}function Dot(){this.x=Math.random()*canvas.width,this.y=Math.random()*canvas.height,this.vx=-.5+Math.random(),this.vy=-.5+Math.random(),this.radius=3*Math.random(),this.color=new Color}function createDots(){for(i=0;i<dots.nb;i++)dots.array.push(new Dot)}function moveDots(){for(i=0;i<dots.nb;i++){var t=dots.array[i];t.y<0||t.y>canvas.height?(t.vx=t.vx,t.vy=-t.vy):(t.x<0||t.x>canvas.width)&&(t.vx=-t.vx,t.vy=t.vy),t.x+=t.vx,t.y+=t.vy}}function connectDots(){for(i=0;i<dots.nb;i++)for(j=0;j<dots.nb;j++)i_dot=dots.array[i],j_dot=dots.array[j],i_dot.x-j_dot.x<dots.distance&&i_dot.y-j_dot.y<dots.distance&&i_dot.x-j_dot.x>-dots.distance&&i_dot.y-j_dot.y>-dots.distance&&i_dot.x-movePos.x<dots.d_radius&&i_dot.y-movePos.y<dots.d_radius&&i_dot.x-movePos.x>-dots.d_radius&&i_dot.y-movePos.y>-dots.d_radius&&(ctx.beginPath(),ctx.strokeStyle=averageColorStyles(i_dot,j_dot),ctx.moveTo(i_dot.x,i_dot.y),ctx.lineTo(j_dot.x,j_dot.y),ctx.stroke(),ctx.closePath())}function drawDots(){for(i=0;i<dots.nb;i++){dots.array[i].draw()}}function runDots(){ctx.clearRect(0,0,canvas.width,canvas.height),moveDots(),connectDots(),drawDots(),requestAnimationFrame(runDots)}Dot.prototype={draw:function(){ctx.beginPath(),ctx.fillStyle=this.color.style,ctx.arc(this.x,this.y,this.radius,0,3*Math.PI,!1),ctx.fill()}};var can=document.querySelector("#canvas");can.addEventListener("mousemove",function(t){movePos.x=t.pageX,movePos.y=t.pageY}),can.addEventListener("mouseleave",function(t){movePos.x=canvas.width/2,movePos.y=canvas.height/2}),createDots(),requestAnimationFrame(runDots);
 
-            .bubble:nth-child(7) {
-                width: 25px;
-                height: 25px;
-                left: 75%;
-                animation-duration: 7s;
-                animation-delay: 2s
-            }
-
-            .bubble:nth-child(8) {
-                width: 80px;
-                height: 80px;
-                left: 80%;
-                animation-duration: 6s;
-                animation-delay: 1s
-            }
-
-            @keyframes rise {
-                0% {
-                    bottom: -100px;
-                    transform: translateX(0)
+    layui.use(['form'], function () {
+        var form = layui.form,
+            $ = layui.$,
+            layer = layui.layer;
+        // 登录过期的时候，跳出ifram框架
+        if (top.location != self.location) top.location = self.location;
+        form.on('submit(login-submit)', function (data) {
+            $.ajax({
+                url: "/home/login/login_submit",
+                data: $('#gougu-login').serialize(),
+                type: 'post',
+                async: false,
+                success: function (res) {
+                    layer.tips(res.msg, '#login-submit');
+                    if (res.code === 0) {
+                        var date = new Date();
+                        date.setTime(date.getTime() + (-1 * 24 * 60 * 60 * 1000));
+                        var expires = "; expires=" + date.toGMTString();
+                        document.cookie = "gougutab=''" + expires + "; path=/";
+                        setTimeout(function () {
+                            parent.document.location.href = "/";
+                        }, 1200);
+                    } else {
+                        $('[alt="captcha"]').click();
+                    }
                 }
-
-                50% {
-                    transform: translateX(100px)
-                }
-
-                100% {
-                    bottom: 1080px;
-                    transform: translateX(-200px)
-                }
-            }
-
-            @keyframes fadeIn {
-                from {
-                    opacity: 0;
-                    transform: translateY(20px)
-                }
-
-                to {
-                    opacity: 1;
-                    transform: translateY(0)
-                }
-            }
+            })
+            return false;
+        });
+    });
 
 
-        </style>
-	</head>
-	<body>
-		<div id="container">
-<!--			<canvas id="canvas"></canvas>-->
-            <div class="bubbles"><div class="bubble"></div><div class="bubble"></div><div class="bubble"></div><div class="bubble"></div><div class="bubble"></div><div class="bubble"></div><div class="bubble"></div><div class="bubble"></div></div>
-			<div class="login-wrap layui-anim layui-anim-upbit">
-<!--				<div class="login-side"><div class="side-img"></div></div>-->
-				<div class="login-box">
-					<div class="top layui-anim layui-anim-downbit">
-						<img src="{:get_system_config('loginlogo','loginlogo')}" onerror="javascript:this.src='{__IMG__}/loginlogo.png';this.onerror=null;" style="height: 66px;">
-					</div>
-					<div class="bottom">
-						<form class="layui-form" id="gougu-login">
-							<div class="layui-form-item layui-anim layui-anim-downbit">
-								<input type="text" name="username" lay-verify="required" value="" placeholder="请输入账户或手机号码" lay-reqText="请输入账户或手机号码" autocomplete="off" class="layui-input">
-							</div>
-							<div class="layui-form-item layui-anim layui-anim-downbit">
-								<input type="password" name="password" lay-verify="required" value="" placeholder="请输入密码" lay-reqText="请输入密码" autocomplete="off" class="layui-input">
-							</div>
-							<div class="layui-form-item layui-anim layui-anim-downbit">
-								<div class="layui-input-inline" style="width:168px;">
-									<input type="text" name="captcha" lay-verify="required" placeholder="验证码" lay-reqText="请输入验证码" autocomplete="off" class="layui-input">
-								</div>
-								<div class="layui-input-inline captcha_img" style="width:142px; height:44px; margin-right:0">
-									{:captcha_img()}
-									<input type="hidden" value="{:make_token()}"/>
-								</div>
-							</div>
-							
-							<button id="login-submit" class="layui-btn layui-btn-fluid layui-bg-cyan layui-anim layui-anim-upbit" lay-submit lay-filter="login-submit">登录</button>
-						</form>
-					</div>
-				</div>
-			</div>
-<!--			<div class="foot">-->
-<!--				&lt;!&ndash; 版权标识 &ndash;&gt;-->
-<!--				&lt;!&ndash; -->
-<!--				+&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;-->
-<!--				勾股OA系统开源且可免费使用，但并不是自由软件，未经授权许可不能去除勾股OA的相关版权信息-->
-<!--				+&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;-->
-<!--				如需去除版权标识使用的，请微信(hdm588)联系作者去除，开源不易，请多支持！-->
-<!--				+&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;-->
-<!--				勾股工作室 <hdm58@qq.com>-->
-<!--				+&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;-->
-<!--				&ndash;&gt;-->
-<!--				Copyright © 2022-2024 勾股OA - {:CMS_VERSION}  ，Powered by GouguOPEN，<a href="https://beian.miit.gov.cn/" target="_blank" rel="nofollow" style="color:#458BF3">{:get_system_config('web','icp')}</a><a target="_blank" rel="nofollow" style="margin-left: 15px;color:#458BF3" href="http://www.beian.gov.cn/portal/registerSystemInfo"> {:get_system_config('web','beian')}</a>-->
-<!--				&lt;!&ndash; /版权标识 &ndash;&gt;-->
-<!--			</div>-->
-            <div class="foot">
-				<!-- 版权标识 -->
-				<!--
-				+------------------------------------------------------------------------------------------
-				勾股OA系统开源且可免费使用，但并不是自由软件，未经授权许可不能去除勾股OA的相关版权信息
-				+------------------------------------------------------------------------------------------
-				如需去除版权标识使用的，请微信(hdm588)联系作者去除，开源不易，请多支持！
-				+------------------------------------------------------------------------------------------
-				勾股工作室 <hdm58@qq.com>
-				+------------------------------------------------------------------------------------------
-				-->
-				Copyright © 2015-2025 青岛汉缆氢能装备科技有限公司 - {:CMS_VERSION}  ，Powered by GouguOPEN，<a href="https://beian.miit.gov.cn/" target="_blank" rel="nofollow" style="color:#458BF3">{:get_system_config('web','icp')}</a><a target="_blank" rel="nofollow" style="margin-left: 15px;color:#458BF3" href="http://www.beian.gov.cn/portal/registerSystemInfo"> {:get_system_config('web','beian')}</a>
-				<!-- /版权标识 -->
-			</div>
-		</div>
-		<script src="{__GOUGU__}/layui/layui.js?v={:get_system_config('system','version')}"></script>
-		<script type="text/javascript">
-			// var canvas=document.querySelector("#canvas"),ctx=canvas.getContext("2d");canvas.width=window.innerWidth,canvas.height=window.innerHeight,ctx.lineWidth=.3,ctx.strokeStyle=new Color(150).style;var movePos={x:30*canvas.width/100,y:30*canvas.height/100},dots={nb:250,distance:100,d_radius:150,array:[]};function colorValue(t){return Math.floor(255*Math.random()+t)}function createColorStyle(t,o,i){return"rgba("+t+","+o+","+i+", 0.618)"}function mixComponents(t,o,i,a){return(t*o+i*a)/(o+a)}function averageColorStyles(t,o){var i=t.color,a=o.color,s=mixComponents(i.r,t.radius,a.r,o.radius),n=mixComponents(i.g,t.radius,a.g,o.radius),e=mixComponents(i.b,t.radius,a.b,o.radius);return createColorStyle(Math.floor(s),Math.floor(n),Math.floor(e))}function Color(t){t=t||0,this.r=colorValue(t),this.g=colorValue(t),this.b=colorValue(t),this.style=createColorStyle(this.r,this.g,this.b)}function Dot(){this.x=Math.random()*canvas.width,this.y=Math.random()*canvas.height,this.vx=-.5+Math.random(),this.vy=-.5+Math.random(),this.radius=3*Math.random(),this.color=new Color}function createDots(){for(i=0;i<dots.nb;i++)dots.array.push(new Dot)}function moveDots(){for(i=0;i<dots.nb;i++){var t=dots.array[i];t.y<0||t.y>canvas.height?(t.vx=t.vx,t.vy=-t.vy):(t.x<0||t.x>canvas.width)&&(t.vx=-t.vx,t.vy=t.vy),t.x+=t.vx,t.y+=t.vy}}function connectDots(){for(i=0;i<dots.nb;i++)for(j=0;j<dots.nb;j++)i_dot=dots.array[i],j_dot=dots.array[j],i_dot.x-j_dot.x<dots.distance&&i_dot.y-j_dot.y<dots.distance&&i_dot.x-j_dot.x>-dots.distance&&i_dot.y-j_dot.y>-dots.distance&&i_dot.x-movePos.x<dots.d_radius&&i_dot.y-movePos.y<dots.d_radius&&i_dot.x-movePos.x>-dots.d_radius&&i_dot.y-movePos.y>-dots.d_radius&&(ctx.beginPath(),ctx.strokeStyle=averageColorStyles(i_dot,j_dot),ctx.moveTo(i_dot.x,i_dot.y),ctx.lineTo(j_dot.x,j_dot.y),ctx.stroke(),ctx.closePath())}function drawDots(){for(i=0;i<dots.nb;i++){dots.array[i].draw()}}function runDots(){ctx.clearRect(0,0,canvas.width,canvas.height),moveDots(),connectDots(),drawDots(),requestAnimationFrame(runDots)}Dot.prototype={draw:function(){ctx.beginPath(),ctx.fillStyle=this.color.style,ctx.arc(this.x,this.y,this.radius,0,3*Math.PI,!1),ctx.fill()}};var can=document.querySelector("#canvas");can.addEventListener("mousemove",function(t){movePos.x=t.pageX,movePos.y=t.pageY}),can.addEventListener("mouseleave",function(t){movePos.x=canvas.width/2,movePos.y=canvas.height/2}),createDots(),requestAnimationFrame(runDots);
-			
-			layui.use(['form'], function() {
-				var form = layui.form,
-					$ = layui.$,
-					layer = layui.layer;
-				// 登录过期的时候，跳出ifram框架
-				if (top.location != self.location) top.location = self.location;
-				form.on('submit(login-submit)', function(data) {
-					$.ajax({
-						url: "/home/login/login_submit",
-						data: $('#gougu-login').serialize(),
-						type: 'post',
-						async: false,
-						success: function(res) {
-							layer.tips(res.msg, '#login-submit');
-							if (res.code === 0) {
-								var date = new Date();
-								date.setTime(date.getTime() + (-1 * 24 * 60 * 60 * 1000));
-								var expires = "; expires=" + date.toGMTString();
-								document.cookie = "gougutab=''" + expires + "; path=/";
-								setTimeout(function() {
-									parent.document.location.href="/";
-								}, 1200);
-							} else {
-								$('[alt="captcha"]').click();
-							}
-						}
-					})
-					return false;
-				});
-			});
-		</script>
-	</body>
+    const formulas = ["H₂", "O₂", "H₂O"];
+    document.querySelectorAll('.bubble').forEach(bubble => {
+        // 随机取一个化学式
+        bubble.textContent = formulas[Math.floor(Math.random() * formulas.length)];
+    });
+
+</script>
+</body>
 </html>

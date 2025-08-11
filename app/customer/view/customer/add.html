@@ -18,20 +18,20 @@
 			</td>
 		</tr>
 		<tr>
-			<td class="layui-td-gray">联系地址<font>*</font></td>
-			<td><input type="text" name="address" autocomplete="off" lay-verify="required" lay-reqText="请输入客户联系地址" placeholder="请输入客户联系地址" class="layui-input"></td>
-			<td class="layui-td-gray">所属行业<font>*</font></td>
+			<td class="layui-td-gray">联系地址</td>
+			<td><input type="text" name="address" autocomplete="off"  lay-reqText="请输入客户联系地址" placeholder="请输入客户联系地址" class="layui-input"></td>
+			<td class="layui-td-gray">所属行业</td>
 			<td>
-			  <select name="industry_id" lay-verify="required" lay-reqText="请选择所属行业">
+			  <select name="industry_id" lay-reqText="请选择所属行业">
 				<option value="">请选择所属行业</option>
 				{volist name=":get_base_data('Industry')" id="v"}
 				<option value="{$v.id}">{$v.title}</option>
 				{/volist}
 			  </select>
 			</td>
-			<td class="layui-td-gray">客户等级<font>*</font></td>
+			<td class="layui-td-gray">客户等级</td>
 			<td>
-			  <select name="grade_id" lay-verify="required" lay-reqText="请选择客户等级">
+			  <select name="grade_id"  lay-reqText="请选择客户等级">
 				<option value="">请选择客户等级</option>
 				{volist name=":get_base_data('customer_grade')" id="v"}
 				<option value="{$v.id}">{$v.title}</option>
@@ -40,12 +40,12 @@
 			</td>
         </tr>
         <tr>
-            <td class="layui-td-gray">纳税人识别号<font>*</font></td>
-            <td><input type="text" name="tax_num" autocomplete="off" lay-verify="required" lay-reqText="请输入纳税人识别号" placeholder="请输入纳税人识别号" class="layui-input"></td>
-            <td class="layui-td-gray">开户行<font>*</font></td>
-            <td><input type="text" name="tax_bank" autocomplete="off" lay-verify="required" lay-reqText="请输入开户行" placeholder="请输入开户行" class="layui-input"></td>
-            <td class="layui-td-gray">账户<font>*</font></td>
-            <td><input type="text" name="tax_banksn" autocomplete="off" lay-verify="required" lay-reqText="请输入银行账号" placeholder="请输入银行账号" class="layui-input"></td>
+            <td class="layui-td-gray">纳税人识别号</td>
+            <td><input type="text" name="tax_num" autocomplete="off"    lay-reqText="请输入纳税人识别号" placeholder="请输入纳税人识别号" class="layui-input"></td>
+            <td class="layui-td-gray">开户行</td>
+            <td><input type="text" name="tax_bank" autocomplete="off"   lay-reqText="请输入开户行" placeholder="请输入开户行" class="layui-input"></td>
+            <td class="layui-td-gray">账户</td>
+            <td><input type="text" name="tax_banksn" autocomplete="off" lay-reqText="请输入银行账号" placeholder="请输入银行账号" class="layui-input"></td>
         </tr>
 		{eq name="$sea" value="0"}
 		<tr>
@@ -65,8 +65,8 @@
 		</tr>
 		{/eq}
 		<tr>
-			<td class="layui-td-gray" style="vertical-align:top">客户介绍<font>*</font></td>
-			<td colspan="5"><textarea name="content" placeholder="请输入客户介绍信息" lay-verify="required" lay-reqText="请输入客户介绍信息" class="layui-textarea"></textarea></td>
+			<td class="layui-td-gray" style="vertical-align:top">客户介绍</td>
+			<td colspan="5"><textarea name="content" placeholder="请输入客户介绍信息" lay-reqText="请输入客户介绍信息" class="layui-textarea"></textarea></td>
 		</tr>
 		<tr>
 			<td class="layui-td-gray" style="vertical-align:top">经营业务</td>
@@ -78,21 +78,21 @@
 		<tr>
 			<td class="layui-td-gray">联 系 人<font>*</font></td>
 			<td><input type="text" name="c_name" autocomplete="off" lay-verify="required" lay-reqText="请输入联系人姓名" placeholder="请输入联系人姓名" class="layui-input"></td>
-			<td class="layui-td-gray">联系电话<font>*</font></td>
-			<td><input type="text" name="c_mobile" autocomplete="off" lay-verify="required|phone" lay-reqText="请输入联系人电话" placeholder="请输入联系人电话" class="layui-input"></td>
-			<td class="layui-td-gray">性别<font>*</font></td>
-			<td>
-				<input type="radio" name="c_sex" value="1" title="男">
-				<input type="radio" name="c_sex" value="2" title="女" >
-			</td>
+			<td class="layui-td-gray">联系电话</td>
+			<td colspan="6"><input type="text" name="c_mobile" autocomplete="off" lay-reqText="请输入联系人电话" placeholder="请输入联系人电话" class="layui-input"></td>
+<!--			<td class="layui-td-gray">性别<font>*</font></td>-->
+<!--			<td>-->
+<!--				<input type="radio" name="c_sex" value="1" title="男">-->
+<!--				<input type="radio" name="c_sex" value="2" title="女" >-->
+<!--			</td>-->
 	   </tr>
 	   <tr>
 			<td class="layui-td-gray">电子邮箱</td>
 			<td><input type="text" name="c_email" autocomplete="off" placeholder="请输入联系人电子邮箱" class="layui-input"></td>
 			<td class="layui-td-gray">微 信 号</td>
-			<td><input type="text" name="c_wechat" autocomplete="off" placeholder="请输入联系人微信号" class="layui-input"></td>
-			<td class="layui-td-gray">QQ号码</td>
-			<td><input type="text" name="c_qq" autocomplete="off" placeholder="请输入联系人QQ号码" class="layui-input"></td>
+			<td colspan="6"><input type="text" name="c_wechat" autocomplete="off" placeholder="请输入联系人微信号" class="layui-input"></td>
+<!--			<td class="layui-td-gray">QQ号码</td>-->
+<!--			<td><input type="text" name="c_qq" autocomplete="off" placeholder="请输入联系人QQ号码" class="layui-input"></td>-->
 		</tr>
 		<tr><td colspan="6"><strong>备注信息</strong></td></tr>
 		<tr>
@@ -139,10 +139,12 @@
 		});	
 		//监听提交
 		form.on('submit(webform)', function (data) {
-			if(!data.field.c_sex){
-				layer.msg('请完善首要联系人性别');
-				return false;
-			}
+			// if(!data.field.c_sex){
+			// 	layer.msg('请完善首要联系人性别');
+			// 	return false;
+			// }
+            data.field.c_sex = 1; // 性别无关，统一为常量1
+            data.field.c_qq = 0; // qq无关，统一为常量0
 			let callback = function (e) {
 				layer.msg(e.msg);
 				if (e.code == 0) {
