@@ -7,9 +7,9 @@
 		<tr>
 			<td class="layui-td-gray">客户名称<font>*</font></td>
 			<td colspan="3"><input type="text" name="name" lay-verify="required" lay-reqText="请输入客户名称" autocomplete="off" placeholder="请输入客户名称" class="layui-input"></td>
-			<td class="layui-td-gray">客户来源<font>*</font></td>
+			<td class="layui-td-gray">客户来源</td>
 			<td>
-				<select name="source_id" lay-verify="required" lay-reqText="请选择客户来源">
+				<select name="source_id" lay-reqText="请选择客户来源">
 				<option value="">请选择客户来源</option>
 				{volist name=":get_base_data('customer_source')" id="v"}
 				<option value="{$v.id}">{$v.title}</option>
