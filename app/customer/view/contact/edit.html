@@ -13,27 +13,27 @@
         <td>
           <input type="text" name="name" value="{$detail.name}" autocomplete="off" lay-verify="required" lay-reqText="请输入联系人姓名" placeholder="请输入联系人姓名" class="layui-input">
         </td>
-		<td class="layui-td-gray">联系电话<font>*</font></td>
-        <td>
+		<td class="layui-td-gray">联系电话</td>
+        <td colspan="3">
 			<input type="text" name="mobile" value="{$detail.mobile}" autocomplete="off" lay-verify="required" lay-reqText="请输入联系人电话" placeholder="请输入联系人电话" class="layui-input">
         </td>
-		<td class="layui-td-gray">性别<font>*</font></td>
-        <td>
-			<input type="radio" name="sex" value="1" title="男" {eq name="$detail.sex" value="1"} checked{/eq}>
-			<input type="radio" name="sex" value="2" title="女" {eq name="$detail.sex" value="2"} checked{/eq}>
-        </td>
+<!--		<td class="layui-td-gray">性别<font>*</font></td>-->
+<!--        <td>-->
+<!--			<input type="radio" name="sex" value="1" title="男" {eq name="$detail.sex" value="1"} checked{/eq}>-->
+<!--			<input type="radio" name="sex" value="2" title="女" {eq name="$detail.sex" value="2"} checked{/eq}>-->
+<!--        </td>-->
 	  </tr>
 	  <tr>
 		<td class="layui-td-gray">微 信 号</td>
         <td>
 			<input type="text" name="wechat" value="{$detail.wechat}" autocomplete="off" placeholder="请输入联系人微信号" class="layui-input">
         </td>
-		<td class="layui-td-gray">QQ号码</td>
-        <td>
-			<input type="text" name="qq" value="{$detail.qq}" autocomplete="off" placeholder="请输入联系人QQ号码" class="layui-input">
-        </td>
+<!--		<td class="layui-td-gray">QQ号码</td>-->
+<!--        <td>-->
+<!--			<input type="text" name="qq" value="{$detail.qq}" autocomplete="off" placeholder="请输入联系人QQ号码" class="layui-input">-->
+<!--        </td>-->
 		<td class="layui-td-gray">电子邮箱</td>
-        <td>
+        <td colspan="3">
 			<input type="text" name="email" value="{$detail.email}" autocomplete="off" placeholder="请输入联系人电子邮箱" class="layui-input">
         </td>
       </tr>
@@ -126,10 +126,10 @@
 		});
 		//监听提交
 		form.on('submit(webform)', function (data) {
-			if(!data.field.sex){
-				layer.msg('请选择性别');
-				return false;
-			}
+			// if(!data.field.sex){
+			// 	layer.msg('请选择性别');
+			// 	return false;
+			// }
 			let callback = function (e) {
 				layer.msg(e.msg);
 				if (e.code == 0) {
